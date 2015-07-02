@@ -111,7 +111,7 @@ Deve ser um destes:
 * **docs**: Mudanças referentes a documentação
 * **style**: Alterações que não afetam o código (espaço em branco, formatação, falta de ponto e vírgula, etc)
 * **refactor**: Melhoria de código que não corrige um bug e nem adiciona um novo recurso
-* **perf**: Alteração no código que melhora o desenpenho
+* **perf**: Alteração no código que melhora o desempenho
 
 ### Scope
 O escopo pode ser qualquer coisa especificando o que o commit está alterando. Por exemplo `login`,
