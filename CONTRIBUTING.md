@@ -4,7 +4,7 @@
  - [Clonar px-project](#clone)
  - [Upstream](#upstream)
  - [Pull Request](#pullrequest)
- - [Pull Request Aceito](#merged)
+ - [Pull Request aceito](#merged)
  - [Commit Message (Formato)](#commit)
  
 
@@ -126,7 +126,7 @@ Descrição objetiva da mudança:
 
 ###Body
 Assim como o **subject**, utilize frases no presente e modo imperativo.
-O body pode descrever a motivação da alteração e comparar seu comportamente com a anterior.
+O body pode descrever a motivação da alteração e comparar seu comportamento atual com a anterior.
 
 ###Footer
 Considerações finais.
