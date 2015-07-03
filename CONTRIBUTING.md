@@ -121,7 +121,7 @@ O escopo pode ser qualquer coisa especificando o que o commit está alterando. P
 Descrição objetiva da mudança:
 
 * use frases no presente e modo imperativo: "alterar" e não "alterado" nem "alterações", por exemplo: `alterar o formulário de login`
-* não utilize letra maiúsculas na primeira letra
+* não utilize letra maiúscula na primeira letra
 * não inclua o ponto no final no título
 
 ###Body
