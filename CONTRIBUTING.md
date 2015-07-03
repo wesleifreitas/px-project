@@ -93,7 +93,7 @@ git pull --ff upstream master
 Regras para o commit.
 
 ### <a name="commit"></a>Commit Message (Formato)
-Cada mensagem de commit possui um **header**(obrigatório), um **body** e um **footer**.  O header incluir um **type**(obrigatório), um **scope**(obrigatório) e um **subject**(obrigatório):
+Cada mensagem de commit deve possuir um **header**(obrigatório), e pode conter um **body** e um **footer**.  O header inclui um **type**(obrigatório), um **scope**(obrigatório) e um **subject**(obrigatório):
 
 ```
 <type>(<scope>): <subject>
