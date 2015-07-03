@@ -47,7 +47,7 @@ git remote add upstream git@github.com:wesleifreitas/px-project.git
 git checkout -b my-fix-branch master
 ```
 
-* Após desenvolver e testar suas alterações ralize o commit:
+* Após desenvolver e testar suas alterações faça o commit:
 
 ```shell
 git commit -a
