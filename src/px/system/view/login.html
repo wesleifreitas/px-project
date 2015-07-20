@@ -1,17 +1,17 @@
-<form role="form" id="loginForm" name="loginForm">
+<form role="form" id="loginForm" name="loginForm" ng-submit="vm.login()">
     <div id="loginDiv">
         <h1>Login</h1>
         <fieldset>
-            <div class="input-control text">              
-                <input id="usuario" type="text" class="form-control" placeholder="Usuário" ng-model="usuario.usuario" required/>
+            <div class="input-control text">
+                <input id="usuario" type="text" class="form-control" placeholder="Usuário" ng-model="vm.username" required/>
                 <button class="btn-clear"></button>
             </div>
             <div class="input-control password">
-                <input id="senha" type="password" class="senha form-control" placeholder="Senha" ng-model="usuario.senha" required/>
+                <input id="senha" type="password" class="senha form-control" placeholder="Senha" ng-model="vm.password" required/>
                 <button class="btn-reveal"></button>
             </div>
             <div layout="row" layout-align="center center">
-                <md-button class="md-raised" type="submit" name="submit" value="Entrar" ng-click="login(usuario)" ng-disabled="loginForm.$invalid">Entrar</md-button>
+                <md-button class="md-raised" type="submit" name="submit" value="Entrar" ng-disabled="loginForm.$invalid">Entrar</md-button>
             </div>
         </fieldset>
     </div>
