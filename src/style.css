@@ -1,0 +1,9 @@
+/* Estilos customizados */
+body {
+	background: url('px/system/assets/wallpaper/richsolutions.jpg') no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	background-color: #000000;
+}

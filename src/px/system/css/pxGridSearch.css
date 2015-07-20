@@ -1,0 +1,18 @@
+.pxGridSearch {
+    width: 100%;
+    border: 1px solid #eee;
+}
+.pxGridSearch div {
+    width: 100%;
+}
+.pxGridSearch .headerSearch {
+    background-color: #eee;
+    padding: 2px;
+    cursor: pointer;
+    text-align: center;
+    opacity: 0.7;
+}
+.pxGridSearch .contentSearch {
+    display: none;
+    padding: 5px;
+}

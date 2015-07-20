@@ -1,0 +1,10 @@
+<div class="pxView">
+    <!-- Directive px-view-header, apresenta o cabeçalho da view atual -->
+    <px-view-header px-show-hr="true"></px-view-header>
+    <!-- Exemplo: custom directive (crie sua própria directive se necessário) -->
+    <!-- <px-custom-directive-exemplo></px-custom-directive-exemplo> -->
+    <div ng-controller="exemploCtrl">
+        <px-grid px-debug="false" px-init="gridInit()" px-table="dbo.exemplo">
+        </px-grid>
+    </div>
+</div>

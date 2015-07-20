@@ -1,0 +1,18 @@
+<form role="form" id="loginForm" name="loginForm">
+    <div id="loginDiv">
+        <h1>Login</h1>
+        <fieldset>
+            <div class="input-control text">
+                <input id="usuario" type="text" placeholder="Usuário" ng-model="usuario.usuario" required/>
+                <button class="btn-clear"></button>
+            </div>
+            <div class="input-control password">
+                <input id="senha" type="password" class="senha" placeholder="Senha" ng-model="usuario.senha" required/>
+                <button class="btn-reveal"></button>
+            </div>
+            <div layout="row" layout-align="center center">
+                <md-button class="md-raised" type="submit" name="submit" value="Entrar" ng-click="login(usuario)" ng-disabled="loginForm.$invalid">Entrar</md-button>
+            </div>
+        </fieldset>
+    </div>
+</form>

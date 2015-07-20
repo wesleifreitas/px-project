@@ -1,0 +1,94 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+body {
+
+    /* http://css-tricks.com/perfect-full-page-background-image/ */
+
+    background: url('../assets/wallpaper/richsolutions.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-color: #000000;
+}
+hr.px1 {
+    border: 0;
+    height: 1px;
+    background: #bbb;
+    background-image: -webkit-linear-gradient(left, #ddd, #bbb, #ddd);
+    background-image: -moz-linear-gradient(left, #ddd, #bbb, #ddd);
+    background-image: -ms-linear-gradient(left, #ddd, #bbb, #ddd);
+    background-image: -o-linear-gradient(left, #ddd, #bbb, #ddd);
+    margin-top: 1px;
+    margin-bottom: 2px;
+}
+div.pxView {
+    position: absolute;
+    bottom: 10px;
+    top: 45px;
+    right: 1px;
+    width: 100%;
+    padding-left: 10px;
+    overflow: auto;
+    color: #666;
+    margin-top:;
+}
+#px-projectMain {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    float: left;
+}
+#px-projectContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    overflow-x: auto;    /* background-color: #FFC000;
+    */
+}
+#menuDiv {
+    position: relative;
+    width: 100%;    /*height: 45px;*/
+    float: left;
+    z-index: 1;
+}
+#workDiv {
+    margin: 0px auto;
+    width: 100%;
+    height: 100%;
+    float: left;
+    padding-top: 45px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;    /* border: 2px solid red;
+    */
+    position: absolute;
+    z-index: 0;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+#workDiv:after {
+    background-color: #FFFFFF;
+    opacity: 0.89;
+    content: '';
+    display: block;
+    position: absolute;
+    top: 45px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: -1;
+}
+#actionDiv {
+    position: absolute;
+    float: right;
+    width: 20%;
+    height: 100%;
+    opacity: 0.97;
+    padding-top: 45px;
+    right: 0;
+}
