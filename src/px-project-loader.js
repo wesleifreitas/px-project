@@ -21,7 +21,10 @@ $(function() {
         file: 'https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.css'
     }, {
         file: 'https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic'
+    }, {
+        file: 'https://fonts.googleapis.com/icon?family=Material+Icons' //https://www.google.com/design/icons/
     }];
+
 
     // Loop em cssLoader
     $.each(cssLoader, function(i, item) {
@@ -72,6 +75,8 @@ $(function() {
         file: pxProjectPackage() + 'px/system/js/px-view-header.js'
     }, {
         file: pxProjectPackage() + 'px/system/js/px-grid.js'
+    }, {
+        file: pxProjectPackage() + 'px/system/js/px-form-item.js'
     }];
 
     // Loop em jsLoader
