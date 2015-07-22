@@ -34,7 +34,7 @@ div.pxView {
     padding-left: 10px;
     overflow: auto;
     color: #666;
-    margin-top:;
+    overflow-y: scroll;
 }
 #px-projectMain {
     position: relative;
@@ -68,12 +68,12 @@ div.pxView {
     */
     position: absolute;
     z-index: 0;
-    overflow-x: scroll;
+    overflow-x: hidden;
     overflow-y: hidden;
 }
 #workDiv:after {
     background-color: #FFFFFF;
-    opacity: 0.89;
+    opacity: 0.95;
     content: '';
     display: block;
     position: absolute;
