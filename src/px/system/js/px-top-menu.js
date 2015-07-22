@@ -32,9 +32,6 @@ app.controller('pxTopMenuCtrl', ['$scope', '$http', function($scope, $http) {
 
     $scope.apresentarView = function(componente) {
 
-        console.log('apresentarView');
-        console.log(componente);
-
         var params = new Object();
         params.com_id = componente;
         params.projectRootFolder = document.location.pathname;
@@ -46,8 +43,6 @@ app.controller('pxTopMenuCtrl', ['$scope', '$http', function($scope, $http) {
             params: params
         }).success(function(result) {
 
-            console.info('apresentarView.success', result);
-
             var headerView = result.QCOMPONENTE[0].MEN_NOMECAMINHO.split(result.QCOMPONENTE[0].MEN_NOMECAMINHO.split('»')[result.QCOMPONENTE[0].MEN_NOMECAMINHO.split('»').length - 1])
 
             $scope.view = new Object();
@@ -58,7 +53,6 @@ app.controller('pxTopMenuCtrl', ['$scope', '$http', function($scope, $http) {
             $scope.view.titulo = result.QCOMPONENTE[0].MEN_NOMECAMINHO.split('»')[result.QCOMPONENTE[0].MEN_NOMECAMINHO.split('»').length - 1];
             $scope.view.icon = result.QCOMPONENTE[0].COM_ICON;
 
-            console.log($scope.view);
 
             $scope.templates[1].name = result.QCOMPONENTE[0].COM_VIEW;
             $scope.templates[1].url = result.QCOMPONENTE[0].COM_VIEW;
