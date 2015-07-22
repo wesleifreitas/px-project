@@ -36,6 +36,9 @@ div.pxView {
     color: #666;
     overflow-y: scroll;
 }
+div.pxViewHeader {
+    margin-left: -10px;
+}
 #px-projectMain {
     position: relative;
     width: 100%;
