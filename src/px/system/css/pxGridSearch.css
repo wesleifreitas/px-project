@@ -1,18 +1,13 @@
 .pxGridSearch {
-    width: 100%;
-    border: 1px solid #eee;
+	border: 1px solid #eee;
+	margin-bottom: 10px;
+	margin-left: -10px;
 }
 .pxGridSearch div {
-    width: 100%;
+	width: 100%;
 }
 .pxGridSearch .headerSearch {
-    background-color: #eee;
-    padding: 2px;
-    cursor: pointer;
-    text-align: center;
-    opacity: 0.7;
-}
-.pxGridSearch .contentSearch {
-    display: none;
-    padding: 5px;
+	background-color: #E3E3E3;
+	cursor: pointer;
+	text-align: center;
 }

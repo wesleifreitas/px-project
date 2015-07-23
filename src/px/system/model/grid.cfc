@@ -86,6 +86,16 @@
 					COUNT(1) as count
 				FROM
 					#arguments.table#
+
+				WHERE 1=1	
+				<cfloop array="#arguments.fields#" index="i">
+					
+					<cfif i.filterValue NEQ "">
+						AND #i.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqltype(i.type)#" value="#i.filterValue#">
+					</cfif>
+							
+				</cfloop>
+
 			</cfquery>
 			
 			<cfquery name="qQuery" datasource="#arguments.dsn#">
@@ -99,6 +109,13 @@
 						#arguments.table#
 					WHERE 
 						1 = 1	
+					<cfloop array="#arguments.fields#" index="i">
+					
+						<cfif i.filterValue NEQ "">
+							AND #i.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqltype(i.type)#" value="#i.filterValue#">
+						</cfif>
+								
+					</cfloop>
 				)
 				
 				SELECT 
@@ -129,5 +146,40 @@
 	<cfset result.qQuery 		= QueryToArray(qQuery)>
 
 	<cfreturn result>
+
+</cffunction>
+
+<cffunction 
+	name         ="getSqltype" 
+	access       ="private" 
+	output       ="false" 
+	returntype   ="String"
+	>
+
+	<cfargument 
+		name     ="type" 	
+		type	 ="string"
+		required ="false"
+		default  =""	
+		hint     ="Tipo do campo">
+
+	<cfscript>
+
+		switch(arguments.type){
+			case 'int':
+				'cf_sql_integer';
+			break;
+
+			case 'varchar':
+				'cf_sql_varchar';
+			break;
+		
+			default:
+				'cf_sql_varchar';
+			break;
+		}
+
+
+	</cfscript>
 
 </cffunction>

@@ -11,16 +11,18 @@ app.directive('pxGrid', ['$timeout', function(timer) {
             table: '@pxTable',
             fields: '@pxFields',
             orderBy: '@pxOrderBy',
-            columns: '@pxColumns',
-            init: '&pxInit'
+            columns: '@pxColumns',            
+            init: '&pxInit',
+            dataInit: '@pxDataInit',
+            control: '='
         },
         link: function(scope, element, attrs) {
             // Manipulação e Eventos DOM           
 
             scope.$watch('fields', function(newValue, oldValue) {
 
-                console.info('link: fields has changed', newValue); // valor atual.
-                console.info(oldValue + ' -> ' + newValue);
+                // Transformar valor String para Array                
+                newValue = JSON.parse(newValue);
 
                 scope.dataTable = ''
                 scope.dataTable += '<thead>';
@@ -47,11 +49,6 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                 scope.dataTable += '<tfoot>';
                 scope.dataTable += scope.columns;
                 scope.dataTable += '</tfoot>';
-                //scope.dataTable += '</table>';
-
-                console.log(scope.dataTable);
-                console.log($('pxTable'));
-                console.info('aoColumns', scope.aoColumns);
 
                 // Quantidade de linhas por consulta
                 scope.rows = 50;
@@ -68,9 +65,27 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                 */
                 scope.pxTableReady = true;
 
+                // Internal Control - Start
+
+                // How to call a method defined in an AngularJS directive?
+                // http://stackoverflow.com/questions/16881478/how-to-call-a-method-defined-in-an-angularjs-directive
+                scope.internalControl = scope.control || {};
+
+                /**
+                 * Recupera dados que são carregados na listagem
+                 * @return {[type]} [description]
+                 */
+                scope.internalControl.getData = function() {
+
+                    scope.getData(0, scope.rows);
+                }
+
+                // Internal Control - End
+
             });
 
-            timer(scope.init, 0); // Chama a função px-init
+            // Chama evento px-init
+            timer(scope.init, 0);
 
         },
         controller: function($scope, $element, $attrs, $http) {
@@ -82,9 +97,6 @@ app.directive('pxGrid', ['$timeout', function(timer) {
             $scope.currentPage = 0;
 
             $scope.$watch('pxTableReady', function(newValue, oldValue) {
-
-                console.info('link: pxTableReady has changed', newValue); // valor atual.
-                console.info(oldValue + ' -> ' + newValue);
 
                 if (newValue == true) {
                     timer($scope.pxGridGetData, 0);
@@ -108,9 +120,11 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                             previous: "« Anterior",
                             next: "Próxima »",
                             last: "Última"
-                        }
+                        },
                     },
-                    "lengthMenu": [10, 25, 45],
+                    "bFilter": false, //Disable search function
+                    "bLengthChange": false,
+                    "lengthMenu": [20, 35, 45],
                     "bProcessing": true,
                     //"sAjaxSource": "px-project research/dataTables/data/exemplo.json",
                     /*
@@ -124,13 +138,17 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                         "mData": "exe_data"
                     }]
                     */
-                    "aoColumns": $scope.aoColumns
+                    "aoColumns": $scope.aoColumns,
+                    "destroy": true,
                 });
 
                 $scope.pxTableReady = false;
 
-                $scope.getData(0, $scope.rows);
-
+                // Se a propriedade pxGetData for igual a true                
+                if ($scope.dataInit == 'true') {
+                    // Recupera dados assim que a listagem é criada 
+                    $scope.getData(0, $scope.rows);
+                }
 
                 // Eventos do dataTable pxTable
                 var table = $('#pxTable').DataTable();
@@ -139,7 +157,6 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                 $('#pxTable').on('page.dt', function() {
 
                     var info = table.page.info();
-                    console.info('pxTable on page.dt', info);
 
                     if (info.page == info.pages - 1) {
 
@@ -163,6 +180,53 @@ app.directive('pxGrid', ['$timeout', function(timer) {
 
             $scope.getData = function(rowFrom, rowTo) {
 
+                // Verifica se $scope.fields é Array
+                // Se não for tranforma utilizado JSON.parse
+                if (!angular.isArray($scope.fields)) {
+                    // Transformar valor String para Array   
+                    $scope.fields = JSON.parse($scope.fields);
+                }
+
+                // Loop na configuração de campos
+                angular.forEach($scope.fields, function(index) {
+
+                    // Valor do filtro
+                    index.filterValue = '';
+
+                    // Verifica se possui campo de filtro
+                    if (angular.isDefined(index.filter)) {
+                        // Caso possua campo de filtro, é definido o 'filterValue'
+                        // filterValue é igual ao valor do campo do filtro
+                        index.filterValue = angular.element(index.filter.selector).val();
+                        // Verifica se o valor do filtro é um valor válido
+                        if (angular.isDefined(index.filterValue) && index.filterValue != '') {
+                            console.info(index.filterValue, 'index.filterValueindex.filterValue');
+
+                            // Regras de filtro por Operator
+                            switch (index.filterOperator) {
+
+                                case '%LIKE%':
+                                case '%LIKE':
+                                case 'LIKE%':
+                                    // Valor do filtro recebe '%' o filterOperator possua '%'
+                                    // Por exemplo:
+                                    // Se filterOperator for igual a '%LIKE%' e valor do filtro for 'teste'
+                                    // Neste caso 'LIKE' é substituido por 'teste' 
+                                    // Portanto o valor final do filtro será  '%teste%'
+                                    index.filterValue = index.filterOperator.toUpperCase().replace('LIKE', index.filterValue);
+                                    break;
+
+                                default:
+
+                                    break;
+
+                            }
+
+                        }
+                    }
+
+                });
+
                 var params = new Object();
                 params.table = $scope.table;
                 params.fields = angular.toJson($scope.fields);
@@ -177,13 +241,21 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                     params.rowTo = rowTo;
                 }
 
+                // Se for a primeira linha significa que é uma nova consulta ao dados
+                // Neste caso é feito um 'clear' na listagem
+                if (rowFrom == 0) {
+                    $('#pxTable').DataTable().clear().draw();
+                }
+
+
                 $http({
                     method: 'POST',
                     url: pxProjectPackage() + 'px/system/model/grid.cfc?method=getData',
                     params: params
                 }).success(function(result) {
 
-                    //console.info('grid getData success', result);
+                    console.info('grid getData success', result);
+                    //console.info('grid getData success JSON.stringify',JSON.stringify(result,null,"    "));
 
                     if (angular.isDefined(result.FAULT)) {
                         //alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
@@ -216,7 +288,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
 
                             //$scope.getData(result.ARGUMENTS.ROWFROM + $scope.rows, result.ARGUMENTS.ROWTO + $scope.rows);
 
-                            var table = $('#pxTable').DataTable()
+                            var table = $('#pxTable').DataTable();
                             table.page($scope.currentPage).draw(false);
 
                             var info = table.page.info();
