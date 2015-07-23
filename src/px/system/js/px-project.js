@@ -1,14 +1,20 @@
-var app = angular.module('pxProjectApp', ['ngRoute', 'ngSanitize', 'ngMaterial']);
+var app = angular.module('app', ['ngRoute', 'ngCookies', 'ngSanitize', 'ngMaterial']);
 
-
-app.config(['$routeProvider', function($routeProvider) {
+app.config(['$routeProvider', function($routeProvider, $locationProvider) {
     $routeProvider.when('/login', {
         templateUrl: pxProjectPackage() + 'px/system/view/login.html',
-        controller: 'loginCtrl'
+        controller: 'loginCtrl',
+        controllerAs: 'vm'
     });
     $routeProvider.when('/home', {
         templateUrl: pxProjectPackage() + 'px/system/view/home.html',
-        controller: 'homeCtrl'
+        controller: 'homeCtrl',
+        controllerAs: 'vm'
+    });
+    $routeProvider.when('/', {
+        templateUrl: pxProjectPackage() + 'px/system/view/home.html',
+        controller: 'homeCtrl',
+        controllerAs: 'vm'
     });
     $routeProvider.otherwise({
         redirectTo: '/login'
@@ -62,17 +68,19 @@ app.controller('homeCtrl2', function($scope, $timeout, $mdSidenav, $mdUtil, $log
         };
     });
 
-/*
-app.run(function($rootScope, $location, loginService){
-    var routespermission=['/home'];  //route that require login
-    $rootScope.$on('$routeChangeStart', function(){
-        if( routespermission.indexOf($location.path()) !=-1)
-        {
-            var connected=loginService.islogged();
-            connected.then(function(msg){
-                if(!msg.data) $location.path('/login');
-            });
+app.run(function($rootScope, $location, $cookieStore, $http) {
+    // keep user logged in after page refresh
+    $rootScope.globals = $cookieStore.get('globals') || {};
+    if ($rootScope.globals.currentUser) {
+        $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
+    }
+
+    $rootScope.$on('$locationChangeStart', function(event, next, current) {
+        // redirect to login page if not logged in and trying to access a restricted page
+        var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;
+        var loggedIn = $rootScope.globals.currentUser;
+        if (restrictedPage && !loggedIn) {
+            $location.path('/login');
         }
     });
 });
-*/

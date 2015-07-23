@@ -120,7 +120,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                             previous: "« Anterior",
                             next: "Próxima »",
                             last: "Última"
-                        },
+                        }
                     },
                     "bFilter": false, //Disable search function
                     "bLengthChange": false,

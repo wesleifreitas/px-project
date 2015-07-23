@@ -1,15 +1,15 @@
-<div id="px-projectContainer" ng-controller="homeCtrl2">
+<div id="px-projectContainer" ng-controller="homeCtrl">
     <px-top-menu /></px-top-menu>
     <div id="workDiv" ng-include="template.url" />
     <!--
-	<div 
-		id            ="actionDiv" 
-		ng-include    ="templates[0].url" 
-		ng-model      ="view" 
-		ng-controller ="homeCtrl"/>
+    <div 
+        id            ="actionDiv" 
+        ng-include    ="templates[0].url" 
+        ng-model      ="view" 
+        ng-controller ="homeCtrl"/>
 
-	</div> 
-	-->
+    </div> 
+    -->
     <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
         <md-toolbar class="">
             <h2 class="md-toolbar-tools">Configurações</h2>
@@ -17,7 +17,7 @@
         <md-content ng-controller="RightCtrl" layout-padding>
             <form>
                 <md-input-container>
-                    <md-button ng-click="logout()" class="md-primary">
+                    <md-button ng-click="logout();" class="md-primary">
                         Sair do sistema
                     </md-button>
                 </md-input-container>

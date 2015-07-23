@@ -1,5 +1,8 @@
 <cfinclude template="../../lib/pxUtil.cfm">
 
+<cfprocessingDirective pageencoding="utf-8">
+<cfset setEncoding("form","utf-8")> 
+
 <cffunction 
 	name         ="getData" 
 	access       ="remote" 
@@ -139,6 +142,7 @@
 		</cfcatch>
 
 	</cftry>
+
 
 	<cfset result._fields 		= _fields>
 	<cfset result.arguments 	= arguments>	

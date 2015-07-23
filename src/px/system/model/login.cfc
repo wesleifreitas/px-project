@@ -1,5 +1,8 @@
 <cfinclude template="../../lib/pxUtil.cfm">
 
+<cfprocessingDirective pageencoding="utf-8">
+<cfset setEncoding("form","utf-8")> 
+
 <cffunction 
 	name         ="login" 
 	access       ="remote" 
@@ -15,34 +18,44 @@
 		hint     ="Data source name">
 
 	<cfargument 
-		name     ="usuario" 
+		name     ="username" 
 		type     ="string"	
 		required ="false">
 
 	<cfargument 
-		name     ="senha" 	
+		name     ="password" 	
 		type     ="string"		
 		required ="false">
 
-
-	<!--- <cfreturn arguments> --->
+	<cfset result = structNew()>
 
 	<cfscript>
 
-		myQuery = QueryNew("nome, usuario, senha, cpf", "VarChar, VarChar, VarChar, BigInt");
+		myQuery = QueryNew("nome, username, password, cpf", "VarChar, VarChar, VarChar, BigInt");
 
-		if ( arguments.usuario == "px-project" && arguments.senha == "atopng"){
+		if ( arguments.username == "px-project" && arguments.password == "atopng"){
 
 			newRow = QueryAddRow(MyQuery, 1);
 
 			temp = QuerySetCell(myQuery, "nome", "px-project", 1);
-			temp = QuerySetCell(myQuery, "usuario", arguments.usuario, 1);
-			temp = QuerySetCell(myQuery, "senha", '*', 1);
+			temp = QuerySetCell(myQuery, "username", arguments.username, 1);
+			temp = QuerySetCell(myQuery, "password", '*', 1);
 			temp = QuerySetCell(myQuery, "cpf", 11111111111, 1);
 
 		}
 
-		return QueryToArray(myQuery);
+		result.arguments = arguments;
+
+		if (MyQuery.recordCount EQ 1){
+			result.success = true;
+			result.message = '';
+		} else {
+			result.success = false;
+			result.message = 'Login inválido';
+		}
+		result.query = QueryToArray(MyQuery);
+
+		return result;
 
 	</cfscript>
 

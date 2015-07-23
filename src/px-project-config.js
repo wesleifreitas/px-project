@@ -1,20 +1,14 @@
 function pxProjectPackage() {
-    return '';
+	return '';
 };
 
 $(function() {
 
-    // Custom Controllers
-    /*
-	var controller = [{
-		file: 'px/custom/controller/exemploCrtl.js'
-	}];
-	*/
+	// Custom Controllers
+	var controller = [];
 
-    // Loop em controller
-    /*
+	// Loop em controller
 	$.each(controller, function(i, item) {
 		$("<script/>").attr('src', pxProjectPackage() + item.file).appendTo($('head'));
 	});
-	*/
 });

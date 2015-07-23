@@ -1,16 +1,33 @@
-'use strict';
+(function() {
+    'use strict';
 
-app.controller('loginCtrl', ['$scope', 'loginService', function($scope, loginService) {
+    app.controller('loginCtrl', ['$location', 'AuthenticationService', 'FlashService', function($location, AuthenticationService, FlashService) {
 
-	$scope.login = function(data) {
+        var vm = this;
 
-		//console.log('login');
-		//console.log(data);
+        vm.initController = function initController() {
+            // reset login status
+            AuthenticationService.ClearCredentials();
+        }();
 
-		if (data.usuario != '') {
 
-			loginService.login(data, $scope); // Chama serviço de login
-		}
+        vm.login = function login() {
+            vm.dataLoading = true;
+            AuthenticationService.Login(vm.username, vm.password, function(response) {
+                if (response.SUCCESS) {
+                    AuthenticationService.SetCredentials(vm.username, vm.password);
+                    $location.path('/');
+                } else {
+                    FlashService.Error(response.message);
+                    vm.dataLoading = false;
 
-	};
-}]);
+                    $('#loginDiv').effect('shake', {
+                        direction: 'left',
+                        distance: 10,
+                        times: 3
+                    });
+                }
+            });
+        };
+    }])
+})();
