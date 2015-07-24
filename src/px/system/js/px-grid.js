@@ -33,7 +33,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                 scope.columns = '';
 
                 angular.forEach(newValue, function(index) {
-                    scope.columns += '<th class="text-left>' + index.title + '</th>';
+                    scope.columns += '<th class="text-left">' + index.title + '</th>';
 
                     var aoColumnsData = new Object();
                     aoColumnsData.mData = index.field;
