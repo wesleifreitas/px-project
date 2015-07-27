@@ -1,3 +1,6 @@
+/**
+ * Digitar somente números
+ */
 app.directive('validNumber', function() {
   return {
     require: '?ngModel',
@@ -22,4 +25,21 @@ app.directive('validNumber', function() {
       });
     }
   };
+});
+
+/**
+ * Chamar função ao pressionar a tecla 'Enter'
+ */
+app.directive('ngEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if(event.which === 13) {
+                scope.$apply(function (){
+                    scope.$eval(attrs.ngEnter);
+                });
+ 
+                event.preventDefault();
+            }
+        });
+    };
 });
