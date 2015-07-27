@@ -8,11 +8,13 @@ function pxProjectPackage() {
 
 $(function() {
 
-	// Custom Controllers
-	var controller = [];
+	// Custom Controllers	
+	var controllers = [{
+		file: 'custom/controller/exemploCtrl.js'
+	}];
 
-	// Loop em controller
-	$.each(controller, function(i, item) {
+	// Loop em controllers
+	$.each(controllers, function(i, item) {
 		$("<script/>").attr('src', pxProjectPackage() + item.file).appendTo($('head'));
 	});
 

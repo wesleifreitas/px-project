@@ -199,11 +199,18 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
         hint     ="Data source name">
 
     <cfargument 
-        name     ="projectRootFolder"     
+        name     ="pathname"     
         type     ="string"  
         required ="false"   
         default  =""    
         hint     ="Pasta raíz do projeto">
+
+    <cfargument 
+        name     ="pxProjectPackage"     
+        type     ="string"  
+        required ="false"   
+        default  =""    
+        hint     ="Componentes px-project">
 
     <cfargument 
         name     ="per_id"  
@@ -276,9 +283,9 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 
     <cfset result               = structNew()> 
 
-    <cfif not fileExists(expandPath('/')&arguments.projectRootFolder&qComponente.com_view)>
-         <cfset result.com_view_fault = qComponente.com_view> 
-         <cfset qComponente.com_view  = '../src/px/system/view/viewDoesNotExist.html'> 
+    <cfif not fileExists(expandPath('/') & arguments.pathname & qComponente.com_view)>        
+        <cfset result.com_view_fault = qComponente.com_view> 
+        <cfset qComponente.com_view  = pxProjectPackage & 'px/system/view/viewDoesNotExist.html'> 
     </cfif>
     
     <cfset result.arguments     = arguments> 

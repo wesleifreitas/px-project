@@ -1,0 +1,31 @@
+<div class="pxView" ng-controller="exemploCtrl">
+    <!-- Directive px-view-header, apresenta o cabeçalho da view atual -->
+    <px-view-header px-show-hr="true"></px-view-header>
+    <div class="pxGridSearch">
+        <div id="headerSearch" class="headerSearch" layout="row" layout-align="center center" ng-click="showFilter()"><span>FILTRO AVANÇADO</span><i class="material-icons" ng-show="filterExpand">expand_less</i><i class="material-icons" ng-show="!filterExpand">expand_more</i>
+        </div>
+        <div class="contentSearch" layout="row" layout-wrap>
+            <div layout="row" layout-wrap layout-padding flex="80">
+                <div flex="10">
+                    <label>ID</label>
+                    <input id="filtroId" class="form-control" ng-model="filtroId" ng-enter="getData()" valid-number>
+                </div>
+                <div flex="25">
+                    <label>Nome</label>
+                    <input id="filtroNome" class="form-control" ng-model="filtroNome" ng-enter="getData()">
+                </div>
+                <div flex="25">
+                    <label>CPF</label>
+                    <input id="filtroCPF" class="form-control" ng-model="filtroCPF" ng-enter="getData()" valid-number>
+                </div>
+            </div>
+            <div flex="20" layout="row">
+                <md-button class="md-raised md-primary" ng-click="getData();">Atualizar listagem</md-button>
+            </div>
+        </div>
+    </div>
+    <div>
+        <px-grid control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="dbo.exemplo" px-fields="{{grid.fields}}" px-data-init="true">
+        </px-grid>
+    </div>
+</div>
