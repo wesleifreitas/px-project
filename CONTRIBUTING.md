@@ -6,7 +6,7 @@
  - [Pull Request](#pullrequest)
  - [Pull Request aceito](#merged)
  - [Commit Message (Formato)](#commit)
- 
+ - [Building px-project](#build)
 
 ## <a name="fork"></a> Fork px-project
 
@@ -131,3 +131,16 @@ O body pode descrever a motivação da alteração e comparar seu comportamento 
 
 ###Footer
 Considerações finais.
+
+## <a name="build"></a> Building px-project
+
+###Bower
+No Git Bash instale as dependências (tais como: AngularJS, Jquery, etc) executando o comando:
+
+```shell
+bower install
+```
+
+Após conclusão do building verifique se o formulário de login é apresentado acessando: [http://localhost:8500/px-project/src](http://localhost:8500/px-project/src)
+
+Visite [px-example](https://github.com/wesleifreitas/px-example) para obter mais detalhes sobre como instalar e usar arquivos de distribução px-project dentro seu próprio projeto local.
