@@ -6,7 +6,7 @@ Copyright (c) 2015 Weslei Freitas.
 
 ## Introdução
 
-* [Sobre a px-project](1-intro-px-project.md)
+* [Sobre px-project](1-intro-px-project.md)
 
 Primeiros Passos
 ----------------
