@@ -14,7 +14,7 @@ Faça um fork (clicando no botão **Fork**) do repositório oficial [Phoenix Pro
 
 ## <a name="clone"></a> Clonar px-project
 
-* Execute o Git Bash (Caso não possua acesse leia os itens do Developer Guide)
+* Execute o Git Bash (Caso não possua acesse e leia os itens do Developer Guide)
  - [Developer Guide pt-BR](docs/guide-pt-BR)
 * Navegue até a pasta ColdFusion11/cfusion/wwwroot (Caso não possua o ColdFusion acesse as [Instruções de instalação](docs/guide-pt-BR/2.2-cf-install.md))
 
