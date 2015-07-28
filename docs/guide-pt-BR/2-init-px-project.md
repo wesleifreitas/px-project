@@ -2,7 +2,7 @@
 
 Para iniciar sua colaboração siga os passos a seguir.
 
-1. Instale o [Adobe ColdFusion](http://www.adobe.com/cfusion/tdrc/index.cfm?product=coldfusion&loc=pt_br). [Instruções de instalação não disponível no momento]
+1. Instale o [Adobe ColdFusion](http://www.adobe.com/cfusion/tdrc/index.cfm?product=coldfusion&loc=pt_br). [Instruções de instalação neste link](2.2-cf-install.md)
 2. Instale o [Sublime Text 2](http://www.sublimetext.com/2)
 3. Crie um usuário [GitHub](https://GitHub.com) caso não possua.
 5. O sistema de controle de versão utilizado é o GIT, recomenda-se ler o book [Pro Git book[pt-BR]](http://git-scm.com/book/pt-br/v1), veja a seguir os capítulos essenciais:
