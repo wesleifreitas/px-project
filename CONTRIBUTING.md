@@ -136,7 +136,15 @@ Considerações finais.
 ## <a name="build"></a> Building px-project
 
 ###Bower
-No Git Bash instale as dependências (tais como: AngularJS, Jquery, etc) executando o comando:
+
+Se não possui o Bower (Gerenciador de pacotes) instalado execute o seguinte comando no Git Bash
+
+```shell
+npm install -g bower
+```
+Mais detalhes em [http://bower.io/](http://bower.io/)
+
+Com o Bower devidamente instalado instale as dependências do projeto (tais como: AngularJS, Jquery, etc) executando o comando abaixo no Git Bash:
 
 ```shell
 bower install
