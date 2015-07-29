@@ -170,16 +170,11 @@ app.directive('pxGrid', ['$timeout', function(timer) {
             };
 
             $scope.getData = function(rowFrom, rowTo) {
-
-                // Verifica se $scope.fields é Array
-                // Se não for tranforma utilizado JSON.parse
-                if (!angular.isArray($scope.fields)) {
-                    // Transformar valor String para Array   
-                    $scope.fields = JSON.parse($scope.fields);
-                }
+                
+                var arrayFields = JSON.parse($scope.fields);
 
                 // Loop na configuração de campos
-                angular.forEach($scope.fields, function(index) {
+                angular.forEach(arrayFields, function(index) {
 
                     // Valor do filtro
                     index.filterValue = '';
@@ -190,8 +185,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                         // filterValue é igual ao valor do campo do filtro
                         index.filterValue = angular.element(index.filter.selector).val();
                         // Verifica se o valor do filtro é um valor válido
-                        if (angular.isDefined(index.filterValue) && index.filterValue != '') {
-                            console.info(index.filterValue, 'index.filterValueindex.filterValue');
+                        if (angular.isDefined(index.filterValue) && index.filterValue != '') {                            
 
                             // Regras de filtro por Operator
                             switch (index.filterOperator) {
@@ -220,7 +214,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
 
                 var params = new Object();
                 params.table = $scope.table;
-                params.fields = angular.toJson($scope.fields);
+                params.fields = angular.toJson(arrayFields);
                 params.orderBy = $scope.orderBy;
 
                 params.rows = $scope.rows;
@@ -245,12 +239,11 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                     params: params
                 }).success(function(result) {
 
-                    console.info('grid getData success', result);
+                    //console.info('grid getData success', result);
                     //console.info('grid getData success JSON.stringify',JSON.stringify(result,null,"    "));
 
                     if (angular.isDefined(result.FAULT)) {
-                        //alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
-                        console.error(result);
+                        alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');                        
                     } else {
 
                         if (result.QQUERY.length > 0) {
@@ -262,7 +255,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                                 var data = new Object();
 
                                 // Loop nas colunas da grid
-                                angular.forEach($scope.fields, function(item) {
+                                angular.forEach(JSON.parse($scope.fields), function(item) {
 
                                     // dDados por campo
                                     data[item.field] = index[item.field.toUpperCase()];
