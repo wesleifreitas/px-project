@@ -11,7 +11,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
             table: '@pxTable',
             fields: '@pxFields',
             orderBy: '@pxOrderBy',
-            columns: '@pxColumns',            
+            columns: '@pxColumns',
             init: '&pxInit',
             dataInit: '@pxDataInit',
             control: '='
@@ -21,8 +21,10 @@ app.directive('pxGrid', ['$timeout', function(timer) {
 
             scope.$watch('fields', function(newValue, oldValue) {
 
-                // Transformar valor String para Array                
-                newValue = JSON.parse(newValue);
+                // Transformar valor String para Array   
+                if (newValue != '') {
+                    newValue = JSON.parse(newValue);
+                }
 
                 scope.dataTable = ''
                 scope.dataTable += '<thead>';
@@ -51,18 +53,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                 scope.dataTable += '</tfoot>';
 
                 // Quantidade de linhas por consulta
-                scope.rows = 50;
-                /*
-                scope.aoColumns = [{
-                    "mData": "exe_id"
-                }, {
-                    "mData": "exe_nome"
-                }, {
-                    "mData": "exe_cpf"
-                }, {
-                    "mData": "exe_data"
-                }];
-                */
+                scope.rows = 50;                
                 scope.pxTableReady = true;
 
                 // Internal Control - Start
@@ -126,7 +117,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                     "bLengthChange": false,
                     "lengthMenu": [20, 35, 45],
                     "bProcessing": true,
-                    //"sAjaxSource": "px-project research/dataTables/data/exemplo.json",
+                    //"sAjaxSource": "http://localhost:8500/px-research/research/dataTables/data/exemplo.json",
                     /*
                     "aoColumns": [{
                         "mData": "exe_id"
