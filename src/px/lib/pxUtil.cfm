@@ -1,18 +1,6 @@
 <cfprocessingDirective pageencoding="utf-8">
 <cfset setEncoding("form","utf-8")> 
 
-<cffunction 
-    name       ="teste" 
-    access     ="public" 
-    returntype ="any" 
-    output     ="false"
-    hint       ="Transforma uma query em uma array de structs.">
-
-    <cfreturn 'inválido'>
-        
-</cffunction>
-
-
 <!--- http://www.bennadel.com/blog/124-ask-ben-converting-a-query-to-an-array.htm --->
 <cffunction 
     name       ="QueryToArray" 
