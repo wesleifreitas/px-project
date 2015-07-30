@@ -53,9 +53,7 @@ app.controller('exemploCtrl', function($scope, $element, $attrs, $rootScope) {
      * Chama função da listagem que carrega os dados
      * @return {[type]} [description]
      */
-    $scope.getData = function() {
-
-        console.info($rootScope.globals);
+    $scope.getData = function() {        
         /**
          * Recupera dados que são carregados na listagem
          */

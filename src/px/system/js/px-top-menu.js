@@ -42,8 +42,7 @@ app.controller('pxTopMenuCtrl', ['$scope', '$http', function($scope, $http) {
             method: 'POST',
             url: pxProjectPackage() + 'px/system/model/menu.cfc?method=recuperaComponente',
             params: params
-        }).success(function(result) {
-            console.info(result);
+        }).success(function(result) {            
             var headerView = result.QCOMPONENTE[0].MEN_NOMECAMINHO.split(result.QCOMPONENTE[0].MEN_NOMECAMINHO.split('»')[result.QCOMPONENTE[0].MEN_NOMECAMINHO.split('»').length - 1])
 
             $scope.view = new Object();
