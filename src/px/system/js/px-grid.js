@@ -53,7 +53,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                 scope.dataTable += '</tfoot>';
 
                 // Quantidade de linhas por consulta
-                scope.rows = 50;                
+                scope.rows = 50;
                 scope.pxTableReady = true;
 
                 // Internal Control - Start
@@ -170,7 +170,7 @@ app.directive('pxGrid', ['$timeout', function(timer) {
             };
 
             $scope.getData = function(rowFrom, rowTo) {
-                
+
                 var arrayFields = JSON.parse($scope.fields);
 
                 // Loop na configuração de campos
@@ -180,12 +180,21 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                     index.filterValue = '';
 
                     // Verifica se possui campo de filtro
+                    // Caso possua campo de filtro será definido o 'filterValue'
+                    // filterValue é igual ao valor do campo do filtro 
                     if (angular.isDefined(index.filter)) {
-                        // Caso possua campo de filtro, é definido o 'filterValue'
-                        // filterValue é igual ao valor do campo do filtro
-                        index.filterValue = angular.element(index.filter.selector).val();
+
+                        // Verifica seu o scope do elemento angular possui valor definido
+                        if (angular.element($(index.filter.selector).get(0)).scope().hasOwnProperty(index.filter.selector.replace('#', ''))) {
+                            // Se possuir o valor do filtro recebe o valor (ng-model)
+                            index.filterValue = angular.element($(index.filter.selector).get(0)).scope()[index.filter.selector.replace('#', '')];
+                        } else {
+                            // Se não possuir um valor válido no ng-model o valor recebe vazio
+                            index.filterValue = '';
+                        }
+
                         // Verifica se o valor do filtro é um valor válido
-                        if (angular.isDefined(index.filterValue) && index.filterValue != '') {                            
+                        if (angular.isDefined(index.filterValue) && index.filterValue != '') {
 
                             // Regras de filtro por Operator
                             switch (index.filterOperator) {
@@ -239,11 +248,11 @@ app.directive('pxGrid', ['$timeout', function(timer) {
                     params: params
                 }).success(function(result) {
 
-                    //console.info('grid getData success', result);
+                    console.info('grid getData success', result);
                     //console.info('grid getData success JSON.stringify',JSON.stringify(result,null,"    "));
 
                     if (angular.isDefined(result.FAULT)) {
-                        alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');                        
+                        alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                     } else {
 
                         if (result.QQUERY.length > 0) {

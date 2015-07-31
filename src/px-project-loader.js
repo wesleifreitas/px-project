@@ -59,6 +59,10 @@ $(function() {
     }, {
         file: 'bower_components/angular-material/angular-material.min.js'
     }, {
+        file: 'bower_components/angular-ui-mask/dist/mask.min.js'
+    }, {
+        file: 'bower_components/angular-input-masks/angular-input-masks-standalone.min.js'
+    }, {
         file: pxProjectPackage() + 'custom/js/directives/customDrc.js'
     }, {
         file: pxProjectPackage() + 'px/system/js/controller/loginCtrl.js'

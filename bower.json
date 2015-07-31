@@ -42,6 +42,7 @@
     "angular-route": "~1.4.3",
     "jquery-ui": "~1.11.4",
     "datatables": "~1.10.7",
-    "bootstrap": "~3.3.5"
+    "bootstrap": "~3.3.5",
+    "angular-input-masks": "~2.0.0"
   }
 }

@@ -14,9 +14,9 @@
                     <label>Nome</label>
                     <input id="filtroNome" class="form-control" ng-model="filtroNome" ng-enter="getData()">
                 </div>
-                <div flex="25">
+                <div flex="15">
                     <label>CPF</label>
-                    <input id="filtroCPF" class="form-control" ng-model="filtroCPF" ng-enter="getData()" valid-number>
+                    <input id="filtroCPF" class="form-control" ng-model="filtroCPF" ng-enter="getData()" ui-mask="999.999.999-99">                 
                 </div>
             </div>
             <div flex="20" layout="row">
