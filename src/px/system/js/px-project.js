@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngCookies', 'ngSanitize', 'ngMaterial', 'ui.mask', 'ui.utils.masks']);
+var app = angular.module('app', ['ngRoute', 'ngCookies', 'ngSanitize', 'ngMaterial', 'ui.mask']);
 
 app.config(['$routeProvider', function($routeProvider, $locationProvider) {
     $routeProvider.when('/login', {
