@@ -8,16 +8,21 @@
             <div layout="row" layout-wrap layout-padding flex="80">
                 <div flex="10">
                     <label>ID</label>
-                    <input id="filtroId" class="form-control" ng-model="filtroId" ng-enter="getData()" valid-number>
+                    <input id="filtroId" class="form-control" ng-model="filtroId" px-enter="getData()" px-valid-number>
                 </div>
                 <div flex="25">
                     <label>Nome</label>
-                    <input id="filtroNome" class="form-control" ng-model="filtroNome" ng-enter="getData()">
+                    <input id="filtroNome" class="form-control" ng-model="filtroNome" px-enter="getData()">
                 </div>
                 <div flex="15">
                     <label>CPF</label>
-                    <input id="filtroCPF" class="form-control" ng-model="filtroCPF" ng-enter="getData()" ui-mask="999.999.999-99">                 
+                    <input id="filtroCPF" class="form-control" ng-model="filtroCPF" px-enter="getData()" px-br-cpf-mask>                 
                 </div>
+                <div flex="15">
+                    <label>Telefone</label>
+                    <input id="filtroTelefone" class="form-control" ng-model="filtroTelefone" px-enter="getData()" px-br-phone-mask>                 
+                </div>
+                
             </div>
             <div flex="20" layout="row">
                 <md-button class="md-raised md-primary" ng-click="getData();">Atualizar listagem</md-button>
