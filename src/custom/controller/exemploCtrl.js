@@ -48,6 +48,12 @@ app.controller('exemploCtrl', function($scope, $element, $attrs, $rootScope) {
                 filter: angular.element($('#filtroTelefone')),
                 filterOperator: '='
             }, {
+                title: 'Valor',
+                field: 'exe_valor',
+                type: 'decimal',
+                filter: angular.element($('#filtroValor')),
+                filterOperator: '='
+            }, {
                 title: 'Data',
                 field: 'exe_data',
                 type: 'datetime'
