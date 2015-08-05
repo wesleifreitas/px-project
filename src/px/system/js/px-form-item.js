@@ -103,22 +103,9 @@ app.directive('pxBrPhoneMask', function($compile) {
         $compile(element)(scope);
       }
 
-      // Evento focusout      
+      // Evento focusout     
       element.bind('focusout', function(event) {
-        // Se possuir 11 dígitos e não estiver validado
-        // Telefone com 11 dígitos é um telefone com 9 dígitos mais dois dígitos do DDD
-        if (scope.cleanValue.length == 11 && scope.validPhone9 == false || !angular.isDefined(scope.validPhone9)) {
-
-          // Atualizar uiMask para telefone com 9 dígitos
-          attrs.$set('uiMask', '(99) ?99999-9999');
-          // Atualizar campo com o valor digitado e váriaveis de controle
-          ngModelCtrl.$setViewValue(scope.cleanValue);
-          //ngModelCtrl.$render();
-          scope.validPhone9 = true;
-          scope.validPhone8 = false;
-
-        } else if (scope.cleanValue.length < 11 && scope.validPhone8 == false || !angular.isDefined(scope.validPhone8)) {
-
+        if (scope.cleanValue.length < 11 || !angular.isDefined(scope.validPhone8)) {
           // Atualizar uiMask para telefone com 8 dígitos
           attrs.$set('uiMask', '(99) 9999-9999');
           // Atualizar campo com o valor digitado e váriaveis de controle
@@ -145,6 +132,31 @@ app.directive('pxBrPhoneMask', function($compile) {
           //ngModelCtrl.$render();
           scope.validPhone9 = false;
           scope.validPhone8 = false;
+        }
+      });
+
+      element.bind("keyup", function(event) {
+        // Se possuir 11 dígitos e não estiver validado
+        // Telefone com 11 dígitos é um telefone com 9 dígitos mais dois dígitos do DDD
+        if (scope.cleanValue.length == 11 && scope.validPhone9 == false || !angular.isDefined(scope.validPhone9)) {
+
+          // Atualizar uiMask para telefone com 9 dígitos
+          attrs.$set('uiMask', '(99) ?99999-9999');
+          // Atualizar campo com o valor digitado e váriaveis de controle
+          ngModelCtrl.$setViewValue(scope.cleanValue);
+          //ngModelCtrl.$render();
+          scope.validPhone9 = true;
+          scope.validPhone8 = false;
+
+        } else if (scope.cleanValue.length == 10 && scope.validPhone8 == false || !angular.isDefined(scope.validPhone8)) {
+
+          // Atualizar uiMask para telefone com 8 dígitos
+          attrs.$set('uiMask', '(99) 9999-9999?9');
+          // Atualizar campo com o valor digitado e váriaveis de controle
+          ngModelCtrl.$setViewValue(scope.cleanValue);
+          //ngModelCtrl.$render();
+          scope.validPhone9 = false;
+          scope.validPhone8 = true;
         }
       });
 
@@ -197,11 +209,10 @@ app.directive('pxValidNumber', function() {
 app.directive('pxEnter', function() {
   return function(scope, element, attrs) {
     element.bind("keydown keypress", function(event) {
-      console.info('pxEnter', event.which);
       if (event.which === 13) {
-        //scope.$apply(function() {
-        scope.$eval(attrs.pxEnter);
-        //});
+        scope.$apply(function() {
+          scope.$eval(attrs.pxEnter);
+        });
 
         event.preventDefault();
       }
