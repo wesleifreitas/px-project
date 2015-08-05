@@ -42,9 +42,15 @@ app.controller('exemploCtrl', function($scope, $element, $attrs, $rootScope) {
                 filter: angular.element($('#filtroCPF')),
                 filterOperator: '='
             }, {
+                title: 'Telefone',
+                field: 'exe_telefone',
+                type: 'varchar',
+                filter: angular.element($('#filtroTelefone')),
+                filterOperator: '='
+            }, {
                 title: 'Data',
                 field: 'exe_data',
-                type: 'varchar'
+                type: 'datetime'
             }]
         };
     };
