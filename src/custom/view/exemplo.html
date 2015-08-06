@@ -16,17 +16,19 @@
                 </div>
                 <div flex="15">
                     <label>CPF</label>
-                    <input id="filtroCPF" class="form-control" ng-model="filtroCPF" px-enter="getData()" px-br-cpf-mask>                 
-                </div>                
+                    <input id="filtroCPF" class="form-control" ng-model="filtroCPF" px-enter="getData()" px-br-cpf-mask>
+                </div>
                 <div flex="15">
                     <label>Telefone</label>
-                    <input id="filtroTelefone" class="form-control" ng-model="filtroTelefone" px-enter="getData()" px-br-phone-mask>                 
+                    <input id="filtroTelefone" class="form-control" ng-model="filtroTelefone" px-enter="getData()" px-br-phone-mask>
                 </div>
-                <div flex="15">
+                <div flex="25">
                     <label>Valor</label>
-                    <input id="filtroValor" class="form-control" ng-model="filtroValor" px-enter="getData()" px-currency-mask>                 
+                    <div class="input-group">
+                        <span class="input-group-addon">R$</span>
+                        <input id="filtroValor" class="form-control" ng-model="filtroValor" px-enter="getData()" px-number-mask>
+                    </div>
                 </div>
-                
             </div>
             <div flex="20" layout="row">
                 <md-button class="md-raised md-primary" ng-click="getData()">Atualizar listagem</md-button>

@@ -61,6 +61,10 @@ $(function() {
     }, {
         file: 'bower_components/angular-ui-mask/dist/mask.min.js'
     }, {
+        file: 'bower_components/numeral/min/numeral.min.js'
+    }, {
+        file: 'bower_components/numeral/min/languages.min.js'
+    }, {
         file: pxProjectPackage() + 'custom/js/directives/customDrc.js'
     }, {
         file: pxProjectPackage() + 'px/system/js/controller/loginCtrl.js'

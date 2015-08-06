@@ -26,9 +26,9 @@ app.directive('pxValidNumber', function() {
         return;
       }
 
-      ngModelCtrl.$parsers.push(function(val) {
-        var clean = val.replace(/[^0-9]+/g, '');
-        if (val !== clean) {
+      ngModelCtrl.$parsers.push(function(value) {
+        var clean = value.replace(/[^0-9]+/g, '');
+        if (value !== clean) {
           ngModelCtrl.$setViewValue(clean);
           ngModelCtrl.$render();
         }
@@ -69,9 +69,9 @@ app.directive('pxBrCnpjMask', function($compile) {
         $compile(element)(scope);
       }
 
-      ngModelCtrl.$parsers.push(function(val) {
-        var clean = val.replace(/[^0-9]+/g, '');
-        if (val !== clean) {
+      ngModelCtrl.$parsers.push(function(value) {
+        var clean = value.replace(/[^0-9]+/g, '');
+        if (value !== clean) {
           // Atualizar campo com o valor digitado
           ngModelCtrl.$setViewValue(clean);
           //ngModelCtrl.$render();          
@@ -107,9 +107,9 @@ app.directive('pxBrCpfMask', function($compile) {
         $compile(element)(scope);
       }
 
-      ngModelCtrl.$parsers.push(function(val) {
-        var clean = val.replace(/[^0-9]+/g, '');
-        if (val !== clean) {
+      ngModelCtrl.$parsers.push(function(value) {
+        var clean = value.replace(/[^0-9]+/g, '');
+        if (value !== clean) {
           // Atualizar campo com o valor digitado
           ngModelCtrl.$setViewValue(clean);
           //ngModelCtrl.$render();          
@@ -206,10 +206,10 @@ app.directive('pxBrPhoneMask', function($compile) {
         }
       });
 
-      ngModelCtrl.$parsers.push(function(val) {
-        var clean = val.replace(/[^0-9]+/g, '');
+      ngModelCtrl.$parsers.push(function(value) {
+        var clean = value.replace(/[^0-9]+/g, '');
         scope.cleanValue = clean;
-        if (val !== clean) {
+        if (value !== clean) {
           // Atualizar campo com o valor digitado
           ngModelCtrl.$setViewValue(clean);
           //ngModelCtrl.$render();          
@@ -220,7 +220,7 @@ app.directive('pxBrPhoneMask', function($compile) {
   };
 });
 
-app.directive('pxCurrencyMask', ['$filter', function($filter) {
+app.directive('pxNumberMask', ['$filter', '$locale', function($filter, $locale) {
   return {
     restrict: 'A',
     scope: {
@@ -228,74 +228,84 @@ app.directive('pxCurrencyMask', ['$filter', function($filter) {
     },
     require: '?ngModel',
     link: function(scope, element, attrs, ngModelCtrl) {
-      if (!ngModelCtrl) return;
 
-      var format = {
-        prefix: '',
-        centsSeparator: ',',
-        thousandsSeparator: '.'
+      //console.info('$locale', $locale);
+
+      if (!ngModelCtrl) {
+        return
       };
 
-      var formatSql = {
-        prefix: '',
-        centsSeparator: '.',
-        thousandsSeparator: ''
-      };
+      if (!angular.isDefined(attrs.pxEnableNumbers)) {
+        attrs.$set('pxEnableNumbers', /[0-9]/);
+      }
 
-      ngModelCtrl.$parsers.unshift(function(value) {
-        var clean = element.priceFormat(formatSql).val();
-        element.priceFormat(format);
-        //console.log('parsers', element[0].value);
-        //console.log('clean', clean);
-        return clean; //element[0].value;
+      if (!angular.isDefined(attrs.pxCurrency)) {
+        attrs.$set('pxCurrency', false);
+      }
+
+      if (!angular.isDefined(attrs.pxCurrencySymbol)) {
+        attrs.$set('pxCurrencySymbol', '');
+      }
+
+      if (!angular.isDefined(attrs.pxNumberSuffix)) {
+        attrs.$set('pxNumberSuffix', '');
+      }
+
+      if (!angular.isDefined(attrs.pxDecimalSeparator)) {
+        attrs.$set('pxDecimalSeparator', $locale.NUMBER_FORMATS.DECIMAL_SEP);
+      }
+
+      if (!angular.isDefined(attrs.pxThousandsSeparator)) {
+        attrs.$set('pxThousandsSeparator', $locale.NUMBER_FORMATS.GROUP_SEP);
+      }
+
+      if (!angular.isDefined(attrs.pxNumberPrecision)) {
+        attrs.$set('pxNumberPrecision', 2);
+      }
+
+      if (!angular.isDefined(attrs.pxUseNegative)) {
+        attrs.$set('pxUseNegative', false);
+      }
+
+      if (!angular.isDefined(attrs.pxUsePositive)) {
+        attrs.$set('pxUsePositive', false);
+      }
+
+      if (attrs.pxUsePositive) {
+        attrs.$set('pxUseNegative', false);
+      }
+
+      if (attrs.pxCurrency && attrs.pxCurrencySymbol == '') {
+        attrs.$set('pxCurrencySymbol', $locale.NUMBER_FORMATS.CURRENCY_SYM);
+      }
+
+      var limit = false;
+
+      ngModelCtrl.$parsers.push(function(value) {
+
+        var formatValue = numberFormatter(value);
+
+        if (value !== formatValue) {
+          ngModelCtrl.$setViewValue(formatValue);
+          ngModelCtrl.$render();
+        }
+
+        if (formatValue == '') {
+          return formatValue;
+        } else if (formatValue == (attrs.pxCurrencySymbol + '.')) {
+          return 0
+        } else {
+          return numeral().unformat(formatValue);
+        }
       });
 
-      ngModelCtrl.$formatters.unshift(function(value) {
-        element[0].value = ngModelCtrl.$modelValue * 0;
-        element.priceFormat(format);
-        //console.log('formatters', element[0].value);
-        return element[0].value;
-      })
-    }
-  };
-}]);
 
-(function($) {
-  $.fn.priceFormat = function(options) {
-    var defaults = {
-      prefix: 'US$ ',
-      suffix: '',
-      centsSeparator: '.',
-      thousandsSeparator: ',',
-      limit: false,
-      centsLimit: 2,
-      clearPrefix: false,
-      clearSufix: false,
-      allowNegative: false,
-      insertPlusSign: false
-    };
-    var options = $.extend(defaults, options);
-    return this.each(function() {
-      var obj = $(this);
-      var is_number = /[0-9]/;
-      var prefix = options.prefix;
-      var suffix = options.suffix;
-      var centsSeparator = options.centsSeparator;
-      var thousandsSeparator = options.thousandsSeparator;
-      var limit = options.limit;
-      var centsLimit = options.centsLimit;
-      var clearPrefix = options.clearPrefix;
-      var clearSuffix = options.clearSuffix;
-      var allowNegative = options.allowNegative;
-      var insertPlusSign = options.insertPlusSign;
-      if (insertPlusSign) allowNegative = true;
-
-      function to_numbers(str) {
+      function toNumber(str) {
         var formatted = '';
         for (var i = 0; i < (str.length); i++) {
           char_ = str.charAt(i);
           if (formatted.length == 0 && char_ == 0) char_ = false;
-          if (char_ && char_.match(is_number)) {
+          if (char_ && char_.match(attrs.pxEnableNumbers)) {
             if (limit) {
               if (formatted.length < limit) formatted = formatted + char_
             } else {
@@ -306,131 +316,57 @@ app.directive('pxCurrencyMask', ['$filter', function($filter) {
         return formatted
       }
 
-      function fill_with_zeroes(str) {
-        while (str.length < (centsLimit + 1)) str = '0' + str;
+      function fillWithZero(str) {
+        if (str == '') {
+          return str;
+        }
+
+        while (str.length < (attrs.pxNumberPrecision + 1)) str = '0' + str;
         return str
       }
 
-      function price_format(str) {
-        var formatted = fill_with_zeroes(to_numbers(str));
+      function numberFormatter(str) {
+
+        var clean = str;
+        if (clean == '') {
+          return clean;
+        } else if (clean == (attrs.pxCurrencySymbol + '.')) {
+          return 0;
+        }
+
+
+        var formatted = fillWithZero(toNumber(str));
         var thousandsFormatted = '';
         var thousandsCount = 0;
-        if (centsLimit == 0) {
-          centsSeparator = "";
+        if (attrs.pxNumberPrecision == 0) {
+          attrs.pxDecimalSeparator = "";
           centsVal = ""
         }
-        var centsVal = formatted.substr(formatted.length - centsLimit, centsLimit);
-        var integerVal = formatted.substr(0, formatted.length - centsLimit);
-        formatted = (centsLimit == 0) ? integerVal : integerVal + centsSeparator + centsVal;
-        if (thousandsSeparator || $.trim(thousandsSeparator) != "") {
+        var centsVal = formatted.substr(formatted.length - attrs.pxNumberPrecision, attrs.pxNumberPrecision);
+        var integerVal = formatted.substr(0, formatted.length - attrs.pxNumberPrecision);
+        formatted = (attrs.pxNumberPrecision == 0) ? integerVal : integerVal + attrs.pxDecimalSeparator + centsVal;
+        if (attrs.pxThousandsSeparator || $.trim(attrs.pxThousandsSeparator) != "") {
           for (var j = integerVal.length; j > 0; j--) {
             char_ = integerVal.substr(j - 1, 1);
             thousandsCount++;
-            if (thousandsCount % 3 == 0) char_ = thousandsSeparator + char_;
+            if (thousandsCount % 3 == 0) char_ = attrs.pxThousandsSeparator + char_;
             thousandsFormatted = char_ + thousandsFormatted
           }
-          if (thousandsFormatted.substr(0, 1) == thousandsSeparator) thousandsFormatted = thousandsFormatted.substring(1, thousandsFormatted.length);
-          formatted = (centsLimit == 0) ? thousandsFormatted : thousandsFormatted + centsSeparator + centsVal
+          if (thousandsFormatted.substr(0, 1) == attrs.pxThousandsSeparator) thousandsFormatted = thousandsFormatted.substring(1, thousandsFormatted.length);
+          formatted = (attrs.pxNumberPrecision == 0) ? thousandsFormatted : thousandsFormatted + attrs.pxDecimalSeparator + centsVal
         }
-        if (allowNegative && (integerVal != 0 || centsVal != 0)) {
+        if (attrs.pxUseNegative && (integerVal != 0 || centsVal != 0)) {
           if (str.indexOf('-') != -1 && str.indexOf('+') < str.indexOf('-')) {
             formatted = '-' + formatted
           } else {
-            if (!insertPlusSign) formatted = '' + formatted;
+            if (!attrs.pxUsePositive) formatted = '' + formatted;
             else formatted = '+' + formatted
           }
         }
-        if (prefix) formatted = prefix + formatted;
-        if (suffix) formatted = formatted + suffix;
-        return formatted
+        if (attrs.pxCurrencySymbol) formatted = attrs.pxCurrencySymbol + formatted;
+        if (attrs.pxNumberSuffix) formatted = formatted + attrs.pxNumberSuffix;
+        return formatted;
       }
-
-      function key_check(e) {
-        var code = (e.keyCode ? e.keyCode : e.which);
-        var typed = String.fromCharCode(code);
-        var functional = false;
-        var str = obj.val();
-        var newValue = price_format(str + typed);
-        if ((code >= 48 && code <= 57) || (code >= 96 && code <= 105)) functional = true;
-        if (code == 8) functional = true;
-        if (code == 9) functional = true;
-        if (code == 13) functional = true;
-        if (code == 46) functional = true;
-        if (code == 37) functional = true;
-        if (code == 39) functional = true;
-        if (allowNegative && (code == 189 || code == 109)) functional = true;
-        if (insertPlusSign && (code == 187 || code == 107)) functional = true;
-        if (!functional) {
-          e.preventDefault();
-          e.stopPropagation();
-          if (str != newValue) obj.val(newValue)
-        }
-      }
-
-      function price_it() {
-        var str = obj.val();
-        var price = price_format(str);
-        if (str != price) obj.val(price)
-      }
-
-      function add_prefix() {
-        var val = obj.val();
-        obj.val(prefix + val)
-      }
-
-      function add_suffix() {
-        var val = obj.val();
-        obj.val(val + suffix)
-      }
-
-      function clear_prefix() {
-        if ($.trim(prefix) != '' && clearPrefix) {
-          var array = obj.val().split(prefix);
-          obj.val(array[1])
-        }
-      }
-
-      function clear_suffix() {
-        if ($.trim(suffix) != '' && clearSuffix) {
-          var array = obj.val().split(suffix);
-          obj.val(array[0])
-        }
-      }
-      $(this).bind('keydown.price_format', key_check);
-      $(this).bind('keyup.price_format', price_it);
-      $(this).bind('focusout.price_format', price_it);
-      if (clearPrefix) {
-        $(this).bind('focusout.price_format', function() {
-          clear_prefix()
-        });
-        $(this).bind('focusin.price_format', function() {
-          add_prefix()
-        })
-      }
-      if (clearSuffix) {
-        $(this).bind('focusout.price_format', function() {
-          clear_suffix()
-        });
-        $(this).bind('focusin.price_format', function() {
-          add_suffix()
-        })
-      }
-      if ($(this).val().length > 0) {
-        price_it();
-        clear_prefix();
-        clear_suffix()
-      }
-    })
-  };
-  $.fn.unpriceFormat = function() {
-    return $(this).unbind(".price_format")
-  };
-  $.fn.unmask = function() {
-    var field = $(this).val();
-    var result = "";
-    for (var f in field) {
-      if (!isNaN(field[f]) || field[f] == "-") result += field[f]
     }
-    return result
-  }
-})(jQuery);
+  };
+}]);
