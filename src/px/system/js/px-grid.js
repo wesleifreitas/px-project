@@ -36,6 +36,7 @@ angular.module('pxGrid', ['ngSanitize'])
 
                     // Campos para o dataTable (dados)
                     scope.aoColumns = [];
+
                     // Colunas para o <table>
                     scope.columns = '';
 
@@ -91,9 +92,10 @@ angular.module('pxGrid', ['ngSanitize'])
                         scope.getData(0, scope.rows);
                     }
 
+                    // Armazena itens selecionados da listagem
                     scope.internalControl.selectedItems = [];
 
-                    // Armazena número de linhas atual
+                    // Armazena número atual de linhas carregadas
                     scope.currentRecordCount = 0;
 
                     // Internal Control - End
@@ -109,7 +111,7 @@ angular.module('pxGrid', ['ngSanitize'])
                 // Verifica se a grid a está preparada para receber os dados
                 $scope.pxTableReady = false;
 
-                // A página atual começa em 0
+                // A página atual inicia-se em 0
                 $scope.currentPage = 0;
 
                 $scope.$watch('pxTableReady', function(newValue, oldValue) {
@@ -140,22 +142,10 @@ angular.module('pxGrid', ['ngSanitize'])
                                 last: "Última"
                             }
                         },
-                        "bFilter": false, //Disable search function
+                        "bFilter": false,
                         "bLengthChange": false,
                         "lengthMenu": [20, 35, 45],
                         "bProcessing": true,
-                        //"sAjaxSource": "http://localhost:8500/px-research/research/dataTables/data/exemplo.json",
-                        /*
-                        "aoColumns": [{
-                            "mData": "exe_id"
-                        }, {
-                            "mData": "exe_nome"
-                        }, {
-                            "mData": "exe_cpf"
-                        }, {
-                            "mData": "exe_data"
-                        }]
-                        */
                         "aoColumns": $scope.aoColumns,
                         "destroy": true,
                         'columnDefs': [{
@@ -169,10 +159,10 @@ angular.module('pxGrid', ['ngSanitize'])
                         }],
                         "order": [1, 'asc'],
                         "rowCallback": function(row, data, dataIndex) {
-                            // Get row ID
+                            // Linhda ID
                             var rowId = data.pxGridRowNumber;
 
-                            // If row ID is in the list of selected row IDs
+                            // Se a linha ID está na lista de IDs de linha selecionados
                             if ($.inArray(rowId, rows_selected) !== -1) {
                                 $(row).find('input[type="checkbox"]').prop('checked', true);
                                 $(row).addClass('selected');
@@ -187,8 +177,7 @@ angular.module('pxGrid', ['ngSanitize'])
                         // Recupera dados assim que a listagem é criada 
                         $scope.getData(0, $scope.rows);
                     }
-
-                    // Eventos do dataTable pxTable
+                   
                     var table = $('#pxTable').DataTable();
 
                     // Evento page.dt
@@ -258,7 +247,7 @@ angular.module('pxGrid', ['ngSanitize'])
                         // Se caixa de seleção está marcada e linha ID não está na lista de IDs de linha selecionados
                         var index = $.inArray(rowId, rows_selected);
 
-                        // If checkbox is checked and row ID is not in list of selected row IDs
+                        // Se caixa de seleção está marcada e linha ID não está na lista de IDs de linha selecionados
                         if (this.checked && index === -1) {
                             rows_selected.push(rowId);
 
@@ -280,10 +269,8 @@ angular.module('pxGrid', ['ngSanitize'])
                         // Atualizar dataTable (selecionar tudo)
                         $scope.updateDataTableSelectAllCtrl(table);
 
-                        //var xmlValue = $.parseXML('<r>' + $(this).get(0).innerHTML + '</r>')
-                        //console.info('xmlValue', $(xmlValue).find('td'));
-
                         $scope.$apply(function() {
+                            // Chama função definida em px-item-click
                             $scope.$eval($scope.itemClick);
                         });
 
@@ -308,12 +295,18 @@ angular.module('pxGrid', ['ngSanitize'])
 
                     // Evento draw
                     table.on('draw', function() {
-                        // Update state of "Select all" control
+                        // Atualizar dataTable (Selecionar tudo)
                         $scope.updateDataTableSelectAllCtrl(table);
                     });
 
                 };
 
+                /**
+                 * Recupera dados para listagem
+                 * @param  {number} rowFrom linha inicial
+                 * @param  {number} rowTo   linha final
+                 * @return {void}         
+                 */
                 $scope.getData = function(rowFrom, rowTo) {
 
                     var arrayFields = JSON.parse($scope.fields);
@@ -383,6 +376,7 @@ angular.module('pxGrid', ['ngSanitize'])
                     // Se for a primeira linha significa que é uma nova consulta ao dados
                     // Neste caso é feito um 'clear' na listagem
                     if (rowFrom == 0) {
+                        // Zera contagem de linhas atuais
                         $scope.currentRecordCount = 0;
                         $('#pxTable').DataTable().clear().draw();
                     }
@@ -420,7 +414,7 @@ angular.module('pxGrid', ['ngSanitize'])
                                         data[item.field] = index[item.field.toUpperCase()];
                                     });
 
-                                    // Atualiza dados do dataTable
+                                    // Atualizar dados do dataTable
                                     $('#pxTable').DataTable().row.add(data).draw();
 
                                 });
