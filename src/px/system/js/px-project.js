@@ -29,8 +29,10 @@ app.config(function($mdThemingProvider) {
         .primaryPalette('grey')
         .accentPalette('blue');
 
+    /*
     $mdThemingProvider.theme('darkTheme')
         .primaryPalette('blue')
+    */
 });
 
 app.run(function($rootScope, $location, $cookieStore, $http) {
