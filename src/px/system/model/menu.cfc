@@ -1,5 +1,8 @@
 <cfinclude template="../../lib/pxUtil.cfm">
 
+<cfprocessingDirective pageencoding="utf-8">
+<cfset setEncoding("form","utf-8")> 
+
 <cffunction 
     name         ="getMenu" 
     access       ="remote"  
