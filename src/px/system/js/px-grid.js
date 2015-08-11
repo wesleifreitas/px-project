@@ -5,7 +5,7 @@ angular.module('pxGrid', ['ngSanitize'])
     .value('pxGridConfig', {
 
     })
-    .directive('pxGrid', ['pxGridConfig', '$timeout', function(pxGridConfig, $timeout) {
+    .directive('pxGrid', ['pxGridConfig', '$timeout', '$sce', function(pxGridConfig, $timeout, $sce) {
         return {
             restrict: 'E',
             replace: true,
@@ -18,10 +18,11 @@ angular.module('pxGrid', ['ngSanitize'])
                 orderBy: '@pxOrderBy',
                 columns: '@pxColumns',
                 init: '&pxInit',
+                itemClick: '&pxItemClick',
                 dataInit: '@pxDataInit',
                 control: '='
             },
-            link: function(scope, element, attrs) {        
+            link: function(scope, element, attrs) {
 
                 scope.$watch('fields', function(newValue, oldValue) {
 
@@ -38,13 +39,26 @@ angular.module('pxGrid', ['ngSanitize'])
                     // Colunas para o <table>
                     scope.columns = '';
 
+                    var i = 0;
+                    var aoColumnsData = {};
                     angular.forEach(newValue, function(index) {
+
+                        if (i == 0) {
+                            scope.columns += '<th class="text-left"><input name="select_all" value="1" type="checkbox"></th>';
+
+                            aoColumnsData = new Object();
+                            aoColumnsData.mData = 'pxGridRowNumber';
+
+                            scope.aoColumns.push(aoColumnsData);
+                        }
+
                         scope.columns += '<th class="text-left">' + index.title + '</th>';
 
-                        var aoColumnsData = new Object();
+                        aoColumnsData = new Object();
                         aoColumnsData.mData = index.field;
 
                         scope.aoColumns.push(aoColumnsData);
+                        i++;
                     });
                     scope.dataTable += scope.columns;
 
@@ -55,6 +69,8 @@ angular.module('pxGrid', ['ngSanitize'])
                     scope.dataTable += '<tfoot>';
                     scope.dataTable += scope.columns;
                     scope.dataTable += '</tfoot>';
+
+                    scope.dataTable = $sce.trustAsHtml(scope.dataTable);
 
                     // Quantidade de linhas por consulta
                     scope.rows = 50;
@@ -74,6 +90,11 @@ angular.module('pxGrid', ['ngSanitize'])
 
                         scope.getData(0, scope.rows);
                     }
+
+                    scope.internalControl.selectedItems = [];
+
+                    // Armazena número de linhas atual
+                    scope.currentRecordCount = 0;
 
                     // Internal Control - End
 
@@ -100,6 +121,8 @@ angular.module('pxGrid', ['ngSanitize'])
 
                 $scope.pxGridGetData = function() {
 
+                    // Armazena linhas selecionadas (checkbox)
+                    var rows_selected = [];
                     $('#pxTable').dataTable({
                         "language": {
                             processing: "Processando...",
@@ -135,6 +158,26 @@ angular.module('pxGrid', ['ngSanitize'])
                         */
                         "aoColumns": $scope.aoColumns,
                         "destroy": true,
+                        'columnDefs': [{
+                            'targets': 0,
+                            'searchable': false,
+                            'orderable': false,
+                            'className': 'dt-body-center',
+                            'render': function(data, type, full, meta) {
+                                return '<input type="checkbox">';
+                            }
+                        }],
+                        "order": [1, 'asc'],
+                        "rowCallback": function(row, data, dataIndex) {
+                            // Get row ID
+                            var rowId = data.pxGridRowNumber;
+
+                            // If row ID is in the list of selected row IDs
+                            if ($.inArray(rowId, rows_selected) !== -1) {
+                                $(row).find('input[type="checkbox"]').prop('checked', true);
+                                $(row).addClass('selected');
+                            }
+                        }
                     });
 
                     $scope.pxTableReady = false;
@@ -148,6 +191,7 @@ angular.module('pxGrid', ['ngSanitize'])
                     // Eventos do dataTable pxTable
                     var table = $('#pxTable').DataTable();
 
+                    // Evento page.dt
                     // https://datatables.net/reference/event/page
                     $('#pxTable').on('page.dt', function() {
 
@@ -169,6 +213,103 @@ angular.module('pxGrid', ['ngSanitize'])
                         //table.context[0].oLanguage.sInfo = 'Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount;
                         table.context[0].oLanguage.sInfo = info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount;
 
+                    });
+
+                    // Atualizar dataTable (Selecionar tudo)
+                    $scope.updateDataTableSelectAllCtrl = function(table) {
+                        var $table = table.table().node();
+                        var $chkbox_all = $('tbody input[type="checkbox"]', $table);
+                        var $chkbox_checked = $('tbody input[type="checkbox"]:checked', $table);
+                        var chkbox_select_all = $('thead input[name="select_all"]', $table).get(0);
+
+                        // Se não possuir nenhum checkbox selecionado
+                        if ($chkbox_checked.length === 0) {
+                            chkbox_select_all.checked = false;
+                            if ('indeterminate' in chkbox_select_all) {
+                                chkbox_select_all.indeterminate = false;
+                            }
+
+                            // Se todos os checkboxes estiverem selecionados
+                        } else if ($chkbox_checked.length === $chkbox_all.length) {
+                            chkbox_select_all.checked = true;
+                            if ('indeterminate' in chkbox_select_all) {
+                                chkbox_select_all.indeterminate = false;
+                            }
+
+                            // Se possuir algum checkbox selecionado
+                        } else {
+                            chkbox_select_all.checked = true;
+                            if ('indeterminate' in chkbox_select_all) {
+                                chkbox_select_all.indeterminate = true;
+                            }
+                        }
+                    }
+
+                    // Evento click checkbox
+                    $('#pxTable tbody').on('click', 'input[type="checkbox"]', function(e) {
+                        var $row = $(this).closest('tr');
+
+                        // Dados da linha
+                        var data = table.row($row).data();
+
+                        // ID da linha
+                        var rowId = data.pxGridRowNumber;
+
+                        // Se caixa de seleção está marcada e linha ID não está na lista de IDs de linha selecionados
+                        var index = $.inArray(rowId, rows_selected);
+
+                        // If checkbox is checked and row ID is not in list of selected row IDs
+                        if (this.checked && index === -1) {
+                            rows_selected.push(rowId);
+
+                            $scope.internalControl.selectedItems.push(data);
+
+                            // Se caixa de seleção está marcada e linha ID não está na lista de IDs de linha selecionados
+                        } else if (!this.checked && index !== -1) {
+                            rows_selected.splice(index, 1);
+
+                            $scope.internalControl.selectedItems.splice(index, 1);
+                        }
+
+                        if (this.checked) {
+                            $row.addClass('selected');
+                        } else {
+                            $row.removeClass('selected');
+                        }
+
+                        // Atualizar dataTable (selecionar tudo)
+                        $scope.updateDataTableSelectAllCtrl(table);
+
+                        //var xmlValue = $.parseXML('<r>' + $(this).get(0).innerHTML + '</r>')
+                        //console.info('xmlValue', $(xmlValue).find('td'));
+
+                        $scope.$apply(function() {
+                            $scope.$eval($scope.itemClick);
+                        });
+
+                        e.stopPropagation();
+                    });
+
+                    // Evento click células
+                    $('#pxTable').on('click', 'tbody td, thead th:first-child', function(e) {
+                        $(this).parent().find('input[type="checkbox"]').trigger('click');
+                    });
+
+                    // Evento click (selecionar tudo)
+                    $('#pxTable thead input[name="select_all"]').on('click', function(e) {
+                        if (this.checked) {
+                            $('#pxTable tbody input[type="checkbox"]:not(:checked)').trigger('click');
+                        } else {
+                            $('#pxTable tbody input[type="checkbox"]:checked').trigger('click');
+                        }
+
+                        e.stopPropagation();
+                    });
+
+                    // Evento draw
+                    table.on('draw', function() {
+                        // Update state of "Select all" control
+                        $scope.updateDataTableSelectAllCtrl(table);
                     });
 
                 };
@@ -242,6 +383,7 @@ angular.module('pxGrid', ['ngSanitize'])
                     // Se for a primeira linha significa que é uma nova consulta ao dados
                     // Neste caso é feito um 'clear' na listagem
                     if (rowFrom == 0) {
+                        $scope.currentRecordCount = 0;
                         $('#pxTable').DataTable().clear().draw();
                     }
 
@@ -265,9 +407,12 @@ angular.module('pxGrid', ['ngSanitize'])
                                 // Loop na query
                                 angular.forEach(result.QQUERY, function(index) {
 
+                                    $scope.currentRecordCount++;
+
                                     // Dados
                                     var data = new Object();
 
+                                    data['pxGridRowNumber'] = $scope.currentRecordCount;
                                     // Loop nas colunas da grid
                                     angular.forEach(JSON.parse($scope.fields), function(item) {
 
