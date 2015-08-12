@@ -44,16 +44,16 @@
 
 		}
 
-		result.arguments = arguments;
+		result['arguments'] = arguments;
 
 		if (MyQuery.recordCount EQ 1){
-			result.success = true;
-			result.message = '';
+			result['success'] = true;
+			result['message'] = '';
 		} else {
-			result.success = false;
-			result.message = 'Login inválido';
+			result['success'] = false;
+			result['message'] = 'Login inválido';
 		}
-		result.query = QueryToArray(MyQuery);
+		result['query'] = QueryToArray(MyQuery);
 
 		return result;
 

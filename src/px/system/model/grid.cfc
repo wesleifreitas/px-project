@@ -55,7 +55,7 @@
 
 	<cfargument 
 		name     ="fields" 	
-		type	 ="array"
+		type	 ="any"
 		required ="false"
 		default  ="250"	
 		hint     ="Campos do px-grid">
@@ -67,9 +67,11 @@
 		required ="false"
 		default  =""	
 		hint     ="Campo ORDER BY da instrução SQL">
-
+	
 	<cfset result = structNew()>
 	<cftry>
+
+		<cfset arguments.fields = decode(arguments.fields)>
 
 		<cfset _fields = "">
 		<cfloop array="#arguments.fields#" index="i">
@@ -93,7 +95,7 @@
 				WHERE 1=1	
 				<cfloop array="#arguments.fields#" index="i">
 					
-					<cfif i.filterValue NEQ "">
+					<cfif isDefined("i.filterValue") AND i.filterValue NEQ "">
 						AND #i.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqltype(i.type)#" value="#i.filterValue#">
 					</cfif>
 							
@@ -114,7 +116,7 @@
 						1 = 1	
 					<cfloop array="#arguments.fields#" index="i">
 					
-						<cfif i.filterValue NEQ "">
+						<cfif isDefined("i.filterValue") AND i.filterValue NEQ "">
 							AND #i.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqltype(i.type)#" value="#i.filterValue#">
 						</cfif>
 								
@@ -136,18 +138,18 @@
 		</cftransaction>
 
 		<cfcatch>
-			<cfset result.fault 	= cfcatch>
-			<cfset result.arguments = arguments>
+			<cfset result['fault'] 	= cfcatch>
+			<cfset result['arguments'] = arguments>
 			<cfreturn result>
 		</cfcatch>
 
 	</cftry>
 
 
-	<cfset result._fields 		= _fields>
-	<cfset result.arguments 	= arguments>	
-	<cfset result.recordCount 	= qRecordCount.count>
-	<cfset result.qQuery 		= QueryToArray(qQuery)>
+	<cfset result['_fields'] 		= _fields>
+	<cfset result['arguments'] 		= arguments>	
+	<cfset result['recordCount'] 	= qRecordCount.count>
+	<cfset result['qQuery'] 		= QueryToArray(qQuery)>
 
 	<cfreturn result>
 
@@ -172,6 +174,10 @@
 		switch(arguments.type){
 			case 'int':
 				'cf_sql_integer';
+			break;
+
+			case 'string':
+				'cf_sql_varchar';
 			break;
 
 			case 'varchar':

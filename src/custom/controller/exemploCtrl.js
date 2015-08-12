@@ -24,6 +24,7 @@ app.controller('exemploCtrl', function($scope, $element, $attrs, $rootScope) {
          */
         $scope.grid = {
             fields: [{
+                pk: true,
                 title: 'id',
                 field: 'exe_id',
                 type: 'int',
@@ -32,7 +33,7 @@ app.controller('exemploCtrl', function($scope, $element, $attrs, $rootScope) {
             }, {
                 title: 'Nome',
                 field: 'exe_nome',
-                type: 'varchar',
+                type: 'string',
                 filter: angular.element($('#filtroNome')),
                 filterOperator: '%LIKE%'
             }, {
@@ -44,7 +45,7 @@ app.controller('exemploCtrl', function($scope, $element, $attrs, $rootScope) {
             }, {
                 title: 'Telefone',
                 field: 'exe_telefone',
-                type: 'varchar',
+                type: 'string',
                 filter: angular.element($('#filtroTelefone')),
                 filterOperator: '='
             }, {
@@ -65,7 +66,7 @@ app.controller('exemploCtrl', function($scope, $element, $attrs, $rootScope) {
      * Chama função da listagem que carrega os dados
      * @return {[type]} [description]
      */
-    $scope.getData = function() {        
+    $scope.getData = function() {
         /**
          * Recupera dados que são carregados na listagem
          */

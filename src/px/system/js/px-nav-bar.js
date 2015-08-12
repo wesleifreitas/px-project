@@ -1,23 +1,23 @@
 /**
- * Module pxTopMenu
+ * Module pxNavBar
  */
-angular.module('pxTopMenu', [])
-    .value('pxTopMenuConfig', {
+angular.module('pxNavBar', [])
+    .value('pxNavBarConfig', {
 
     })
-    .directive('pxTopMenu', ['pxTopMenuConfig', function(pxGridConfig) {
+    .directive('pxNavBar', ['pxNavBarConfig', function(pxGridConfig) {
         return {
             restrict: 'E',
             replace: true,
             transclude: false,
-            templateUrl: pxProjectPackage() + 'px/system/view/topMenu.cfm',
+            templateUrl: pxProjectPackage() + 'px/system/view/navBar.cfm',
             link: function(scope, element, attrs) {
 
                 scope.logo = pxProjectPackage() + 'px/system/assets/richsolutions/richsolutions_bola_200x200.jpg';
             }
         }
     }])
-    .controller('pxTopMenuCtrl', ['$scope', '$http', function($scope, $http) {
+    .controller('pxNavBarCtrl', ['$scope', '$http', function($scope, $http) {
         $scope.templates =
             [{
                 name: 'pxProjectAction.html',
@@ -40,21 +40,22 @@ angular.module('pxTopMenu', [])
 
             $http({
                 method: 'POST',
-                url: pxProjectPackage() + 'px/system/model/menu.cfc?method=recuperaComponente',
+                url: pxProjectPackage() + 'px/system/model/navBar.cfc?method=getView',
                 params: params
             }).success(function(result) {
-                var headerView = result.QCOMPONENTE[0].MEN_NOMECAMINHO.split(result.QCOMPONENTE[0].MEN_NOMECAMINHO.split('»')[result.QCOMPONENTE[0].MEN_NOMECAMINHO.split('»').length - 1])
+                console.info(result);
+                var headerView = result.qComponente[0].MEN_NOMECAMINHO.split(result.qComponente[0].MEN_NOMECAMINHO.split('»')[result.qComponente[0].MEN_NOMECAMINHO.split('»').length - 1])
 
                 $scope.view = new Object();
                 $scope.view.result = result;
-                $scope.view.men_id = result.QCOMPONENTE[0].MEN_ID;
-                $scope.view.caminho = result.QCOMPONENTE[0].MEN_NOMECAMINHO;
+                $scope.view.men_id = result.qComponente[0].MEN_ID;
+                $scope.view.caminho = result.qComponente[0].MEN_NOMECAMINHO;
                 $scope.view.header = headerView[0];
-                $scope.view.titulo = result.QCOMPONENTE[0].MEN_NOMECAMINHO.split('»')[result.QCOMPONENTE[0].MEN_NOMECAMINHO.split('»').length - 1];
-                $scope.view.icon = result.QCOMPONENTE[0].COM_ICON;
+                $scope.view.titulo = result.qComponente[0].MEN_NOMECAMINHO.split('»')[result.qComponente[0].MEN_NOMECAMINHO.split('»').length - 1];
+                $scope.view.icon = result.qComponente[0].COM_ICON;
 
-                $scope.templates[1].name = result.QCOMPONENTE[0].COM_VIEW;
-                $scope.templates[1].url = result.QCOMPONENTE[0].COM_VIEW;
+                $scope.templates[1].name = result.qComponente[0].COM_VIEW;
+                $scope.templates[1].url = result.qComponente[0].COM_VIEW;
 
             }).
             error(function(data, status, headers, config) {

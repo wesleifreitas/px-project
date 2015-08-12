@@ -77,7 +77,7 @@ $(function() {
     }, {
         file: pxProjectPackage() + 'px/system/js/services/user.service.local-storage.js'
     }, {
-        file: pxProjectPackage() + 'px/system/js/px-top-menu.js'
+        file: pxProjectPackage() + 'px/system/js/px-nav-bar.js'
     }, {
         file: pxProjectPackage() + 'px/system/js/px-view-header.js'
     }, {

@@ -396,10 +396,10 @@ angular.module('pxGrid', ['ngSanitize'])
                             alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                         } else {
 
-                            if (result.QQUERY.length > 0) {
+                            if (result.qQuery.length > 0) {
 
                                 // Loop na query
-                                angular.forEach(result.QQUERY, function(index) {
+                                angular.forEach(result.qQuery, function(index) {
 
                                     $scope.currentRecordCount++;
 
@@ -419,11 +419,11 @@ angular.module('pxGrid', ['ngSanitize'])
 
                                 });
 
-                                $scope.recordCount = result.RECORDCOUNT;
-                                $scope.nextRowFrom = result.ARGUMENTS.ROWFROM + $scope.rows;
-                                $scope.nextRowTo = result.ARGUMENTS.ROWTO + $scope.rows;
+                                $scope.recordCount = result.recordCount;
+                                $scope.nextRowFrom = result.arguments.ROWFROM + $scope.rows;
+                                $scope.nextRowTo = result.arguments.ROWTO + $scope.rows;
 
-                                //$scope.getData(result.ARGUMENTS.ROWFROM + $scope.rows, result.ARGUMENTS.ROWTO + $scope.rows);
+                                //$scope.getData(result.arguments.ROWFROM + $scope.rows, result.arguments.ROWTO + $scope.rows);
 
                                 var table = $('#pxTable').DataTable();
                                 table.page($scope.currentPage).draw(false);

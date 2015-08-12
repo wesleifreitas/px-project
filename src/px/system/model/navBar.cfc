@@ -4,7 +4,7 @@
 <cfset setEncoding("form","utf-8")> 
 
 <cffunction 
-    name         ="getMenu" 
+    name         ="getNavBar" 
     access       ="remote"  
     output       ="true" 
     returntype   ="any" 
@@ -69,7 +69,7 @@
         variable = "pxMenu">
         
 
-        <cfset getRecursiveMenu(
+        <cfset getRecursiveNavBar(
             Dados = qMenu) />
 
     </cfsavecontent>
@@ -84,7 +84,7 @@
 <!--- Função desenvolvida baseada em:
 http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 <cffunction
-    name       ="getRecursiveMenu"
+    name       ="getRecursiveNavBar"
     access     ="public"
     returntype ="void"
     output     ="true"
@@ -147,7 +147,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                 <!---
                     Chama função recursiva.
                 --->
-                <cfset getRecursiveMenu(
+                <cfset getRecursiveNavBar(
                     Dados = ARGUMENTS.Dados,
                     men_idPai = LOCAL.qMenu.men_id
                     ) />
@@ -188,7 +188,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 
 
 <cffunction 
-    name         ="recuperaComponente"    
+    name         ="getView"    
     access       ="remote"  
     output       ="true" 
     returntype   ="any" 
@@ -287,12 +287,12 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
     <cfset result               = structNew()> 
 
     <cfif not fileExists(expandPath('/') & arguments.pathname & qComponente.com_view)>        
-        <cfset result.com_view_fault = qComponente.com_view> 
+        <cfset result['com_view_fault'] = qComponente.com_view> 
         <cfset qComponente.com_view  = pxProjectPackage & 'px/system/view/viewDoesNotExist.html'> 
     </cfif>
     
-    <cfset result.arguments     = arguments> 
-    <cfset result.qComponente   = QueryToArray(qComponente)> 
+    <cfset result['arguments']     = arguments> 
+    <cfset result['qComponente']   = QueryToArray(qComponente)> 
     
     <cfreturn result>
 
