@@ -31,7 +31,7 @@ angular.module('pxNavBar', [])
 
         //console.log($scope.template);
 
-        $scope.apresentarView = function(componente) {
+        $scope.showView = function(componente) {
 
             var params = new Object();
             params.com_id = componente;
@@ -43,7 +43,7 @@ angular.module('pxNavBar', [])
                 url: pxProjectPackage() + 'px/system/model/navBar.cfc?method=getView',
                 params: params
             }).success(function(result) {
-                console.info(result);
+              
                 var headerView = result.qComponente[0].MEN_NOMECAMINHO.split(result.qComponente[0].MEN_NOMECAMINHO.split('»')[result.qComponente[0].MEN_NOMECAMINHO.split('»').length - 1])
 
                 $scope.view = new Object();

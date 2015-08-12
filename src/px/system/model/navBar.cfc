@@ -162,7 +162,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                 </cfif>
                 
                 <li>
-                    <a ng-click="apresentarView('#LOCAL.qMenu.men_id#')">#LOCAL.qMenu.men_nome#</a>
+                    <a ng-click="showView('#LOCAL.qMenu.men_id#')">#LOCAL.qMenu.men_nome#</a>
                 </li>
                  
             <cfelse>

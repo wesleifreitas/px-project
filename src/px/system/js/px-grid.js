@@ -420,10 +420,10 @@ angular.module('pxGrid', ['ngSanitize'])
                                 });
 
                                 $scope.recordCount = result.recordCount;
-                                $scope.nextRowFrom = result.arguments.ROWFROM + $scope.rows;
-                                $scope.nextRowTo = result.arguments.ROWTO + $scope.rows;
+                                $scope.nextRowFrom = result.rowFrom + $scope.rows;
+                                $scope.nextRowTo = result.rowTo + $scope.rows;
 
-                                //$scope.getData(result.arguments.ROWFROM + $scope.rows, result.arguments.ROWTO + $scope.rows);
+                                //$scope.getData(result.rowFrom + $scope.rows, result.rowTo + $scope.rows);
 
                                 var table = $('#pxTable').DataTable();
                                 table.page($scope.currentPage).draw(false);

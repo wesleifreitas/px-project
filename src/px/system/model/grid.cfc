@@ -17,6 +17,7 @@
 		default  ="px_project_sql"	
 		hint     ="Data source name">
 
+
 	<cfargument 
 		name     ="usuario" 	
 		type     ="numeric"
@@ -73,10 +74,10 @@
 
 		<cfset arguments.fields = decode(arguments.fields)>
 
-		<cfset _fields = "">
+		<cfset listFields = "">
 		<cfloop array="#arguments.fields#" index="i">
 			
-			<cfset _fields = _fields&i.field&",">
+			<cfset listFields = listFields&i.field&",">
 			
 		</cfloop>
 
@@ -108,7 +109,7 @@
 				WITH pagination AS
 				(
 					SELECT 
-						#_fields#
+						#listFields#
 						ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS RowNumber
 					FROM 
 						#arguments.table#
@@ -124,7 +125,7 @@
 				)
 				
 				SELECT 
-					#_fields# 
+					#listFields# 
 					RowNumber
 				FROM	
 					pagination
@@ -146,10 +147,12 @@
 	</cftry>
 
 
-	<cfset result['_fields'] 		= _fields>
-	<cfset result['arguments'] 		= arguments>	
-	<cfset result['recordCount'] 	= qRecordCount.count>
-	<cfset result['qQuery'] 		= QueryToArray(qQuery)>
+	<cfset result['listFields']     = listFields>
+	<cfset result['arguments']   = arguments>
+	<cfset result['rowFrom']     = arguments.rowFrom>
+	<cfset result['rowTo']       = arguments.rowTo>
+	<cfset result['qQuery']      = QueryToArray(qQuery)>
+	<cfset result['recordCount'] = qRecordCount.count>
 
 	<cfreturn result>
 
