@@ -288,7 +288,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 
     <cfif not fileExists(expandPath('/') & arguments.pathname & qComponente.com_view)>        
         <cfset result['com_view_fault'] = qComponente.com_view> 
-        <cfset qComponente.com_view  = pxProjectPackage & 'system/components/fault-view.html'> 
+        <cfset qComponente.com_view  = pxProjectPackage & 'system/components/px-nav-bar/fault-view.html'> 
     </cfif>
     
     <cfset result['arguments']     = arguments> 
