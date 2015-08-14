@@ -1,18 +1,18 @@
-var app = angular.module('app', ['ngRoute', 'ngCookies', 'ngMaterial', 'ui.mask', 'pxNavBar', 'pxViewHeader', 'pxGrid','pxFormItem']);
+var app = angular.module('app', ['pxConfig','pxLoader','ngRoute', 'ngCookies', 'ngMaterial', 'ui.mask', 'pxNavBar', 'pxViewHeader', 'pxGrid', 'pxFormItem']);
 
-app.config(['$routeProvider', function($routeProvider, $locationProvider) {
+app.config(['pxConfig', '$routeProvider', '$locationProvider', function(pxConfig, $routeProvider, $locationProvider) {
     $routeProvider.when('/login', {
-        templateUrl: pxProjectPackage() + 'px/system/view/login.html',
+        templateUrl: pxConfig.PX_PACKAGE + 'px/system/view/login.html',
         controller: 'loginCtrl',
         controllerAs: 'vm'
     });
     $routeProvider.when('/home', {
-        templateUrl: pxProjectPackage() + 'px/system/view/home.html',
+        templateUrl: pxConfig.PX_PACKAGE + 'px/system/view/home.html',
         controller: 'homeCtrl',
         controllerAs: 'vm'
     });
     $routeProvider.when('/', {
-        templateUrl: pxProjectPackage() + 'px/system/view/home.html',
+        templateUrl: pxConfig.PX_PACKAGE + 'px/system/view/home.html',
         controller: 'homeCtrl',
         controllerAs: 'vm'
     });

@@ -5,23 +5,23 @@ angular.module('pxNavBar', [])
     .value('pxNavBarConfig', {
 
     })
-    .directive('pxNavBar', ['pxNavBarConfig', function(pxGridConfig) {
+    .directive('pxNavBar', ['pxNavBarConfig', 'pxConfig', function(pxGridConfig, pxConfig) {
         return {
             restrict: 'E',
             replace: true,
             transclude: false,
-            templateUrl: pxProjectPackage() + 'px/system/view/navBar.cfm',
+            templateUrl: pxConfig.PX_PACKAGE + 'px/system/view/navBar.cfm',
             link: function(scope, element, attrs) {
 
-                scope.logo = pxProjectPackage() + 'px/system/assets/richsolutions/richsolutions_bola_200x200.jpg';
+                scope.logo = pxConfig.PX_PACKAGE + 'px/system/assets/richsolutions/richsolutions_bola_200x200.jpg';
             }
         }
     }])
-    .controller('pxNavBarCtrl', ['$scope', '$http', function($scope, $http) {
+    .controller('pxNavBarCtrl', ['pxConfig', '$scope', '$http', function(pxConfig, $scope, $http) {
         $scope.templates =
             [{
                 name: 'pxProjectAction.html',
-                url: pxProjectPackage() + 'px/custom/view/pxProjectAction.html'
+                url: pxConfig.PX_PACKAGE + 'px/custom/view/pxProjectAction.html'
             }, {
                 name: '',
                 url: ''
@@ -36,14 +36,14 @@ angular.module('pxNavBar', [])
             var params = new Object();
             params.com_id = componente;
             params.pathname = document.location.pathname;
-            params.pxProjectPackage = pxProjectPackage();
+            params.pxProjectPackage = pxConfig.PX_PACKAGE;
 
             $http({
                 method: 'POST',
-                url: pxProjectPackage() + 'px/system/model/navBar.cfc?method=getView',
+                url: pxConfig.PX_PACKAGE + 'px/system/model/navBar.cfc?method=getView',
                 params: params
             }).success(function(result) {
-              
+
                 var headerView = result.qComponente[0].MEN_NOMECAMINHO.split(result.qComponente[0].MEN_NOMECAMINHO.split('»')[result.qComponente[0].MEN_NOMECAMINHO.split('»').length - 1])
 
                 $scope.view = new Object();

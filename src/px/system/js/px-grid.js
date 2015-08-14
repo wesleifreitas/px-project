@@ -5,12 +5,12 @@ angular.module('pxGrid', ['ngSanitize'])
     .value('pxGridConfig', {
 
     })
-    .directive('pxGrid', ['pxGridConfig', '$timeout', '$sce', function(pxGridConfig, $timeout, $sce) {
+    .directive('pxGrid', ['pxGridConfig', 'pxConfig', '$timeout', '$sce', function(pxGridConfig, pxConfig, $timeout, $sce) {
         return {
             restrict: 'E',
             replace: true,
             transclude: false,
-            templateUrl: pxProjectPackage() + 'px/system/view/grid.html',
+            templateUrl: pxConfig.PX_PACKAGE + 'px/system/view/grid.html',
             scope: {
                 debug: '@pxDebug',
                 table: '@pxTable',
@@ -177,7 +177,7 @@ angular.module('pxGrid', ['ngSanitize'])
                         // Recupera dados assim que a listagem é criada 
                         $scope.getData(0, $scope.rows);
                     }
-                   
+
                     var table = $('#pxTable').DataTable();
 
                     // Evento page.dt
@@ -384,7 +384,7 @@ angular.module('pxGrid', ['ngSanitize'])
 
                     $http({
                         method: 'POST',
-                        url: pxProjectPackage() + 'px/system/model/grid.cfc?method=getData',
+                        url: pxConfig.PX_PACKAGE + 'px/system/model/grid.cfc?method=getData',
                         dataType: 'json',
                         params: params
                     }).success(function(result) {

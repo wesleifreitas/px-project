@@ -5,9 +5,9 @@
         .module('app')
         .factory('AuthenticationService', AuthenticationService);
 
-    AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope', '$timeout', 'UserService'];
+    AuthenticationService.$inject = ['pxConfig','$http', '$cookieStore', '$rootScope', '$timeout', 'UserService'];
 
-    function AuthenticationService($http, $cookieStore, $rootScope, $timeout, UserService) {
+    function AuthenticationService(pxConfig,$http, $cookieStore, $rootScope, $timeout, UserService) {
         var service = {};
 
         service.Login = Login;
@@ -52,7 +52,7 @@
             }
             $http({
                 method: 'POST',
-                url: pxProjectPackage() + 'px/system/model/login.cfc?method=login',
+                url: pxConfig.PX_PACKAGE + 'px/system/model/login.cfc?method=login',
                 params: params
             }).success(function(response) {
                 callback(response);
