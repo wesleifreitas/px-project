@@ -1,16 +1,16 @@
 /**
- * Module pxGrid
+ * Module pxDataGrid
  */
-angular.module('pxGrid', ['ngSanitize'])
-    .value('pxGridConfig', {
+angular.module('pxDataGrid', ['ngSanitize'])
+    .value('pxDataGridConfig', {
 
     })
-    .directive('pxGrid', ['pxGridConfig', 'pxConfig', '$timeout', '$sce', function(pxGridConfig, pxConfig, $timeout, $sce) {
+    .directive('pxDataGrid', ['pxDataGridConfig', 'pxConfig', '$timeout', '$sce', function(pxDataGridConfig, pxConfig, $timeout, $sce) {
         return {
             restrict: 'E',
             replace: true,
             transclude: false,
-            templateUrl: pxConfig.PX_PACKAGE + 'px/system/view/grid.html',
+            templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.html',
             scope: {
                 debug: '@pxDebug',
                 table: '@pxTable',
@@ -48,7 +48,7 @@ angular.module('pxGrid', ['ngSanitize'])
                             scope.columns += '<th class="text-left"><input name="select_all" value="1" type="checkbox"></th>';
 
                             aoColumnsData = new Object();
-                            aoColumnsData.mData = 'pxGridRowNumber';
+                            aoColumnsData.mData = 'pxDataGridRowNumber';
 
                             scope.aoColumns.push(aoColumnsData);
                         }
@@ -117,11 +117,11 @@ angular.module('pxGrid', ['ngSanitize'])
                 $scope.$watch('pxTableReady', function(newValue, oldValue) {
 
                     if (newValue == true) {
-                        $timeout($scope.pxGridGetData, 0);
+                        $timeout($scope.pxDataGridGetData, 0);
                     }
                 });
 
-                $scope.pxGridGetData = function() {
+                $scope.pxDataGridGetData = function() {
 
                     // Armazena linhas selecionadas (checkbox)
                     var rows_selected = [];
@@ -160,7 +160,7 @@ angular.module('pxGrid', ['ngSanitize'])
                         "order": [1, 'asc'],
                         "rowCallback": function(row, data, dataIndex) {
                             // Linhda ID
-                            var rowId = data.pxGridRowNumber;
+                            var rowId = data.pxDataGridRowNumber;
 
                             // Se a linha ID está na lista de IDs de linha selecionados
                             if ($.inArray(rowId, rows_selected) !== -1) {
@@ -242,7 +242,7 @@ angular.module('pxGrid', ['ngSanitize'])
                         var data = table.row($row).data();
 
                         // ID da linha
-                        var rowId = data.pxGridRowNumber;
+                        var rowId = data.pxDataGridRowNumber;
 
                         // Se caixa de seleção está marcada e linha ID não está na lista de IDs de linha selecionados
                         var index = $.inArray(rowId, rows_selected);
@@ -384,7 +384,7 @@ angular.module('pxGrid', ['ngSanitize'])
 
                     $http({
                         method: 'POST',
-                        url: pxConfig.PX_PACKAGE + 'px/system/model/grid.cfc?method=getData',
+                        url: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.cfc?method=getData',
                         dataType: 'json',
                         params: params
                     }).success(function(result) {
@@ -406,7 +406,7 @@ angular.module('pxGrid', ['ngSanitize'])
                                     // Dados
                                     var data = new Object();
 
-                                    data['pxGridRowNumber'] = $scope.currentRecordCount;
+                                    data['pxDataGridRowNumber'] = $scope.currentRecordCount;
                                     // Loop nas colunas da grid
                                     angular.forEach(JSON.parse($scope.fields), function(item) {
 

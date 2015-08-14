@@ -1,4 +1,4 @@
-<cfinclude template="../../lib/pxUtil.cfm">
+<cfinclude template="../lib/px-util.cfm">
 
 <cfprocessingDirective pageencoding="utf-8">
 <cfset setEncoding("form","utf-8")> 

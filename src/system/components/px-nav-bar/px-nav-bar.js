@@ -5,23 +5,23 @@ angular.module('pxNavBar', [])
     .value('pxNavBarConfig', {
 
     })
-    .directive('pxNavBar', ['pxNavBarConfig', 'pxConfig', function(pxGridConfig, pxConfig) {
+    .directive('pxNavBar', ['pxNavBarConfig', 'pxConfig', function(pxDataGridConfig, pxConfig) {
         return {
             restrict: 'E',
             replace: true,
             transclude: false,
-            templateUrl: pxConfig.PX_PACKAGE + 'px/system/view/navBar.cfm',
+            templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfm',
             link: function(scope, element, attrs) {
 
-                scope.logo = pxConfig.PX_PACKAGE + 'px/system/assets/richsolutions/richsolutions_bola_200x200.jpg';
+                scope.logo = pxConfig.PX_PACKAGE + 'system/assets/richsolutions/richsolutions_bola_200x200.jpg';
             }
         }
     }])
     .controller('pxNavBarCtrl', ['pxConfig', '$scope', '$http', function(pxConfig, $scope, $http) {
         $scope.templates =
             [{
-                name: 'pxProjectAction.html',
-                url: pxConfig.PX_PACKAGE + 'px/custom/view/pxProjectAction.html'
+                name: '?.html',
+                url: pxConfig.PX_PACKAGE + '?.html'
             }, {
                 name: '',
                 url: ''
@@ -40,7 +40,7 @@ angular.module('pxNavBar', [])
 
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'px/system/model/navBar.cfc?method=getView',
+                url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getView',
                 params: params
             }).success(function(result) {
 

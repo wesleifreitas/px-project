@@ -10,7 +10,7 @@ angular.module('pxViewHeader', [])
             restrict: 'E',
             replace: true,
             transclude: false,
-            templateUrl: pxConfig.PX_PACKAGE + 'px/system/view/viewHeader.html',
+            templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.html',
 
             link: function(scope, element, attrs) {
                 // Manipulação e Eventos DOM

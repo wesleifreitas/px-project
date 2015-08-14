@@ -8,17 +8,15 @@ $(function() {
 
             // CSS
             var cssLoader = [{
-                file: pxConfig.PX_PACKAGE + 'px/system/css/metro-bootstrap.css'
+                file: pxConfig.PX_PACKAGE + 'system/core/external/metro-bootstrap.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/css/metro-bootstrap-responsive.css'
+                file: pxConfig.PX_PACKAGE + 'system/core/external/metro-bootstrap-responsive.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/css/iconFont.css'
+                file: pxConfig.PX_PACKAGE + 'system/core/external/iconFont.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/css/pxProject.css'
+                file: pxConfig.PX_PACKAGE + 'system/core/px-project.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/css/login.css'
-            }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/css/pxGridSearch.css'
+                file: pxConfig.PX_PACKAGE + 'system/login/login.css'
             }, {
                 file: pxConfig.EXTERNAL_COMPONENTS + 'bootstrap/dist/css/bootstrap.min.css'
             }, {
@@ -46,9 +44,9 @@ $(function() {
             }, {
                 file: pxConfig.EXTERNAL_COMPONENTS + 'datatables/media/js/jquery.dataTables.min.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/metro.min.js'
+                file: pxConfig.PX_PACKAGE + 'system/core/external/metro.min.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/docs.js'
+                file: pxConfig.PX_PACKAGE + 'system/core/external/docs.js'
             }, {
                 file: pxConfig.EXTERNAL_COMPONENTS + 'angular-route/angular-route.js'
             }, {
@@ -70,25 +68,23 @@ $(function() {
             }, {
                 file: pxConfig.EXTERNAL_COMPONENTS + 'numeral/min/languages.min.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'custom/js/directives/customDrc.js'
+                file: pxConfig.PX_PACKAGE + 'system/login/login.controller.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/controller/loginCtrl.js'
+                file: pxConfig.PX_PACKAGE + 'system/home/home.controller.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/controller/homeCtrl.js'
+                file: pxConfig.PX_PACKAGE + 'system/login/authentication.service.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/services/authentication.service.js'
+                file: pxConfig.PX_PACKAGE + 'system/login/flash.service.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/services/flash.service.js'
+                file: pxConfig.PX_PACKAGE + 'system/login/user.service.local-storage.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/services/user.service.local-storage.js'
+                file: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/px-nav-bar.js'
+                file: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/px-view-header.js'
+                file: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.js'
             }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/px-grid.js'
-            }, {
-                file: pxConfig.PX_PACKAGE + 'px/system/js/px-form-item.js'
+                file: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-form-item.js'
             }];
 
             // Loop em jsLoader

@@ -15,7 +15,7 @@ $(function() {
 			// Custom Controllers	
 			/*
 			Exemplo:
-			
+
 			var controllers = [{
 				file: 'custom/cliente/cliente.controller.js'
 			}, {
@@ -25,7 +25,7 @@ $(function() {
 			}];
 			*/
 			var controllers = [{
-				file: 'custom/controller/exemploCtrl.js'
+				file: 'custom/exemplo/exemplo.controller.js'
 			}];
 
 			// Loop em controllers

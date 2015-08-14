@@ -1,7 +1,7 @@
 <div class="pxView" ng-controller="exemploCtrl">
     <!-- Directive px-view-header, apresenta o cabeçalho da view atual -->
     <px-view-header px-show-hr="true"></px-view-header>
-    <div class="pxGridSearch">
+    <div class="pxDataGridSearch">
         <div id="headerSearch" class="headerSearch" layout="row" layout-align="center center" ng-click="showFilter()"><span>FILTRO AVANÇADO</span><i class="material-icons" ng-show="filterExpand">expand_less</i><i class="material-icons" ng-show="!filterExpand">expand_more</i>
         </div>
         <div class="contentSearch" layout="row" layout-wrap>
@@ -36,7 +36,7 @@
         </div>
     </div>
     <div>
-        <px-grid control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="dbo.exemplo" px-fields="{{grid.fields}}" px-data-init="true">
-        </px-grid>
+        <px-data-grid control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="dbo.exemplo" px-fields="{{grid.fields}}" px-data-init="true">
+        </px-data-grid>
     </div>
 </div>

@@ -1,6 +1,6 @@
 <div id="menuDiv" class="navbar bg-dark px-no-radius" ng-controller="pxNavBarCtrl">
     <cfif CGI.SERVER_NAME EQ "localhost">
-        <cfinvoke component="px-project.src.px.system.model.navBar" method="getNavBar" returnvariable="pxMenu">
+        <cfinvoke component="px-project.src.system.components.px-nav-bar.px-nav-bar" method="getNavBar" returnvariable="pxMenu">
     <cfelse>
         <cfinvoke component="px.system.model.menu" method="getMenu" returnvariable="pxMenu">
     </cfif>

@@ -1,4 +1,4 @@
-<cfinclude template="../../lib/pxUtil.cfm">
+<cfinclude template="../../lib/px-util.cfm">
 
 <cfprocessingDirective pageencoding="utf-8">
 <cfset setEncoding("form","utf-8")> 
@@ -56,10 +56,10 @@
 
 	<cfargument 
 		name     ="fields" 	
-		type	 ="any"
+		type	 ="string"
 		required ="false"
 		default  ="250"	
-		hint     ="Campos do px-grid">
+		hint     ="Campos do px-data-grid">
 
 
 	<cfargument 
@@ -97,7 +97,7 @@
 				<cfloop array="#arguments.fields#" index="i">
 					
 					<cfif isDefined("i.filterValue") AND i.filterValue NEQ "">
-						AND #i.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqltype(i.type)#" value="#i.filterValue#">
+						AND #i.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterValue#">
 					</cfif>
 							
 				</cfloop>
@@ -110,7 +110,7 @@
 				(
 					SELECT 
 						#listFields#
-						ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS RowNumber
+						ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS row_number
 					FROM 
 						#arguments.table#
 					WHERE 
@@ -118,7 +118,7 @@
 					<cfloop array="#arguments.fields#" index="i">
 					
 						<cfif isDefined("i.filterValue") AND i.filterValue NEQ "">
-							AND #i.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqltype(i.type)#" value="#i.filterValue#">
+							AND #i.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterValue#">
 						</cfif>
 								
 					</cfloop>
@@ -126,13 +126,13 @@
 				
 				SELECT 
 					#listFields# 
-					RowNumber
+					row_number
 				FROM	
 					pagination
 				WHERE	
-					RowNumber BETWEEN #arguments.rowFrom+1# AND #arguments.rowTo#
+					row_number BETWEEN #arguments.rowFrom+1# AND #arguments.rowTo#
 				ORDER BY 
-					RowNumber ASC
+					row_number ASC
 
 			</cfquery>
 
@@ -147,7 +147,7 @@
 	</cftry>
 
 
-	<cfset result['listFields']     = listFields>
+	<cfset result['listFields']  = listFields>
 	<cfset result['arguments']   = arguments>
 	<cfset result['rowFrom']     = arguments.rowFrom>
 	<cfset result['rowTo']       = arguments.rowTo>
@@ -159,7 +159,7 @@
 </cffunction>
 
 <cffunction 
-	name         ="getSqltype" 
+	name         ="getSqlType" 
 	access       ="private" 
 	output       ="false" 
 	returntype   ="String"
@@ -177,21 +177,20 @@
 		switch(arguments.type){
 			case 'int':
 				'cf_sql_integer';
-			break;
+				break;
 
 			case 'string':
 				'cf_sql_varchar';
-			break;
+				break;
 
 			case 'varchar':
 				'cf_sql_varchar';
-			break;
+				break;
 		
 			default:
 				'cf_sql_varchar';
-			break;
+				break;
 		}
-
 
 	</cfscript>
 

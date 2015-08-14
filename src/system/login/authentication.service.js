@@ -52,7 +52,7 @@
             }
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'px/system/model/login.cfc?method=login',
+                url: pxConfig.PX_PACKAGE + 'system/login/login.cfc?method=login',
                 params: params
             }).success(function(response) {
                 callback(response);

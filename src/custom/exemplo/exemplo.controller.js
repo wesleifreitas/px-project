@@ -1,12 +1,14 @@
-// Este script deve ser carregado em 'px-config.js', verifique a variável 'controllers'
-app.controller('exemploCtrl', function($scope, $element, $attrs, $rootScope) {
+app.controller('exemploCtrl', ['pxConfig','$scope','$element','$attrs',function(pxConfig, $scope, $element, $attrs, $rootScope) {
 
-    //console.info('exemploCtrl carregado com sucesso.');
+    // Value Object
+    $.getScript('custom/exemplo/exemplo.vo.js', function(){
+        console.info('pxConfig',pxConfig);
+    });
 
     /**
      * Controle da listagem
-     * Note que a propriedade 'control' da directive px-grid é igual a 'gridControl'
-     * Exemplo: <px-grid control="gridControl">
+     * Note que a propriedade 'control' da directive px-data-grid é igual a 'gridControl'
+     * Exemplo: <px-data-grid control="gridControl">
      * @type {Object}
      */
     $scope.gridControl = {};
@@ -90,4 +92,4 @@ app.controller('exemploCtrl', function($scope, $element, $attrs, $rootScope) {
         $scope.filterExpand = !$scope.filterExpand;
         $header.blur();
     };
-});
+}]);
