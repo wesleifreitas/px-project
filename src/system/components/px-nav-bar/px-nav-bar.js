@@ -31,10 +31,10 @@ angular.module('pxNavBar', [])
 
         //console.log($scope.template);
 
-        $scope.showView = function(componente) {
+        $scope.showView = function(view) {
 
             var params = new Object();
-            params.com_id = componente;
+            params.com_id = view;
             params.pathname = document.location.pathname;
             params.pxProjectPackage = pxConfig.PX_PACKAGE;
 
@@ -44,18 +44,18 @@ angular.module('pxNavBar', [])
                 params: params
             }).success(function(result) {
 
-                var headerView = result.qComponente[0].MEN_NOMECAMINHO.split(result.qComponente[0].MEN_NOMECAMINHO.split('»')[result.qComponente[0].MEN_NOMECAMINHO.split('»').length - 1])
+                var headerView = result.qView[0].MEN_NOMECAMINHO.split(result.qView[0].MEN_NOMECAMINHO.split('»')[result.qView[0].MEN_NOMECAMINHO.split('»').length - 1])
 
                 $scope.view = new Object();
                 $scope.view.result = result;
-                $scope.view.men_id = result.qComponente[0].MEN_ID;
-                $scope.view.caminho = result.qComponente[0].MEN_NOMECAMINHO;
+                $scope.view.men_id = result.qView[0].MEN_ID;
+                $scope.view.caminho = result.qView[0].MEN_NOMECAMINHO;
                 $scope.view.header = headerView[0];
-                $scope.view.titulo = result.qComponente[0].MEN_NOMECAMINHO.split('»')[result.qComponente[0].MEN_NOMECAMINHO.split('»').length - 1];
-                $scope.view.icon = result.qComponente[0].COM_ICON;
+                $scope.view.titulo = result.qView[0].MEN_NOMECAMINHO.split('»')[result.qView[0].MEN_NOMECAMINHO.split('»').length - 1];
+                $scope.view.icon = result.qView[0].COM_ICON;
 
-                $scope.templates[1].name = result.qComponente[0].COM_VIEW;
-                $scope.templates[1].url = result.qComponente[0].COM_VIEW;
+                $scope.templates[1].name = result.qView[0].COM_VIEW;
+                $scope.templates[1].url = result.qView[0].COM_VIEW;
 
             }).
             error(function(data, status, headers, config) {

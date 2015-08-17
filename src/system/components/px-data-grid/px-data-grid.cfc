@@ -1,4 +1,4 @@
-<cfinclude template="../../lib/px-util.cfm">
+<cfinclude template="../../utils/cf/px-util.cfm">
 
 <cfprocessingDirective pageencoding="utf-8">
 <cfset setEncoding("form","utf-8")> 
@@ -109,6 +109,7 @@
 				WITH pagination AS
 				(
 					SELECT 
+						-- TOP 1
 						#listFields#
 						ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS row_number
 					FROM 

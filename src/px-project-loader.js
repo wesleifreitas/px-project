@@ -68,6 +68,8 @@ $(function() {
             }, {
                 file: pxConfig.EXTERNAL_COMPONENTS + 'numeral/min/languages.min.js'
             }, {
+                file: pxConfig.PX_PACKAGE + 'system/utils/js/px-array-util.js'
+            }, {
                 file: pxConfig.PX_PACKAGE + 'system/login/login.controller.js'
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/home/home.controller.js'

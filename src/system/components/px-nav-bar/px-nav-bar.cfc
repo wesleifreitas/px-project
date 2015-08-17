@@ -1,4 +1,4 @@
-<cfinclude template="../../lib/px-util.cfm">
+<cfinclude template="../../utils/cf/px-util.cfm">
 
 <cfprocessingDirective pageencoding="utf-8">
 <cfset setEncoding("form","utf-8")> 
@@ -229,7 +229,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
         hint     ="Código do componente">
 
 
-    <cfquery name="qComponente" datasource="#arguments.dsn#">
+    <cfquery name="qView" datasource="#arguments.dsn#">
         
         WITH pxProjectMenuRecursivo(men_id, men_nome, men_nivel, men_nomeCaminho, men_ordem, men_idPai, com_view, com_icon)
         AS
@@ -286,13 +286,13 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 
     <cfset result               = structNew()> 
 
-    <cfif not fileExists(expandPath('/') & arguments.pathname & qComponente.com_view)>        
-        <cfset result['com_view_fault'] = qComponente.com_view> 
-        <cfset qComponente.com_view  = pxProjectPackage & 'system/components/px-nav-bar/fault-view.html'> 
+    <cfif not fileExists(expandPath('/') & arguments.pathname & qView.com_view)>        
+        <cfset result['com_view_fault'] = qView.com_view> 
+        <cfset qView.com_view  = pxProjectPackage & 'system/components/px-nav-bar/fault-view.html'> 
     </cfif>
     
     <cfset result['arguments']     = arguments> 
-    <cfset result['qComponente']   = QueryToArray(qComponente)> 
+    <cfset result['qView']   = QueryToArray(qView)> 
     
     <cfreturn result>
 
