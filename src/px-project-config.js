@@ -12,25 +12,29 @@ $(function() {
 		})
 		.config(function(pxConfig) {
 
-			// Custom Controllers	
+			// Custom JS	
 			/*
 			Exemplo:
 
 			var controllers = [{
 				file: 'custom/cliente/cliente.controller.js'
 			}, {
-				file: 'custom/produto/produto.controller.js'
+				file: 'custom/produto/cliente.service.js'
 			}, {
-				file: 'custom/pedido/pedido.controller.js'
+				file: 'custom/produto/pedido.controller.js'
+			}, {
+				file: 'custom/pedido/pedido.service.js'
 			}];
 			*/
-			var controllers = [{
+			var jsLoader = [{
 				file: 'custom/exemplo/exemplo.controller.js'
+			}, {
+				file: 'custom/exemplo/exemplo.service.js'
 			}];
 
-			// Loop em controllers
-			// Incluir custom controllers
-			$.each(controllers, function(i, item) {
+			// Loop em jsLoader
+			// Incluir java scripts
+			$.each(jsLoader, function(i, item) {
 				$("<script/>").attr('src', pxConfig.PX_PACKAGE + item.file).appendTo($('head'));
 			});
 		});

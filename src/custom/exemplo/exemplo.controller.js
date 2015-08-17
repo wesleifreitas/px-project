@@ -1,9 +1,22 @@
-app.controller('exemploCtrl', ['pxConfig','$scope','$element','$attrs',function(pxConfig, $scope, $element, $attrs, $rootScope) {
+app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element', '$attrs', function(exemploService, pxConfig, $scope, $element, $attrs, $rootScope) {
 
-    // Value Object
-    $.getScript('custom/exemplo/exemplo.vo.js', function(){
-        console.info('pxConfig',pxConfig);
-    });
+    // Variáveis gerais - Start
+
+    // Define as opções de status
+    $scope.dataStatus = {
+        // array, opções do select com opção "Todos"
+        optionsAll: exemploService.status(true),
+        // default de optionsAll
+        selectedAll: exemploService.status(true)[0],
+        // array, opções do select sem opção "Todos"
+        options: exemploService.status(false),
+        // default de options
+        selected: exemploService.status(false)[0]
+    };
+
+    // Variáveis gerais - End
+
+    // Listagem - Start
 
     /**
      * Controle da listagem
@@ -18,7 +31,6 @@ app.controller('exemploCtrl', ['pxConfig','$scope','$element','$attrs',function(
      * @return {[type]}   [description]
      */
     $scope.gridInit = function() {
-
         /**
          * Configurações da listagem
          * - fields: Colunas da listagem
@@ -32,6 +44,10 @@ app.controller('exemploCtrl', ['pxConfig','$scope','$element','$attrs',function(
                 type: 'int',
                 filter: angular.element($('#filtroId')),
                 filterOperator: '='
+            }, {
+                title: 'Status',
+                field: 'exe_ativo_label',
+                type: 'bit'
             }, {
                 title: 'Nome',
                 field: 'exe_nome',
@@ -60,7 +76,7 @@ app.controller('exemploCtrl', ['pxConfig','$scope','$element','$attrs',function(
                 title: 'Data',
                 field: 'exe_data',
                 type: 'datetime'
-            }]
+            }],
         };
     };
 
@@ -74,6 +90,8 @@ app.controller('exemploCtrl', ['pxConfig','$scope','$element','$attrs',function(
          */
         $scope.gridControl.getData();
     };
+
+    // Listagem - End
 
     /**
      * Váriavel de controle de visualição do Filtro Avançado

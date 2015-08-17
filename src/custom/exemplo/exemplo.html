@@ -10,6 +10,10 @@
                     <label>ID</label>
                     <input id="filtroId" class="form-control" ng-model="filtroId" px-enter="getData()" px-valid-number>
                 </div>
+                <div flex="15">
+                    <label>Status</label>
+                    <select class="form-control" ng-options="option.name for option in dataStatus.optionsAll track by option.id" ng-model="dataStatus.selectedAll"></select>
+                </div>
                 <div flex="25">
                     <label>Nome</label>
                     <input id="filtroNome" class="form-control" ng-model="filtroNome" px-enter="getData()">
@@ -36,7 +40,7 @@
         </div>
     </div>
     <div>
-        <px-data-grid control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="dbo.exemplo" px-fields="{{grid.fields}}" px-data-init="true">
+        <px-data-grid control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="dbo.vw_exemplo" px-fields="{{grid.fields}}" px-data-init="true">
         </px-data-grid>
     </div>
 </div>
