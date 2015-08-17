@@ -121,8 +121,19 @@ angular.module('pxDataGrid', ['ngSanitize'])
                     }
                 });
 
-                $scope.pxDataGridGetData = function() {
+                $scope.reset = function() {
 
+                    // A página atual inicia-se em 0
+                    $scope.currentPage = 0;
+
+                    // Zera contagem de linhas atuais
+                    $scope.currentRecordCount = 0;
+
+                    // Armazena itens selecionados da listagem
+                    $scope.internalControl.selectedItems = [];
+                }
+
+                $scope.pxDataGridGetData = function() {
                     // Armazena linhas selecionadas (checkbox)
                     var rows_selected = [];
                     $('#pxTable').dataTable({
@@ -376,8 +387,7 @@ angular.module('pxDataGrid', ['ngSanitize'])
                     // Se for a primeira linha significa que é uma nova consulta ao dados
                     // Neste caso é feito um 'clear' na listagem
                     if (rowFrom == 0) {
-                        // Zera contagem de linhas atuais
-                        $scope.currentRecordCount = 0;
+                        $scope.reset();
                         $('#pxTable').DataTable().clear().draw();
                     }
 
@@ -391,8 +401,8 @@ angular.module('pxDataGrid', ['ngSanitize'])
 
                         console.info('grid getData success', result);
                         //console.info('grid getData success JSON.stringify',JSON.stringify(result,null,"    "));
-
-                        if (angular.isDefined(result.FAULT)) {
+                       
+                        if (angular.isDefined(result.fault)) {
                             alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                         } else {
 
@@ -407,10 +417,10 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                     var data = new Object();
 
                                     data['pxDataGridRowNumber'] = $scope.currentRecordCount;
+
                                     // Loop nas colunas da grid
                                     angular.forEach(JSON.parse($scope.fields), function(item) {
-
-                                        // dDados por campo
+                                        // Dados por campo
                                         data[item.field] = index[item.field.toUpperCase()];
                                     });
 
