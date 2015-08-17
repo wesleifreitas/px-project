@@ -12,7 +12,7 @@
                 </div>
                 <div flex="15">
                     <label>Status</label>
-                    <select class="form-control" ng-options="option.name for option in dataStatus.optionsAll track by option.id" ng-model="dataStatus.selectedAll"></select>
+                    <select id="filtroStatus" class="form-control" ng-model="filtroStatus" ng-options="option.name for option in dataStatus.optionsAll track by option.id"></select>        
                 </div>
                 <div flex="25">
                     <label>Nome</label>

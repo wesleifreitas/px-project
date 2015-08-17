@@ -96,8 +96,8 @@
 				WHERE 1=1	
 				<cfloop array="#arguments.fields#" index="i">
 					
-					<cfif isDefined("i.filterValue") AND i.filterValue NEQ "">
-						AND #i.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterValue#">
+					<cfif isDefined("i.filterObject.field")>
+						AND #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
 					</cfif>
 							
 				</cfloop>
@@ -118,8 +118,8 @@
 						1 = 1	
 					<cfloop array="#arguments.fields#" index="i">
 					
-						<cfif isDefined("i.filterValue") AND i.filterValue NEQ "">
-							AND #i.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterValue#">
+						<cfif isDefined("i.filterObject.field")>
+							AND #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
 						</cfif>
 								
 					</cfloop>

@@ -6,13 +6,12 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
     $scope.dataStatus = {
         // array, opções do select com opção "Todos"
         optionsAll: exemploService.status(true),
-        // default de optionsAll
-        selectedAll: exemploService.status(true)[0],
         // array, opções do select sem opção "Todos"
         options: exemploService.status(false),
-        // default de options
-        selected: exemploService.status(false)[0]
     };
+
+    // default de options para o filtro filtroStatus
+    $scope.filtroStatus = exemploService.status(true)[0]
 
     // Variáveis gerais - End
 
@@ -47,7 +46,13 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
             }, {
                 title: 'Status',
                 field: 'exe_ativo_label',
-                type: 'bit'
+                type: 'bit',
+                filter: angular.element($('#filtroStatus')),
+                filterOperator: '=',
+                filterOptions: {
+                    field: 'exe_ativo',
+                    selectedItem: 'id'
+                }
             }, {
                 title: 'Nome',
                 field: 'exe_nome',
