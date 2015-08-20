@@ -5,7 +5,7 @@ angular.module('pxDataGrid', ['ngSanitize'])
     .value('pxDataGridConfig', {
 
     })
-    .directive('pxDataGrid', ['pxDataGridConfig', 'pxConfig', '$timeout', '$sce', function(pxDataGridConfig, pxConfig, $timeout, $sce) {
+    .directive('pxDataGrid', ['pxDataGridConfig', 'pxConfig', 'pxUtil', '$timeout', '$sce', function(pxDataGridConfig, pxConfig, pxUtil, $timeout, $sce) {
         return {
             restrict: 'E',
             replace: true,
@@ -349,7 +349,7 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                         value: filter
                                     };
                                 } else {
-                                    // Se o filtro possuir congirações filterOptions
+                                    // Se o valor do filtro por diferente que '%'
                                     if (filter[index.filterOptions.selectedItem] != '%') {
                                         // Define o objeto de filtro do campo
                                         // field é nome do campo que será filtro no banco de dados
@@ -358,7 +358,7 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                             // field recebe o que foi configurado em filterOptions.field
                                             field: index.filterOptions.field,
                                             // value recebe o que foi configurado em index.filterOptions.selectedItem
-                                            // por exemplo se o filtro for um select, o ng-model pode ser um objeto
+                                            // por exemplo se o filtro for um select, o ng-model pode ser um objeto {id: 1, name: 'teste'}
                                             // neste caso é necessário definir qual chave do objeto representa o valor a ser filtrado
                                             value: filter[index.filterOptions.selectedItem]
                                         };
@@ -372,30 +372,7 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                 index.filterObject = {};
                             }
 
-                            // Verifica se o valor do filtro é um valor válido
-                            if (angular.isDefined(index.filterObject) && index.filterObject != null) {
-
-                                // Regras de filtro por Operator
-                                switch (index.filterOperator) {
-
-                                    case '%LIKE%':
-                                    case '%LIKE':
-                                    case 'LIKE%':
-                                        // Valor do filtro recebe '%' o filterOperator possua '%'
-                                        // Por exemplo:
-                                        // Se filterOperator for igual a '%LIKE%' e valor do filtro for 'teste'
-                                        // Neste caso 'LIKE' é substituido por 'teste' 
-                                        // Portanto o valor final do filtro será  '%teste%'
-                                        index.filterObject['value'] = index.filterOperator.toUpperCase().replace('LIKE', index.filterObject['value']);
-                                        break;
-
-                                    default:
-
-                                        break;
-
-                                }
-
-                            }
+                            index.filterObject['value'] = pxUtil.filterOperator(index.filterObject['value'], index.filterOperator);
                         }
 
                     });
