@@ -668,3 +668,41 @@ Version: 1.9 February 20, 2008
         <cfreturn true />
     </cfif>
  </cffunction>
+
+ <cffunction 
+    name         ="getSqlType" 
+    access       ="private" 
+    output       ="false" 
+    returntype   ="String"
+    >
+
+    <cfargument 
+        name     ="type"    
+        type     ="string"
+        required ="false"
+        default  =""    
+        hint     ="Tipo do campo">
+
+    <cfscript>
+
+        switch(arguments.type){
+            case 'int':
+                'cf_sql_integer';
+                break;
+
+            case 'string':
+                'cf_sql_varchar';
+                break;
+
+            case 'varchar':
+                'cf_sql_varchar';
+                break;
+        
+            default:
+                'cf_sql_varchar';
+                break;
+        }
+
+    </cfscript>
+
+</cffunction>
