@@ -25,7 +25,6 @@
 		default  ="0"	
 		hint     ="ID do usuário">
 
-
 	<cfargument 
 		name     ="rows" 	
 		type     ="numeric"
@@ -60,7 +59,6 @@
 		required ="false"
 		default  ="250"	
 		hint     ="Campos do px-data-grid">
-
 
 	<cfargument 
 		name     ="orderBy" 	
@@ -156,43 +154,5 @@
 	<cfset result['recordCount'] = qRecordCount.count>
 
 	<cfreturn result>
-
-</cffunction>
-
-<cffunction 
-	name         ="getSqlType" 
-	access       ="private" 
-	output       ="false" 
-	returntype   ="String"
-	>
-
-	<cfargument 
-		name     ="type" 	
-		type	 ="string"
-		required ="false"
-		default  =""	
-		hint     ="Tipo do campo">
-
-	<cfscript>
-
-		switch(arguments.type){
-			case 'int':
-				'cf_sql_integer';
-				break;
-
-			case 'string':
-				'cf_sql_varchar';
-				break;
-
-			case 'varchar':
-				'cf_sql_varchar';
-				break;
-		
-			default:
-				'cf_sql_varchar';
-				break;
-		}
-
-	</cfscript>
 
 </cffunction>
