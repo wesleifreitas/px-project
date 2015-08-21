@@ -333,11 +333,26 @@ angular.module('pxDataGrid', ['ngSanitize'])
                         // filterObject armazena dados do filtro que será realizado no campo
                         if (angular.isDefined(index.filter)) {
 
+                            var selectorName = index.filter.selector;
+                            var selectorValue = index.filter.selector.replace('#', '');
+
+                            // Verifica se o filtro é um px-complete
+                            if (angular.isDefined(angular.element($(index.filter.selector + '_pxComplete').get(0)).scope())) {
+
+                                selectorName += '_pxComplete';
+                                selectorValue = 'selectedItem';
+                            }
+
                             // Verifica seu o scope do elemento angular possui valor definido
-                            if (angular.element($(index.filter.selector).get(0)).scope().hasOwnProperty(index.filter.selector.replace('#', ''))) {
+                            if (angular.element($(selectorName).get(0)).scope().hasOwnProperty(selectorValue)) {
 
                                 // filtro
-                                var filter = angular.element($(index.filter.selector).get(0)).scope()[index.filter.selector.replace('#', '')];
+                                var filter = angular.element($(selectorName).get(0)).scope()[selectorValue];
+
+                                // Se filtro for undefined, o filtro será considerado inválido
+                                if (!angular.isDefined(filter)) {
+                                    return;
+                                }
 
                                 // Se não possuir configuração avançada de fitro (filterOptions)
                                 if (!angular.isDefined(index.filterOptions)) {
@@ -349,8 +364,15 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                         value: filter
                                     };
                                 } else {
+
+                                    // Armazena valor que deve ser utilizado para o filtro
+                                    var tempValue = filter[index.filterOptions.selectedItem];
+                                    if (!angular.isDefined(tempValue)) {
+                                        tempValue = filter[index.filterOptions.selectedItem.toUpperCase()];
+                                    }
+
                                     // Se o valor do filtro por diferente que '%'
-                                    if (filter[index.filterOptions.selectedItem] != '%') {
+                                    if (tempValue != '%') {
                                         // Define o objeto de filtro do campo
                                         // field é nome do campo que será filtro no banco de dados
                                         // value é valor do campo, o qual será filtrado                        
@@ -360,8 +382,9 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                             // value recebe o que foi configurado em index.filterOptions.selectedItem
                                             // por exemplo se o filtro for um select, o ng-model pode ser um objeto {id: 1, name: 'teste'}
                                             // neste caso é necessário definir qual chave do objeto representa o valor a ser filtrado
-                                            value: filter[index.filterOptions.selectedItem]
+                                            value: tempValue
                                         };
+                                        //console.info(index.field,index.filterObject);
                                     } else {
                                         // Se não possuir um valor válido no ng-model o valor recebe vazio
                                         index.filterObject = {};
@@ -372,11 +395,13 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                 index.filterObject = {};
                             }
 
+                            // Armazena valor do filtro que será enviado ao back-end
                             index.filterObject['value'] = pxUtil.filterOperator(index.filterObject['value'], index.filterOperator);
                         }
 
                     });
-
+                    
+                    // Parâmetros da consulta
                     var params = new Object();
                     params.table = $scope.table;
                     params.fields = angular.toJson(arrayFields);
@@ -427,8 +452,14 @@ angular.module('pxDataGrid', ['ngSanitize'])
 
                                     // Loop nas colunas da grid
                                     angular.forEach(JSON.parse($scope.fields), function(item) {
-                                        // Dados por campo
-                                        data[item.field] = index[item.field.toUpperCase()];
+
+                                        if (!angular.isDefined(index[item.field])) {
+                                            // Dados por campo
+                                            data[item.field] = index[item.field.toUpperCase()];
+                                        } else {
+                                            // Dados por campo
+                                            data[item.field] = index[item.field];
+                                        }
                                     });
 
                                     // Atualizar dados do dataTable

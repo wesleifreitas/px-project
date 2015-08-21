@@ -143,7 +143,6 @@
 
 	</cftry>
 
-
 	<cfset result['listFields']  = listFields>
 	<cfset result['arguments']   = arguments>
 	<cfset result['rowFrom']     = arguments.rowFrom>

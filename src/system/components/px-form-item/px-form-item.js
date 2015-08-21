@@ -390,9 +390,15 @@ angular.module('pxFormItem', [])
         inputClass: '@pxInputClass',
         searchFields: '@searchfields'
       },
+      require: '?ngModel',
       templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-complete.html',
 
-      link: function(scope, element, attrs) {
+      link: function(scope, element, attrs, ngModelCtrl) {
+     
+        if (!ngModelCtrl) {
+          return
+        };
+
         scope.lastSearchTerm = null;
         scope.currentIndex = null;
         scope.justChanged = false;
@@ -479,7 +485,7 @@ angular.module('pxFormItem', [])
 
                   index.filterObject = {
                     field: index.field,
-                    value: pxUtil.filterOperator(str,index.filterOperator)
+                    value: pxUtil.filterOperator(str, index.filterOperator)
                   };
                 }
               })
@@ -569,7 +575,7 @@ angular.module('pxFormItem', [])
         scope.selectResult = function(result) {
 
           scope.searchStr = scope.lastSearchTerm = result.title;
-          scope.selectedItem = result;
+          scope.selectedItem = result.item;
           scope.showDropdown = false;
           scope.results = [];
           //scope.$apply();

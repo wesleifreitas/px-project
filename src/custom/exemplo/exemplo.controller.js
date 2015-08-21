@@ -14,7 +14,7 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
     $scope.filtroStatus = exemploService.status(true)[0];
 
     // Configuração do filtro filtroComplete
-    $scope.filtroComplete = {
+    $scope.filtroCompleteConfig = {
         fields: [{
             title: '',
             labelField: true,
@@ -26,6 +26,9 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
             title: 'CPF: ',
             descriptionField: true,
             field: 'exe_cpf',
+        }, {
+            title: '',
+            field: 'exe_id',
         }]
     };
 
@@ -75,6 +78,16 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
                 type: 'string',
                 filter: angular.element($('#filtroNome')),
                 filterOperator: '%LIKE%'
+            }, {
+                title: 'Complete',
+                field: 'exe_complete',
+                type: 'bit',
+                filter: angular.element($('#filtroComplete')),
+                filterOperator: '=',
+                filterOptions: {
+                    field: 'exe_id',
+                    selectedItem: 'exe_id'
+                }
             }, {
                 title: 'CPF',
                 field: 'exe_cpf',

@@ -91,13 +91,13 @@
 				FROM
 					#arguments.table#
 
-				WHERE 1=1	
+				<cfset whereInit = 'WHERE'>
 				<cfloop array="#arguments.fields#" index="i">
 					
 					<cfif isDefined("i.filterObject.field")>
-						AND #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
-					</cfif>
-							
+						#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
+						<cfset whereInit = 'AND '>
+					</cfif>							
 				</cfloop>
 
 			</cfquery>
@@ -112,14 +112,14 @@
 						ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS row_number
 					FROM 
 						#arguments.table#
-					WHERE 
-						1 = 1	
+
+					<cfset whereInit = 'WHERE'>
 					<cfloop array="#arguments.fields#" index="i">
-					
+						
 						<cfif isDefined("i.filterObject.field")>
-							AND #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
-						</cfif>
-								
+							#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
+							<cfset whereInit = 'AND '>
+						</cfif>							
 					</cfloop>
 				)
 				
@@ -144,7 +144,6 @@
 		</cfcatch>
 
 	</cftry>
-
 
 	<cfset result['listFields']  = listFields>
 	<cfset result['arguments']   = arguments>
