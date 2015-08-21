@@ -6,13 +6,17 @@
         </div>
         <div class="contentSearch" layout="row" layout-wrap>
             <div layout="row" layout-wrap layout-padding flex="80">
+                <div flex="25">
+                    <label>Auto-complete (Nome)</label>
+                    <px-complete id="filtroComplete" px-input-class="form-control" placeholder="Pesquisar nome" px-table="dbo.vw_exemplo" px-fields="{{filtroComplete.fields}}" />
+                </div>
                 <div flex="10">
                     <label>ID</label>
                     <input id="filtroId" class="form-control" ng-model="filtroId" px-enter="getData()" px-valid-number>
                 </div>
                 <div flex="15">
                     <label>Status</label>
-                    <select id="filtroStatus" class="form-control" ng-model="filtroStatus" ng-options="option.name for option in dataStatus.optionsAll track by option.id"></select>        
+                    <select id="filtroStatus" class="form-control" ng-model="filtroStatus" ng-options="option.name for option in dataStatus.optionsAll track by option.id"></select>
                 </div>
                 <div flex="25">
                     <label>Nome</label>
@@ -40,7 +44,7 @@
         </div>
     </div>
     <div>
-        <px-data-grid control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="dbo.vw_exemplo" px-fields="{{grid.fields}}" px-data-init="true">
+        <px-data-grid control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="dbo.vw_exemplo" px-fields="{{gridConfig.fields}}" px-data-init="true">
         </px-data-grid>
     </div>
 </div>

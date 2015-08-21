@@ -27,6 +27,8 @@ $(function() {
                 file: 'https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic'
             }, {
                 file: 'https://fonts.googleapis.com/icon?family=Material+Icons' //https://www.google.com/design/icons/
+            }, {
+                file: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-form-item.css'
             }];
 
             // Loop em cssLoader
@@ -67,6 +69,8 @@ $(function() {
                 file: pxConfig.EXTERNAL_COMPONENTS + 'numeral/min/numeral.min.js'
             }, {
                 file: pxConfig.EXTERNAL_COMPONENTS + 'numeral/min/languages.min.js'
+            }, {
+                file: pxConfig.PX_PACKAGE + 'system/utils/js/px-util.js'
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/utils/js/px-array-util.js'
             }, {

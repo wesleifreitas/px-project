@@ -1,0 +1,11 @@
+<div class="pxComplete-holder">
+    <input id="{{id}}_value" ng-model="searchStr" type="text" placeholder="{{placeholder}}" class="{{inputClass}}" onmouseup="this.select();" ng-focus="resetHideResults()" ng-blur="hideResults()" />
+    <div id="{{id}}_dropdown" class="pxComplete-dropdown" ng-if="showDropdown">
+        <div class="pxComplete-searching" ng-show="searching">Pesquisando...</div>
+        <div class="pxComplete-searching" ng-show="!searching && (!results || results.length == 0)">Nenhum registro encontrado</div>
+        <div class="pxComplete-row" ng-repeat="result in results" ng-mousedown="selectResult(result)" ng-mouseover="hoverRow()" ng-class="{'pxComplete-selected-row': $index == currentIndex}">         
+            <div class="pxComplete-title" ng-if="!matchClass">{{ result.title }}</div>
+            <div ng-if="result.description && result.description != ''" class="pxComplete-description">{{result.description}}</div>
+        </div>
+    </div>
+</div>

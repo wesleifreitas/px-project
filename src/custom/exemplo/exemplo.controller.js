@@ -11,7 +11,23 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
     };
 
     // default de options para o filtro filtroStatus
-    $scope.filtroStatus = exemploService.status(true)[0]
+    $scope.filtroStatus = exemploService.status(true)[0];
+
+    // Configuração do filtro filtroComplete
+    $scope.filtroComplete = {
+        fields: [{
+            title: '',
+            labelField: true,
+            field: 'exe_nome',
+            search: true,
+            type: 'string',
+            filterOperator: '%LIKE%'
+        }, {
+            title: 'CPF: ',
+            descriptionField: true,
+            field: 'exe_cpf',
+        }]
+    };
 
     // Variáveis gerais - End
 
@@ -33,9 +49,9 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
         /**
          * Configurações da listagem
          * - fields: Colunas da listagem
-         * @type {Object}
+         * @type {object}
          */
-        $scope.grid = {
+        $scope.gridConfig = {
             fields: [{
                 pk: true,
                 title: 'id',
@@ -87,25 +103,23 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
 
     /**
      * Chama função da listagem que carrega os dados
-     * @return {[type]} [description]
+     * @return {void}
      */
     $scope.getData = function() {
-        /**
-         * Recupera dados que são carregados na listagem
-         */
+        //Recuperar dados que são carregados na listagem
         $scope.gridControl.getData();
     };
 
     // Listagem - End
 
     /**
-     * Váriavel de controle de visualição do Filtro Avançado
+     * Variável de controle de visualição do Filtro Avançado
      * @type {Boolean}
      */
     $scope.expand = false;
     /**
      * Responsável por realizar o efeito de expandir o Filtro Avançado
-     * @return {[type]} [description]
+     * @return {void}
      */
     $scope.showFilter = function() {
 
