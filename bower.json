@@ -30,19 +30,21 @@
     "src/px-project-config.js"
   ],
   "dependencies": {
-    "angular-ui-mask": "~1.2.0",
-    "jquery": "latest",
     "angular": "~1.4.3",
-    "angular-cookies": "~1.4.3",
-    "angular-resource": "~1.4.3",
-    "angular-sanitize": "~1.4.3",
     "angular-animate": "~1.4.3",
     "angular-aria": "~1.4.3",
+    "angular-cookies": "~1.4.3",
     "angular-material": "~0.10.0",
+    "angular-resource": "~1.4.3",
     "angular-route": "~1.4.3",
-    "jquery-ui": "~1.11.4",
-    "datatables": "~1.10.7",
+    "angular-sanitize": "~1.4.3",
+    "angular-ui-mask": "~1.2.0",
     "bootstrap": "~3.3.5",
-    "numeral": "~1.5.3"
+    "datatables": "~1.10.7",
+    "jquery": "latest",
+    "jquery-ui": "~1.11.4",
+    "moment": "~2.10.6",
+    "numeral": "~1.5.3",
+    "string-mask": "~0.2.2"
   }
 }

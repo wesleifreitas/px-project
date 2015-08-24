@@ -92,6 +92,7 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
                 title: 'CPF',
                 field: 'exe_cpf',
                 type: 'int',
+                mask: '###.###.###-##',
                 filter: angular.element($('#filtroCPF')),
                 filterOperator: '='
             }, {
@@ -109,7 +110,8 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
             }, {
                 title: 'Data',
                 field: 'exe_data',
-                type: 'datetime'
+                type: 'datetime',
+                moment: 'dddd - DD/MM/YYYY'
             }],
         };
     };

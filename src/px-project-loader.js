@@ -70,6 +70,10 @@ $(function() {
             }, {
                 file: pxConfig.EXTERNAL_COMPONENTS + 'numeral/min/languages.min.js'
             }, {
+                file: pxConfig.EXTERNAL_COMPONENTS + 'string-mask/src/string-mask.js'
+            }, {
+                file: pxConfig.EXTERNAL_COMPONENTS + 'moment/min/moment-with-locales.min.js'
+            }, {
                 file: pxConfig.PX_PACKAGE + 'system/utils/js/px-util.js'
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/utils/js/px-array-util.js'

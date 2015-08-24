@@ -400,7 +400,7 @@ angular.module('pxDataGrid', ['ngSanitize'])
                         }
 
                     });
-                    
+
                     // Parâmetros da consulta
                     var params = new Object();
                     params.table = $scope.table;
@@ -460,6 +460,17 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                             // Dados por campo
                                             data[item.field] = index[item.field];
                                         }
+
+                                        // Se possuir máscara
+                                        if (item.mask) {
+                                            var formatter = new StringMask(item.mask);
+                                            data[item.field] = formatter.apply(data[item.field]);
+                                        }
+
+                                        // Se possuir moment
+                                        if (item.moment) {
+                                            data[item.field] = moment(data[item.field]).format(item.moment);
+                                        };
                                     });
 
                                     // Atualizar dados do dataTable
