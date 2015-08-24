@@ -500,8 +500,6 @@ angular.module('pxFormItem', [])
               }
 
               params.rows = scope.recordCount;
-              params.rowFrom = 0;
-              params.rowTo = params.rowFrom + params.rows;
 
               if (!angular.isDefined(scope.url) || scope.url == '') {
                 scope.url = pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-form-item.cfc?method=getData';

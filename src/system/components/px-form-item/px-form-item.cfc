@@ -32,20 +32,6 @@
 		hint     ="Número de linhas por select">
 
 	<cfargument 
-		name     ="rowFrom" 	
-		type     ="numeric"
-		required ="false"
-		default  ="0"	
-		hint     ="Linha inicial do select">
-
-	<cfargument 
-		name     ="rowTo" 	
-		type     ="numeric"
-		required ="false"
-		default  ="250"	
-		hint     ="Linha final do select">
-
-	<cfargument 
 		name     ="table" 	
 		type	 ="string"
 		required ="false"
@@ -82,57 +68,22 @@
 			<cfset arguments.orderBy = arguments.fields[1].field>
 		</cfif>
 
-		<cftransaction>
-					
-			<cfquery name="qRecordCount" datasource="#arguments.dsn#">
-				SELECT
-					COUNT(1) as count
-				FROM
+		<cftransaction>						
+			<cfquery name="qQuery" datasource="#arguments.dsn#">			
+				SELECT 
+					TOP #arguments.rows#
+					#listFields#
+					ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS row_number
+				FROM 
 					#arguments.table#
-				
 				<cfset whereInit = 'WHERE'>
-				<cfloop array="#arguments.fields#" index="i">
-					
+				<cfloop array="#arguments.fields#" index="i">					
 					<cfif isDefined("i.filterObject.field")>
 						#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
 						<cfset whereInit = 'OR '>
 					</cfif>							
-				</cfloop>			
-
+				</cfloop>				
 			</cfquery>
-			
-			<cfquery name="qQuery" datasource="#arguments.dsn#">
-			
-				WITH pagination AS
-				(
-					SELECT 
-						-- TOP 1
-						#listFields#
-						ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS row_number
-					FROM 
-						#arguments.table#
-					<cfset whereInit = 'WHERE'>
-					<cfloop array="#arguments.fields#" index="i">
-						
-						<cfif isDefined("i.filterObject.field")>
-							#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
-							<cfset whereInit = 'OR '>
-						</cfif>							
-					</cfloop>
-				)
-				
-				SELECT 
-					#listFields# 
-					row_number
-				FROM	
-					pagination
-				WHERE	
-					row_number BETWEEN #arguments.rowFrom+1# AND #arguments.rowTo#
-				ORDER BY 
-					row_number ASC
-
-			</cfquery>
-
 		</cftransaction>
 
 		<cfcatch>
@@ -145,10 +96,7 @@
 
 	<cfset result['listFields']  = listFields>
 	<cfset result['arguments']   = arguments>
-	<cfset result['rowFrom']     = arguments.rowFrom>
-	<cfset result['rowTo']       = arguments.rowTo>
 	<cfset result['qQuery']      = QueryToArray(qQuery)>
-	<cfset result['recordCount'] = qRecordCount.count>
 
 	<cfreturn result>
 
