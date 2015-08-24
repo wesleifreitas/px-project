@@ -17,7 +17,6 @@
 		default  ="px_project_sql"	
 		hint     ="Data source name">
 
-
 	<cfargument 
 		name     ="usuario" 	
 		type     ="numeric"
@@ -83,27 +82,22 @@
 			<cfset arguments.orderBy = arguments.fields[1].field>
 		</cfif>
 
-		<cftransaction>
-					
+		<cftransaction>				
 			<cfquery name="qRecordCount" datasource="#arguments.dsn#">
 				SELECT
 					COUNT(1) as count
 				FROM
 					#arguments.table#
-
 				<cfset whereInit = 'WHERE'>
-				<cfloop array="#arguments.fields#" index="i">
-					
+				<cfloop array="#arguments.fields#" index="i">					
 					<cfif isDefined("i.filterObject.field")>
 						#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
 						<cfset whereInit = 'AND '>
 					</cfif>							
 				</cfloop>
-
 			</cfquery>
 			
-			<cfquery name="qQuery" datasource="#arguments.dsn#">
-			
+			<cfquery name="qQuery" datasource="#arguments.dsn#">			
 				WITH pagination AS
 				(
 					SELECT 
@@ -112,10 +106,8 @@
 						ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS row_number
 					FROM 
 						#arguments.table#
-
 					<cfset whereInit = 'WHERE'>
-					<cfloop array="#arguments.fields#" index="i">
-						
+					<cfloop array="#arguments.fields#" index="i">						
 						<cfif isDefined("i.filterObject.field")>
 							#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
 							<cfset whereInit = 'AND '>
@@ -132,9 +124,7 @@
 					row_number BETWEEN #arguments.rowFrom+1# AND #arguments.rowTo#
 				ORDER BY 
 					row_number ASC
-
 			</cfquery>
-
 		</cftransaction>
 
 		<cfcatch>
