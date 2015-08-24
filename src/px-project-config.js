@@ -7,8 +7,9 @@ $(function() {
 		.constant('pxConfig', {
 			PX_PACKAGE: '', // Pacote Phoenix Project
 			EXTERNAL_COMPONENTS: 'bower_components/', // Componentes externos
-			PROJECT_NAME: 'Phoenix Project', // Nome do projedto
-			PROJECT_SRC: 'px-project/src/' // Source do projedto
+			PROJECT_NAME: 'Phoenix Project', // Nome do projeto
+			PROJECT_SRC: 'px-project/src/', // Source do projeto
+			LOCALE: 'pt-BR'
 		})
 		.config(function(pxConfig) {
 

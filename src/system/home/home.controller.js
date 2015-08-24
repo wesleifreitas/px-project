@@ -1,7 +1,13 @@
 (function() {
 	'use strict';
 
-	app.controller('homeCtrl', ['UserService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', function(UserService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $log) {
+	app.controller('homeCtrl', ['pxConfig', 'UserService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', function(pxConfig, UserService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $log) {
+
+			if (pxConfig.LOCALE) {
+				// Definir locale da lib moment.js
+				// http://momentjs.com/docs/
+				moment.locale(pxConfig.LOCALE);
+			}
 
 			var vm = this;
 
