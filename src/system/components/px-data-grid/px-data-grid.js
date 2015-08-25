@@ -462,14 +462,22 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                         }
 
                                         // Se possuir máscara
-                                        if (item.mask) {
-                                            var formatter = new StringMask(item.mask);
+                                        // https://github.com/the-darc/string-mask
+                                        if (item.stringMask) {
+                                            var formatter = new StringMask(item.stringMask);
                                             data[item.field] = formatter.apply(data[item.field]);
                                         }
 
                                         // Se possuir moment
+                                        // http://momentjs.com/
                                         if (item.moment) {
                                             data[item.field] = moment(data[item.field]).format(item.moment);
+                                        };
+
+                                        // Se possuir numeral
+                                        // http://numeraljs.com/
+                                        if (item.numeral) {
+                                            data[item.field] =  numeral(data[item.field]).format(item.numeral);
                                         };
                                     });
 

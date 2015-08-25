@@ -92,7 +92,7 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
                 title: 'CPF',
                 field: 'exe_cpf',
                 type: 'int',
-                mask: '###.###.###-##',
+                stringMask: '###.###.###-##',
                 filter: angular.element($('#filtroCPF')),
                 filterOperator: '='
             }, {
@@ -105,6 +105,7 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
                 title: 'Valor',
                 field: 'exe_valor',
                 type: 'decimal',
+                numeral: '0,0.00',
                 filter: angular.element($('#filtroValor')),
                 filterOperator: '='
             }, {
