@@ -467,19 +467,15 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                             var formatter;
 
                                             switch (item.stringMask) {
-
                                                 case 'cpf':
                                                     formatter = new StringMask('###.###.###-##');
                                                     break;
-
                                                 case 'cnpj':
                                                     data[item.field] = '##.###.###/####-##'
                                                     break;
-
                                                 case 'cep':
                                                     data[item.field] = '#####-###'
                                                     break;
-
                                                 case 'brPhone':
                                                     if (data[item.field].length == 11) {
                                                         formatter = new StringMask('(##) #####-####');
@@ -487,7 +483,6 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                                         formatter = new StringMask('(##) #####-####');
                                                     }
                                                     break;
-
                                                 default:
                                                     formatter = new StringMask(item.stringMask);
                                                     break;
@@ -503,8 +498,15 @@ angular.module('pxDataGrid', ['ngSanitize'])
 
                                         // Se possuir numeral
                                         // http://numeraljs.com/
-                                        if (item.numeral) {
-                                            data[item.field] = numeral(data[item.field]).format(item.numeral);
+                                        if (item.numeral) {                                            
+                                            switch (item.numeral) {
+                                                case 'currency':
+                                                    data[item.field] = numeral(data[item.field]).format('0,0.00');
+                                                    break;
+                                                default:
+                                                    data[item.field] = numeral(data[item.field]).format(item.numeral);
+                                                    break;
+                                            }
                                         };
                                     });
 
