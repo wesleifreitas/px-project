@@ -99,6 +99,7 @@ app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element
                 title: 'Telefone',
                 field: 'exe_telefone',
                 type: 'string',
+                stringMask: 'brPhone',
                 filter: angular.element($('#filtroTelefone')),
                 filterOperator: '='
             }, {

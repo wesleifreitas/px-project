@@ -464,13 +464,40 @@ angular.module('pxDataGrid', ['ngSanitize'])
                                         // Se possuir máscara
                                         // https://github.com/the-darc/string-mask
                                         if (item.stringMask) {
-                                            var formatter = new StringMask(item.stringMask);
+                                            var formatter;
+
+                                            switch (item.stringMask) {
+
+                                                case 'cpf':
+                                                    formatter = new StringMask('###.###.###-##');
+                                                    break;
+
+                                                case 'cnpj':
+                                                    data[item.field] = '##.###.###/####-##'
+                                                    break;
+
+                                                case 'cep':
+                                                    data[item.field] = '#####-###'
+                                                    break;
+
+                                                case 'brPhone':
+                                                    if (data[item.field].length == 11) {
+                                                        formatter = new StringMask('(##) #####-####');
+                                                    } else {
+                                                        formatter = new StringMask('(##) #####-####');
+                                                    }
+                                                    break;
+
+                                                default:
+                                                    formatter = new StringMask(item.stringMask);
+                                                    break;
+                                            }
                                             data[item.field] = formatter.apply(data[item.field]);
                                         }
 
                                         // Se possuir moment
                                         // http://momentjs.com/
-                                        if (item.moment) {                                                                              
+                                        if (item.moment) {
                                             data[item.field] = moment(Date.parse(data[item.field])).format(item.moment);
                                         };
 
