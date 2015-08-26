@@ -1,0 +1,21 @@
+//http://jshint.com/docs/options/
+{
+    "curly": true,
+    "eqeqeq": true,
+    "undef": true,
+    "jquery": true,
+    "devel": true,
+
+    // global variables
+    "globals": {
+        "angular": false,
+        "jasmine": false,
+        "$": false,
+        "_": false,
+        "module": false,
+        "require": false,
+        "StringMask": false,
+        "numeral": false,
+        "moment": false
+    }
+}
