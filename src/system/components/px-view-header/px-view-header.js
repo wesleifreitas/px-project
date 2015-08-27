@@ -1,22 +1,23 @@
-/**
- * Module pxViewHeader
- */
-angular.module('pxViewHeader', [])
-    .value('pxViewHeaderConfig', {
+(function () {
+    'use strict';
 
-    })
-    .directive('pxViewHeader', ['pxViewHeaderConfig', 'pxConfig', function(pxViewHeaderConfig, pxConfig) {
-        return {
-            restrict: 'E',
-            replace: true,
-            transclude: false,
-            templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.html',
+    angular.module('pxViewHeader', [])
+        .value('pxViewHeaderConfig', {
 
-            link: function(scope, element, attrs) {
-                // Manipulação e Eventos DOM
-            },
-            controller: function($scope, $element, $attrs) {
-                // Controller
-            }
-        }
+        })
+        .directive('pxViewHeader', ['pxViewHeaderConfig', 'pxConfig', function (pxViewHeaderConfig, pxConfig) {
+            return {
+                restrict: 'E',
+                replace: true,
+                transclude: false,
+                templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.html',
+
+                link: function (scope, element, attrs) {
+                    // Manipulação e Eventos DOM
+                },
+                controller: function ($scope, $element, $attrs) {
+                    // Controller
+                }
+            };
     }]);
+})();

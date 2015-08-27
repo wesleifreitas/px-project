@@ -1,13 +1,13 @@
-﻿(function() {
+(function () {
     'use strict';
 
     angular
         .module('app')
         .factory('AuthenticationService', AuthenticationService);
 
-    AuthenticationService.$inject = ['pxConfig','$http', '$cookieStore', '$rootScope', '$timeout', 'UserService'];
+    AuthenticationService.$inject = ['pxConfig', '$http', '$cookieStore', '$rootScope', '$timeout', 'UserService'];
 
-    function AuthenticationService(pxConfig,$http, $cookieStore, $rootScope, $timeout, UserService) {
+    function AuthenticationService(pxConfig, $http, $cookieStore, $rootScope, $timeout, UserService) {
         var service = {};
 
         service.Login = Login;
@@ -49,15 +49,15 @@
             var params = {
                 username: username,
                 password: password
-            }
+            };
             $http({
                 method: 'POST',
                 url: pxConfig.PX_PACKAGE + 'system/login/login.cfc?method=login',
                 params: params
-            }).success(function(response) {
+            }).success(function (response) {
                 callback(response);
             }).
-            error(function(data, status, headers, config) {
+            error(function (data, status, headers, config) {
                 // Erro
                 alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
             });
@@ -89,7 +89,7 @@
 
         keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
 
-        encode: function(input) {
+        encode: function (input) {
             var output = "";
             var chr1, chr2, chr3 = "";
             var enc1, enc2, enc3, enc4 = "";
@@ -123,7 +123,7 @@
             return output;
         },
 
-        decode: function(input) {
+        decode: function (input) {
             var output = "";
             var chr1, chr2, chr3 = "";
             var enc1, enc2, enc3, enc4 = "";
@@ -150,10 +150,10 @@
 
                 output = output + String.fromCharCode(chr1);
 
-                if (enc3 != 64) {
+                if (enc3 !== 64) {
                     output = output + String.fromCharCode(chr2);
                 }
-                if (enc4 != 64) {
+                if (enc4 !== 64) {
                     output = output + String.fromCharCode(chr3);
                 }
 

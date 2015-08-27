@@ -35,11 +35,11 @@
                     // Neste caso 'LIKE' é substituido por 'teste' 
                     // Portanto o valor final do filtro será  '%teste%'
                     return operator.toUpperCase().replace('LIKE', value);
-                    break;
+                    //break;
 
                 default:
                     return value;
-                    break;
+                    //break;
             }
         }
     }

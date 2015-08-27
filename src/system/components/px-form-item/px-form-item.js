@@ -138,7 +138,7 @@
                     // Verifica se NÃO possui uiMask definido
                     if (!angular.isDefined(attrs.uiMask)) {
                         // Define uiMask
-                        attrs.$set('uiMask', '(99) 9999-9999?9')
+                        attrs.$set('uiMask', '(99) 9999-9999?9');
                         $compile(element)(scope);
                     }
 
@@ -176,7 +176,7 @@
                     element.bind('keyup', function (event) {
                         // Se possuir 11 dígitos e não estiver validado
                         // Telefone com 11 dígitos é um telefone com 9 dígitos mais dois dígitos do DDD
-                        if (scope.cleanValue.length == 11 && scope.validPhone9 == false || !angular.isDefined(scope.validPhone9)) {
+                        if (scope.cleanValue.length === 11 && scope.validPhone9 === false || !angular.isDefined(scope.validPhone9)) {
 
                             // Atualizar uiMask para telefone com 9 dígitos
                             attrs.$set('uiMask', '(99) ?99999-9999');
@@ -186,7 +186,7 @@
                             scope.validPhone9 = true;
                             scope.validPhone8 = false;
 
-                        } else if (scope.cleanValue.length == 10 && scope.validPhone8 == false || !angular.isDefined(scope.validPhone8)) {
+                        } else if (scope.cleanValue.length === 10 && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
 
                             // Atualizar uiMask para telefone com 8 dígitos
                             attrs.$set('uiMask', '(99) 9999-9999?9');
@@ -224,8 +224,8 @@
                     //console.info('$locale', $locale);
 
                     if (!ngModelCtrl) {
-                        return
-                    };
+                        return;
+                    }
 
                     if (!angular.isDefined(attrs.pxEnableNumbers)) {
                         attrs.$set('pxEnableNumbers', /[0-9]/);
@@ -267,95 +267,121 @@
                         attrs.$set('pxUseNegative', false);
                     }
 
-                    if (attrs.pxCurrency && attrs.pxCurrencySymbol == '') {
+                    if (attrs.pxCurrency && attrs.pxCurrencySymbol === '') {
                         attrs.$set('pxCurrencySymbol', $locale.NUMBER_FORMATS.CURRENCY_SYM);
                     }
 
                     var limit = false;
 
+                    var emptyValue = true;
+
                     ngModelCtrl.$parsers.push(function (value) {
 
-                        var formatValue = numberFormatter(value);
-
-                        if (value !== formatValue) {
-                            ngModelCtrl.$setViewValue(formatValue);
+                        var clean = '';
+                        if (value !== '0' && (value !== '' || emptyValue === false)) {
+                            clean = numberFormatter(value);
+                        } else if (value.trim() === '0' && emptyValue === true) {
+                            return 0;
+                        } else {
+                            emptyValue = true;
+                            return '';
+                        }
+                        if (value !== clean) {
+                            ngModelCtrl.$setViewValue(clean);
                             ngModelCtrl.$render();
                         }
 
-                        if (formatValue == '') {
-                            return formatValue;
-                        } else if (formatValue == (attrs.pxCurrencySymbol + '.')) {
-                            return 0
+                        if (isNaN(numeral().unformat(clean))) {
+                            return 0;
                         } else {
-                            return numeral().unformat(formatValue);
+                            return numeral().unformat(clean);
                         }
                     });
 
                     function toNumber(str) {
                         var formatted = '';
                         for (var i = 0; i < (str.length); i++) {
-                            char_ = str.charAt(i);
-                            if (formatted.length == 0 && char_ == 0) char_ = false;
+                            var char_ = str.charAt(i);
+                            if (formatted.length === 0 && char_ === '0') {
+                                char_ = false;
+                            }
                             if (char_ && char_.match(attrs.pxEnableNumbers)) {
                                 if (limit) {
-                                    if (formatted.length < limit) formatted = formatted + char_
+                                    if (formatted.length < limit) {
+                                        formatted = formatted + char_;
+                                    }
                                 } else {
-                                    formatted = formatted + char_
+                                    formatted = formatted + char_;
                                 }
                             }
                         }
-                        return formatted
+                        return formatted;
                     }
 
                     function fillWithZero(str) {
-                        if (str == '') {
+                        if (str === '') {
                             return str;
                         }
 
-                        while (str.length < (attrs.pxNumberPrecision + 1)) str = '0' + str;
-                        return str
+                        while (str.length < (attrs.pxNumberPrecision + 1)) {
+                            str = '0' + str;
+                        }
+                        return str;
                     }
 
                     function numberFormatter(str) {
 
-                        var clean = str;
-                        if (clean == '') {
-                            return clean;
-                        } else if (clean == (attrs.pxCurrencySymbol + '.')) {
-                            return 0;
+                        if (str === '') {
+                            emptyValue = true;
+                            return str;
+                        } else if (str === (attrs.pxCurrencySymbol + $locale.NUMBER_FORMATS.DECIMAL_SEP)) {
+                            return '0';
                         }
+
+                        //emptyValue = false;
 
 
                         var formatted = fillWithZero(toNumber(str));
                         var thousandsFormatted = '';
                         var thousandsCount = 0;
-                        if (attrs.pxNumberPrecision == 0) {
+                        if (attrs.pxNumberPrecision === 0) {
                             attrs.pxDecimalSeparator = '';
-                            centsVal = ''
+                            centsVal = '';
                         }
                         var centsVal = formatted.substr(formatted.length - attrs.pxNumberPrecision, attrs.pxNumberPrecision);
                         var integerVal = formatted.substr(0, formatted.length - attrs.pxNumberPrecision);
-                        formatted = (attrs.pxNumberPrecision == 0) ? integerVal : integerVal + attrs.pxDecimalSeparator + centsVal;
-                        if (attrs.pxThousandsSeparator || $.trim(attrs.pxThousandsSeparator) != '') {
+                        formatted = (attrs.pxNumberPrecision === 0) ? integerVal : integerVal + attrs.pxDecimalSeparator + centsVal;
+                        if (attrs.pxThousandsSeparator || $.trim(attrs.pxThousandsSeparator) !== '') {
                             for (var j = integerVal.length; j > 0; j--) {
-                                char_ = integerVal.substr(j - 1, 1);
+                                var char_ = integerVal.substr(j - 1, 1);
                                 thousandsCount++;
-                                if (thousandsCount % 3 == 0) char_ = attrs.pxThousandsSeparator + char_;
-                                thousandsFormatted = char_ + thousandsFormatted
+                                if (thousandsCount % 3 === 0) {
+                                    char_ = attrs.pxThousandsSeparator + char_;
+                                }
+                                thousandsFormatted = char_ + thousandsFormatted;
                             }
-                            if (thousandsFormatted.substr(0, 1) == attrs.pxThousandsSeparator) thousandsFormatted = thousandsFormatted.substring(1, thousandsFormatted.length);
-                            formatted = (attrs.pxNumberPrecision == 0) ? thousandsFormatted : thousandsFormatted + attrs.pxDecimalSeparator + centsVal
+                            if (thousandsFormatted.substr(0, 1) === attrs.pxThousandsSeparator) {
+                                thousandsFormatted = thousandsFormatted.substring(1, thousandsFormatted.length);
+                            }
+                            formatted = (attrs.pxNumberPrecision === 0) ? thousandsFormatted : thousandsFormatted + attrs.pxDecimalSeparator + centsVal;
                         }
-                        if (attrs.pxUseNegative && (integerVal != 0 || centsVal != 0)) {
-                            if (str.indexOf('-') != -1 && str.indexOf('+') < str.indexOf('-')) {
-                                formatted = '-' + formatted
+                        if (attrs.pxUseNegative && (integerVal !== 0 || centsVal !== 0)) {
+                            if (str.indexOf('-') !== -1 && str.indexOf('+') < str.indexOf('-')) {
+                                formatted = '-' + formatted;
                             } else {
-                                if (!attrs.pxUsePositive) formatted = '' + formatted;
-                                else formatted = '+' + formatted
+                                if (!attrs.pxUsePositive) {
+                                    formatted = '' + formatted;
+                                } else {
+                                    formatted = '+' + formatted;
+                                }
                             }
                         }
-                        if (attrs.pxCurrencySymbol) formatted = attrs.pxCurrencySymbol + formatted;
-                        if (attrs.pxNumberSuffix) formatted = formatted + attrs.pxNumberSuffix;
+                        if (attrs.pxCurrencySymbol) {
+                            formatted = attrs.pxCurrencySymbol + formatted;
+                        }
+                        if (attrs.pxNumberSuffix) {
+                            formatted = formatted + attrs.pxNumberSuffix;
+                        }
                         return formatted;
                     }
                 }
@@ -385,8 +411,8 @@
                 link: function (scope, element, attrs, ngModelCtrl) {
 
                     if (!ngModelCtrl) {
-                        return
-                    };
+                        return;
+                    }
 
                     scope.lastSearchTerm = null;
                     scope.currentIndex = null;
@@ -398,11 +424,11 @@
                     scope.minLength = 3;
                     scope.searchStr = null;
 
-                    isNewSearchNeeded = function (newTerm, oldTerm) {
-                        return newTerm.length >= scope.minLength && newTerm != oldTerm
-                    }
+                    var isNewSearchNeeded = function (newTerm, oldTerm) {
+                        return newTerm.length >= scope.minLength && newTerm !== oldTerm;
+                    };
 
-                    scope.processResults = function (response, str) {
+                    scope.processResults = function (response, str, arrayFields) {
                         if (response && response.length > 0) {
 
                             scope.results = [];
@@ -443,18 +469,18 @@
                                     title: textValue,
                                     description: description,
                                     item: response[i]
-                                }
+                                };
                                 scope.results[scope.results.length] = resultRow;
                             }
                         } else {
                             scope.results = [];
                         }
-                    }
+                    };
 
                     scope.searchTimerComplete = function (str) {
                         // Início da pesquisa
 
-                        arrayFields = JSON.parse(scope.fields);
+                        var arrayFields = JSON.parse(scope.fields);
 
                         if (str.length >= scope.minLength) {
                             if (scope.localQuery) {
@@ -477,20 +503,20 @@
                                             value: pxUtil.filterOperator(str, index.filterOperator)
                                         };
                                     }
-                                })
+                                });
 
-                                var params = new Object();
+                                var params = {};
                                 params.table = scope.table;
                                 params.fields = angular.toJson(arrayFields);
                                 params.orderBy = scope.orderBy;
 
-                                if (!angular.isDefined(scope.recordCount) || scope.recordCount == '') {
+                                if (!angular.isDefined(scope.recordCount) || scope.recordCount === '') {
                                     scope.recordCount = 4;
                                 }
 
                                 params.rows = scope.recordCount;
 
-                                if (!angular.isDefined(scope.url) || scope.url == '') {
+                                if (!angular.isDefined(scope.url) || scope.url === '') {
                                     scope.url = pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-form-item.cfc?method=getData';
                                 }
 
@@ -501,12 +527,12 @@
                                     params: params
                                 }).success(function (response, status, headers, config) {
                                     console.info('response', response);
-                                    if (!angular.isDefined(scope.responseQuery) || scope.responseQuery == '') {
+                                    if (!angular.isDefined(scope.responseQuery) || scope.responseQuery === '') {
                                         scope.responseQuery = 'qQuery';
                                     }
 
                                     scope.searching = false;
-                                    scope.processResults(((scope.responseQuery) ? response[scope.responseQuery] : response), str);
+                                    scope.processResults(((scope.responseQuery) ? response[scope.responseQuery] : response), str, arrayFields);
 
                                 }).
                                 error(function (data, status, headers, config) {
@@ -515,7 +541,7 @@
                                 });
                             }
                         }
-                    }
+                    };
 
                     scope.hideResults = function () {
                         scope.hideTimer = $timeout(function () {
@@ -526,20 +552,20 @@
                     scope.resetHideResults = function () {
                         if (scope.hideTimer) {
                             $timeout.cancel(scope.hideTimer);
-                        };
+                        }
                     };
 
                     scope.hoverRow = function (index) {
                         scope.currentIndex = index;
-                    }
+                    };
 
                     scope.keyPressed = function (event) {
-                        if (!(event.which == 38 || event.which == 40 || event.which == 13)) {
-                            if (!scope.searchStr || scope.searchStr == '') {
+                        if (!(event.which === 38 || event.which === 40 || event.which === 13)) {
+                            if (!scope.searchStr || scope.searchStr === '') {
                                 scope.showDropdown = false;
-                                scope.lastSearchTerm = null
+                                scope.lastSearchTerm = null;
                             } else if (isNewSearchNeeded(scope.searchStr, scope.lastSearchTerm)) {
-                                scope.lastSearchTerm = scope.searchStr
+                                scope.lastSearchTerm = scope.searchStr;
                                 scope.showDropdown = true;
                                 scope.currentIndex = -1;
                                 scope.results = [];
@@ -557,7 +583,7 @@
                         } else {
                             event.preventDefault();
                         }
-                    }
+                    };
 
                     scope.selectResult = function (result) {
 
@@ -566,7 +592,7 @@
                         scope.showDropdown = false;
                         scope.results = [];
                         //scope.$apply();
-                    }
+                    };
 
                     var inputField = element.find('input');
 
@@ -577,37 +603,37 @@
                             if (scope.results && (scope.currentIndex + 1) < scope.results.length) {
                                 scope.currentIndex++;
                                 scope.$apply();
-                                event.preventDefault;
+                                event.preventDefault();
                                 event.stopPropagation();
                             }
 
                             scope.$apply();
-                        } else if (event.which == 38) {
+                        } else if (event.which === 38) {
                             if (scope.currentIndex >= 1) {
                                 scope.currentIndex--;
                                 scope.$apply();
-                                event.preventDefault;
+                                event.preventDefault();
                                 event.stopPropagation();
                             }
 
-                        } else if (event.which == 13) {
+                        } else if (event.which === 13) {
                             if (scope.results && scope.currentIndex >= 0 && scope.currentIndex < scope.results.length) {
                                 scope.selectResult(scope.results[scope.currentIndex]);
                                 scope.$apply();
-                                event.preventDefault;
+                                event.preventDefault();
                                 event.stopPropagation();
                             } else {
                                 scope.results = [];
                                 scope.$apply();
-                                event.preventDefault;
+                                event.preventDefault();
                                 event.stopPropagation();
                             }
 
-                        } else if (event.which == 27) {
+                        } else if (event.which === 27) {
                             scope.results = [];
                             scope.showDropdown = false;
                             scope.$apply();
-                        } else if (event.which == 8) {
+                        } else if (event.which === 8) {
                             scope.selectedItem = null;
                             scope.$apply();
                         }

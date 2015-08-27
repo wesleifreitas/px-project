@@ -14,6 +14,8 @@
         "_": false,
         "module": false,
         "require": false,
+        "app": false,
+        "localStorage": false,
         "StringMask": false,
         "numeral": false,
         "moment": false

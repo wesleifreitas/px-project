@@ -1,4 +1,4 @@
-﻿(function() {
+(function () {
     'use strict';
 
     angular
@@ -18,7 +18,7 @@
         return service;
 
         function initService() {
-            $rootScope.$on('$locationChangeStart', function() {
+            $rootScope.$on('$locationChangeStart', function () {
                 clearFlashMessage();
             });
 

@@ -1,11 +1,8 @@
 (function () {
     'use strict';
 
-
     angular.module('pxNavBar', [])
-        .value('pxNavBarConfig', {
-
-        })
+        .value('pxNavBarConfig', {})
         .directive('pxNavBar', ['pxNavBarConfig', 'pxConfig', function (pxDataGridConfig, pxConfig) {
             return {
                 restrict: 'E',
@@ -16,7 +13,7 @@
 
                     scope.logo = pxConfig.PX_PACKAGE + 'system/assets/richsolutions/richsolutions_bola_200x200.jpg';
                 }
-            }
+            };
     }])
         .controller('pxNavBarCtrl', ['pxConfig', '$scope', '$http', function (pxConfig, $scope, $http) {
             $scope.templates = [{
@@ -33,9 +30,9 @@
 
             $scope.showView = function (view) {
 
-                var params = new Object();
+                var params = {};
                 params.com_id = view;
-                params.pathname = document.location.pathname;
+                params.pathname = pxConfig.PROJECT_SRC; //document.location.pathname;
                 params.pxProjectPackage = pxConfig.PX_PACKAGE;
 
                 $http({
@@ -44,9 +41,9 @@
                     params: params
                 }).success(function (result) {
 
-                    var headerView = result.qView[0].MEN_NOMECAMINHO.split(result.qView[0].MEN_NOMECAMINHO.split('»')[result.qView[0].MEN_NOMECAMINHO.split('»').length - 1])
+                    var headerView = result.qView[0].MEN_NOMECAMINHO.split(result.qView[0].MEN_NOMECAMINHO.split('»')[result.qView[0].MEN_NOMECAMINHO.split('»').length - 1]);
 
-                    $scope.view = new Object();
+                    $scope.view = {};
                     $scope.view.result = result;
                     $scope.view.men_id = result.qView[0].MEN_ID;
                     $scope.view.caminho = result.qView[0].MEN_NOMECAMINHO;
@@ -62,6 +59,6 @@
                     // Erro
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 });
-            }
+            };
     }]);
 })();

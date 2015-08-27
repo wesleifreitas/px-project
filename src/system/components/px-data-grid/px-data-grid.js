@@ -352,41 +352,38 @@
                                         return;
                                     }
 
-                                    // Se não possuir configuração avançada de fitro (filterOptions)
-                                    if (!angular.isDefined(index.filterOptions)) {
+                                    var tempField = index.field;
+                                    var tempValue = filter;
+
+                                    // Se possuir configuração avançada de fitro (filterOptions)
+                                    if (angular.isDefined(index.filterOptions)) {
+                                        tempField = index.filterOptions.field;
+                                        // value recebe o que foi configurado em index.filterOptions.selectedItem
+                                        // por exemplo se o filtro for um select, o ng-model pode ser um objeto {id: 1, name: 'teste'}
+                                        // neste caso é necessário definir qual chave do objeto representa o valor a ser filtrado
+                                        if (filter) {
+                                            tempValue = filter[index.filterOptions.selectedItem];
+                                            if (!angular.isDefined(tempValue)) {
+                                                tempValue = filter[index.filterOptions.selectedItem.toUpperCase()];
+                                            }
+                                            if (tempValue === '%') {
+                                                tempValue = null;
+                                            }
+                                        } else {
+                                            tempValue = null;
+                                        }
+                                    }
+
+                                    if (tempValue !== null && tempValue !== '') {
                                         // Define o objeto de filtro do campo
                                         // field é nome do campo que será filtro no banco de dados
                                         // value é valor do campo, o qual será filtrado                        
                                         index.filterObject = {
-                                            field: index.field,
-                                            value: filter
+                                            field: tempField,
+                                            value: tempValue
                                         };
                                     } else {
-
-                                        // Armazena valor que deve ser utilizado para o filtro
-                                        var tempValue = filter[index.filterOptions.selectedItem];
-                                        if (!angular.isDefined(tempValue)) {
-                                            tempValue = filter[index.filterOptions.selectedItem.toUpperCase()];
-                                        }
-
-                                        // Se o valor do filtro por diferente que '%'
-                                        if (tempValue !== '%') {
-                                            // Define o objeto de filtro do campo
-                                            // field é nome do campo que será filtro no banco de dados
-                                            // value é valor do campo, o qual será filtrado
-                                            index.filterObject = {
-                                                // field recebe o que foi configurado em filterOptions.field
-                                                field: index.filterOptions.field,
-                                                // value recebe o que foi configurado em index.filterOptions.selectedItem
-                                                // por exemplo se o filtro for um select, o ng-model pode ser um objeto {id: 1, name: 'teste'}
-                                                // neste caso é necessário definir qual chave do objeto representa o valor a ser filtrado
-                                                value: tempValue
-                                            };
-                                            //console.info(index.field,index.filterObject);
-                                        } else {
-                                            // Se não possuir um valor válido no ng-model o valor recebe vazio
-                                            index.filterObject = {};
-                                        }
+                                        index.filterObject = {};
                                     }
                                 } else {
                                     // Se não possuir um valor válido no ng-model o valor recebe vazio
