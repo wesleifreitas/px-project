@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -34,7 +34,7 @@
                 }, {
                     name: 'Inativo',
                     id: 0
-                }]
+                }];
             } else {
                 arrayData = [{
                     name: 'Ativo',
@@ -42,10 +42,10 @@
                 }, {
                     name: 'Inativo',
                     id: 0
-                }]
+                }];
             }
-            
+
             return arrayData.sort(pxArrayUtil.sortOn('id'));
-        }        
+        }
     }
 })();
