@@ -216,7 +216,15 @@
             return {
                 restrict: 'A',
                 scope: {
-                    cleanValue: '@cleanValue'
+                    cleanValue: '@cleanValue',
+                    currency: '=pxCurrency',
+                    currencySymbol: '@pxCurrencySymbol',
+                    numberSuffix: '@pxNumberSuffix',
+                    decimalSeparator: '@pxDecimalSeparator',
+                    thousandsSeparator: '@pxThousandsSeparator',
+                    numberPrecision: '@pxNumberPrecision',
+                    useNegative: '=pxUseNegative',
+                    usePositiveSymbol: '=pxUsePositiveSymbol'
                 },
                 require: '?ngModel',
                 link: function (scope, element, attrs, ngModelCtrl) {
@@ -227,52 +235,30 @@
                         return;
                     }
 
-                    if (!angular.isDefined(attrs.pxEnableNumbers)) {
-                        attrs.$set('pxEnableNumbers', /[0-9]/);
-                    }
+                    // Número habilitados
+                    var enableNumbers = /[0-9]/;
+                    // Define se o valor será moeda
+                    var currency = scope.pxCurrency || false;
+                    // Define símbolo do valor moeda
+                    var currencySymbol = scope.currencySymbol || '';
+                    // Define sufixo
+                    var numberSuffix = scope.numberSuffix || '';
+                    // Separador de decimal
+                    var decimalSeparator = scope.decimalSeparator || $locale.NUMBER_FORMATS.DECIMAL_SEP;
+                    // Separador de milhar
+                    var thousandsSeparator = scope.thousandsSeparator || $locale.NUMBER_FORMATS.GROUP_SEP;
+                    // Número de casas decimais
+                    var numberPrecision = Number(scope.numberPrecision) || 2;
+                    // Habilitar uso de número negativos
+                    var useNegative = scope.useNegative || false;
+                    // Usar símbolo positivo (+)
+                    var usePositiveSymbol = scope.usePositiveSymbol || false;
 
-                    if (!angular.isDefined(attrs.pxCurrency)) {
-                        attrs.$set('pxCurrency', false);
-                    }
-
-                    if (!angular.isDefined(attrs.pxCurrencySymbol)) {
-                        attrs.$set('pxCurrencySymbol', '');
-                    }
-
-                    if (!angular.isDefined(attrs.pxNumberSuffix)) {
-                        attrs.$set('pxNumberSuffix', '');
-                    }
-
-                    if (!angular.isDefined(attrs.pxDecimalSeparator)) {
-                        attrs.$set('pxDecimalSeparator', $locale.NUMBER_FORMATS.DECIMAL_SEP);
-                    }
-
-                    if (!angular.isDefined(attrs.pxThousandsSeparator)) {
-                        attrs.$set('pxThousandsSeparator', $locale.NUMBER_FORMATS.GROUP_SEP);
-                    }
-
-                    if (!angular.isDefined(attrs.pxNumberPrecision)) {
-                        attrs.$set('pxNumberPrecision', 2);
-                    }
-
-                    if (!angular.isDefined(attrs.pxUseNegative)) {
-                        attrs.$set('pxUseNegative', false);
-                    }
-
-                    if (!angular.isDefined(attrs.pxUsePositive)) {
-                        attrs.$set('pxUsePositive', false);
-                    }
-
-                    if (attrs.pxUsePositive) {
-                        attrs.$set('pxUseNegative', false);
-                    }
-
-                    if (attrs.pxCurrency && attrs.pxCurrencySymbol === '') {
-                        attrs.$set('pxCurrencySymbol', $locale.NUMBER_FORMATS.CURRENCY_SYM);
+                    if (currency && currencySymbol === '') {
+                        currencySymbol = $locale.NUMBER_FORMATS.CURRENCY_SYM;
                     }
 
                     var limit = false;
-
                     var emptyValue = true;
 
                     ngModelCtrl.$parsers.push(function (value) {
@@ -305,7 +291,7 @@
                             if (formatted.length === 0 && char_ === '0') {
                                 char_ = false;
                             }
-                            if (char_ && char_.match(attrs.pxEnableNumbers)) {
+                            if (char_ && char_.match(enableNumbers)) {
                                 if (limit) {
                                     if (formatted.length < limit) {
                                         formatted = formatted + char_;
@@ -323,7 +309,7 @@
                             return str;
                         }
 
-                        while (str.length < (attrs.pxNumberPrecision + 1)) {
+                        while (str.length < (numberPrecision + 1)) {
                             str = '0' + str;
                         }
                         return str;
@@ -334,7 +320,7 @@
                         if (str === '') {
                             emptyValue = true;
                             return str;
-                        } else if (str === (attrs.pxCurrencySymbol + $locale.NUMBER_FORMATS.DECIMAL_SEP)) {
+                        } else if (str === (currencySymbol + $locale.NUMBER_FORMATS.DECIMAL_SEP)) {
                             return '0';
                         }
 
@@ -344,43 +330,43 @@
                         var formatted = fillWithZero(toNumber(str));
                         var thousandsFormatted = '';
                         var thousandsCount = 0;
-                        if (attrs.pxNumberPrecision === 0) {
-                            attrs.pxDecimalSeparator = '';
+                        if (numberPrecision === 0) {
+                            decimalSeparator = '';
                             centsVal = '';
                         }
-                        var centsVal = formatted.substr(formatted.length - attrs.pxNumberPrecision, attrs.pxNumberPrecision);
-                        var integerVal = formatted.substr(0, formatted.length - attrs.pxNumberPrecision);
-                        formatted = (attrs.pxNumberPrecision === 0) ? integerVal : integerVal + attrs.pxDecimalSeparator + centsVal;
-                        if (attrs.pxThousandsSeparator || $.trim(attrs.pxThousandsSeparator) !== '') {
+                        var centsVal = formatted.substr(formatted.length - numberPrecision, numberPrecision);
+                        var integerVal = formatted.substr(0, formatted.length - numberPrecision);
+                        formatted = (numberPrecision === 0) ? integerVal : integerVal + decimalSeparator + centsVal;
+                        if (thousandsSeparator || $.trim(thousandsSeparator) !== '') {
                             for (var j = integerVal.length; j > 0; j--) {
                                 var char_ = integerVal.substr(j - 1, 1);
                                 thousandsCount++;
                                 if (thousandsCount % 3 === 0) {
-                                    char_ = attrs.pxThousandsSeparator + char_;
+                                    char_ = thousandsSeparator + char_;
                                 }
                                 thousandsFormatted = char_ + thousandsFormatted;
                             }
-                            if (thousandsFormatted.substr(0, 1) === attrs.pxThousandsSeparator) {
+                            if (thousandsFormatted.substr(0, 1) === thousandsSeparator) {
                                 thousandsFormatted = thousandsFormatted.substring(1, thousandsFormatted.length);
                             }
-                            formatted = (attrs.pxNumberPrecision === 0) ? thousandsFormatted : thousandsFormatted + attrs.pxDecimalSeparator + centsVal;
+                            formatted = (numberPrecision === 0) ? thousandsFormatted : thousandsFormatted + decimalSeparator + centsVal;
                         }
-                        if (attrs.pxUseNegative && (integerVal !== 0 || centsVal !== 0)) {
+                        if (useNegative && (integerVal !== 0 || centsVal !== 0)) {
                             if (str.indexOf('-') !== -1 && str.indexOf('+') < str.indexOf('-')) {
                                 formatted = '-' + formatted;
                             } else {
-                                if (!attrs.pxUsePositive) {
+                                if (!usePositiveSymbol) {
                                     formatted = '' + formatted;
                                 } else {
                                     formatted = '+' + formatted;
                                 }
                             }
                         }
-                        if (attrs.pxCurrencySymbol) {
-                            formatted = attrs.pxCurrencySymbol + formatted;
+                        if (currencySymbol) {
+                            formatted = currencySymbol + formatted;
                         }
-                        if (attrs.pxNumberSuffix) {
-                            formatted = formatted + attrs.pxNumberSuffix;
+                        if (numberSuffix) {
+                            formatted = formatted + numberSuffix;
                         }
                         return formatted;
                     }
