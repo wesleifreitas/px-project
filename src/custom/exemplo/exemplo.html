@@ -5,7 +5,7 @@
         <div id="headerSearch" class="headerSearch" layout="row" layout-align="center center" ng-click="showFilter()"><span>FILTRO AVANÇADO</span><i class="material-icons" ng-show="filterExpand">expand_less</i><i class="material-icons" ng-show="!filterExpand">expand_more</i>
         </div>
         <div class="contentSearch" layout="row" layout-wrap>
-            <div layout="row" layout-wrap layout-padding flex="80">
+            <div layout="row" layout-wrap layout-padding flex="100">
                 <div flex="25">
                     <label>Auto-complete (Nome)</label>
                     <px-complete id="filtroComplete" ng-model="filtroComplete" px-input-class="form-control" placeholder="  Pesquisar nome" px-enter="getData()" px-table="dbo.vw_exemplo" px-fields="{{filtroCompleteConfig.fields}}"></px-complete>
@@ -38,12 +38,14 @@
                     </div>
                 </div>
             </div>
-            <div flex="20" layout="row">
-                <md-button class="md-raised md-primary" ng-click="getData()">Atualizar listagem</md-button>
-            </div>
         </div>
     </div>
     <div>
+        <div layout="row" layout-align="center center">
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-primary" ng-click="getData()">Atualizar listagem</button>
+            </div>
+        </div>
         <px-data-grid control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="dbo.vw_exemplo" px-fields="{{gridConfig.fields}}" px-data-init="true">
         </px-data-grid>
     </div>

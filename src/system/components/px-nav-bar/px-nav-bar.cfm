@@ -10,7 +10,7 @@
             <cfoutput>#pxMenu#</cfoutput>
             <div class="element place-right px-pointer" ng-click="toggleRight()">
                 <a class="element-menu">
-                    <span class="icon-cog"></span>
+                    <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
                 </a>
                 <!--
             <ul class="dropdown-menu place-right" data-role="dropdown" ng-click="logout()">

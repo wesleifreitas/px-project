@@ -1,10 +1,10 @@
-$(function() {
+$(function () {
 
     /**
      * Module pxLoader
      */
     angular.module('pxLoader', [])
-        .config(function(pxConfig) {
+        .config(function (pxConfig) {
 
             // CSS
             var cssLoader = [{
@@ -12,13 +12,11 @@ $(function() {
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/core/external/metro-bootstrap-responsive.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/core/external/iconFont.css'
-            }, {
                 file: pxConfig.PX_PACKAGE + 'system/core/px-project.css'
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/login/login.css'
             }, {
-                file: pxConfig.EXTERNAL_COMPONENTS + 'bootstrap/dist/css/bootstrap.min.css'
+                file: pxConfig.EXTERNAL_COMPONENTS + 'bootstrap/dist/css/bootstrap.min.css' //  pxConfig.PX_PACKAGE + 'system/core/external/iconFont.css'
             }, {
                 file: 'http://cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.css' // http://cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.css
             }, {
@@ -32,7 +30,7 @@ $(function() {
             }];
 
             // Loop em cssLoader
-            $.each(cssLoader, function(i, item) {
+            $.each(cssLoader, function (i, item) {
                 //console.info('pxLoader - cssLoader:',item.file);
                 $('<link rel="stylesheet"/>').attr('href', item.file).appendTo($('head'));
             });
@@ -98,7 +96,7 @@ $(function() {
             }];
 
             // Loop em jsLoader
-            $.each(jsLoader, function(i, item) {
+            $.each(jsLoader, function (i, item) {
                 //console.info('pxLoader - jsLoader:',item.file);
                 $("<script/>").attr('src', item.file).appendTo($('head'));
             });
@@ -108,9 +106,10 @@ $(function() {
             var htmlLoader = [];
 
             // loop em htmlLoader
-            $.each(htmlLoader, function(i, item) {
+            $.each(htmlLoader, function (i, item) {
                 //console.info('pxLoader - htmlLoader:',item.file);
                 $('<link rel="import"/>').attr('href', item.file).appendTo($('head'));
             });
         });
+    $('body').addClass('metro');
 });
