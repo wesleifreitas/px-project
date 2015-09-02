@@ -1,4 +1,4 @@
-<div class="pxView" ng-controller="exemploCtrl">
+<div class="px-view" ng-controller="exemploCtrl">
     <!-- Directive px-view-header, apresenta o cabeçalho da view atual -->
     <px-view-header px-show-hr="true"></px-view-header>
     <div class="pxDataGridSearch">
@@ -46,6 +46,7 @@
                 <button type="button" class="btn btn-primary" ng-click="getData()">Atualizar listagem</button>
             </div>
         </div>
+        <div class="px-fixed-left"></div>
         <px-data-grid control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="dbo.vw_exemplo" px-fields="{{gridConfig.fields}}" px-data-init="true">
         </px-data-grid>
     </div>
