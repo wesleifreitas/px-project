@@ -7,13 +7,13 @@
 
         // Define as opções de status
         $scope.dataStatus = {
-            // array, opções do select com opção "Todos"
+            // Array: opções do select com opção "Todos"
             optionsAll: exemploService.status(true),
-            // array, opções do select sem opção "Todos"
+            // Array: opções do select sem opção "Todos"
             options: exemploService.status(false),
         };
 
-        // default de options para o filtro filtroStatus
+        // Default de options para o filtro filtroStatus
         $scope.filtroStatus = exemploService.status(true)[0];
 
         // Configuração do filtro filtroComplete
@@ -49,7 +49,7 @@
 
         /**
          * Inicializa listagem
-         * @return {[type]}   [description]
+         * @return {void}
          */
         $scope.gridInit = function () {
             /**
@@ -65,7 +65,7 @@
                     type: 'int',
                     filter: angular.element($('#filtroId')),
                     filterOperator: '='
-            }, {
+                }, {
                     title: 'Status',
                     field: 'exe_ativo_label',
                     type: 'bit',
@@ -75,13 +75,13 @@
                         field: 'exe_ativo',
                         selectedItem: 'id'
                     }
-            }, {
+                }, {
                     title: 'Nome',
                     field: 'exe_nome',
                     type: 'string',
                     filter: angular.element($('#filtroNome')),
                     filterOperator: '%LIKE%'
-            }, {
+                }, {
                     title: 'Complete',
                     field: 'exe_complete',
                     type: 'bit',
@@ -91,42 +91,42 @@
                         field: 'exe_id',
                         selectedItem: 'exe_id'
                     }
-            }, {
+                }, {
                     title: 'CPF',
                     field: 'exe_cpf',
                     type: 'int',
                     stringMask: '###.###.###-##',
                     filter: angular.element($('#filtroCPF')),
                     filterOperator: '='
-            }, {
+                }, {
                     title: 'Telefone',
                     field: 'exe_telefone',
                     type: 'string',
                     stringMask: 'brPhone',
                     filter: angular.element($('#filtroTelefone')),
                     filterOperator: '='
-            }, {
+                }, {
                     title: 'Valor',
                     field: 'exe_valor',
                     type: 'decimal',
                     numeral: '0,0.00',
                     filter: angular.element($('#filtroValor')),
                     filterOperator: '='
-            }, {
+                }, {
                     title: 'Data',
                     field: 'exe_data',
                     type: 'datetime',
                     moment: 'dddd - DD/MM/YYYY'
-            }],
+                }],
             };
         };
 
         /**
-         * Chama função da listagem que carrega os dados
+         * Atualizar dados da listagem
          * @return {void}
          */
         $scope.getData = function () {
-            //Recuperar dados que são carregados na listagem
+            //Recuperar dados para a listagem
             $scope.gridControl.getData();
         };
 
@@ -142,7 +142,6 @@
          * @return {void}
          */
         $scope.showFilter = function () {
-
             var $header = $('#headerSearch');
             var $content = $header.next();
             $content.slideToggle(500, function () {});
