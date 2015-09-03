@@ -9,7 +9,7 @@
             EXTERNAL_COMPONENTS: 'bower_components/', // Componentes externos
             PROJECT_NAME: 'Phoenix Project', // Nome do projeto
             PROJECT_SRC: 'px-project/src/', // Source do projeto
-            LOCALE: 'pt-BR'
+            LOCALE: 'pt-BR' // Locale
         })
         .config(function (pxConfig) {
 
@@ -36,7 +36,7 @@
             // Loop em jsLoader
             // Incluir java scripts
             $.each(jsLoader, function (i, item) {
-                $("<script/>").attr('src', pxConfig.PX_PACKAGE + item.file).appendTo($('head'));
+                $("<script/>").attr('src', item.file).appendTo($('head'));
             });
         });
 })();

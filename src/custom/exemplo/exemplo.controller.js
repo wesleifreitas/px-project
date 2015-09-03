@@ -1,7 +1,7 @@
-(function () {
+(function() {
     'use strict';
 
-    app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element', '$attrs', function (exemploService, pxConfig, $scope, $element, $attrs, $rootScope) {
+    app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element', '$attrs', function(exemploService, pxConfig, $scope, $element, $attrs, $rootScope) {
 
         // Variáveis gerais - Start
 
@@ -25,14 +25,14 @@
                 search: true,
                 type: 'string',
                 filterOperator: '%LIKE%'
-        }, {
+            }, {
                 title: 'CPF: ',
                 descriptionField: true,
                 field: 'exe_cpf',
-        }, {
+            }, {
                 title: '',
                 field: 'exe_id',
-        }]
+            }]
         };
 
         // Variáveis gerais - End
@@ -51,7 +51,7 @@
          * Inicializa listagem
          * @return {void}
          */
-        $scope.gridInit = function () {
+        $scope.gridInit = function() {
             /**
              * Configurações da listagem
              * - fields: Colunas da listagem
@@ -125,7 +125,7 @@
          * Atualizar dados da listagem
          * @return {void}
          */
-        $scope.getData = function () {
+        $scope.getData = function() {
             //Recuperar dados para a listagem
             $scope.gridControl.getData();
         };
@@ -141,10 +141,10 @@
          * Responsável por realizar o efeito de expandir o Filtro Avançado
          * @return {void}
          */
-        $scope.showFilter = function () {
+        $scope.showFilter = function() {
             var $header = $('#headerSearch');
             var $content = $header.next();
-            $content.slideToggle(500, function () {});
+            $content.slideToggle(500, function() {});
             $scope.filterExpand = !$scope.filterExpand;
             $header.blur();
         };
