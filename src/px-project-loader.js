@@ -1,10 +1,10 @@
-$(function () {
+$(function() {
 
     /**
      * Module pxLoader
      */
     angular.module('pxLoader', [])
-        .config(function (pxConfig) {
+        .config(function(pxConfig) {
 
             // CSS
             var cssLoader = [{
@@ -26,11 +26,13 @@ $(function () {
             }, {
                 file: 'https://fonts.googleapis.com/icon?family=Material+Icons' //https://www.google.com/design/icons/
             }, {
+                file: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.css'
+            }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-form-item.css'
             }];
 
             // Loop em cssLoader
-            $.each(cssLoader, function (i, item) {
+            $.each(cssLoader, function(i, item) {
                 //console.info('pxLoader - cssLoader:',item.file);
                 $('<link rel="stylesheet"/>').attr('href', item.file).appendTo($('head'));
             });
@@ -96,7 +98,7 @@ $(function () {
             }];
 
             // Loop em jsLoader
-            $.each(jsLoader, function (i, item) {
+            $.each(jsLoader, function(i, item) {
                 //console.info('pxLoader - jsLoader:',item.file);
                 $("<script/>").attr('src', item.file).appendTo($('head'));
             });
@@ -106,7 +108,7 @@ $(function () {
             var htmlLoader = [];
 
             // loop em htmlLoader
-            $.each(htmlLoader, function (i, item) {
+            $.each(htmlLoader, function(i, item) {
                 //console.info('pxLoader - htmlLoader:',item.file);
                 $('<link rel="import"/>').attr('href', item.file).appendTo($('head'));
             });
