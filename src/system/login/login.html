@@ -11,7 +11,12 @@
                 <button class="btn-reveal"></button>
             </div>
             <div layout="row" layout-align="center center">
-                <md-button class="md-raised" type="submit" name="submit" value="Entrar" ng-disabled="loginForm.$invalid">Entrar</md-button>
+                <div class="btn-group" role="group" aria-label="...">
+                    <!--
+                    <button class="btn btn-default" type="submit" value="Recuperar senha" ng-disabled="loginForm.$invalid">Recuperar senha</button>
+                    -->
+                    <button class="btn btn-default" type="submit" name="submit" value="Entrar" ng-disabled="loginForm.$invalid">Entrar</button>
+                </div>
             </div>
         </fieldset>
     </div>
