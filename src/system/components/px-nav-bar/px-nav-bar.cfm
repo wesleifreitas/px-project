@@ -1,9 +1,5 @@
 <div id="menuDiv" class="navbar bg-dark px-no-radius" ng-controller="pxNavBarCtrl">
-    <cfif CGI.SERVER_NAME EQ "localhost">
-        <cfinvoke component="px-project.src.system.components.px-nav-bar.px-nav-bar" method="getNavBar" returnvariable="pxMenu">
-    <cfelse>
-        <cfinvoke component="px.system.model.menu" method="getMenu" returnvariable="pxMenu">
-    </cfif>
+    <cfinvoke component="px-nav-bar" method="getNavBar" returnvariable="pxMenu">
     <div class="navbar-content px-no-radius">
         <a class="pull-menu" href="#"></a>
         <ul id="menu" class="element-menu px-no-radius">
