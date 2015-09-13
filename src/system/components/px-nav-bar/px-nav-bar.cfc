@@ -284,15 +284,17 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
     </cfquery>
 
 
-    <cfset result               = structNew()> 
+    <cfset result = structNew()> 
 
-    <cfif not fileExists(expandPath('/') & arguments.pathname & qView.com_view)>        
-        <cfset result['com_view_fault'] = qView.com_view> 
+    <cfif fileExists(expandPath('/') & qView.com_view) OR fileExists(expandPath('/') & arguments.pathname & qView.com_view)>
+        <cfset result['com_view_fault'] = ''> 
+    <cfelse>        
+        <cfset result['com_view_fault'] = expandPath('/') & qView.com_view> 
         <cfset qView.com_view  = pxProjectPackage & 'system/components/px-nav-bar/fault-view.html'> 
     </cfif>
     
-    <cfset result['arguments']     = arguments> 
-    <cfset result['qView']   = QueryToArray(qView)> 
+    <cfset result['arguments'] = arguments> 
+    <cfset result['qView'] = QueryToArray(qView)> 
     
     <cfreturn result>
 
