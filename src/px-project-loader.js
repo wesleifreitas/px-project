@@ -26,6 +26,8 @@ $(function() {
             }, {
                 file: 'https://fonts.googleapis.com/icon?family=Material+Icons' //https://www.google.com/design/icons/
             }, {
+                file: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.css'
+            }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.css'
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-form-item.css'

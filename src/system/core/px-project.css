@@ -1,17 +1,15 @@
-body,
-html {
+body, html {
     margin: 0;
     padding: 0;
     height: 100%;
 }
-
 body {
+
     /* http://css-tricks.com/perfect-full-page-background-image/ */
     background: url('../assets/wallpaper/richsolutions.jpg') no-repeat center center fixed;
     background-size: cover;
     background-color: #000000;
 }
-
 hr.px1 {
     border: 0;
     height: 1px;
@@ -21,7 +19,6 @@ hr.px1 {
     margin-top: 1px;
     margin-bottom: 2px;
 }
-
 div.px-view {
     position: absolute;
     bottom: 10px;
@@ -33,36 +30,25 @@ div.px-view {
     color: #666;
     overflow-y: scroll;
 }
-
-div.px-view-header {
-    margin-left: -10px;
-}
-
 #px-main {
     position: relative;
     width: 100%;
     height: 100%;
     float: left;
 }
-
 #px-container {
     position: relative;
     width: 100%;
     height: 100%;
     margin: auto;
-    overflow-x: auto;
-    /* background-color: #FFC000;
-    */
+    overflow-x: auto;    /* background-color: #FFC000;*/
 }
-
 #menuDiv {
     position: relative;
-    width: 100%;
-    /*height: 45px;*/
+    width: 100%;    /*height: 45px;*/
     float: left;
     z-index: 1;
 }
-
 #workDiv {
     margin: 0px auto;
     width: 100%;
@@ -71,15 +57,12 @@ div.px-view-header {
     padding-top: 45px;
     padding-left: 10px;
     padding-right: 10px;
-    padding-bottom: 10px;
-    /* border: 2px solid red;
-    */
+    padding-bottom: 10px;    /* border: 2px solid red;*/
     position: absolute;
     z-index: 0;
     overflow-x: hidden;
     overflow-y: hidden;
 }
-
 #workDiv:after {
     background-color: #FFFFFF;
     opacity: 0.95;
@@ -92,7 +75,6 @@ div.px-view-header {
     bottom: 0px;
     z-index: -1;
 }
-
 #actionDiv {
     position: absolute;
     float: right;
@@ -102,15 +84,11 @@ div.px-view-header {
     padding-top: 45px;
     right: 0;
 }
-
-table.dataTable.select tbody tr,
-table.dataTable thead th:first-child {
+table.dataTable.select tbody tr, table.dataTable thead th:first-child {
     cursor: pointer;
     width: 1%;
 }
-
-table.dataTable tbody tr,
-table.dataTable thead th {
+table.dataTable tbody tr, table.dataTable thead th {
     cursor: pointer;
     white-space: nowrap;
 }
