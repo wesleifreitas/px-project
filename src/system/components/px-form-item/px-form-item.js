@@ -1,15 +1,15 @@
-(function () {
+(function() {
     'use strict';
 
     angular.module('pxFormItem', [])
         .value('pxFormItemConfig', {})
         // pxEnter
         // Evento [ENTER]
-        .directive('pxEnter', ['pxViewHeaderConfig', function (pxViewHeaderConfig) {
-            return function (scope, element, attrs) {
-                element.bind('keydown keypress', function (event) {
+        .directive('pxEnter', ['pxViewHeaderConfig', function(pxViewHeaderConfig) {
+            return function(scope, element, attrs) {
+                element.bind('keydown keypress', function(event) {
                     if (event.which === 13) {
-                        scope.$apply(function () {
+                        scope.$apply(function() {
                             scope.$eval(attrs.pxEnter);
                         });
                         event.preventDefault();
@@ -19,16 +19,16 @@
         }])
         // pxValidNumber
         // Digitar somente números
-        .directive('pxValidNumber', ['pxViewHeaderConfig', function (pxViewHeaderConfig) {
+        .directive('pxValidNumber', ['pxViewHeaderConfig', function(pxViewHeaderConfig) {
             return {
                 require: '?ngModel',
-                link: function (scope, element, attrs, ngModelCtrl) {
+                link: function(scope, element, attrs, ngModelCtrl) {
 
                     if (!ngModelCtrl) {
                         return;
                     }
 
-                    ngModelCtrl.$parsers.push(function (value) {
+                    ngModelCtrl.$parsers.push(function(value) {
                         var clean = value.replace(/[^0-9]+/g, '');
                         if (value !== clean) {
                             ngModelCtrl.$setViewValue(clean);
@@ -37,7 +37,7 @@
                         return clean;
                     });
 
-                    element.bind('keypress', function (event) {
+                    element.bind('keypress', function(event) {
                         if (event.keyCode === 32) {
                             event.preventDefault();
                         }
@@ -47,7 +47,7 @@
         }])
         // pxBrCnpjMask
         // 99.999.999/9999-99
-        .directive('pxBrCnpjMask', ['pxViewHeaderConfig', '$compile', function (pxViewHeaderConfig, $compile) {
+        .directive('pxBrCnpjMask', ['pxViewHeaderConfig', '$compile', function(pxViewHeaderConfig, $compile) {
             return {
                 priority: 100,
                 restrict: 'A',
@@ -55,7 +55,7 @@
                     cleanValue: '@cleanValue'
                 },
                 require: '?ngModel',
-                link: function (scope, element, attrs, ngModelCtrl) {
+                link: function(scope, element, attrs, ngModelCtrl) {
 
                     if (!ngModelCtrl) {
                         return;
@@ -68,7 +68,7 @@
                         $compile(element)(scope);
                     }
 
-                    ngModelCtrl.$parsers.push(function (value) {
+                    ngModelCtrl.$parsers.push(function(value) {
                         var clean = value.replace(/[^0-9]+/g, '');
                         if (value !== clean) {
                             // Atualizar campo com o valor digitado
@@ -82,7 +82,7 @@
         }])
         // pxBrCpfMask
         // 999.999.999-99
-        .directive('pxBrCpfMask', ['pxViewHeaderConfig', '$compile', function (pxViewHeaderConfig, $compile) {
+        .directive('pxBrCpfMask', ['pxViewHeaderConfig', '$compile', function(pxViewHeaderConfig, $compile) {
             return {
                 priority: 100,
                 restrict: 'A',
@@ -90,7 +90,7 @@
                     cleanValue: '@cleanValue'
                 },
                 require: '?ngModel',
-                link: function (scope, element, attrs, ngModelCtrl) {
+                link: function(scope, element, attrs, ngModelCtrl) {
 
                     if (!ngModelCtrl) {
                         return;
@@ -103,7 +103,7 @@
                         $compile(element)(scope);
                     }
 
-                    ngModelCtrl.$parsers.push(function (value) {
+                    ngModelCtrl.$parsers.push(function(value) {
                         var clean = value.replace(/[^0-9]+/g, '');
                         if (value !== clean) {
                             // Atualizar campo com o valor digitado
@@ -118,7 +118,7 @@
         // pxBrPhoneMask
         // (99) 9999-9999 / (99) 9999-9999?9
         // (99) 99999-999
-        .directive('pxBrPhoneMask', ['pxViewHeaderConfig', '$compile', function (pxViewHeaderConfig, $compile) {
+        .directive('pxBrPhoneMask', ['pxViewHeaderConfig', '$compile', function(pxViewHeaderConfig, $compile) {
             return {
                 priority: 100,
                 restrict: 'A',
@@ -129,7 +129,7 @@
                 },
                 bindToController: false,
                 require: '?ngModel',
-                link: function (scope, element, attrs, ngModelCtrl) {
+                link: function(scope, element, attrs, ngModelCtrl) {
 
                     if (!ngModelCtrl) {
                         return;
@@ -143,7 +143,7 @@
                     }
 
                     // Evento focusout
-                    element.bind('focusout', function (event) {
+                    element.bind('focusout', function(event) {
                         if (scope.cleanValue.length < 11 || !angular.isDefined(scope.validPhone8)) {
                             // Atualizar uiMask para telefone com 8 dígitos
                             attrs.$set('uiMask', '(99) 9999-9999');
@@ -156,7 +156,7 @@
                     });
 
                     // Evento focusin
-                    element.bind('focusin', function (event) {
+                    element.bind('focusin', function(event) {
                         if (!angular.isDefined(scope.cleanValue)) {
                             scope.cleanValue = '';
                         }
@@ -173,7 +173,7 @@
                         }
                     });
 
-                    element.bind('keyup', function (event) {
+                    element.bind('keyup', function(event) {
                         // Se possuir 11 dígitos e não estiver validado
                         // Telefone com 11 dígitos é um telefone com 9 dígitos mais dois dígitos do DDD
                         if (scope.cleanValue.length === 11 && scope.validPhone9 === false || !angular.isDefined(scope.validPhone9)) {
@@ -198,7 +198,7 @@
                         }
                     });
 
-                    ngModelCtrl.$parsers.push(function (value) {
+                    ngModelCtrl.$parsers.push(function(value) {
                         var clean = value.replace(/[^0-9]+/g, '');
                         scope.cleanValue = clean;
                         if (value !== clean) {
@@ -212,7 +212,7 @@
             };
         }])
         // pxNumberMask
-        .directive('pxNumberMask', ['pxViewHeaderConfig', '$filter', '$locale', function (pxViewHeaderConfig, $filter, $locale) {
+        .directive('pxNumberMask', ['pxViewHeaderConfig', '$filter', '$locale', function(pxViewHeaderConfig, $filter, $locale) {
             return {
                 restrict: 'A',
                 scope: {
@@ -227,9 +227,12 @@
                     usePositiveSymbol: '=pxUsePositiveSymbol'
                 },
                 require: '?ngModel',
-                link: function (scope, element, attrs, ngModelCtrl) {
+                link: function(scope, element, attrs, ngModelCtrl) {
 
                     //console.info('$locale', $locale);
+                    element.css({
+                        zIndex: 0
+                    });
 
                     if (!ngModelCtrl) {
                         return;
@@ -261,7 +264,7 @@
                     var limit = false;
                     var emptyValue = true;
 
-                    ngModelCtrl.$parsers.push(function (value) {
+                    ngModelCtrl.$parsers.push(function(value) {
 
                         var clean = '';
                         if (value !== '0' && (value !== '' || emptyValue === false)) {
@@ -374,7 +377,7 @@
             };
         }])
         // pxComplete
-        .directive('pxComplete', function (pxConfig, pxUtil, $parse, $http, $sce, $timeout) {
+        .directive('pxComplete', function(pxConfig, pxUtil, $parse, $http, $sce, $timeout) {
             return {
                 restrict: 'EA',
                 scope: {
@@ -394,7 +397,7 @@
                 require: '?ngModel',
                 templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-complete.html',
 
-                link: function (scope, element, attrs, ngModelCtrl) {
+                link: function(scope, element, attrs, ngModelCtrl) {
 
                     if (!ngModelCtrl) {
                         return;
@@ -410,11 +413,11 @@
                     scope.minLength = 3;
                     scope.searchStr = null;
 
-                    var isNewSearchNeeded = function (newTerm, oldTerm) {
+                    var isNewSearchNeeded = function(newTerm, oldTerm) {
                         return newTerm.length >= scope.minLength && newTerm !== oldTerm;
                     };
 
-                    scope.processResults = function (response, str, arrayFields) {
+                    scope.processResults = function(response, str, arrayFields) {
                         if (response && response.length > 0) {
 
                             scope.results = [];
@@ -463,7 +466,7 @@
                         }
                     };
 
-                    scope.searchTimerComplete = function (str) {
+                    scope.searchTimerComplete = function(str) {
                         // Início da pesquisa
 
                         var arrayFields = JSON.parse(scope.fields);
@@ -471,7 +474,7 @@
                         if (str.length >= scope.minLength) {
                             if (scope.localQuery) {
 
-                                console.warn('px-complete', 'função localQuery não implementada!');
+                                console.warn('px-complete:', 'função localQuery não implementada!');
 
                                 scope.searching = false;
                                 scope.processResults(JSON.parse(scope.localQuery), str);
@@ -479,7 +482,7 @@
                             } else {
 
                                 // Loop na configuração de campos
-                                angular.forEach(arrayFields, function (index) {
+                                angular.forEach(arrayFields, function(index) {
                                     if (index.search) {
                                         // Valor do filtro
                                         index.filterObject = {};
@@ -511,7 +514,7 @@
                                     url: scope.url,
                                     dataType: 'json',
                                     params: params
-                                }).success(function (response, status, headers, config) {
+                                }).success(function(response, status, headers, config) {
                                     console.info('response', response);
                                     if (!angular.isDefined(scope.responseQuery) || scope.responseQuery === '') {
                                         scope.responseQuery = 'qQuery';
@@ -521,7 +524,7 @@
                                     scope.processResults(((scope.responseQuery) ? response[scope.responseQuery] : response), str, arrayFields);
 
                                 }).
-                                error(function (data, status, headers, config) {
+                                error(function(data, status, headers, config) {
                                     // Erro
                                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                                 });
@@ -529,23 +532,23 @@
                         }
                     };
 
-                    scope.hideResults = function () {
-                        scope.hideTimer = $timeout(function () {
+                    scope.hideResults = function() {
+                        scope.hideTimer = $timeout(function() {
                             scope.showDropdown = false;
                         }, scope.pause);
                     };
 
-                    scope.resetHideResults = function () {
+                    scope.resetHideResults = function() {
                         if (scope.hideTimer) {
                             $timeout.cancel(scope.hideTimer);
                         }
                     };
 
-                    scope.hoverRow = function (index) {
+                    scope.hoverRow = function(index) {
                         scope.currentIndex = index;
                     };
 
-                    scope.keyPressed = function (event) {
+                    scope.keyPressed = function(event) {
                         if (!(event.which === 38 || event.which === 40 || event.which === 13)) {
                             if (!scope.searchStr || scope.searchStr === '') {
                                 scope.showDropdown = false;
@@ -562,7 +565,7 @@
 
                                 scope.searching = true;
 
-                                scope.searchTimer = $timeout(function () {
+                                scope.searchTimer = $timeout(function() {
                                     scope.searchTimerComplete(scope.searchStr);
                                 }, scope.pause);
                             }
@@ -571,7 +574,7 @@
                         }
                     };
 
-                    scope.selectResult = function (result) {
+                    scope.selectResult = function(result) {
 
                         scope.searchStr = scope.lastSearchTerm = result.title;
                         scope.selectedItem = result.item;
@@ -584,7 +587,7 @@
 
                     inputField.on('keyup', scope.keyPressed);
 
-                    element.on('keyup', function (event) {
+                    element.on('keyup', function(event) {
                         if (event.which === 40) {
                             if (scope.results && (scope.currentIndex + 1) < scope.results.length) {
                                 scope.currentIndex++;
