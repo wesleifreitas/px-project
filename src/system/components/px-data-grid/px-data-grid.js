@@ -1,9 +1,9 @@
-(function () {
+(function() {
     'use strict';
 
     angular.module('pxDataGrid', ['ngSanitize'])
         .value('pxDataGridConfig', {})
-        .directive('pxDataGrid', ['pxDataGridConfig', 'pxConfig', 'pxUtil', '$timeout', '$sce', function (pxDataGridConfig, pxConfig, pxUtil, $timeout, $sce) {
+        .directive('pxDataGrid', ['pxDataGridConfig', 'pxConfig', 'pxUtil', '$timeout', '$sce', function(pxDataGridConfig, pxConfig, pxUtil, $timeout, $sce) {
             return {
                 restrict: 'E',
                 replace: true,
@@ -20,9 +20,9 @@
                     dataInit: '@pxDataInit',
                     control: '='
                 },
-                link: function (scope, element, attrs) {
+                link: function(scope, element, attrs) {
 
-                    scope.$watch('fields', function (newValue, oldValue) {
+                    scope.$watch('fields', function(newValue, oldValue) {
 
                         // Transformar valor String para Array
                         if (newValue !== '') {
@@ -40,7 +40,7 @@
 
                         var i = 0;
                         var aoColumnsData = {};
-                        angular.forEach(newValue, function (index) {
+                        angular.forEach(newValue, function(index) {
 
                             if (i === 0) {
                                 scope.columns += '<th class="text-left"><input name="select_all" value="1" type="checkbox"></th>';
@@ -85,7 +85,7 @@
                          * Recupera dados que são carregados na listagem
                          * @return {[type]} [description]
                          */
-                        scope.internalControl.getData = function () {
+                        scope.internalControl.getData = function() {
 
                             scope.getData(0, scope.rows);
                         };
@@ -104,7 +104,7 @@
                     $timeout(scope.init, 0);
 
                 },
-                controller: function ($scope, $element, $attrs, $http) {
+                controller: function($scope, $element, $attrs, $http) {
 
                     // Verifica se a grid a está preparada para receber os dados
                     $scope.pxTableReady = false;
@@ -112,14 +112,14 @@
                     // A página atual inicia-se em 0
                     $scope.currentPage = 0;
 
-                    $scope.$watch('pxTableReady', function (newValue, oldValue) {
+                    $scope.$watch('pxTableReady', function(newValue, oldValue) {
 
                         if (newValue === true) {
                             $timeout($scope.pxDataGridGetData, 0);
                         }
                     });
 
-                    $scope.reset = function () {
+                    $scope.reset = function() {
 
                         // A página atual inicia-se em 0
                         $scope.currentPage = 0;
@@ -131,7 +131,7 @@
                         $scope.internalControl.selectedItems = [];
                     };
 
-                    $scope.pxDataGridGetData = function () {
+                    $scope.pxDataGridGetData = function() {
                         // Armazena linhas selecionadas (checkbox)
                         var rows_selected = [];
                         $('#pxTable').dataTable({
@@ -162,12 +162,12 @@
                                 'searchable': false,
                                 'orderable': false,
                                 'className': 'dt-body-center',
-                                'render': function (data, type, full, meta) {
+                                'render': function(data, type, full, meta) {
                                     return '<input type="checkbox">';
                                 }
-                        }],
+                            }],
                             "order": [1, 'asc'],
-                            "rowCallback": function (row, data, dataIndex) {
+                            "rowCallback": function(row, data, dataIndex) {
                                 // Linhda ID
                                 var rowId = data.pxDataGridRowNumber;
 
@@ -191,7 +191,7 @@
 
                         // Evento page.dt
                         // https://datatables.net/reference/event/page
-                        $('#pxTable').on('page.dt', function () {
+                        $('#pxTable').on('page.dt', function() {
 
                             var info = table.page.info();
 
@@ -214,7 +214,7 @@
                         });
 
                         // Atualizar dataTable (Selecionar tudo)
-                        $scope.updateDataTableSelectAllCtrl = function (table) {
+                        $scope.updateDataTableSelectAllCtrl = function(table) {
                             var $table = table.table().node();
                             var $chkbox_all = $('tbody input[type="checkbox"]', $table);
                             var $chkbox_checked = $('tbody input[type="checkbox"]:checked', $table);
@@ -244,7 +244,7 @@
                         };
 
                         // Evento click checkbox
-                        $('#pxTable tbody').on('click', 'input[type="checkbox"]', function (e) {
+                        $('#pxTable tbody').on('click', 'input[type="checkbox"]', function(e) {
                             var $row = $(this).closest('tr');
 
                             // Dados da linha
@@ -278,7 +278,7 @@
                             // Atualizar dataTable (selecionar tudo)
                             $scope.updateDataTableSelectAllCtrl(table);
 
-                            $scope.$apply(function () {
+                            $scope.$apply(function() {
                                 // Chama função definida em px-item-click
                                 $scope.$eval($scope.itemClick);
                             });
@@ -287,12 +287,12 @@
                         });
 
                         // Evento click células
-                        $('#pxTable').on('click', 'tbody td, thead th:first-child', function (e) {
+                        $('#pxTable').on('click', 'tbody td, thead th:first-child', function(e) {
                             $(this).parent().find('input[type="checkbox"]').trigger('click');
                         });
 
                         // Evento click (selecionar tudo)
-                        $('#pxTable thead input[name="select_all"]').on('click', function (e) {
+                        $('#pxTable thead input[name="select_all"]').on('click', function(e) {
                             if (this.checked) {
                                 $('#pxTable tbody input[type="checkbox"]:not(:checked)').trigger('click');
                             } else {
@@ -303,7 +303,7 @@
                         });
 
                         // Evento draw
-                        table.on('draw', function () {
+                        table.on('draw', function() {
                             // Atualizar dataTable (Selecionar tudo)
                             $scope.updateDataTableSelectAllCtrl(table);
                         });
@@ -316,12 +316,12 @@
                      * @param  {number} rowTo   linha final
                      * @return {void}
                      */
-                    $scope.getData = function (rowFrom, rowTo) {
+                    $scope.getData = function(rowFrom, rowTo) {
 
                         var arrayFields = JSON.parse($scope.fields);
 
                         // Loop na configuração de campos
-                        angular.forEach(arrayFields, function (index) {
+                        angular.forEach(arrayFields, function(index) {
 
                             // Valor do filtro
                             index.filterObject = {};
@@ -331,11 +331,11 @@
                             // filterObject armazena dados do filtro que será realizado no campo
                             if (angular.isDefined(index.filter)) {
 
-                                var selectorName = index.filter.selector;
-                                var selectorValue = index.filter.selector.replace('#', '');
+                                var selectorName = '#' + index.filter;                 
+                                var selectorValue = index.filter;
 
                                 // Verifica se o filtro é um px-complete
-                                if (angular.isDefined(angular.element($(index.filter.selector + '_pxComplete').get(0)).scope())) {
+                                if (angular.isDefined(angular.element($(selectorName + '_pxComplete').get(0)).scope())) {
 
                                     selectorName += '_pxComplete';
                                     selectorValue = 'selectedItem';
@@ -418,13 +418,12 @@
                             $('#pxTable').DataTable().clear().draw();
                         }
 
-
                         $http({
                             method: 'POST',
                             url: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.cfc?method=getData',
                             dataType: 'json',
                             params: params
-                        }).success(function (result) {
+                        }).success(function(result) {
 
                             console.info('grid getData success', result);
                             //console.info('grid getData success JSON.stringify',JSON.stringify(result,null,"    "));
@@ -436,7 +435,7 @@
                                 if (result.qQuery.length > 0) {
 
                                     // Loop na query
-                                    angular.forEach(result.qQuery, function (index) {
+                                    angular.forEach(result.qQuery, function(index) {
 
                                         $scope.currentRecordCount++;
 
@@ -446,7 +445,7 @@
                                         data.pxDataGridRowNumber = $scope.currentRecordCount;
 
                                         // Loop nas colunas da grid
-                                        angular.forEach(JSON.parse($scope.fields), function (item) {
+                                        angular.forEach(JSON.parse($scope.fields), function(item) {
 
                                             if (!angular.isDefined(index[item.field])) {
                                                 // Dados por campo
@@ -462,25 +461,25 @@
                                                 var formatter;
 
                                                 switch (item.stringMask) {
-                                                case 'cpf':
-                                                    formatter = new StringMask('###.###.###-##');
-                                                    break;
-                                                case 'cnpj':
-                                                    data[item.field] = '##.###.###/####-##';
-                                                    break;
-                                                case 'cep':
-                                                    data[item.field] = '#####-###';
-                                                    break;
-                                                case 'brPhone':
-                                                    if (data[item.field].length === 11) {
-                                                        formatter = new StringMask('(##) #####-####');
-                                                    } else {
-                                                        formatter = new StringMask('(##) #####-####');
-                                                    }
-                                                    break;
-                                                default:
-                                                    formatter = new StringMask(item.stringMask);
-                                                    break;
+                                                    case 'cpf':
+                                                        formatter = new StringMask('###.###.###-##');
+                                                        break;
+                                                    case 'cnpj':
+                                                        data[item.field] = '##.###.###/####-##';
+                                                        break;
+                                                    case 'cep':
+                                                        data[item.field] = '#####-###';
+                                                        break;
+                                                    case 'brPhone':
+                                                        if (data[item.field].length === 11) {
+                                                            formatter = new StringMask('(##) #####-####');
+                                                        } else {
+                                                            formatter = new StringMask('(##) #####-####');
+                                                        }
+                                                        break;
+                                                    default:
+                                                        formatter = new StringMask(item.stringMask);
+                                                        break;
                                                 }
                                                 data[item.field] = formatter.apply(data[item.field]);
                                             }
@@ -495,12 +494,12 @@
                                             // http://numeraljs.com/
                                             if (item.numeral) {
                                                 switch (item.numeral) {
-                                                case 'currency':
-                                                    data[item.field] = numeral(data[item.field]).format('0,0.00');
-                                                    break;
-                                                default:
-                                                    data[item.field] = numeral(data[item.field]).format(item.numeral);
-                                                    break;
+                                                    case 'currency':
+                                                        data[item.field] = numeral(data[item.field]).format('0,0.00');
+                                                        break;
+                                                    default:
+                                                        data[item.field] = numeral(data[item.field]).format(item.numeral);
+                                                        break;
                                                 }
                                             }
                                         });
@@ -531,7 +530,7 @@
                                 }
                             }
                         }).
-                        error(function (data, status, headers, config) {
+                        error(function(data, status, headers, config) {
                             // Erro
                             alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                         });
@@ -539,5 +538,5 @@
                     };
                 }
             };
-    }]);
+        }]);
 })();

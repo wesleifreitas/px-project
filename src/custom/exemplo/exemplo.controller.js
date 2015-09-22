@@ -63,13 +63,13 @@
                     title: 'id',
                     field: 'exe_id',
                     type: 'int',
-                    filter: angular.element($('#filtroId')),
+                    filter: 'filtroId',
                     filterOperator: '='
                 }, {
                     title: 'Status',
                     field: 'exe_ativo_label',
                     type: 'bit',
-                    filter: angular.element($('#filtroStatus')),
+                    filter: 'filtroStatus',
                     filterOperator: '=',
                     filterOptions: {
                         field: 'exe_ativo',
@@ -79,13 +79,13 @@
                     title: 'Nome',
                     field: 'exe_nome',
                     type: 'string',
-                    filter: angular.element($('#filtroNome')),
+                    filter: 'filtroNome',
                     filterOperator: '%LIKE%'
                 }, {
                     title: 'Complete',
                     field: 'exe_complete',
                     type: 'bit',
-                    filter: angular.element($('#filtroComplete')),
+                    filter: 'filtroComplete',
                     filterOperator: '=',
                     filterOptions: {
                         field: 'exe_id',
@@ -96,21 +96,21 @@
                     field: 'exe_cpf',
                     type: 'int',
                     stringMask: '###.###.###-##',
-                    filter: angular.element($('#filtroCPF')),
+                    filter: 'filtroCPF',
                     filterOperator: '='
                 }, {
                     title: 'Telefone',
                     field: 'exe_telefone',
                     type: 'string',
                     stringMask: 'brPhone',
-                    filter: angular.element($('#filtroTelefone')),
+                    filter: 'filtroTelefone',
                     filterOperator: '='
                 }, {
                     title: 'Valor',
                     field: 'exe_valor',
                     type: 'decimal',
                     numeral: '0,0.00',
-                    filter: angular.element($('#filtroValor')),
+                    filter: 'filtroValor',
                     filterOperator: '='
                 }, {
                     title: 'Data',
