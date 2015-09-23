@@ -94,6 +94,8 @@ $(function() {
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.js'
             }, {
+                file: pxConfig.PX_PACKAGE + 'system/components/px-container/px-container.js'
+            }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.js'
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-form-item.js'
