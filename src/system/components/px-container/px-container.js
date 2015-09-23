@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    angular.module('pxFixed', [])
+    angular.module('pxContainer', [])
         .value('pxFixedConfig', {})
         // pxFixed       
         .directive('pxFixed', ['pxFixedConfig', function(pxViewHeaderConfig) {
