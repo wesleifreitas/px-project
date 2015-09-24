@@ -1,21 +1,30 @@
-(function () {
+(function() {
     'use strict';
 
     angular.module('pxNavBar', [])
         .value('pxNavBarConfig', {})
-        .directive('pxNavBar', ['pxNavBarConfig', 'pxConfig', function (pxDataGridConfig, pxConfig) {
+        .directive('pxNavBar', ['pxNavBarConfig', 'pxConfig', '$compile', '$parse', '$timeout', function(pxDataGridConfig, pxConfig, $compile, $parse, $timeout) {
             return {
                 restrict: 'E',
                 replace: true,
                 transclude: false,
-                templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfm',
-                link: function (scope, element, attrs) {
+                templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.html',
+                link: function(scope, element, attrs) {
 
                     scope.logo = pxConfig.PX_PACKAGE + 'system/assets/richsolutions/richsolutions_bola_200x200.jpg';
+
+                    scope.$watch(attrs.content, function() {
+                        element.html($parse(attrs.content)(scope));
+                        $compile(element.contents())(scope);
+                    }, true);
+
+                    // Inicializa menu
+                    $timeout(scope.getNavBar, 1000);
                 }
             };
-    }])
-        .controller('pxNavBarCtrl', ['pxConfig', '$scope', '$http', function (pxConfig, $scope, $http) {
+        }])
+        .controller('pxNavBarCtrl', ['pxConfig', '$scope', '$http', function(pxConfig, $scope, $http) {
+
             $scope.templates = [{
                 name: '?.html',
                 url: pxConfig.PX_PACKAGE + '?.html'
@@ -26,9 +35,27 @@
 
             $scope.template = $scope.templates[1];
 
-            //console.log($scope.template);
+            $scope.navBar = '<div class="navbar-content px-no-radius"><a class="pull-menu" href=""></a><ul id="menu" class="element-menu px-no-radius"><span class="element bg-dark" title="">Por favor aguarde, carregando barra de navegação...</span><div class="element place-right px-pointer" ng-click="toggleRight()"><a class="element-menu"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></a></div><span class="element-divider place-right"></span><button class="element image-button image-left place-right bg-dark">Phoenix Project - pxproject.com.br<img id="topMenuImgLogo" ng-src="{{logo}}" /></button></ul></div>';
 
-            $scope.showView = function (view) {
+            $scope.getNavBar = function() {
+
+                var params = {};
+
+                $http({
+                    method: 'POST',
+                    url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
+                    params: params
+                }).success(function(response) {
+                    //console.info('getNavBar: ', response);                    
+                    $scope.navBar = response.navBar;
+                }).
+                error(function(data, status, headers, config) {
+                    // Erro
+                    alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+                });
+            };
+
+            $scope.showView = function(view) {
 
                 var params = {};
                 params.com_id = view;
@@ -39,7 +66,7 @@
                     method: 'POST',
                     url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getView',
                     params: params
-                }).success(function (result) {
+                }).success(function(result) {
 
                     var headerView = result.qView[0].MEN_NOMECAMINHO.split(result.qView[0].MEN_NOMECAMINHO.split('»')[result.qView[0].MEN_NOMECAMINHO.split('»').length - 1]);
 
@@ -55,10 +82,10 @@
                     $scope.templates[1].url = result.qView[0].COM_VIEW;
 
                 }).
-                error(function (data, status, headers, config) {
+                error(function(data, status, headers, config) {
                     // Erro
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 });
             };
-    }]);
+        }]);
 })();

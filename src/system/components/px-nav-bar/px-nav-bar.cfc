@@ -19,12 +19,21 @@
         hint     ="Data source name">
 
     <cfargument 
+        name     ="pro_id"  
+        type     ="numeric"  
+        required ="false"   
+        default  ="0"          
+        hint     ="Identificação do projeto">
+
+    <cfargument 
         name     ="per_id"  
         type     ="numeric"  
         required ="false"   
         default  ="-1"          
         hint     ="Código do perfil">
 
+    <cfset response = structNew()>
+        
     <cfquery datasource="#arguments.dsn#" name="qMenu">
 
         SELECT
@@ -40,7 +49,8 @@
                 FROM 
                     px.menu AS submenu 
                 WHERE 
-                    menu.men_id = submenu.men_idPai 
+                    pro_id      IN(#arguments.pro_id#)
+                AND menu.men_id = submenu.men_idPai 
                 AND men_ativo   = 1
                 AND men_sistema = 1
             ) AS count_submenu
@@ -50,14 +60,16 @@
                 FROM 
                     px.menu AS submenu 
                 WHERE 
-                    submenu.men_idPai   = menu.men_idPai
+                    pro_id      IN(#arguments.pro_id#)
+                AND submenu.men_idPai   = menu.men_idPai
                 AND men_ativo           = 1 
                 AND men_sistema         = 1
             ) AS count_menu
         FROM
             px.menu AS menu
         WHERE
-            men_ativo   = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
+            pro_id      IN(#arguments.pro_id#)
+        AND men_ativo   = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
         AND men_sistema = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
         ORDER BY
             menu.men_idPai
@@ -70,14 +82,29 @@
         
 
         <cfset getRecursiveNavBar(
-            Dados = qMenu) />
+            data = qMenu) />
 
     </cfsavecontent>
 
     
     <!--- <cfwddx action="cfml2js" input="#pxMenu#" toplevelvariable="menuString"/> --->
-
-    <cfreturn pxMenu>
+    <cfset response['navBar'] = '<div class="navbar-content px-no-radius">
+        <a class="pull-menu" href=""></a>
+        <ul id="menu" class="element-menu px-no-radius">
+            #pxMenu#
+            <div class="element place-right px-pointer" ng-click="toggleRight()">
+                <a class="element-menu">
+                    <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                </a>
+                
+            </div>
+            <span class="element-divider place-right"></span>
+            <button class="element image-button image-left place-right bg-dark">Phoenix Project - pxproject.com.br
+                <img id="topMenuImgLogo" ng-src="{{logo}}" />
+            </button>
+        </ul>
+    </div>'>
+    <cfreturn response>
 
 </cffunction>
 
@@ -92,10 +119,10 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
  
     <!--- Define argumentos. --->
     <cfargument
-        name     ="Dados"
+        name     ="data"
         type     ="query"
         required ="true"
-        hint     ="Dados dos menus"
+        hint     ="data dos menus"
         />
  
     <cfargument
@@ -120,7 +147,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
             ,count_submenu
             ,count_menu
         FROM
-            ARGUMENTS.Dados
+            arguments.data
         WHERE
             men_ativo    = <cfqueryparam cfsqltype="cf_sql_bit"     value="1"/>
         AND men_sistema  = <cfqueryparam cfsqltype="cf_sql_bit"     value="1"/>
@@ -148,7 +175,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                     Chama função recursiva.
                 --->
                 <cfset getRecursiveNavBar(
-                    Dados = ARGUMENTS.Dados,
+                    data = arguments.data,
                     men_idPai = LOCAL.qMenu.men_id
                     ) />
             
