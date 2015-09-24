@@ -1,3 +1,6 @@
 div.px-view-header {
 	margin-left: -10px;
 }
+div.px-header {
+	z-index: 100;
+}
