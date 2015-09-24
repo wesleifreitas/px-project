@@ -16,10 +16,6 @@
 
                     scope.left = scope.left || 0;
 
-                    console.info('scope.left', scope.left);
-                    console.info('scope.wrapper', scope.wrapper);
-
-                    
                     if (!scope.hfixed && !scope.vfixed) {
                         console.warn('px-fixed:', 'px-fixed utilizado sem px-hfixed e/ou px-vfixed');
                         return;
@@ -29,8 +25,14 @@
                     //element.get(0).style.position = "relative";
                     element.css({
                         width: '100%',
-                        position: "relative"
+                        position: "relative",
                     });
+
+                    /*
+                    $(scope.wrapper).css({
+                        zIndex: 100
+                    });
+                    */
 
                     $(scope.wrapper).scroll(function() {
                         // console.info(window.getComputedStyle(element.get(0)).getPropertyValue('left'));
