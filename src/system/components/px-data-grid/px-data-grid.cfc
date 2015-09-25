@@ -56,7 +56,7 @@
 		name     ="fields" 	
 		type	 ="string"
 		required ="false"
-		default  ="250"	
+		default  =""	
 		hint     ="Campos do px-data-grid">
 
 	<cfargument 
@@ -144,4 +144,87 @@
 
 	<cfreturn result>
 
+</cffunction>
+
+<cffunction 
+	name         ="removeData" 
+	access       ="remote" 
+	output       ="false" 
+	returntype   ="Any" 
+	returnformat ="JSON">
+
+	<cfargument 
+		name     ="dsn"		
+		type     ="string"
+		required ="false"	
+		default  ="px_project_sql"	
+		hint     ="Data source name">
+
+	<cfargument 
+		name     ="table" 	
+		type	 ="string"
+		required ="false"
+		default  =""	
+		hint     ="Tabela do banco de dados">
+
+	<cfargument 
+		name     ="fields" 	
+		type	 ="string"
+		required ="false"
+		default  =""	
+		hint     ="Campos do px-data-grid">
+
+	<cfargument 
+		name     ="selectedItems" 	
+		type	 ="string"
+		required ="false"
+		default  =""	
+		hint     ="Itens selecionados">
+
+	<cfset result = structNew()>
+	<cfset result['arguments']  = arguments>
+
+	<cftry>	
+		<cfset arguments.fields 		= decode(arguments.fields)>
+		<cfset arguments.selectedItems 	= decode(arguments.selectedItems)>
+
+		<!--- Utilize apenas para testes --->
+		<!--- <cfset dump = arrayNew(1)> --->
+		<cfloop array="#arguments.selectedItems#" index="i">	
+			<cfquery name="qRemove" datasource="#arguments.dsn#">
+				<!---
+				-- Utilize a instrução abaixo (SELECT) para testes
+				-- Para verificar quais registros estão sendos removidos por exemplo
+				-- Note que no final do loop existe uma variável (dump) para tal ação
+				SELECT						
+					*
+				FROM
+					#arguments.table#	
+				--->
+				DELETE FROM #arguments.table#
+
+				<!--- Constroi condição da instrução DELETE (SQL)--->
+				<cfset whereInit = 'WHERE'>
+				<cfloop array="#arguments.fields#" index="j">		
+					<cfif isDefined("j.field") AND isDefined("j.pk") AND j.pk>						
+						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i[j.field]#">
+						<cfset whereInit = 'AND '>	
+					</cfif>																			
+				</cfloop>		
+			</cfquery>			
+			<!--- <cfset arrayAppend(dump, qRemove)> --->		
+		</cfloop>
+		
+		<!--- Utilize apenas para testes --->
+		<!--- <cfset result['dump'] = dump>	--->	
+		<cfset result['success']  	= true>
+		
+		<cfcatch>
+			<cfset result['success']  = false>
+			<cfset result['cfcatch']  = cfcatch>
+		</cfcatch>
+
+	</cftry>
+
+	<cfreturn result>
 </cffunction>

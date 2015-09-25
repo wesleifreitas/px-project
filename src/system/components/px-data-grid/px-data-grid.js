@@ -3,7 +3,7 @@
 
     angular.module('pxDataGrid', ['ngSanitize'])
         .value('pxDataGridConfig', {})
-        .directive('pxDataGrid', ['pxDataGridConfig', 'pxConfig', 'pxUtil', '$timeout', '$sce', function(pxDataGridConfig, pxConfig, pxUtil, $timeout, $sce) {
+        .directive('pxDataGrid', ['pxDataGridConfig', 'pxConfig', 'pxDataGridService', 'pxUtil', '$timeout', '$sce', function(pxDataGridConfig, pxConfig, pxDataGridService, pxUtil, $timeout, $sce) {
             return {
                 restrict: 'E',
                 replace: true,
@@ -90,6 +90,15 @@
                             scope.getData(0, scope.rows);
                         };
 
+                        /**
+                         * Remove itens (selecionados) da listagem
+                         * @return {[type]} [description]
+                         */
+                        scope.internalControl.remove = function() {
+
+                            scope.remove();
+                        };
+
                         // Armazena itens selecionados da listagem
                         scope.internalControl.selectedItems = [];
 
@@ -105,6 +114,8 @@
 
                 },
                 controller: function($scope, $element, $attrs, $http) {
+
+                    var vm = this;
 
                     // Verifica se a grid a está preparada para receber os dados
                     $scope.pxTableReady = false;
@@ -133,7 +144,8 @@
 
                     $scope.pxDataGridGetData = function() {
                         // Armazena linhas selecionadas (checkbox)
-                        var rows_selected = [];
+                        $scope.rowsSelected = [];
+
                         $('#pxTable').dataTable({
                             "language": {
                                 processing: "Processando...",
@@ -172,7 +184,7 @@
                                 var rowId = data.pxDataGridRowNumber;
 
                                 // Se a linha ID está na lista de IDs de linha selecionados
-                                if ($.inArray(rowId, rows_selected) !== -1) {
+                                if ($.inArray(rowId, $scope.rowsSelected) !== -1) {
                                     $(row).find('input[type="checkbox"]').prop('checked', true);
                                     $(row).addClass('selected');
                                 }
@@ -188,6 +200,8 @@
                         }
 
                         var table = $('#pxTable').DataTable();
+
+                        $scope.internalControl.table = $('#pxTable').DataTable();
 
                         // Evento page.dt
                         // https://datatables.net/reference/event/page
@@ -254,17 +268,17 @@
                             var rowId = data.pxDataGridRowNumber;
 
                             // Se caixa de seleção está marcada e linha ID não está na lista de IDs de linha selecionados
-                            var index = $.inArray(rowId, rows_selected);
+                            var index = $.inArray(rowId, $scope.rowsSelected);
 
                             // Se caixa de seleção está marcada e linha ID não está na lista de IDs de linha selecionados
                             if (this.checked && index === -1) {
-                                rows_selected.push(rowId);
+                                $scope.rowsSelected.push(rowId);
 
                                 $scope.internalControl.selectedItems.push(data);
 
                                 // Se caixa de seleção está marcada e linha ID não está na lista de IDs de linha selecionados
                             } else if (!this.checked && index !== -1) {
-                                rows_selected.splice(index, 1);
+                                $scope.rowsSelected.splice(index, 1);
 
                                 $scope.internalControl.selectedItems.splice(index, 1);
                             }
@@ -322,7 +336,6 @@
 
                         // Loop na configuração de campos
                         angular.forEach(arrayFields, function(index) {
-
                             // Valor do filtro
                             index.filterObject = {};
 
@@ -331,7 +344,7 @@
                             // filterObject armazena dados do filtro que será realizado no campo
                             if (angular.isDefined(index.filter)) {
 
-                                var selectorName = '#' + index.filter;                 
+                                var selectorName = '#' + index.filter;
                                 var selectorValue = index.filter;
 
                                 // Verifica se o filtro é um px-complete
@@ -424,7 +437,6 @@
                             dataType: 'json',
                             params: params
                         }).success(function(result) {
-
                             console.info('grid getData success', result);
                             //console.info('grid getData success JSON.stringify',JSON.stringify(result,null,"    "));
 
@@ -522,11 +534,8 @@
                                     if (info.start === 0) {
                                         info.start = 1;
                                     }
-                                    //$('#pxTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);
+                                    //$('#pxTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);                           
                                     $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
-
-
-
                                 }
                             }
                         }).
@@ -535,6 +544,37 @@
                             alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                         });
 
+                    };
+
+                    /**
+                     * Remover itens da listagem                  
+                     * @return {void}
+                     */
+                    $scope.remove = function remove() {
+                        var arrayFields = JSON.parse($scope.fields);
+
+                        pxDataGridService.remove($scope.table, angular.toJson(arrayFields), angular.toJson($scope.internalControl.selectedItems), function(response) {
+                            //console.info('pxDataGrid remove: ', response);
+                            if (response.success) {
+                                $scope.internalControl.table.rows('.selected').remove().draw(false);
+
+                                // rotina duplicada :( - START
+                                var info = $scope.internalControl.table.page.info();
+                                if (info.start === 0) {
+                                    info.start = 1;
+                                }
+                               
+                                $scope.recordCount -= $scope.rowsSelected.length;
+
+                                $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
+                                // rotina duplicada :( - END
+                                
+                                $scope.internalControl.selectedItems = [];
+                                $scope.rowsSelected = [];
+                            } else {
+                                alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+                            }
+                        });
                     };
                 }
             };

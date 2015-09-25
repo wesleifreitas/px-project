@@ -130,6 +130,15 @@
             $scope.gridControl.getData();
         };
 
+        /**
+         * Remover itens da listagem
+         * @return {void}
+         */
+        $scope.remove = function() {
+            // Remover itens (selecionados) da listagem
+            $scope.gridControl.remove();
+        };
+
         // Listagem - End
 
         /**
