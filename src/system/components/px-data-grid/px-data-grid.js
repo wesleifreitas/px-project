@@ -178,7 +178,7 @@
                                     return '<input type="checkbox">';
                                 }
                             }],
-                            "order": [1, 'asc'],
+                            "order": [], //default order
                             "rowCallback": function(row, data, dataIndex) {
                                 // Linhda ID
                                 var rowId = data.pxDataGridRowNumber;
@@ -520,23 +520,23 @@
                                         $('#pxTable').DataTable().row.add(data).draw();
 
                                     });
-
-                                    $scope.recordCount = result.recordCount;
-                                    $scope.nextRowFrom = result.rowFrom + $scope.rows;
-                                    $scope.nextRowTo = result.rowTo + $scope.rows;
-
-                                    //$scope.getData(result.rowFrom + $scope.rows, result.rowTo + $scope.rows);
-
-                                    var table = $('#pxTable').DataTable();
-                                    table.page($scope.currentPage).draw(false);
-
-                                    var info = table.page.info();
-                                    if (info.start === 0) {
-                                        info.start = 1;
-                                    }
-                                    //$('#pxTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);                           
-                                    $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
                                 }
+
+                                $scope.recordCount = result.recordCount;
+                                $scope.nextRowFrom = result.rowFrom + $scope.rows;
+                                $scope.nextRowTo = result.rowTo + $scope.rows;
+
+                                //$scope.getData(result.rowFrom + $scope.rows, result.rowTo + $scope.rows);
+
+                                var table = $('#pxTable').DataTable();
+                                table.page($scope.currentPage).draw(false);
+
+                                var info = table.page.info();
+                                if (info.start === 0) {
+                                    info.start = 1;
+                                }
+                                //$('#pxTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);                           
+                                $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
                             }
                         }).
                         error(function(data, status, headers, config) {
@@ -563,12 +563,12 @@
                                 if (info.start === 0) {
                                     info.start = 1;
                                 }
-                               
+
                                 $scope.recordCount -= $scope.rowsSelected.length;
 
                                 $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
                                 // rotina duplicada :( - END
-                                
+
                                 $scope.internalControl.selectedItems = [];
                                 $scope.rowsSelected = [];
                             } else {
