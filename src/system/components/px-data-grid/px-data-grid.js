@@ -81,8 +81,11 @@
                         // http://stackoverflow.com/questions/16881478/how-to-call-a-method-defined-in-an-angularjs-directive
                         scope.internalControl = scope.control || {};
 
+                        // A listagem está processamento?
+                        scope.internalControl.working = false;
+
                         /**
-                         * Recupera dados que são carregados na listagem
+                         * Recuperar dados que são carregados na listagem
                          * @return {[type]} [description]
                          */
                         scope.internalControl.getData = function() {
@@ -91,7 +94,7 @@
                         };
 
                         /**
-                         * Remove itens (selecionados) da listagem
+                         * Remover itens (selecionados) da listagem
                          * @return {[type]} [description]
                          */
                         scope.internalControl.remove = function() {
@@ -140,6 +143,9 @@
 
                         // Armazena itens selecionados da listagem
                         $scope.internalControl.selectedItems = [];
+
+                        // Armazena linhas selecionados da listagem
+                        $scope.internalControl.rowsSelected = [];
                     };
 
                     $scope.pxDataGridGetData = function() {
@@ -331,6 +337,9 @@
                      * @return {void}
                      */
                     $scope.getData = function(rowFrom, rowTo) {
+                        // Processamento getData iniciado
+                        $scope.internalControl.working = true;
+                        //alert($scope.internalControl.working);
 
                         var arrayFields = JSON.parse($scope.fields);
 
@@ -537,6 +546,9 @@
                                 }
                                 //$('#pxTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);                           
                                 $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
+
+                                // A listagem está processo?
+                                $scope.internalControl.working = false;
                             }
                         }).
                         error(function(data, status, headers, config) {
