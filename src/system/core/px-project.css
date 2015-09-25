@@ -26,6 +26,7 @@ div.px-view {
     right: 1px;
     width: 100%;
     padding-left: 10px;
+    padding-right: 10px;
     overflow: auto;
     color: #666;
     overflow-y: scroll;
