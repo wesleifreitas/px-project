@@ -140,7 +140,7 @@
          * Atualizar dados da listagem
          * @return {void}
          */
-        $scope.getData = function(event) {
+        $scope.getData = function() {
             //Recuperar dados para a listagem
             $scope.gridControl.getData();
         };
