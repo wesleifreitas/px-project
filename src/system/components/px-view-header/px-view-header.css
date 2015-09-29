@@ -1,6 +1,7 @@
 div.px-view-header {
 	margin-left: -10px;
 	margin-right: -10px;
+	padding-bottom: 5px;
 }
 div.px-header {
 	z-index: 100;
