@@ -40,6 +40,7 @@
             $scope.getNavBar = function() {
 
                 var params = {};
+                params.pro_id = pxConfig.PROJECT_ID;
 
                 $http({
                     method: 'POST',
