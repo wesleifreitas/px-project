@@ -49,7 +49,7 @@
                 FROM 
                     px.menu AS submenu 
                 WHERE 
-                    pro_id      IN(#arguments.pro_id#)
+                    pro_id      = #arguments.pro_id#
                 AND menu.men_id = submenu.men_idPai 
                 AND men_ativo   = 1
                 AND men_sistema = 1
@@ -60,7 +60,7 @@
                 FROM 
                     px.menu AS submenu 
                 WHERE 
-                    pro_id      IN(#arguments.pro_id#)
+                    pro_id              = #arguments.pro_id#
                 AND submenu.men_idPai   = menu.men_idPai
                 AND men_ativo           = 1 
                 AND men_sistema         = 1
@@ -68,7 +68,7 @@
         FROM
             px.menu AS menu
         WHERE
-            pro_id      IN(#arguments.pro_id#)
+            pro_id      = #arguments.pro_id#
         AND men_ativo   = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
         AND men_sistema = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
         ORDER BY
