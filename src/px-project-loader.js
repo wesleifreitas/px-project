@@ -26,6 +26,8 @@ $(function() {
             }, {
                 file: 'https://fonts.googleapis.com/icon?family=Material+Icons' //https://www.google.com/design/icons/
             }, {
+                file: 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'
+            }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.css'
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.css'
