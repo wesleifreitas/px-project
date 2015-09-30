@@ -1,4 +1,4 @@
-(function () {
+(function() {
     'use strict';
 
     // pxConfig
@@ -10,9 +10,11 @@
             PROJECT_ID: 0, // Identificação do projeto (table: px.project)
             PROJECT_NAME: 'Phoenix Project', // Nome do projeto
             PROJECT_SRC: 'px-project/src/', // Source do projeto
-            LOCALE: 'pt-BR' // Locale
+            LOCALE: 'pt-BR', // Locale
+            LOGIN_REQUIRED: true // Login obrigatório?
+
         })
-        .config(function (pxConfig) {
+        .config(function(pxConfig) {
 
             // Custom JS
             /*
@@ -30,13 +32,13 @@
             */
             var jsLoader = [{
                 file: 'custom/exemplo/exemplo.controller.js'
-			}, {
+            }, {
                 file: 'custom/exemplo/exemplo.service.js'
-			}];
+            }];
 
             // Loop em jsLoader
             // Incluir java scripts
-            $.each(jsLoader, function (i, item) {
+            $.each(jsLoader, function(i, item) {
                 $("<script/>").attr('src', item.file).appendTo($('head'));
             });
         });
