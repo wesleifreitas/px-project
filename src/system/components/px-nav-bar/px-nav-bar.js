@@ -40,14 +40,14 @@
             $scope.getNavBar = function() {
 
                 var params = {};
-                params.pro_id = pxConfig.PROJECT_ID;
+                params.pro_id = angular.toJson(pxConfig.PROJECT_ID);
 
                 $http({
                     method: 'POST',
                     url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
                     params: params
                 }).success(function(response) {
-                    //console.info('getNavBar: ', response);                    
+                    console.info('getNavBar: ', response);                    
                     $scope.navBar = response.navBar;
                 }).
                 error(function(data, status, headers, config) {

@@ -20,7 +20,7 @@
 
     <cfargument 
         name     ="pro_id"  
-        type     ="numeric"  
+        type     ="string"  
         required ="false"   
         default  ="0"          
         hint     ="Identificação do projeto">
@@ -33,6 +33,13 @@
         hint     ="Código do perfil">
 
     <cfset response = structNew()>
+
+    <cfset arguments.pro_id = decode(arguments.pro_id)>
+    <cfif isArray(arguments.pro_id)>
+        <cfset inPro_id = arrayToList(arguments.pro_id, ",")>
+    <cfelse>
+         <cfset inPro_id = arguments.pro_id>
+    </cfif>
         
     <cfquery datasource="#arguments.dsn#" name="qMenu">
 
@@ -49,7 +56,7 @@
                 FROM 
                     px.menu AS submenu 
                 WHERE 
-                    pro_id      = #arguments.pro_id#
+                    pro_id      IN (#inPro_id#)
                 AND menu.men_id = submenu.men_idPai 
                 AND men_ativo   = 1
                 AND men_sistema = 1
@@ -60,7 +67,7 @@
                 FROM 
                     px.menu AS submenu 
                 WHERE 
-                    pro_id              = #arguments.pro_id#
+                    pro_id              IN (#inPro_id#)
                 AND submenu.men_idPai   = menu.men_idPai
                 AND men_ativo           = 1 
                 AND men_sistema         = 1
@@ -68,12 +75,12 @@
         FROM
             px.menu AS menu
         WHERE
-            pro_id      = #arguments.pro_id#
+            pro_id      IN (#inPro_id#)
         AND men_ativo   = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
         AND men_sistema = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
         ORDER BY
             menu.men_idPai
-            ,menu.men_ordem 
+            ,menu.men_ordem             
     </cfquery>
     
 
