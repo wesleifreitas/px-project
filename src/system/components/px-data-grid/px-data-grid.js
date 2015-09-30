@@ -152,6 +152,17 @@
                         // Armazena linhas selecionadas (checkbox)
                         $scope.rowsSelected = [];
 
+                        // sDom - Start
+                        // http://legacy.datatables.net/usage/options#sDom
+                        var sDom = '';
+                        sDom += 'l'; // Length changing
+                        //sDom += 'f';  // Filtering input
+                        sDom += 't'; // The table!
+                        sDom += 'i'; // Information
+                        sDom += 'p'; // Pagination
+                        sDom += 'r'; // pRocessing
+                        // sDom - End
+
                         $('#pxTable').dataTable({
                             "language": {
                                 processing: "Processando...",
@@ -169,9 +180,10 @@
                                     last: "Última"
                                 }
                             },
-                            "bFilter": false,
+                            "bFilter": true,
                             "bLengthChange": false,
                             "lengthMenu": [20, 35, 45],
+                            "sDom": sDom,
                             "bProcessing": true,
                             "aoColumns": $scope.aoColumns,
                             "destroy": true,
