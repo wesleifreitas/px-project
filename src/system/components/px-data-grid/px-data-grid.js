@@ -10,17 +10,27 @@
                 transclude: false,
                 templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.html',
                 scope: {
-                    debug: '@pxDebug',
+                    debug: '=pxDebug',
                     table: '@pxTable',
                     fields: '@pxFields',
                     orderBy: '@pxOrderBy',
                     columns: '@pxColumns',
                     init: '&pxInit',
                     itemClick: '&pxItemClick',
-                    dataInit: '@pxDataInit',
+                    dataInit: '=pxDataInit',
+                    rowsProcess: '=pxRowsProcess',
+                    demand: '=pxDemand',
                     control: '='
                 },
                 link: function(scope, element, attrs) {
+
+                    // Quantidade de linhas por consulta
+                    scope.rowsProcess = scope.rowsProcess || 100;
+
+                    // Consulta por demanda?                    
+                    if (!angular.isDefined(scope.demand)) {
+                        scope.demand = true;
+                    }
 
                     scope.$watch('fields', function(newValue, oldValue) {
 
@@ -71,8 +81,7 @@
 
                         scope.dataTable = $sce.trustAsHtml(scope.dataTable);
 
-                        // Quantidade de linhas por consulta
-                        scope.rows = 50;
+                        // Data Grid pronta para consulta
                         scope.pxTableReady = true;
 
                         // Internal Control - Start
@@ -90,7 +99,7 @@
                          */
                         scope.internalControl.getData = function() {
 
-                            scope.getData(0, scope.rows);
+                            scope.getData(0, scope.rowsProcess);
                         };
 
                         /**
@@ -212,9 +221,9 @@
                         $scope.pxTableReady = false;
 
                         // Se a propriedade pxGetData for igual a true
-                        if ($scope.dataInit === 'true') {
+                        if ($scope.dataInit === true) {
                             // Recupera dados assim que a listagem é criada
-                            $scope.getData(0, $scope.rows);
+                            $scope.getData(0, $scope.rowsProcess);
                         }
 
                         var table = $('#pxTable').DataTable();
@@ -436,7 +445,7 @@
                         params.fields = angular.toJson(arrayFields);
                         params.orderBy = $scope.orderBy;
 
-                        params.rows = $scope.rows;
+                        params.rows = $scope.rowsProcess;
 
                         if (angular.isDefined(rowFrom)) {
                             params.rowFrom = rowFrom;
@@ -458,15 +467,16 @@
                             dataType: 'json',
                             params: params
                         }).success(function(result) {
-                            console.info('grid getData success', result);
-                            //console.info('grid getData success JSON.stringify',JSON.stringify(result,null,"    "));
+                            if ($scope.debug) {
+                                console.info('grid getData success', result);
+                                //console.info('grid getData success JSON.stringify',JSON.stringify(result,null,"    "));
+                            }
 
                             if (angular.isDefined(result.fault)) {
                                 alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                             } else {
-
+                                // Verifica se a quantidade de registros é maior que 0
                                 if (result.qQuery.length > 0) {
-
                                     // Loop na query
                                     angular.forEach(result.qQuery, function(index) {
 
@@ -541,26 +551,35 @@
                                         $('#pxTable').DataTable().row.add(data).draw();
 
                                     });
+
+                                    $scope.recordCount = result.recordCount;
+                                    $scope.nextRowFrom = result.rowFrom + $scope.rowsProcess;
+                                    $scope.nextRowTo = result.rowTo + $scope.rowsProcess;
+
+                                    var table = $('#pxTable').DataTable();
+                                    table.page($scope.currentPage).draw(false);
+
+                                    var info = table.page.info();
+                                    if (info.start === 0) {
+                                        info.start = 1;
+                                    }
+                                    //$('#pxTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);                           
+                                    $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
+
+                                    // Verifica $scope.demand
+                                    // false: não continua a consulta até que o usuário navegue até a última página
+                                    // true: continua consulta até carregar todos os registros
+                                    if ($scope.demand) {
+                                        // A listagem está processo?
+                                        $scope.internalControl.working = false;
+                                    } else {
+                                        // Continuar a consulta
+                                        $scope.getData($scope.nextRowFrom, $scope.nextRowTo);
+                                    }
+                                } else {
+                                    // A listagem está processo?
+                                    $scope.internalControl.working = false;
                                 }
-
-                                $scope.recordCount = result.recordCount;
-                                $scope.nextRowFrom = result.rowFrom + $scope.rows;
-                                $scope.nextRowTo = result.rowTo + $scope.rows;
-
-                                //$scope.getData(result.rowFrom + $scope.rows, result.rowTo + $scope.rows);
-
-                                var table = $('#pxTable').DataTable();
-                                table.page($scope.currentPage).draw(false);
-
-                                var info = table.page.info();
-                                if (info.start === 0) {
-                                    info.start = 1;
-                                }
-                                //$('#pxTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);                           
-                                $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
-
-                                // A listagem está processo?
-                                $scope.internalControl.working = false;
                             }
                         }).
                         error(function(data, status, headers, config) {
