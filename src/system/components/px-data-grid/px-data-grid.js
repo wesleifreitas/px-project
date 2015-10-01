@@ -11,10 +11,14 @@
                 templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.html',
                 scope: {
                     debug: '=pxDebug',
+                    lengthChange: '=pxLengthChange',
+                    lengthMenu: '=pxLengthMenu',
+                    ajaxUrl: '@pxAjaxUrl',
                     table: '@pxTable',
                     fields: '@pxFields',
                     orderBy: '@pxOrderBy',
                     columns: '@pxColumns',
+                    check: '=pxCheck',
                     init: '&pxInit',
                     itemClick: '&pxItemClick',
                     dataInit: '=pxDataInit',
@@ -52,7 +56,7 @@
                         var aoColumnsData = {};
                         angular.forEach(newValue, function(index) {
 
-                            if (i === 0) {
+                            if (i === 0 && scope.check) {
                                 scope.columns += '<th class="text-left"><input name="select_all" value="1" type="checkbox"></th>';
 
                                 aoColumnsData = {};
@@ -172,55 +176,73 @@
                         sDom += 'r'; // pRocessing
                         // sDom - End
 
-                        $('#pxTable').dataTable({
-                            "language": {
-                                processing: "Processando...",
-                                search: "Filtrar registros carregados",
-                                lengthMenu: "Visualizar _MENU_ registros",
-                                //info: "Monstrando de _START_ a _END_ no total de _TOTAL_ registros.",
-                                infoEmpty: "Nenhum registro encontrado",
-                                zeroRecords: "Nenhum registro encontrado",
-                                emptyTable: "Nenhum registro encontrado.",
-                                infoFiltered: "",
-                                paginate: {
-                                    first: "Primeira",
-                                    previous: "« Anterior",
-                                    next: "Próxima »",
-                                    last: "Última"
-                                }
-                            },
-                            "bFilter": true,
-                            "bLengthChange": false,
-                            "lengthMenu": [20, 35, 45],
-                            "sDom": sDom,
-                            "bProcessing": true,
-                            "aoColumns": $scope.aoColumns,
-                            "destroy": true,
-                            'columnDefs': [{
-                                'targets': 0,
-                                'searchable': false,
-                                'orderable': false,
-                                'className': 'dt-body-center',
-                                'render': function(data, type, full, meta) {
-                                    return '<input type="checkbox">';
-                                }
-                            }],
-                            "order": [], //default order
-                            "rowCallback": function(row, data, dataIndex) {
-                                // Linhda ID
-                                var rowId = data.pxDataGridRowNumber;
-
-                                // Se a linha ID está na lista de IDs de linha selecionados
-                                if ($.inArray(rowId, $scope.rowsSelected) !== -1) {
-                                    $(row).find('input[type="checkbox"]').prop('checked', true);
-                                    $(row).addClass('selected');
-                                }
+                        // Configuração do dataTable
+                        // Features: http://legacy.datatables.net/usage/features
+                        var dataTableConfig = {};
+                        // Ajax Url
+                        if ($scope.ajaxUrl) {
+                            dataTableConfig.ajax = {
+                                "url": $scope.ajaxUrl,
+                                "dataSrc": ""
                             }
-                        });
+                        }
+                        // Tradução                       
+                        // https://datatables.net/reference/option/language
+                        dataTableConfig.language = {
+                            processing: "Processando...",
+                            search: "Filtrar registros carregados",
+                            lengthMenu: "Visualizar _MENU_ registros",
+                            info: "Monstrando de _START_ a _END_ no total de _TOTAL_ registros.",
+                            infoEmpty: "Nenhum registro encontrado",
+                            zeroRecords: "Nenhum registro encontrado",
+                            emptyTable: "Nenhum registro encontrado.",
+                            infoFiltered: "",
+                            paginate: {
+                                first: "Primeira",
+                                previous: "« Anterior",
+                                next: "Próxima »",
+                                last: "Última"
+                            }
+                        }
+                        dataTableConfig.bFilter = true;
+                        dataTableConfig.bLengthChange = $scope.lengthChange;
+                        dataTableConfig.lengthMenu = $scope.lengthMenu; //[20, 35, 45];
+                        dataTableConfig.sDom = sDom;
+                        dataTableConfig.bProcessing = true;
+                        dataTableConfig.aoColumns = $scope.aoColumns;
+                        dataTableConfig.destroy = true;
+                        // Verifica se possui coluna com checkbox
+                        if ($scope.check) {
+                            dataTableConfig.columnDefs = [{
+                                "targets": 0,
+                                "searchable": false,
+                                "orderable": false,
+                                "className": "dt-body-center",
+                                "render": function(data, type, full, meta) {
+                                    return "<input type='checkbox'>";
+                                }
+                            }];
+                        }
+                        dataTableConfig.order = []; //default order
+                        dataTableConfig.rowCallback = function(row, data, dataIndex) {
+                            // Linhda ID
+                            var rowId = data.pxDataGridRowNumber;
+
+                            // Se a linha ID está na lista de IDs de linha selecionados
+                            if ($.inArray(rowId, $scope.rowsSelected) !== -1) {
+                                $(row).find('input[type="checkbox"]').prop('checked', true);
+                                $(row).addClass('selected');
+                            }
+                        };
+
+                        // Inicializa dataTable
+                        $('#pxTable').dataTable(
+                            dataTableConfig
+                        );
 
                         $scope.pxTableReady = false;
 
-                        // Se a propriedade pxGetData for igual a true
+                        // Se a propriedade pxGetData for true
                         if ($scope.dataInit === true) {
                             // Recupera dados assim que a listagem é criada
                             $scope.getData(0, $scope.rowsProcess);
@@ -243,7 +265,6 @@
                             }
 
                             //$('#pxTable_length').hide();
-
                             //console.info('pxTable page.dt table.context',table.context[0]);
                             if (info.start === 0) {
                                 info.start = 1;
@@ -256,6 +277,10 @@
 
                         // Atualizar dataTable (Selecionar tudo)
                         $scope.updateDataTableSelectAllCtrl = function(table) {
+                            // Verifica se o dataTable possui coluna de checkbox
+                            if (!$scope.check == true)
+                                return;
+
                             var $table = table.table().node();
                             var $chkbox_all = $('tbody input[type="checkbox"]', $table);
                             var $chkbox_checked = $('tbody input[type="checkbox"]:checked', $table);
