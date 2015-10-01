@@ -13,4 +13,3 @@ Primeiros Passos
 
 * [Inicialização](2-init-px-project.md)
 * [Sublime](3-init-sublime.md)
-* [Contribuição](https://github.com/wesleifreitas/px-project/blob/master/CONTRIBUTING.md)
