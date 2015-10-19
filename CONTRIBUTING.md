@@ -133,6 +133,23 @@ O body pode descrever a motivação da alteração e comparar seu comportamento 
 ###Footer
 Considerações finais.
 
+## Banco de dados - DSN (ColdFusion)
+
+* Para configurar o DSN (ColdFusion) acesse: 
+[http://localhost:8500/CFIDE/administrator](http://localhost:8500/CFIDE/administrator)
+* Na seção **DATA & SERVICES** - **Data Sources**, crie uma nova conexão.
+
+Parâmetro | Valor
+------------ | -------------
+CF Data Source Name | px_project_sql
+Database | px_project
+Server | sql8.hostek.com | Port: 1433
+User name | team
+Password | Px2015
+
+![cf_dsn_px-project](https://github.com/wesleifreitas/px-project/blob/master/docs/guide-pt-BR/images/cf_dsn_px-project.png)
+
+
 ## <a name="build"></a> Building px-project
 
 ###Bower
@@ -151,5 +168,12 @@ bower install
 ```
 
 Após conclusão do building verifique se o formulário de login é apresentado acessando: [http://localhost:8500/px-project/src](http://localhost:8500/px-project/src)
+
+Dados para login:
+
+Campo | Valor
+------------ | -------------
+Usuário | px-project
+Senha | atopng
 
 Visite [px-example](https://github.com/wesleifreitas/px-example) para obter mais detalhes sobre como instalar e usar arquivos de distribução px-project dentro seu próprio projeto local.
