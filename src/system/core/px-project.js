@@ -1,6 +1,6 @@
 (function() {
 
-    app = angular.module('app', ['pxConfig', 'pxLoader', 'ngRoute', 'ngCookies', 'ngMaterial', 'ui.mask', 'pxNavBar', 'pxViewHeader', 'pxContainer', 'pxDataGrid', 'pxFormItem']);
+    app = angular.module('app', ['pxConfig', 'pxLoader', 'ngRoute', 'ngCookies', 'ngMaterial', 'ui.mask', 'pxNavBar', 'pxViewHeader', 'pxContainer', 'pxDataGrid', 'pxForm', 'pxFormItem']);
 
     app.config(['pxConfig', '$routeProvider', '$locationProvider', function(pxConfig, $routeProvider, $locationProvider) {
         $routeProvider.when('/login', {

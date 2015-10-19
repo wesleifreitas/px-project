@@ -102,6 +102,8 @@ $(function() {
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.service.js'
             }, {
+                file: pxConfig.PX_PACKAGE + 'system/components/px-form/px-form.js'
+            }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-form-item.js'
             }];
 
