@@ -3,19 +3,20 @@ body, html {
     padding: 0;
     height: 100%;
 }
-body {
-
-    /* http://css-tricks.com/perfect-full-page-background-image/ */
+/* http://css-tricks.com/perfect-full-page-background-image/ */
+/*
+body {    
     background: url('../assets/wallpaper/richsolutions.jpg') no-repeat center center fixed;
     background-size: cover;
     background-color: #000000;
 }
+*/
 hr.px1 {
     border: 0;
     height: 1px;
     background: #bbb;
-    background-image: -webkit-linear-gradient(left, #ddd, #bbb, #ddd);
-    background-image: -o-linear-gradient(left, #ddd, #bbb, #ddd);
+    background-image: -webkit-linear-gradient(left, #eee, #bbb, #eee);
+    background-image: -o-linear-gradient(left, #eee, #bbb, #eee);
     margin-top: 1px;
     margin-bottom: 2px;
 }
@@ -37,6 +38,10 @@ div.px-view {
     height: 100%;
     float: left;
 }
+.loading {    
+    display: none;
+}
+
 #px-container {
     position: relative;
     width: 100%;
@@ -84,12 +89,4 @@ div.px-view {
     opacity: 0.97;
     padding-top: 45px;
     right: 0;
-}
-table.dataTable.select tbody tr, table.dataTable thead th:first-child {
-    cursor: pointer;
-    width: 1%;
-}
-table.dataTable tbody tr, table.dataTable thead th {
-    cursor: pointer;
-    white-space: nowrap;
 }

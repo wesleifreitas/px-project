@@ -1,9 +1,7 @@
-(function () {
+define(['../services/module'], function(services) {
     'use strict';
 
-    angular
-        .module('app')
-        .factory('AuthenticationService', AuthenticationService);
+    services.factory('AuthenticationService', AuthenticationService);
 
     AuthenticationService.$inject = ['pxConfig', '$http', '$cookieStore', '$rootScope', '$timeout', 'UserService'];
 
@@ -54,10 +52,10 @@
                 method: 'POST',
                 url: pxConfig.PX_PACKAGE + 'system/login/login.cfc?method=login',
                 params: params
-            }).success(function (response) {
+            }).success(function(response) {
                 callback(response);
             }).
-            error(function (data, status, headers, config) {
+            error(function(data, status, headers, config) {
                 // Erro
                 alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
             });
@@ -89,7 +87,7 @@
 
         keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
 
-        encode: function (input) {
+        encode: function(input) {
             var output = "";
             var chr1, chr2, chr3 = "";
             var enc1, enc2, enc3, enc4 = "";
@@ -123,7 +121,7 @@
             return output;
         },
 
-        decode: function (input) {
+        decode: function(input) {
             var output = "";
             var chr1, chr2, chr3 = "";
             var enc1, enc2, enc3, enc4 = "";
@@ -165,5 +163,4 @@
             return output;
         }
     };
-
-})();
+});

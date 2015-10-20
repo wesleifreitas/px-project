@@ -8,23 +8,14 @@
     <meta name="description" content="Phoenix Project">
     <meta name="author" content="Weslei Freitas, weslei.rfreitas@gmail.com">
     <link href="favicon.ico" rel="shortcut icon">
-    <!-- Jquery -->
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <!-- px-project Loader -->
-    <script src="px-project-loader.js"></script>
-    <!-- AngularJS -->
-    <script src="bower_components/angular/angular.min.js"></script>
-    <!-- angular-i18n -->
-    <script src="bower_components/angular-i18n/angular-locale_pt-br.js"></script>
-    <!-- px-project Application -->
-    <script src="system/core/px-project.js"></script>
-    <!-- px-project Config -->
-    <script src="px-project-config.js"></script>
     <title>px-project</title>
+    <link rel="stylesheet" href="system/core/px-loading.css">
 </head>
 
-<body ng-app="app">
+<body class="metro">
+    <div id="px-loading" class="loading">Loading&#8230;</div>
     <div id="px-main" ng-view></div>
+    <script src="lib/requirejs/require.js" data-main="js/main.js"></script>
 </body>
 
 </html>

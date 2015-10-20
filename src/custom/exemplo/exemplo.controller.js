@@ -1,22 +1,8 @@
-(function() {
+define(['../controllers/module'], function(controllers) {
     'use strict';
 
-    // Filter refreshDataGrid
-    // Retorna o class adequado para o botão atualizar de acordo com o processamento do dataGrid
-    app.filter('refreshDataGrid', function() {
-        return function(working) {
-            // Verifica working da px-data-grid
-            // Class no botão Atualizar (Listagem)
-            if (working) {
-                return 'fa fa-refresh fa-spin';
-            } else {
-                return 'fa fa-refresh';
-            }
-        };
-    })
-
     // Controller
-    app.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element', '$attrs', function(exemploService, pxConfig, $scope, $element, $attrs, $rootScope) {
+    controllers.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element', '$attrs', function(exemploService, pxConfig, $scope, $element, $attrs, $rootScope) {
 
         // Variáveis gerais - Start
 
@@ -173,4 +159,4 @@
             $header.blur();
         };
     }]);
-})();
+});

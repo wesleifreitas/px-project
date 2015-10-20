@@ -1,9 +1,7 @@
-(function () {
+define(['../services/module'], function(services) {
     'use strict';
 
-    angular
-        .module('app')
-        .factory('UserService', UserService);
+    services.factory('UserService', UserService);
 
     UserService.$inject = ['$http'];
 
@@ -50,7 +48,7 @@
         }
 
         function handleError(error) {
-            return function () {
+            return function() {
                 return {
                     success: false,
                     message: error
@@ -59,4 +57,4 @@
         }
     }
 
-})();
+});

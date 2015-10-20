@@ -1,9 +1,7 @@
-(function() {
+define(['../services/module'], function (services) {
     'use strict';
 
-    angular
-        .module('app')
-        .factory('exemploService', exemploService);
+    services.factory('exemploService', exemploService);
 
     exemploService.$inject = ['pxConfig', 'pxArrayUtil'];
 
@@ -48,4 +46,4 @@
             return arrayData.sort(pxArrayUtil.sortOn('id'));
         }
     }
-})();
+});

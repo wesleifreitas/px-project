@@ -1,11 +1,7 @@
-(function() {
+define(['../../directives/module'], function(directives) {
     'use strict';
 
-    angular.module('pxFormItem', [])
-        .value('pxFormItemConfig', {})
-        // pxEnter
-        // Evento [ENTER]
-        .directive('pxEnter', ['pxViewHeaderConfig', function(pxViewHeaderConfig) {
+    directives.directive('pxEnter', [function() {
             return function(scope, element, attrs) {
                 element.bind('keydown keypress', function(event) {
                     if (event.which === 13) {
@@ -19,7 +15,7 @@
         }])
         // pxValidNumber
         // Digitar somente números
-        .directive('pxValidNumber', ['pxViewHeaderConfig', function(pxViewHeaderConfig) {
+        .directive('pxValidNumber', [function() {
             return {
                 require: '?ngModel',
                 link: function(scope, element, attrs, ngModelCtrl) {
@@ -47,7 +43,7 @@
         }])
         // pxBrCnpjMask
         // 99.999.999/9999-99
-        .directive('pxBrCnpjMask', ['pxViewHeaderConfig', '$compile', function(pxViewHeaderConfig, $compile) {
+        .directive('pxBrCnpjMask', ['$compile', function($compile) {
             return {
                 priority: 100,
                 restrict: 'A',
@@ -82,7 +78,7 @@
         }])
         // pxBrCpfMask
         // 999.999.999-99
-        .directive('pxBrCpfMask', ['pxViewHeaderConfig', '$compile', function(pxViewHeaderConfig, $compile) {
+        .directive('pxBrCpfMask', ['$compile', function($compile) {
             return {
                 priority: 100,
                 restrict: 'A',
@@ -118,7 +114,7 @@
         // pxBrPhoneMask
         // (99) 9999-9999 / (99) 9999-9999?9
         // (99) 99999-999
-        .directive('pxBrPhoneMask', ['pxViewHeaderConfig', '$compile', function(pxViewHeaderConfig, $compile) {
+        .directive('pxBrPhoneMask', ['$compile', function($compile) {
             return {
                 priority: 100,
                 restrict: 'A',
@@ -212,7 +208,7 @@
             };
         }])
         // pxNumberMask
-        .directive('pxNumberMask', ['pxViewHeaderConfig', '$filter', '$locale', function(pxViewHeaderConfig, $filter, $locale) {
+        .directive('pxNumberMask', ['$filter', '$locale', function($filter, $locale) {
             return {
                 restrict: 'A',
                 scope: {
@@ -631,4 +627,4 @@
                 }
             };
         });
-})();
+});

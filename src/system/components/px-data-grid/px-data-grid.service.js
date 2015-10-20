@@ -1,9 +1,7 @@
-(function() {
+define(['../../services/module'], function(services) {
     'use strict';
 
-    angular
-        .module('app')
-        .factory('pxDataGridService', pxDataGridService);
+    services.factory('pxDataGridService', pxDataGridService);
 
     pxDataGridService.$inject = ['pxConfig', '$http'];
 
@@ -34,4 +32,4 @@
             });
         }
     }
-})();
+});

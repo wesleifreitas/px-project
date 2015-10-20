@@ -1,16 +1,20 @@
-(function () {
+define(['../controllers/module'], function(controllers) {
     'use strict';
 
-    app.controller('homeCtrl', ['pxConfig', 'UserService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$locale', function (pxConfig, UserService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $log, $locale) {
+    controllers.controller('homeCtrl', ['pxConfig', 'pxCssLoader', 'UserService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$locale', function(pxConfig, pxCssLoader, UserService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $log, $locale) {
+
+            pxCssLoader.load();
 
             if (pxConfig.LOCALE) {
-                // Definir locale da lib moment.js
-                // http://momentjs.com/docs/
-                moment.locale(pxConfig.LOCALE);
+
+                // Carrega moment.js como moment
+                require(['moment'], function(moment) {
+                    moment.locale(pxConfig.LOCALE);
+                });
 
                 // Definir language da lib numeral.js
-                // http://numeraljs.com/
-                numeral.language(pxConfig.LOCALE.toLowerCase());
+                // http://numeraljs.com/                                                               
+                numeral.language(pxConfig.LOCALE.toLowerCase());                
             }
 
             var vm = this;
@@ -19,29 +23,37 @@
             vm.allUsers = [];
 
             vm.loadCurrentUser = function loadCurrentUser() {
+                /*
                 UserService.GetByUsername($rootScope.globals.currentUser.username)
-                    .then(function (user) {
+                    .then(function(user) {
                         vm.user = user;
                     });
+                */
             };
 
             vm.loadAllUsers = function loadAllUsers() {
+                /*
                 UserService.GetAll()
-                    .then(function (users) {
+                    .then(function(users) {
                         vm.allUsers = users;
                     });
+                */
             };
 
             vm.deleteUser = function deleteUser(id) {
+                /*
                 UserService.Delete(id)
-                    .then(function () {
+                    .then(function() {
                         vm.loadAllUsers();
                     });
+                */
             };
 
             vm.initController = function initController() {
+                /*
                 vm.loadCurrentUser();
                 vm.loadAllUsers();
+                */
             }();
 
             vm.toggleLeft = buildToggler('left');
@@ -51,11 +63,11 @@
              * report completion in console
              */
             function buildToggler(navID) {
-                var debounceFn = $mdUtil.debounce(function () {
+                var debounceFn = $mdUtil.debounce(function() {
                     $mdSidenav(navID)
                         .toggle()
-                        .then(function () {
-                            $log.debug("toggle " + navID + " is done");
+                        .then(function() {
+                            //$log.debug("toggle " + navID + " is done");
                         });
                 }, 300);
                 return debounceFn;
@@ -65,22 +77,21 @@
                 $location.path('/login');
             };
 
-		}])
-        .controller('LeftCtrl', function ($scope, $timeout, $mdSidenav, $log) {
-            $scope.close = function () {
+        }])
+        .controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
+            $scope.close = function() {
                 $mdSidenav('left').close()
-                    .then(function () {
-                        $log.debug("close LEFT is done");
+                    .then(function() {
+                        //$log.debug("close LEFT is done");
                     });
             };
         })
-        .controller('RightCtrl', function ($scope, $timeout, $mdSidenav, $log) {
-            $scope.close = function () {
+        .controller('RightCtrl', function($scope, $timeout, $mdSidenav, $log) {
+            $scope.close = function() {
                 $mdSidenav('right').close()
-                    .then(function () {
-                        $log.debug("close RIGHT is done");
+                    .then(function() {
+                        //$log.debug("close RIGHT is done");
                     });
             };
         });
-
-})();
+});

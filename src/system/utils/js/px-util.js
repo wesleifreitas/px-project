@@ -1,12 +1,9 @@
-(function() {
+define(['angular'], function(ng) {
     'use strict';
 
-    angular
-        .module('app')
+    var module = ng.module('pxUtil', [])
         .factory('pxUtil', pxUtil);
-
-    pxUtil.$inject = [];
-
+    
     function pxUtil() {
 
         var service = {};
@@ -43,4 +40,6 @@
             }
         }
     }
-})();
+
+    return module;
+});
