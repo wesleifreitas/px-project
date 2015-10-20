@@ -46,6 +46,6 @@
     "jquery-ui": "~1.11.4",
     "moment": "~2.10.6",
     "numeral": "~1.5.3",
-    "string-mask": "~0.2.2"
+    "requirejs": "~2.1.20"
   }
 }
