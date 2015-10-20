@@ -54,7 +54,7 @@ define(['../../services/module'], function(services) {
             options = {
                 reverse: options.reverse || false,
                 usedefaults: options.usedefaults || options.reverse
-            };            
+            };
 
             return proccess(value, pattern, options);
         }

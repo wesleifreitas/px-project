@@ -528,16 +528,16 @@ define(['../../directives/module'], function(directives) {
 
                                         // Se possuir máscara
                                         // https://github.com/the-darc/string-mask
-                                        if (item.stringMask) {                                
+                                        if (item.stringMask) {
                                             switch (item.stringMask) {
                                                 case 'cpf':
                                                     data[item.field] = pxMaskUtil.maskFormat(data[item.field], '###.###.###-##').result;
                                                     break;
                                                 case 'cnpj':
-                                                    data[item.field] = pxMaskUtil.maskFormat(data[item.field],'##.###.###/####-##').result;
+                                                    data[item.field] = pxMaskUtil.maskFormat(data[item.field], '##.###.###/####-##').result;
                                                     break;
                                                 case 'cep':
-                                                    data[item.field] = pxMaskUtil.maskFormat(data[item.field],'#####-###').result;
+                                                    data[item.field] = pxMaskUtil.maskFormat(data[item.field], '#####-###').result;
                                                     break;
                                                 case 'brPhone':
                                                     if (data[item.field].length === 11) {
@@ -547,9 +547,9 @@ define(['../../directives/module'], function(directives) {
                                                     }
                                                     break;
                                                 default:
-                                                    data[item.field] = pxMaskUtil.maskFormat(data[item.field], item.stringMask).result;                                                    
+                                                    data[item.field] = pxMaskUtil.maskFormat(data[item.field], item.stringMask).result;
                                                     break;
-                                            }                                                                                    
+                                            }
                                         }
 
                                         // Se possuir moment

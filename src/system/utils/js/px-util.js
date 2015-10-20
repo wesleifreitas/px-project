@@ -3,7 +3,7 @@ define(['angular'], function(ng) {
 
     var module = ng.module('pxUtil', [])
         .factory('pxUtil', pxUtil);
-    
+
     function pxUtil() {
 
         var service = {};
