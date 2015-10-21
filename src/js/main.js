@@ -1,9 +1,9 @@
 require.config({
     paths: {
-        'angular': '../lib/angular/angular',
+        'angular': '../lib/angular/angular.min',
         'angular-locale_pt-br': '../lib/angular-i18n/angular-locale_pt-br',
-        'angular-route': '../lib/angular-route/angular-route',
-        'angular-cookies': '../lib/angular-cookies/angular-cookies',
+        'angular-route': '../lib/angular-route/angular-route.min',
+        'angular-cookies': '../lib/angular-cookies/angular-cookies.min',
         'angular-resource': '../lib/angular-resource/angular-resource.min',
         'angular-sanitize': '../lib/angular-sanitize/angular-sanitize.min',
         'angular-animate': '../lib/angular-animate/angular-animate.min',
