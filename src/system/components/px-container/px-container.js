@@ -1,7 +1,7 @@
 define(['../../directives/module'], function(directives) {
     'use strict';
 
-    directives.directive('pxFixed', function() {
+    directives.directive('pxFixed', ['pxUtil', function(pxUtil) {
         return {
             estrict: 'A',
             scope: {
@@ -10,6 +10,10 @@ define(['../../directives/module'], function(directives) {
                 vfixed: '=pxVfixed'
             },
             link: function(scope, element, attrs, ngModelCtrl) {
+                // Acesso via mobile browsers
+                if (pxUtil.isMobile()) {
+                    return;
+                }
 
                 scope.left = scope.left || 0;
 
@@ -48,5 +52,5 @@ define(['../../directives/module'], function(directives) {
                 });
             }
         };
-    })
+    }])
 });

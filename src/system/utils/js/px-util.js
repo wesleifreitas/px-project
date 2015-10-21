@@ -9,11 +9,12 @@ define(['angular'], function(ng) {
         var service = {};
 
         service.filterOperator = filterOperator;
+        service.isMobile = isMobile;
 
         return service;
 
         /**
-         * Prepara o valor do filtro de acordo com seu operator
+         * Preparar o valor do filtro de acordo com seu operator
          * @param  {string} value    valor do filtro
          * @param  {string} operator operador, exemplos: "=", "%LIKE%"
          * @return {string}          filtro
@@ -37,6 +38,19 @@ define(['angular'], function(ng) {
                 default:
                     return value;
                     //break;
+            }
+        }
+
+        /**
+         * Verificar se o acesso ao sistema é via mobile browser verificando o user agent
+         * @return {Boolean}
+         */
+        function isMobile() {
+            var userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.search(/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i) != -1) {
+                return true;
+            } else {
+                return false;
             }
         }
     }
