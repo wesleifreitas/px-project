@@ -39,6 +39,7 @@ define(['../../directives/module'], function(directives) {
 
                 var params = {};
                 params.pro_id = angular.toJson(pxConfig.PROJECT_ID);
+                params.isMobile = $scope.isMobile();
 
                 $http({
                     method: 'POST',
@@ -54,6 +55,11 @@ define(['../../directives/module'], function(directives) {
             };
 
             $scope.showView = function(view) {
+
+                if ($scope.isMobile()) {
+                    // "Minimizar" menu
+                    document.getElementById("menu").style.display = "none";
+                }
 
                 var params = {};
                 params.com_id = view;
@@ -84,6 +90,15 @@ define(['../../directives/module'], function(directives) {
                     // Erro
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 });
+            };
+
+            $scope.isMobile = function() {
+                var userAgent = navigator.userAgent.toLowerCase();
+                if (userAgent.search(/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i) != -1) {
+                    return true;
+                } else {
+                    return false;
+                }
             };
         }]);
 });

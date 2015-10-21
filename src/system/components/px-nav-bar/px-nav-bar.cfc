@@ -32,6 +32,13 @@
         default  ="-1"          
         hint     ="Código do perfil">
 
+    <cfargument 
+        name     ="isMobile"  
+        type     ="boolean"
+        required ="false"   
+        default  ="false"          
+        hint     ="O acesso é feito por browser mobile?">
+
     <cfset response = structNew()>
 
     <cfset arguments.pro_id = decode(arguments.pro_id)>
@@ -84,27 +91,33 @@
     </cfquery>
     
 
+    <cfset cssFit = "px-fit">
+    <cfset toggle = '<div class="element place-right px-pointer" ng-click="toggleRight()">
+                <a class="element-menu">
+                    <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                </a>            
+            </div>'>
+    <cfif arguments.isMobile>
+        <cfset cssFit = "px-fit-mobile">
+        <cfset toggle = "">
+    </cfif>
+
     <cfsavecontent 
         variable = "pxMenu">
         
 
         <cfset getRecursiveNavBar(
-            data = qMenu) />
+            data = qMenu,
+            cssFit = variables.cssFit) />
 
     </cfsavecontent>
-
-    
+   
     <!--- <cfwddx action="cfml2js" input="#pxMenu#" toplevelvariable="menuString"/> --->
-    <cfset response['navBar'] = '<div class="navbar-content px-no-radius">
+    <cfset response['navBar'] = '<div class="navbar-content #variables.cssFit#">
         <a class="pull-menu" href=""></a>
-        <ul id="menu" class="element-menu px-no-radius">
-            #pxMenu#
-            <div class="element place-right px-pointer" ng-click="toggleRight()">
-                <a class="element-menu">
-                    <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
-                </a>
-                
-            </div>
+        <ul id="menu" class="element-menu #variables.cssFit#">
+            #variables.pxMenu#    
+            #variables.toggle#
             <span class="element-divider place-right"></span>
             <button class="element image-button image-left place-right bg-dark">Phoenix Project - pxproject.com.br
                 <img id="topMenuImgLogo" ng-src="{{logo}}" />
@@ -139,10 +152,19 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
         default  ="0"
         hint     ="ID do menu pai que o menu filho pertence"
         />
+
+    <cfargument
+        name     ="cssFit"
+        type     ="string"
+        required ="false"
+        default  =""
+        hint     ="CSS Fit"
+        />
+
+        
  
     <!--- Define o scope LOCAL. --->
     <cfset var LOCAL = StructNew() />
- 
  
     <!--- Menus do menu pai. --->
     <cfquery name="LOCAL.qMenu" dbtype="query">
@@ -172,18 +194,19 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
         <cfloop query="LOCAL.qMenu">
 
            <cfif LOCAL.qMenu.count_submenu GT 0>
-              <li class="px-no-radius">
+              <li class="#arguments.cssFit#">
 
-                <a class='dropdown-toggle px-no-radius px-pointer'>#LOCAL.qMenu.men_nome# </a>
+                <a class='dropdown-toggle #arguments.cssFit# px-pointer'>#LOCAL.qMenu.men_nome# </a>
 
-                <ul class='dropdown-menu px-no-radius' data-role='dropdown'>
+                <ul class='dropdown-menu #arguments.cssFit#' data-role='dropdown'>
 
                 <!---
                     Chama função recursiva.
                 --->
                 <cfset getRecursiveNavBar(
                     data = arguments.data,
-                    men_idPai = LOCAL.qMenu.men_id
+                    men_idPai = LOCAL.qMenu.men_id,
+                    cssFit = arguments.cssFit
                     ) />
             
 

@@ -14,7 +14,7 @@ define(['../controllers/module'], function(controllers) {
 
                 // Definir language da lib numeral.js
                 // http://numeraljs.com/                                                               
-                numeral.language(pxConfig.LOCALE.toLowerCase());                
+                numeral.language(pxConfig.LOCALE.toLowerCase());
             }
 
             var vm = this;
@@ -77,6 +77,17 @@ define(['../controllers/module'], function(controllers) {
                 $location.path('/login');
             };
 
+
+            if (navigator.userAgent.toLowerCase().search(/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i) != -1) {
+                $('html').click(function() {
+                    // "Minimizar" menu
+                    document.getElementById("menu").style.display = "none";
+                });
+
+                $('#menu').click(function(event) {
+                    event.stopPropagation();
+                });
+            }
         }])
         .controller('LeftCtrl', function($scope, $timeout, $mdSidenav, $log) {
             $scope.close = function() {

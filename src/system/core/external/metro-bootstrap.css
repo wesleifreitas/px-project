@@ -10372,8 +10372,13 @@ a {
 */
 
 /* .metro .px - start*/
-.metro .px-no-radius {  
-  border-radius: 0px;
+.metro .px-fit {  
+  border-radius: 0px;   
+}
+
+.metro .px-fit-mobile {  
+  border-radius: 0px;  
+  width: 100%; 
 }
 
 .metro .px-pointer{
