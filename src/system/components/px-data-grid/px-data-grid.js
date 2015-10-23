@@ -202,6 +202,11 @@ define(['../../directives/module'], function(directives) {
                             last: "Última"
                         }
                     }
+                    // Acesso via mobile browser
+                    if (pxUtil.isMobile()) {
+                        dataTableConfig.pagingType = "simple";
+                         dataTableConfig.pageLength = 8;                        
+                    }
                     dataTableConfig.bFilter = true;
                     dataTableConfig.bLengthChange = $scope.lengthChange;
                     dataTableConfig.lengthMenu = $scope.lengthMenu; //[20, 35, 45];
