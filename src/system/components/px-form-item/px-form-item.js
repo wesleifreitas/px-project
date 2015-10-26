@@ -373,7 +373,7 @@ define(['../../directives/module'], function(directives) {
             };
         }])
         // pxComplete
-        .directive('pxComplete', function(pxConfig, pxUtil, $parse, $http, $sce, $timeout) {
+        .directive('pxComplete', ['pxConfig', 'pxUtil', '$parse', '$http', '$sce', '$timeout', function(pxConfig, pxUtil, $parse, $http, $sce, $timeout) {
             return {
                 restrict: 'EA',
                 scope: {
@@ -623,8 +623,7 @@ define(['../../directives/module'], function(directives) {
                             scope.$apply();
                         }
                     });
-
                 }
             };
-        });
+        }]);
 });

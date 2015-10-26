@@ -10,7 +10,7 @@ define(['angular'], function(ng) {
 			PROJECT_SRC: 'px-project/src/', // Source do projeto
 			LOCALE: 'pt-BR', // Locale
 			LOGIN_REQUIRED: true // Login obrigatório?
-		})
-
+		});
+		
 	return config;
 });

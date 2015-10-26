@@ -17,7 +17,7 @@ require.config({
         'numeral': '../lib/numeral/min/numeral.min',
         'numeral-languages': '../lib/numeral/min/languages.min',
         'px-config': 'px-config',
-        'metro': '../system/core/external/metro.min',
+        'metro': '../system/core/external/metro',
         'docs': '../system/core/external/docs',
         'px-util': '../system/utils/js/px-util'
     },

@@ -4,14 +4,13 @@ define(['../controllers/module'], function(controllers) {
     controllers.controller('loginCtrl', ['pxCssLoader', '$location', 'AuthenticationService', 'FlashService', function(pxCssLoader, $location, AuthenticationService, FlashService) {
 
         pxCssLoader.load();
-       
+
         var vm = this;
 
         vm.initController = function initController() {
             // reset login status
             AuthenticationService.ClearCredentials();
         }();
-
 
         vm.login = function login() {
             vm.dataLoading = true;

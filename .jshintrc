@@ -1,4 +1,5 @@
-//http://jshint.com/docs/options/
+// http://jshint.com/docs/
+// http://jshint.com/docs/options/
 {
     "curly": true,
     "eqeqeq": true,
@@ -9,6 +10,8 @@
     // global variables
     "globals": {
         "angular": false,
+        "define": false,
+        "document": false,
         "jasmine": false,
         "$": false,
         "_": false,
@@ -16,7 +19,6 @@
         "require": false,
         "app": false,
         "localStorage": false,
-        "StringMask": false,
         "numeral": false,
         "moment": false
     }

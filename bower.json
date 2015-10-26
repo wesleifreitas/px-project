@@ -7,7 +7,7 @@
     "Weslei Freitas <weslei.rfreitas@gmail.com>"
   ],
   "description": "Phoenix Project",
-  "main": "src/px/system/js/px-project.js",
+  "main": "src/js/main.js",
   "moduleType": [
     "amd",
     "globals"
@@ -25,9 +25,7 @@
     "test",
     "tests",
     "docs",
-    "src/Application.cfm",
-    "src/index.html",
-    "src/px-project-config.js"
+    "src"
   ],
   "dependencies": {
     "angular": "~1.4.3",
