@@ -1,0 +1,1 @@
+define(["../../filters/module"],function(e){"use strict";return e.filter("dataGridRefresh",[function(){return function(e){return e?"fa fa-refresh fa-spin":"fa fa-refresh"}}]),e});

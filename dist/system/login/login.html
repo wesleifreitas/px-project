@@ -1,0 +1,23 @@
+<form role="form" id="loginForm" name="loginForm" ng-submit="vm.login()">
+    <div id="loginDiv">
+        <h1>Login</h1>
+        <fieldset>
+            <div class="input-control text">
+                <input id="usuario" type="text" class="form-control" placeholder="Usuário" ng-model="vm.username" required/>
+                <button class="btn-clear"></button>
+            </div>
+            <div class="input-control password">
+                <input id="senha" type="password" class="senha form-control" placeholder="Senha" ng-model="vm.password" required/>
+                <button class="btn-reveal"></button>
+            </div>
+            <div layout="row" layout-align="center center">
+                <div class="btn-group" role="group" aria-label="...">
+                    <!--
+                    <button class="btn btn-default" type="submit" value="Recuperar senha" ng-disabled="loginForm.$invalid">Recuperar senha</button>
+                    -->
+                    <button class="btn btn-default" type="submit" name="submit" value="Entrar" ng-disabled="loginForm.$invalid">Entrar</button>
+                </div>
+            </div>            
+        </fieldset>
+    </div>    
+</form>
