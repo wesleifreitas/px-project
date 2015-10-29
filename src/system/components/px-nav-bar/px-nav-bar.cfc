@@ -47,7 +47,7 @@
     <cfelse>
          <cfset inPro_id = arguments.pro_id>
     </cfif>
-        
+    
     <cfquery datasource="#arguments.dsn#" name="qMenu">
 
         SELECT
@@ -102,10 +102,8 @@
         <cfset toggle = "">
     </cfif>
 
-    <cfsavecontent 
-        variable = "pxMenu">
+    <cfsavecontent variable = "pxMenu">
         
-
         <cfset getRecursiveNavBar(
             data = qMenu,
             cssFit = variables.cssFit) />
@@ -137,7 +135,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
     output     ="true"
     hint       ="Faz a saída dos menus filhos de um determinado menu pai">
  
-    <!--- Define argumentos. --->
+    <!--- Define argumentos --->
     <cfargument
         name     ="data"
         type     ="query"
@@ -161,12 +159,10 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
         hint     ="CSS Fit"
         />
 
-        
- 
-    <!--- Define o scope LOCAL. --->
+    <!--- Define o scope LOCAL --->
     <cfset var LOCAL = StructNew() />
  
-    <!--- Menus do menu pai. --->
+    <!--- Menus do menu pai --->
     <cfquery name="LOCAL.qMenu" dbtype="query">
         SELECT
             men_id
@@ -186,14 +182,14 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
     </cfquery>
 
     <!---     
-        Verifica se existem algum menu filho.
+        Verifica se existem algum menu filho
     --->
-    <cfif LOCAL.qMenu.RecordCount> 
-      
-        <!--- Loop nos menus filhos. --->
+    <cfif LOCAL.qMenu.RecordCount>       
+        <!--- Loop nos menus filhos --->
         <cfloop query="LOCAL.qMenu">
+            <!--- Possui submenu? --->
+            <cfif LOCAL.qMenu.count_submenu GT 0>
 
-           <cfif LOCAL.qMenu.count_submenu GT 0>
               <li class="#arguments.cssFit#">
 
                 <a class='dropdown-toggle #arguments.cssFit# px-pointer'>#LOCAL.qMenu.men_nome# </a>
@@ -201,7 +197,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                 <ul class='dropdown-menu #arguments.cssFit#' data-role='dropdown'>
 
                 <!---
-                    Chama função recursiva.
+                    Chama função recursiva
                 --->
                 <cfset getRecursiveNavBar(
                     data = arguments.data,
@@ -209,15 +205,9 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                     cssFit = arguments.cssFit
                     ) />
             
-
+            <!--- Verifica se possui idPai --->
             <cfelseif LOCAL.qMenu.men_idPai GT 0>
 
-                <cfif LOCAL.qMenu.men_ordem EQ 1>
-                    
-                    <!---<ul class='dropdown-menu' data-role='dropdown'> --->
-
-                </cfif>
-                
                 <li>
                     <a ng-click="showView('#LOCAL.qMenu.men_id#')">#LOCAL.qMenu.men_nome#</a>
                 </li>
@@ -225,7 +215,11 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
             <cfelse>
                 
                 <li>
-                    <a>#LOCAL.qMenu.men_nome#</a>
+                    <cfif LOCAL.qMenu.count_submenu EQ 0>
+                        <a class="px-pointer" ng-click="showView('#LOCAL.qMenu.men_id#')">#LOCAL.qMenu.men_nome# </a>
+                    <cfelse>
+                        <a>#LOCAL.qMenu.men_nome# </a>
+                    </cfif>                   
                 </li>
 
             </cfif>                   
@@ -235,9 +229,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                  </ul> </li>    
 
             </cfif>
-
-        </cfloop>
-        
+        </cfloop>        
     </cfif>
 
     <cfreturn />
@@ -280,7 +272,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 
 
     <cfargument 
-        name     ="com_id"  
+        name     ="men_id"  
         required ="false"   
         default  ="-1"          
         hint     ="Código do componente">
@@ -307,7 +299,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                                     
             UNION ALL
                                 
-            -- Parte recursiva.
+            -- Parte recursiva
             SELECT 
                 m.men_id
                 ,m.men_nome
@@ -336,19 +328,19 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
         FROM 
             pxProjectMenuRecursivo
         WHERE 
-            men_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.com_id#">
+            men_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.men_id#">
 
     </cfquery>
 
 
     <cfset result = structNew()> 
-
+    
     <cfif fileExists(expandPath('/') & qView.com_view) OR fileExists(expandPath('/') & arguments.pathname & qView.com_view)>
         <cfset result['com_view_fault'] = ''> 
     <cfelse>        
         <cfset result['com_view_fault'] = expandPath('/') & qView.com_view> 
         <cfset qView.com_view  = pxProjectPackage & 'system/components/px-nav-bar/fault-view.html'> 
-    </cfif>
+    </cfif>    
     
     <cfset result['arguments'] = arguments> 
     <cfset result['qView'] = QueryToArray(qView)> 
