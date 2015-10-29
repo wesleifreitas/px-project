@@ -57,6 +57,8 @@ gulp.task('build-system-others', function() {
 	return gulp
 		.src([
 			'./src/system/**/*.html',
+			'./src/system/**/*.woff',
+			'./src/system/**/*.tff',
 			'./src/system/**/*.cfm',
 			'./src/system/**/*.cfc'
 		])		
