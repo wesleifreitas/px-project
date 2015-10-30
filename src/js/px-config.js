@@ -8,6 +8,7 @@ define(['angular'], function(ng) {
 			PROJECT_ID: 0, // Identificação do projeto (table: px.project)
 			PROJECT_NAME: 'Phoenix Project', // Nome do projeto
 			PROJECT_SRC: 'px-project/src/', // Source do projeto
+			PROJECT_DSN: 'px_project_sql', // Data Source Name (CF)
 			LOCALE: 'pt-BR', // Locale
 			LOGIN_REQUIRED: true // Login obrigatório?
 		});
