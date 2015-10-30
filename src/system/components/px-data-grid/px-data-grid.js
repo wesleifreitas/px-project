@@ -592,8 +592,8 @@ define(['../../directives/module'], function(directives) {
                                 }
                             });
 
-                            // Atualizar dados do dataTable
-                            $('#pxTable').DataTable().row.add(data).draw();
+                            // Atualizar dados do dataTable                            
+                            $scope.internalControl.table.row.add(data).draw();
 
                         });
 
@@ -601,7 +601,7 @@ define(['../../directives/module'], function(directives) {
                         $scope.nextRowFrom = result.rowFrom + $scope.rowsProcess;
                         $scope.nextRowTo = result.rowTo + $scope.rowsProcess;
 
-                        var table = $('#pxTable').DataTable();
+                        var table = $scope.internalControl.table;
                         table.page($scope.currentPage).draw(false);
 
                         var info = table.page.info();
