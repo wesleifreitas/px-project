@@ -1,7 +1,7 @@
 define(['../../directives/module'], function(directives) {
     'use strict';
 
-    directives.directive('pxDataGrid', ['pxConfig', 'pxDataGridService', 'pxUtil', 'pxMaskUtil', '$timeout', '$sce', function(pxConfig, pxDataGridService, pxUtil, pxMaskUtil, $timeout, $sce) {
+    directives.directive('pxDataGrid', ['pxConfig', '$timeout', '$sce', function(pxConfig, $timeout, $sce) {
         return {
             restrict: 'E',
             replace: true,
@@ -130,9 +130,9 @@ define(['../../directives/module'], function(directives) {
         };
     }]);
 
-    pxDataGridCtrl.$inject = ['$scope', '$http', '$timeout', 'pxConfig', 'pxUtil', 'pxMaskUtil'];
+    pxDataGridCtrl.$inject = ['pxConfig', 'pxUtil', 'pxMaskUtil', 'pxDataGridService', '$scope', '$http', '$timeout'];
 
-    function pxDataGridCtrl($scope, $http, $timeout, pxConfig, pxUtil, pxMaskUtil) {
+    function pxDataGridCtrl(pxConfig, pxUtil, pxMaskUtil, pxDataGridService, $scope, $http, $timeout) {
 
         // Verifica se a grid a está preparada para receber os dados
         $scope.pxTableReady = false;
@@ -148,7 +148,6 @@ define(['../../directives/module'], function(directives) {
         });
 
         $scope.reset = function() {
-
             // A página atual inicia-se em 0
             $scope.currentPage = 0;
 
@@ -160,6 +159,17 @@ define(['../../directives/module'], function(directives) {
 
             // Armazena linhas selecionados da listagem
             $scope.internalControl.rowsSelected = [];
+
+            // Nenhuma linha selecionada
+            $scope.rowsSelected = [];
+            
+            // Se exitir a opção selecionar tudo de listagem
+            if (angular.isDefined($scope.internalControl.checkAll)) {
+                // Resetar checkbox
+                $scope.internalControl.checkAll.checked = false;
+                $scope.internalControl.checkAll.indeterminate = false;
+            }
+
         };
 
         $scope.pxDataGridGetData = function() {
@@ -293,6 +303,7 @@ define(['../../directives/module'], function(directives) {
                 var $chkbox_all = $('tbody input[type="checkbox"]', $table);
                 var $chkbox_checked = $('tbody input[type="checkbox"]:checked', $table);
                 var chkbox_select_all = $('thead input[name="select_all"]', $table).get(0);
+                $scope.internalControl.checkAll = chkbox_select_all;
 
                 // Se não possuir nenhum checkbox selecionado
                 if ($chkbox_checked.length === 0) {
