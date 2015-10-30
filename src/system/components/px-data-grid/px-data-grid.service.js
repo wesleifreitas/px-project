@@ -15,6 +15,7 @@ define(['../../services/module'], function(services) {
         function remove(table, fields, selectedItems, callback) {
 
             var params = {
+                dsn: pxConfig.PROJECT_DSN,
                 table: table,
                 fields: fields,
                 selectedItems: selectedItems

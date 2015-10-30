@@ -22,7 +22,7 @@ define(['../../directives/module'], function(directives) {
                 dataInit: '=pxDataInit',
                 rowsProcess: '=pxRowsProcess',
                 demand: '=pxDemand',
-                control: '='
+                control: '=pxControl'
             },
             link: function(scope, element, attrs) {
 
@@ -131,9 +131,9 @@ define(['../../directives/module'], function(directives) {
     }]);
 
     pxDataGridCtrl.$inject = ['$scope', '$http', '$timeout', 'pxConfig', 'pxUtil', 'pxMaskUtil'];
-    
+
     function pxDataGridCtrl($scope, $http, $timeout, pxConfig, pxUtil, pxMaskUtil) {
-    
+
         // Verifica se a grid a está preparada para receber os dados
         $scope.pxTableReady = false;
 
@@ -474,6 +474,7 @@ define(['../../directives/module'], function(directives) {
 
             // Parâmetros da consulta
             var params = {};
+            params.dsn = pxConfig.PROJECT_DSN;
             params.table = $scope.table;
             params.fields = angular.toJson(arrayFields);
             params.orderBy = $scope.orderBy;
