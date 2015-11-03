@@ -1,8 +1,9 @@
-define(['angular'], function(ng) {
+define(['../../services/module'], function(services) {
     'use strict';
 
-    var module = ng.module('pxUtil', [])
-        .factory('pxUtil', pxUtil);
+    services.factory('pxUtil', pxUtil);
+
+    pxUtil.$inject = [];
 
     function pxUtil() {
 
@@ -54,6 +55,4 @@ define(['angular'], function(ng) {
             }
         }
     }
-
-    return module;
 });

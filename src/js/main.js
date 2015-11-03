@@ -15,11 +15,10 @@ require.config({
         'dataTables': '../lib/datatables/media/js/jquery.dataTables.min',
         'moment': '../lib/moment/min/moment-with-locales.min',
         'numeral': '../lib/numeral/min/numeral.min',
-        'numeral-languages': '../lib/numeral/min/languages.min',
-        'px-config': 'px-config',
+        'numeral-languages': '../lib/numeral/min/languages.min',        
         'metro': '../system/core/external/metro',
         'docs': '../system/core/external/docs',
-        'px-util': '../system/utils/js/px-util'
+        'px-config': 'px-config'
     },
     shim: {
         'angular': {
