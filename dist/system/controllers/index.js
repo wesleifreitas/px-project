@@ -1,1 +1,1 @@
-define(["../login/login.controller","../home/home.controller"],function(){});
+define(["../controllers/controller"],function(){});
