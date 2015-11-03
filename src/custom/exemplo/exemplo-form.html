@@ -1,0 +1,38 @@
+<md-dialog ng-cloak flex="50" aria-label="Formulário">
+    <px-form px-debug="true" px-control="formControl" px-init="formInit()" px-table="dbo.exemplo" px-config="{{formConfig}}"></px-form>
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{formTitle}}</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <i class="fa fa-close"></i>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="max-width:800px;max-height:810px;">
+            <div class="md-dialog-content">
+                <div layout="row" layout-sm="column" layout-wrap layout-padding flex="100">
+                    <div flex="50" flex-sm="100">
+                        <label>Nome</label>
+                        <input id="nome" ng-model="nome" class="form-control">
+                    </div>
+                    <div flex="50" flex-sm="100">
+                        <label>CPF</label>
+                        <input id="cpf" ng-model="cpf" class="form-control" px-br-cpf-mask>
+                    </div>
+                </div>
+        </md-dialog-content>
+        <div class="md-actions" layout="row">
+            <span flex></span>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default" ng-click="cancel()">
+                    <span class="fa fa-remove"></span> <span hide-sm>Cancelar</span>
+                </button>
+                <button type="button" class="btn btn-default" ng-click="insert(form)" style="margin-right:20px;">
+                    <span class="fa fa-plus"></span> <span hide-sm>Adicionar</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</md-dialog>

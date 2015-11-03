@@ -2,9 +2,29 @@ define(['../controllers/module'], function(controllers) {
     'use strict';
 
     // Controller
-    controllers.controller('exemploCtrl', ['exemploService', 'pxConfig', '$scope', '$element', '$attrs', function(exemploService, pxConfig, $scope, $element, $attrs, $rootScope) {
+    controllers.controller('exemploCtrl', exemploCtrl);
 
+    exemploCtrl.$inject = ['exemploService', 'pxConfig', '$scope', '$element', '$attrs', '$mdDialog'];
+
+    function exemploCtrl(exemploService, pxConfig, $scope, $element, $attrs, $mdDialog) {
         // Variáveis gerais - Start
+
+        /**
+         * Variável de controle de visualição do Filtro Avançado
+         * @type {Boolean}
+         */
+        $scope.expand = false;
+        /**
+         * Responsável por realizar o efeito de expandir o Filtro Avançado
+         * @return {void}
+         */
+        $scope.showFilter = function() {
+            var $header = $('#headerSearch');
+            var $content = $header.next();
+            $content.slideToggle(500, function() {});
+            $scope.filterExpand = !$scope.filterExpand;
+            $header.blur();
+        };
 
         // Define as opções de status
         $scope.dataStatus = {
@@ -43,7 +63,7 @@ define(['../controllers/module'], function(controllers) {
         /**
          * Controle da listagem
          * Note que a propriedade 'control' da directive px-data-grid é igual a 'gridControl'
-         * Exemplo: <px-data-grid control="gridControl">
+         * Exemplo: <px-data-grid px-control="gridControl">
          * @type {Object}
          */
         $scope.gridControl = {};
@@ -122,6 +142,7 @@ define(['../controllers/module'], function(controllers) {
             };
         };
 
+
         /**
          * Atualizar dados da listagem
          * @return {void}
@@ -140,23 +161,64 @@ define(['../controllers/module'], function(controllers) {
             $scope.gridControl.remove();
         };
 
-        // Listagem - End
+        // Listagem - End        
+        $scope.formTitle = "Formulário";
+        $scope.add = function(event) {
+            $scope.formTitle = "Formulário de Adicionar";
+            $scope.action = "insert";
+
+            formCtrl.$inject = ['$scope', '$mdDialog'];
+            $mdDialog.show({
+                scope: $scope,
+                preserveScope: true,
+                controller: formCtrl,
+                templateUrl: 'custom/exemplo/exemplo-form.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose: false
+            });
+        };
+    }
+    // Controller - Formulário
+    function formCtrl($scope, $mdDialog) {
+        /**
+         * Controle do formulário
+         * Note que a propriedade 'control' da directive px-form é igual a 'formControl'
+         * Exemplo: <px-form px-control="formControl">
+         * @type {Object}
+         */
+        $scope.formControl = {};
 
         /**
-         * Variável de controle de visualição do Filtro Avançado
-         * @type {Boolean}
-         */
-        $scope.expand = false;
-        /**
-         * Responsável por realizar o efeito de expandir o Filtro Avançado
+         * Inicializa formulário
          * @return {void}
          */
-        $scope.showFilter = function() {
-            var $header = $('#headerSearch');
-            var $content = $header.next();
-            $content.slideToggle(500, function() {});
-            $scope.filterExpand = !$scope.filterExpand;
-            $header.blur();
+        $scope.formInit = function() {
+            $scope.formConfig = {
+                pk: [{
+                    field: 'exe_id',
+                    type: 'int'
+                }],
+                fields: [{
+                    field: 'exe_nome',
+                    type: 'string',
+                    element: 'nome'
+                }, {
+                    field: 'exe_cpf',
+                    type: 'string',
+                    element: 'cpf'
+                }]
+            }
         };
-    }]);
+
+        $scope.insert = function() {
+            console.info(' $scope.formControl', $scope.formControl);
+            $scope.formControl.insert();
+            $mdDialog.hide();
+        };
+
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+    }
 });
