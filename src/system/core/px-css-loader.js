@@ -55,8 +55,7 @@ define(['../services/module'], function(services) {
             $.each(cssLoader, function(i, item) {
                 $('<link rel="stylesheet"/>').attr('href', item.file).appendTo($('head'));
             });
-            $('<link rel="stylesheet"/>').attr('href', 'styles.css').appendTo($('head'));
-            $('<link rel="stylesheet"/>').attr('href', pxConfig.PX_PACKAGE + 'system/core/px-project.css').appendTo($('head'));
+            $('<link rel="stylesheet"/>').attr('href', 'styles.css').appendTo($('head'));            
         }
     }
 });
