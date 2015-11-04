@@ -52,7 +52,7 @@ require.config({
             deps: ['angular']
         },
         'metro': {
-            deps: ['jquery', 'jquery-ui']
+            deps: ['jquery', 'jquery-ui','docs']
         },
         'docs': {
             deps: ['jquery']
