@@ -7,17 +7,14 @@
                 <button class="btn-clear"></button>
             </div>
             <div class="input-control password">
-                <input id="senha" type="password" class="senha form-control" placeholder="Senha" ng-model="vm.password" required/>
+                <input id="senha" type="password" class="form-control" placeholder="Senha" ng-model="vm.password" required/>
                 <button class="btn-reveal"></button>
             </div>
             <div layout="row" layout-align="center center">
                 <div class="btn-group" role="group" aria-label="...">
-                    <!--
-                    <button class="btn btn-default" type="submit" value="Recuperar senha" ng-disabled="loginForm.$invalid">Recuperar senha</button>
-                    -->
                     <button class="btn btn-default" type="submit" name="submit" value="Entrar" ng-disabled="loginForm.$invalid">Entrar</button>
                 </div>
-            </div>            
+            </div>
         </fieldset>
-    </div>    
+    </div>
 </form>
