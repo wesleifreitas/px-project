@@ -215,8 +215,7 @@ define(['../controllers/module'], function(controllers) {
          * Inserir registro
          * @return {[type]} [description]
          */
-        $scope.insert = function() {
-            console.info(' $scope.formControl', $scope.formControl);
+        $scope.insert = function() {            
             $scope.formControl.insert();
             $mdDialog.hide();
         };
