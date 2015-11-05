@@ -13,6 +13,57 @@ define(['../../directives/module'], function(directives) {
                 });
             };
         }])
+        // Validar campos
+        // http://stackoverflow.com/questions/18063561/access-isolated-parent-scope-from-a-transcluded-directive
+        // http://stackoverflow.com/questions/21488803/how-does-one-preserve-scope-with-nested-directives
+        // https://groups.google.com/forum/#!topic/angular/BZqs4TXyOcw 
+        .directive('pxValid', ['$timeout', function($timeout) {
+            return {
+                restrict: 'E',
+                replace: true,
+                transclude: false,
+                template: '<small>{{error}}</small>',
+                scope: {
+                    field: '@pxField'
+                },
+                link: function(scope, element, attrs) {
+                    // Chama evento px-init
+                    $timeout(scope.init, 0);
+                },
+                controller: ['$scope', function($scope) {
+                    // Inicializar validação
+                    $scope.init = function() {
+                        // Armazena mensagem de erro de validação                        
+                        $scope.error = '';
+                        // Elemento que será validado
+                        var _element = angular.element($('#' + $scope.field).get(0));
+                        // ngModelController do elemento
+                        var _ngModelCtrl = angular.element($('#' + $scope.field)).data('$ngModelController');
+                        // Evento blur
+                        _element.on('blur', function(event) {
+                            // Verificar ser o elemento está inválido
+                            if (_ngModelCtrl.$invalid) {
+                                console.info('_ngModelCtrl.$error', _ngModelCtrl.$error)
+                                _element.css({
+                                    borderColor: '#DF0707'
+                                });
+                                if (_ngModelCtrl.$error.required) {
+                                    $scope.$apply(function() {
+                                        $scope.error = 'Campo obrigatório';
+                                    });
+                                }
+                                console.info('$scope.error', $scope.error);
+                            } else {
+                                $scope.error = '';
+                                _element.css({
+                                    borderColor: '#CCCCCC'
+                                });
+                            }
+                        });
+                    }
+                }]
+            };
+        }])
         // pxValidNumber
         // Digitar somente números
         .directive('pxValidNumber', [function() {
