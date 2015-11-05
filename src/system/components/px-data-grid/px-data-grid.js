@@ -541,15 +541,19 @@ define(['../../directives/module'], function(directives) {
                         $scope.nextRowTo = result.rowTo + $scope.rowsProcess;
 
                         var table = $scope.internalControl.table;
-                        table.page($scope.currentPage).draw(false);
+                        requirejs(["datatables"], function() {
+                            $('#pxTable').DataTable().page($scope.currentPage).draw(false);
+                        });
 
-                        var info = table.page.info();
-                        if (info.start === 0) {
-                            info.start = 1;
-                        }
-                        //$('#pxTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);                           
-                        $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
+                        requirejs(["datatables"], function() {
+                            var info = $('#pxTable').DataTable().page.info();
+                            if (info.start === 0) {
+                                info.start = 1;
+                            }
 
+                            //$('#pxTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);                           
+                            $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
+                        });
                         // Verifica $scope.demand
                         // false: não continua a consulta até que o usuário navegue até a última página
                         // true: continua consulta até carregar todos os registros
@@ -592,7 +596,7 @@ define(['../../directives/module'], function(directives) {
                     // Dados por campo
                     data[item.field] = value[item.field];
                 }
-                
+
                 if (!angular.isDefined(data[item.field])) {
                     data[item.field] = '';
                 }
@@ -643,8 +647,10 @@ define(['../../directives/module'], function(directives) {
                 }
             });
 
-            // Atualizar dados do dataTable                            
-            $scope.internalControl.table.row.add(data).draw();
+            // Atualizar dados do dataTable                                        
+            requirejs(["datatables"], function() {
+                $('#pxTable').DataTable().row.add(data).draw();
+            });
         }
 
         /**
