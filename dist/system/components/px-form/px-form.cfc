@@ -39,14 +39,14 @@
 		hint     ="Campos do px-data-grid">
 
 	<cfset result = structNew()>
-	<cfset result['arguments']  = arguments>
+	<cfset result['arguments'] = arguments>
 	
 	<cftry>	
-		<cfset arguments.pk 	= decode(arguments.pk)>
+		<cfset arguments.pk = decode(arguments.pk)>
 		<cfset arguments.fields = decode(arguments.fields)>		
 		
 		<cfset comma = "">
-		<cfquery name="qResult" datasource="#arguments.dsn#">
+		<cfquery datasource="#arguments.dsn#" result="queryResult">
 			INSERT INTO
 				#arguments.table#
 			(
@@ -64,12 +64,21 @@
 				</cfloop>
 			)			
 		</cfquery>			
+
+		<cfscript>
+			var data = structNew();			
+			for(item in arguments.fields) {
+			   data[item.field] = item.valueObject.value;
+			}
+		</cfscript>
 						
-		<cfset result['success']  	= true>
+		<cfset result['success'] = true>
+		<cfset result['queryResult'] = queryResult>
+		<cfset result['data'] = data>
 		
 		<cfcatch>
-			<cfset result['success']  = false>
-			<cfset result['cfcatch']  = cfcatch>
+			<cfset result['success'] = false>
+			<cfset result['cfcatch'] = cfcatch>
 		</cfcatch>
 
 	</cftry>
