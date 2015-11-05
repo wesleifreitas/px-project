@@ -211,14 +211,34 @@ define(['../controllers/module'], function(controllers) {
             }
         };
 
+        /**
+         * Inserir registro
+         * @return {[type]} [description]
+         */
         $scope.insert = function() {
             console.info(' $scope.formControl', $scope.formControl);
             $scope.formControl.insert();
             $mdDialog.hide();
         };
 
-        $scope.cancel = function() {
-            $mdDialog.cancel();
+        /**
+         * Função callback do formulário
+         * @param  {object} event retorno do formulário
+         * @return {void}
+         */
+        $scope.formCallback = function(event) {            
+            // Adicionar registro na listagem
+            $scope.gridControl.addRow(event.data);            
         };
+
+        /**
+         * Fechar formulário
+         * @return {void}
+         */
+        $scope.formCancel = function() {
+            console.info('validNome',$scope.validNome);
+
+            $mdDialog.cancel();
+        };        
     }
 });
