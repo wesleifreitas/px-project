@@ -14,6 +14,7 @@ define(['../../directives/module'], function(directives) {
                 pk: '@pk',
                 fields: '@pxFields',
                 init: '&pxInit',
+                callback: '&pxCallback',
                 control: '=pxControl'
             },
             link: function(scope, element, attrs) {
@@ -27,6 +28,10 @@ define(['../../directives/module'], function(directives) {
                     scope.insert();
                 };
 
+                scope.internalControl.update = function() {
+                    scope.update();
+                };
+
                 // Chama evento px-init
                 $timeout(scope.init, 0);
             },
@@ -37,7 +42,7 @@ define(['../../directives/module'], function(directives) {
     pxFormCtrl.$inject = ['pxFormService', '$scope', '$http'];
 
     function pxFormCtrl(pxFormService, $scope, $http) {
-
+        // Inserir dados        
         $scope.insert = function() {
             var objConfig = JSON.parse($scope.config);
 
@@ -131,7 +136,12 @@ define(['../../directives/module'], function(directives) {
                     console.info('pxFormService.insert response: ', response);
                 }
                 if (response.success) {
-                    alert(":)")
+                    if ($scope.callback) {
+                        // http://blog-it.hypoport.de/2013/11/06/passing-functions-to-angularjs-directives/
+                        $scope.callback({
+                            event: response
+                        });
+                    }
                 } else {
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 }
