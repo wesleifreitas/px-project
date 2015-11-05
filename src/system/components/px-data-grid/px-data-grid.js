@@ -97,19 +97,25 @@ define(['../../directives/module'], function(directives) {
 
                     /**
                      * Recuperar dados que são carregados na listagem
-                     * @return {[type]} [description]
+                     * @return {void}
                      */
                     scope.internalControl.getData = function() {
-
                         scope.getData(0, scope.rowsProcess);
                     };
 
                     /**
+                     * Adicionar linha de registro 
+                     * @param {object} value dado
+                     */
+                    scope.internalControl.addRow = function(value) {
+                        scope.addRow(value);
+                    };
+
+                    /**
                      * Remover itens (selecionados) da listagem
-                     * @return {[type]} [description]
+                     * @return {void}
                      */
                     scope.internalControl.remove = function() {
-
                         scope.remove();
                     };
 
@@ -162,7 +168,7 @@ define(['../../directives/module'], function(directives) {
 
             // Nenhuma linha selecionada
             $scope.rowsSelected = [];
-            
+
             // Se exitir a opção selecionar tudo de listagem
             if (angular.isDefined($scope.internalControl.checkAll)) {
                 // Resetar checkbox
@@ -527,74 +533,7 @@ define(['../../directives/module'], function(directives) {
                     if (result.qQuery.length > 0) {
                         // Loop na query
                         angular.forEach(result.qQuery, function(index) {
-
-                            $scope.currentRecordCount++;
-
-                            // Dados
-                            var data = {};
-
-                            data.pxDataGridRowNumber = $scope.currentRecordCount;
-
-                            // Loop nas colunas da grid
-                            angular.forEach(JSON.parse($scope.fields), function(item) {
-
-                                if (!angular.isDefined(index[item.field])) {
-                                    // Dados por campo
-                                    data[item.field] = index[item.field.toUpperCase()];
-                                } else {
-                                    // Dados por campo
-                                    data[item.field] = index[item.field];
-                                }
-
-                                // Se possuir máscara
-                                // https://github.com/the-darc/string-mask
-                                if (item.stringMask) {
-                                    switch (item.stringMask) {
-                                        case 'cpf':
-                                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], '###.###.###-##').result;
-                                            break;
-                                        case 'cnpj':
-                                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], '##.###.###/####-##').result;
-                                            break;
-                                        case 'cep':
-                                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], '#####-###').result;
-                                            break;
-                                        case 'brPhone':
-                                            if (data[item.field].length === 11) {
-                                                data[item.field] = pxMaskUtil.maskFormat(data[item.field], '(##) #####-####').result;
-                                            } else {
-                                                data[item.field] = pxMaskUtil.maskFormat(data[item.field], '(##) #####-####').result;
-                                            }
-                                            break;
-                                        default:
-                                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], item.stringMask).result;
-                                            break;
-                                    }
-                                }
-
-                                // Se possuir moment
-                                // http://momentjs.com/
-                                if (item.moment) {
-                                    //data[item.field] = moment(Date.parse(data[item.field])).format(item.moment);
-                                }
-
-                                // Se possuir numeral
-                                // http://numeraljs.com/
-                                if (item.numeral) {
-                                    switch (item.numeral) {
-                                        case 'currency':
-                                            data[item.field] = numeral(data[item.field]).format('0,0.00');
-                                            break;
-                                        default:
-                                            data[item.field] = numeral(data[item.field]).format(item.numeral);
-                                            break;
-                                    }
-                                }
-                            });
-
-                            // Atualizar dados do dataTable                            
-                            $scope.internalControl.table.row.add(data).draw();
-
+                            $scope.addRow(index);
                         });
 
                         $scope.recordCount = result.recordCount;
@@ -633,6 +572,80 @@ define(['../../directives/module'], function(directives) {
             });
 
         };
+
+        $scope.addRow = function addRow(value) {
+            // Somar currentRecordCount
+            $scope.currentRecordCount++;
+
+            // Dados
+            var data = {};
+
+            data.pxDataGridRowNumber = $scope.currentRecordCount;
+
+            // Loop nas colunas da grid
+            angular.forEach(JSON.parse($scope.fields), function(item) {
+
+                if (!angular.isDefined(value[item.field])) {
+                    // Dados por campo
+                    data[item.field] = value[item.field.toUpperCase()];
+                } else {
+                    // Dados por campo
+                    data[item.field] = value[item.field];
+                }
+                
+                if (!angular.isDefined(data[item.field])) {
+                    data[item.field] = '';
+                }
+
+                // Se possuir máscara
+                // https://github.com/the-darc/string-mask
+                if (item.stringMask) {
+                    switch (item.stringMask) {
+                        case 'cpf':
+                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], '###.###.###-##').result;
+                            break;
+                        case 'cnpj':
+                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], '##.###.###/####-##').result;
+                            break;
+                        case 'cep':
+                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], '#####-###').result;
+                            break;
+                        case 'brPhone':
+                            if (data[item.field].length === 11) {
+                                data[item.field] = pxMaskUtil.maskFormat(data[item.field], '(##) #####-####').result;
+                            } else {
+                                data[item.field] = pxMaskUtil.maskFormat(data[item.field], '(##) #####-####').result;
+                            }
+                            break;
+                        default:
+                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], item.stringMask).result;
+                            break;
+                    }
+                }
+
+                // Se possuir moment
+                // http://momentjs.com/
+                if (item.moment) {
+                    //data[item.field] = moment(Date.parse(data[item.field])).format(item.moment);
+                }
+
+                // Se possuir numeral
+                // http://numeraljs.com/
+                if (item.numeral) {
+                    switch (item.numeral) {
+                        case 'currency':
+                            data[item.field] = numeral(data[item.field]).format('0,0.00');
+                            break;
+                        default:
+                            data[item.field] = numeral(data[item.field]).format(item.numeral);
+                            break;
+                    }
+                }
+            });
+
+            // Atualizar dados do dataTable                            
+            $scope.internalControl.table.row.add(data).draw();
+        }
 
         /**
          * Remover itens da listagem                  
