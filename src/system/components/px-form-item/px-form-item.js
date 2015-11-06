@@ -43,7 +43,6 @@ define(['../../directives/module'], function(directives) {
                         _element.on('blur', function(event) {
                             // Verificar ser o elemento está inválido
                             if (_ngModelCtrl.$invalid) {
-                                console.info('_ngModelCtrl.$error', _ngModelCtrl.$error)
                                 _element.css({
                                     borderColor: '#DF0707'
                                 });
@@ -54,7 +53,9 @@ define(['../../directives/module'], function(directives) {
                                 }
                                 console.info('$scope.error', $scope.error);
                             } else {
-                                $scope.error = '';
+                                $scope.$apply(function() {
+                                    $scope.error = '';
+                                });
                                 _element.css({
                                     borderColor: '#CCCCCC'
                                 });
