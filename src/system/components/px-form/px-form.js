@@ -11,7 +11,6 @@ define(['../../directives/module'], function(directives) {
                 debug: '=pxDebug',
                 config: '@pxConfig',
                 table: '@pxTable',
-                pk: '@pk',
                 fields: '@pxFields',
                 init: '&pxInit',
                 callback: '&pxCallback',
@@ -22,14 +21,24 @@ define(['../../directives/module'], function(directives) {
                 scope.internalControl = scope.control || {};
 
                 /**
-                 * Inserir dados na base                 
+                 * Inserir dados              
                  */
                 scope.internalControl.insert = function() {
-                    scope.insert();
+                    scope.insertUpdate('insert');
                 };
 
+                /**
+                 * Selecionar dados               
+                 */
+                scope.internalControl.select = function(data) {
+                    scope.select(data);
+                };
+
+                /**
+                 * Atualizar dados               
+                 */
                 scope.internalControl.update = function() {
-                    scope.update();
+                    scope.insertUpdate('update');
                 };
 
                 // Chama evento px-init
@@ -39,21 +48,17 @@ define(['../../directives/module'], function(directives) {
         };
     }]);
 
-    pxFormCtrl.$inject = ['pxFormService', '$scope', '$http'];
+    pxFormCtrl.$inject = ['pxFormService', 'pxArrayUtil', '$scope', '$http', '$timeout'];
 
-    function pxFormCtrl(pxFormService, $scope, $http) {
+    function pxFormCtrl(pxFormService, pxArrayUtil, $scope, $http, $timeout) {
         // Inserir dados        
-        $scope.insert = function() {
+        $scope.insertUpdate = function(action) {
             var objConfig = JSON.parse($scope.config);
 
             var table = objConfig.table;
-            var pk = objConfig.pk;
             var fields = objConfig.fields;
             if (!angular.isDefined(table)) {
                 table = $scope.table;
-            }
-            if (!angular.isDefined(pk)) {
-                pk = JSON.parse($scope.pk);
             }
             if (!angular.isDefined(fields)) {
                 fields = JSON.parse($scope.fields);
@@ -126,14 +131,18 @@ define(['../../directives/module'], function(directives) {
             });
             /*
             console.group('$scope.insert - var');
-            console.info('table:', table);
-            console.info('pk:', pk);
+            console.info('table:', table);            
             console.info('fields:', fields);
             console.groupEnd();
             */
-            pxFormService.insert(table, angular.toJson(pk), angular.toJson(fields), function(response) {
+            var oldForm = '';
+            if (angular.isDefined($scope.oldForm)) {
+                oldForm = angular.toJson($scope.oldForm)
+            }
+
+            pxFormService.insertUpdate(action, table, angular.toJson(fields), oldForm, function(response) {
                 if ($scope.debug) {
-                    console.info('pxFormService.insert response: ', response);
+                    console.info('pxFormService.insertUpdate response: ', response);
                 }
                 if (response.success) {
                     if ($scope.callback) {
@@ -146,6 +155,75 @@ define(['../../directives/module'], function(directives) {
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 }
             });
+
+        }
+
+        // Selecionar      
+        $scope.select = function(data) {
+            $timeout(function() {
+                var objConfig = JSON.parse($scope.config);
+
+                var table = objConfig.table;
+                var fields = objConfig.fields;
+                if (!angular.isDefined(table)) {
+                    table = $scope.table;
+                }
+                if (!angular.isDefined(fields)) {
+                    fields = JSON.parse($scope.fields);
+                }
+
+                angular.forEach(fields, function(index) {
+                    index.valueObject = {};
+                    index.valueObject.value = data[index.field];
+                });
+
+                pxFormService.select(table, angular.toJson(fields), function(response) {
+                    if ($scope.debug) {
+                        console.info('pxFormService.select response: ', response);
+                    }
+                    if (response.success) {
+                        // Armazenar dados recuperados
+                        $scope.oldForm = response.qQuery[0];
+
+                        angular.forEach(fields, function(index) {
+                            if (angular.isDefined(index.element)) {
+                                var selectorName = '#' + index.element;
+                                var selectorValue = index.element;
+
+                                // Verifica se o campo é um px-complete
+                                if (angular.isDefined(angular.element($(selectorName + '_pxComplete').get(0)).scope())) {
+
+                                    selectorName += '_pxComplete';
+                                    selectorValue = 'selectedItem';
+                                }
+                                /*
+                                var _ngModelCtrl = angular.element($(selectorName).data('$ngModelController'));
+
+                                _ngModelCtrl.get(0).$parsers.push(function(value) {
+                                    _ngModelCtrl.get(0).$setViewValue(response.qQuery[0][index.field]);
+                                    return response.qQuery[0][index.field];
+                                });
+                                */
+                                var _element = angular.element($(selectorName).get(0));
+
+                                // Se possuir configuração avançada (fieldValueOptions)
+                                if (angular.isDefined(index.fieldValueOptions)) {
+
+                                    if (_element.scope().hasOwnProperty(selectorValue)) {
+                                        _element.scope()[index.field] = _element.scope()[index.field][pxArrayUtil.getIndexByProperty(_element.scope()[index.field], index.fieldValueOptions.selectedItem, response.qQuery[0][index.field])]
+                                    } else {
+                                        console.error('pxForm:', 'Scope ' + selectorValue + ' sem valor inicial definido');
+                                    }
+                                } else {
+                                    _element.scope()[index.field] = response.qQuery[0][index.field];
+                                }
+                            }
+                        });
+                    } else {
+                        alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+                    }
+                });
+            }, 0);
         }
     }
 });
