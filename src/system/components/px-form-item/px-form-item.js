@@ -50,8 +50,7 @@ define(['../../directives/module'], function(directives) {
                                     $scope.$apply(function() {
                                         $scope.error = 'Campo obrigatório';
                                     });
-                                }
-                                console.info('$scope.error', $scope.error);
+                                }                                
                             } else {
                                 $scope.$apply(function() {
                                     $scope.error = '';
@@ -562,8 +561,7 @@ define(['../../directives/module'], function(directives) {
                                     url: scope.url,
                                     dataType: 'json',
                                     params: params
-                                }).success(function(response, status, headers, config) {
-                                    console.info('response', response);
+                                }).success(function(response, status, headers, config) {                                    
                                     if (!angular.isDefined(scope.responseQuery) || scope.responseQuery === '') {
                                         scope.responseQuery = 'qQuery';
                                     }
