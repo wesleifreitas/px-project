@@ -19,6 +19,7 @@ define(['../../directives/module'], function(directives) {
                 check: '=pxCheck',
                 init: '&pxInit',
                 itemClick: '&pxItemClick',
+                itemEdit: '&pxItemEdit',
                 dataInit: '=pxDataInit',
                 rowsProcess: '=pxRowsProcess',
                 demand: '=pxDemand',
@@ -50,18 +51,32 @@ define(['../../directives/module'], function(directives) {
                     // Colunas para o <table>
                     scope.columns = '';
 
-                    var i = 0;
+                    var i = -1;
                     var aoColumnsData = {};
                     angular.forEach(newValue, function(index) {
 
-                        if (i === 0 && scope.check) {
-                            scope.columns += '<th class="text-left"><input name="select_all" value="1" type="checkbox"></th>';
+                        // Checkbox  - Start
+                        if (i === -1 && scope.check) {
+                            scope.columns += '<th class="text-left" width="1px"><input name="select_all" value="1" type="checkbox"></th>';
 
                             aoColumnsData = {};
                             aoColumnsData.mData = 'pxDataGridRowNumber';
 
                             scope.aoColumns.push(aoColumnsData);
                         }
+                        i++;
+                        // Checkbox  - End
+
+                        // Edit - Start
+                        if (i === 0) {
+                            scope.columns += '<th class="text-center" width="1px"><i class=""></i></th>';
+
+                            aoColumnsData = {};
+                            aoColumnsData.mData = 'edit';
+
+                            scope.aoColumns.push(aoColumnsData);
+                        }
+                        // Edit - End
 
                         scope.columns += '<th class="text-left">' + index.title + '</th>';
 
@@ -78,7 +93,7 @@ define(['../../directives/module'], function(directives) {
                     scope.dataTable += '<tbody></tbody>';
 
                     scope.dataTable += '<tfoot>';
-                    scope.dataTable += scope.columns;
+                    scope.dataTable += scope.columns.replace('<th class="text-left" width="1px"><input name="select_all" value="1" type="checkbox"></th>', '<th class="text-left"></th>');
                     scope.dataTable += '</tfoot>';
 
                     scope.dataTable = $sce.trustAsHtml(scope.dataTable);
@@ -104,12 +119,21 @@ define(['../../directives/module'], function(directives) {
                     };
 
                     /**
-                     * Adicionar linha de registro 
-                     * @param {object} value dado
+                     * Adicionar linha de registro
+                     * @param {object} value valor que será inserido na listagem
                      */
-                    scope.internalControl.addRow = function(value) {
-                        scope.addRow(value);
+                    scope.internalControl.addDataRow = function(value) {
+                        scope.addDataRow(value);
                     };
+
+                    /**
+                     * Remover linha
+                     * @param {object} value objeto linha do DataTable
+                     */
+                    scope.internalControl.removeRow = function(value) {
+                        scope.removeRow(value);
+                    };
+                    
 
                     /**
                      * Remover itens (selecionados) da listagem
@@ -243,6 +267,14 @@ define(['../../directives/module'], function(directives) {
                     "render": function(data, type, full, meta) {
                         return "<input type='checkbox'>";
                     }
+                }, {
+                    "targets": 1,
+                    "searchable": false,
+                    "orderable": false,
+                    "className": "dt-body-center",
+                    "render": function(data, type, full, meta) {
+                        return "<i class='fa fa-pencil'>";
+                    }
                 }];
             }
             dataTableConfig.order = []; //default order
@@ -334,6 +366,29 @@ define(['../../directives/module'], function(directives) {
                 }
             };
 
+            // Evento click edit
+            $('#pxTable tbody').on('click', 'i[class="fa fa-pencil"]', function(e) {
+
+                var $row = $(this).closest('tr');
+                $scope.internalControl.updatedRow = $row;
+                var data = $scope.internalControl.table.row($row).data();
+
+                var itemEdit = {} //angular.copy(JSON.parse($scope.fields))
+
+                angular.forEach(JSON.parse($scope.fields), function(index) {
+                    itemEdit[index.field] = data.edit[index.field]
+                });
+
+                var itemEditEvent = {
+                    itemClick: data,
+                    itemEdit: itemEdit
+                }
+
+                $scope.itemEdit({
+                    event: itemEditEvent
+                });
+            });
+
             // Evento click checkbox
             $('#pxTable tbody').on('click', 'input[type="checkbox"]', function(e) {
                 var $row = $(this).closest('tr');
@@ -379,6 +434,10 @@ define(['../../directives/module'], function(directives) {
 
             // Evento click células
             $('#pxTable').on('click', 'tbody td, thead th:first-child', function(e) {
+                // Clicar no edit
+                if (e.target.tagName === 'I') {
+                    return;
+                }
                 $(this).parent().find('input[type="checkbox"]').trigger('click');
             });
 
@@ -533,7 +592,7 @@ define(['../../directives/module'], function(directives) {
                     if (result.qQuery.length > 0) {
                         // Loop na query
                         angular.forEach(result.qQuery, function(index) {
-                            $scope.addRow(index);
+                            $scope.addDataRow(index);
                         });
 
                         $scope.recordCount = result.recordCount;
@@ -577,7 +636,7 @@ define(['../../directives/module'], function(directives) {
 
         };
 
-        $scope.addRow = function addRow(value) {
+        $scope.addDataRow = function addDataRow(value) {
             // Somar currentRecordCount
             $scope.currentRecordCount++;
 
@@ -585,6 +644,7 @@ define(['../../directives/module'], function(directives) {
             var data = {};
 
             data.pxDataGridRowNumber = $scope.currentRecordCount;
+            data.edit = {}; //$scope.currentRecordCount;
 
             // Loop nas colunas da grid
             angular.forEach(JSON.parse($scope.fields), function(item) {
@@ -600,6 +660,8 @@ define(['../../directives/module'], function(directives) {
                 if (!angular.isDefined(data[item.field])) {
                     data[item.field] = '';
                 }
+
+                data.edit[item.field] = angular.copy(data[item.field]);
 
                 // Se possuir máscara
                 // https://github.com/the-darc/string-mask
@@ -651,6 +713,10 @@ define(['../../directives/module'], function(directives) {
             requirejs(["datatables"], function() {
                 $('#pxTable').DataTable().row.add(data).draw();
             });
+        }
+
+        $scope.removeRow = function removeRow(value) {
+            $scope.internalControl.table.rows(value).remove().draw();
         }
 
         /**
