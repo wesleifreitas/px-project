@@ -10,6 +10,7 @@ define(['../../services/module'], function(services) {
         var service = {};
 
         service.sortOn = sortOn;
+        service.getIndexByProperty = getIndexByProperty;
 
         return service;
 
@@ -44,6 +45,26 @@ define(['../../services/module'], function(services) {
             return function(a, b) {
                 return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
             };
+        }
+
+        /**
+         * Retornar index da array pelo valor de uma propriedade
+         * @param  {array} array array
+         * @param  {string} property  nome do propriedade a ser comparada
+         * @param  {string} value valor a ser comparado com o propriedade
+         * @return {number} index da array
+         */
+        function getIndexByProperty(array, property, value) {
+
+            for (var i = array.length - 1; i >= 0; i--) {
+                console.info('value', value);
+                console.info('array[i][property]', array[i][property]);
+                if (array[i][property] == value) {
+                    return i;
+                }
+            };
+
+            return -1;
         }
     }
 });
