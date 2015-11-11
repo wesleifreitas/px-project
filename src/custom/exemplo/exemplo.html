@@ -59,7 +59,7 @@
                 </button>
             </div>
         </div>
-        <px-data-grid px-debug="false" px-control="gridControl" px-init="gridInit()" px-table="dbo.vw_exemplo" px-fields="{{gridConfig.fields}}" px-order-by="exe_id" px-data-init="true" px-check="true">
-        </px-data-grid>        
+        <px-data-grid px-debug="false" px-control="gridControl" px-init="gridInit()" px-table="dbo.vw_exemplo" px-fields="{{gridConfig.fields}}" px-order-by="exe_id DESC" px-data-init="true" px-check="true" px-edit="true" px-item-edit="edit(event)">
+        </px-data-grid>
     </div>
 </div>
