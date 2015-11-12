@@ -52,36 +52,54 @@
 		<cfset arguments.fields = decode(arguments.fields)>
 		<cfif arguments.oldForm NEQ "">
 			<cfset arguments.oldForm = decode(arguments.oldForm)>
+		<cfelse>
+			<cfset arguments.oldForm = structNew()>	
 		</cfif>
 		
 		<cfset comma = "">
-		<cfif arguments.action EQ "insert">				
+		<cfif arguments.action EQ "insert">					
 			<cfquery datasource="#arguments.dsn#" result="queryResult">
 				INSERT INTO
 					#arguments.table#
 				(
 					<cfloop array="#arguments.fields#" index="i">
-						#comma# #i.field#
-						<cfset comma = ",">
+						<cfif i.insert>
+							#comma# #i.field#
+							<cfset comma = ",">
+						</cfif>						
 					</cfloop>		
 				)
 				<cfset comma = "">
 				VALUES 
 				(
 					<cfloop array="#arguments.fields#" index="i">
-						#comma# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
-						<cfset comma = ",">
+						<cfif i.insert>
+							#comma# 
+							<cfif isDefined("i.hash") AND i.hash>												
+								<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#hash(i.valueObject.value,i.algorithm)#">
+							<cfelse>
+								<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
+							</cfif>
+							<cfset comma = ",">							
+						</cfif>	
 					</cfloop>
 				)			
-			</cfquery>
+			</cfquery>			
 		<cfelse>
 			<cfquery datasource="#arguments.dsn#" result="queryResult">
 				UPDATE
 					#arguments.table#
 				SET
 					<cfloop array="#arguments.fields#" index="i">
-						#comma# #i.field# = <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
-						<cfset comma = ",">
+						<cfif i.update>
+							#comma# #i.field# = 
+							<cfif isDefined("i.hash") AND i.hash>												
+								<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#hash(i.valueObject.value,i.algorithm)#">
+							<cfelse>
+								<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
+							</cfif>
+							<cfset comma = ",">
+						</cfif>
 					</cfloop>	
 
 					<cfset whereInit = 'WHERE'>
@@ -95,10 +113,22 @@
 		</cfif>		
 
 		<cfscript>
-			var data = structNew();			
+			var data = structNew();	
+			
 			for(item in arguments.fields) {
-			   data[item.field] = item.valueObject.value;
+					
+				if(isDefined("item.valueObject.value")){					
+			   		data[item.field] = item.valueObject.value;
+			   	} else if (isDefined("item.pk") AND item.pk){				   		
+			   		if(StructKeyExists(arguments.oldForm, item.field)){			   			
+			   			data[item.field] = arguments.oldForm[item.field];
+			   		} else if(arguments.action EQ "insert" AND isDefined("queryResult.IDENTITYCOL")){
+			   			data[item.field] = queryResult.IdentityCol;
+			   		}			   	
+			   	}
+
 			}
+						
 		</cfscript>
 						
 		<cfset result['success'] = true>
@@ -155,8 +185,10 @@
 		<cfquery datasource="#arguments.dsn#" name="qQuery" result="queryResult">
 			SELECT
 				<cfloop array="#arguments.fields#" index="i">
-					#comma# #i.field#
-					<cfset comma = ",">
+					<cfif i.select>
+						#comma# #i.field#
+						<cfset comma = ",">
+					</cfif>
 				</cfloop>
 			FROM
 				#arguments.table#	

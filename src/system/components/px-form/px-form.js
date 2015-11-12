@@ -21,24 +21,31 @@ define(['../../directives/module'], function(directives) {
                 scope.internalControl = scope.control || {};
 
                 /**
-                 * Inserir dados              
+                 * Inserir dados
                  */
                 scope.internalControl.insert = function() {
                     scope.insertUpdate('insert');
                 };
 
                 /**
-                 * Selecionar dados               
+                 * Selecionar dados
                  */
                 scope.internalControl.select = function(data) {
                     scope.select(data);
                 };
 
                 /**
-                 * Atualizar dados               
+                 * Atualizar dados
                  */
                 scope.internalControl.update = function() {
                     scope.insertUpdate('update');
+                };
+
+                /**
+                 * Limpar formulário
+                 */
+                scope.internalControl.clean = function() {
+                    scope.clean();
                 };
 
                 // Chama evento px-init
@@ -48,9 +55,9 @@ define(['../../directives/module'], function(directives) {
         };
     }]);
 
-    pxFormCtrl.$inject = ['pxFormService', 'pxArrayUtil', '$scope', '$http', '$timeout'];
+    pxFormCtrl.$inject = ['pxFormService', 'pxArrayUtil', '$scope', '$http', '$timeout', '$compile'];
 
-    function pxFormCtrl(pxFormService, pxArrayUtil, $scope, $http, $timeout) {
+    function pxFormCtrl(pxFormService, pxArrayUtil, $scope, $http, $timeout, $compile) {
         // Inserir dados        
         $scope.insertUpdate = function(action) {
             var objConfig = JSON.parse($scope.config);
@@ -67,11 +74,29 @@ define(['../../directives/module'], function(directives) {
             angular.forEach(fields, function(index) {
 
                 index.valueObject = {};
+                if (!angular.isDefined(index.insert) && index.identity !== true) {
+                    index.insert = true;
+                } else {
+                    index.insert = false;
+                }
+
+                if (!angular.isDefined(index.update) && index.identity !== true) {
+                    index.update = true;
+                } else {
+                    index.update = false;
+                }
+
+                if (angular.isDefined(index.hash) && index.hash) {                    
+                    if (!angular.isDefined(index.algorithm)) {
+                        index.algorithm = 'SHA-512';
+                    }
+                }
 
                 if (angular.isDefined(index.element)) {
 
                     var selectorName = '#' + index.element;
                     var selectorValue = index.element;
+                    var element = angular.element($(selectorName).get(0));
 
                     // Verifica se o campo é um px-complete
                     if (angular.isDefined(angular.element($(selectorName + '_pxComplete').get(0)).scope())) {
@@ -80,10 +105,31 @@ define(['../../directives/module'], function(directives) {
                         selectorValue = 'selectedItem';
                     }
 
-                    // Verifica seu o scope do elemento angular possui valor definido
-                    if (angular.element($(selectorName).get(0)).scope().hasOwnProperty(selectorValue)) {
+                    // Verificar se é um checkbox
+                    if (element.context.type === 'checkbox') {
+                        if (!angular.isDefined(element.scope()[selectorValue]) || element.scope()[selectorValue] === '') {
+                            element.scope()[selectorValue] = false;
+                        }
 
-                        var fieldValue = angular.element($(selectorName).get(0)).scope()[selectorValue];
+                        // Se possuir configuração avançada (fieldValueOptions)
+                        if (angular.isDefined(index.fieldValueOptions)) {
+                            if (element.scope()[selectorValue] === true) {
+                                element.scope()[selectorValue] = index.fieldValueOptions.checked;
+                            } else {
+                                element.scope()[selectorValue] = index.fieldValueOptions.unchecked;
+                            }
+                        }
+                    }
+
+                    // Verifica seu o scope do elemento angular possui valor definido
+                    if (element.scope().hasOwnProperty(selectorValue)) {
+
+                        var fieldValue = element.scope()[selectorValue];
+
+                        // Verifica se é um checkbox
+                        if (fieldValue === true || fieldValue === false) {
+
+                        }
 
                         // Se filtro for undefined, o filtro será considerado inválido
                         if (!angular.isDefined(fieldValue)) {
@@ -94,7 +140,7 @@ define(['../../directives/module'], function(directives) {
                         var tempValue = fieldValue;
 
                         // Se possuir configuração avançada (fieldValueOptions)
-                        if (angular.isDefined(index.fieldValueOptions)) {
+                        if (angular.isDefined(index.fieldValueOptions) && angular.element($(selectorName).get(0)).context.type !== 'checkbox') {
                             tempField = index.fieldValueOptions.field;
                             // value recebe o que foi configurado em index.fieldValueOptions.selectedItem
                             // por exemplo se o filtro for um select, o ng-model pode ser um objeto {id: 1, name: 'teste'}
@@ -129,12 +175,16 @@ define(['../../directives/module'], function(directives) {
                     }
                 }
             });
-            /*
-            console.group('$scope.insert - var');
-            console.info('table:', table);            
-            console.info('fields:', fields);
-            console.groupEnd();
-            */
+
+            if ($scope.debug) {
+                console.group('$scope.insertUpdate');
+                console.info('action:', action);
+                console.info('table:', table);
+                console.info('fields (new):', fields);
+                console.info('oldForm:', $scope.oldForm);
+                console.groupEnd();
+            }
+
             var oldForm = '';
             if (angular.isDefined($scope.oldForm)) {
                 oldForm = angular.toJson($scope.oldForm)
@@ -151,6 +201,7 @@ define(['../../directives/module'], function(directives) {
                             event: response
                         });
                     }
+                    $scope.clean();
                 } else {
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 }
@@ -175,7 +226,20 @@ define(['../../directives/module'], function(directives) {
                 angular.forEach(fields, function(index) {
                     index.valueObject = {};
                     index.valueObject.value = data[index.field];
+
+                    if (!angular.isDefined(index.select)) {
+                        index.select = true;
+                    } else {
+                        index.select = false;
+                    }
                 });
+
+                if ($scope.debug) {
+                    console.group('$scope.select');
+                    console.info('table:', table);
+                    console.info('fields:', fields);
+                    console.groupEnd();
+                }
 
                 pxFormService.select(table, angular.toJson(fields), function(response) {
                     if ($scope.debug) {
@@ -196,34 +260,124 @@ define(['../../directives/module'], function(directives) {
                                     selectorName += '_pxComplete';
                                     selectorValue = 'selectedItem';
                                 }
-                                /*
+
                                 var _ngModelCtrl = angular.element($(selectorName).data('$ngModelController'));
 
-                                _ngModelCtrl.get(0).$parsers.push(function(value) {
-                                    _ngModelCtrl.get(0).$setViewValue(response.qQuery[0][index.field]);
-                                    return response.qQuery[0][index.field];
-                                });
-                                */
                                 var _element = angular.element($(selectorName).get(0));
 
-                                // Se possuir configuração avançada (fieldValueOptions)
-                                if (angular.isDefined(index.fieldValueOptions)) {
+                                var _value = String(response.qQuery[0][index.field]);
+                                if (!angular.isDefined(response.qQuery[0][index.field])) {
+                                    _value = String(response.qQuery[0][index.field.toUpperCase()]);
+                                }
+                                
+                                if (!angular.isDefined(_element.context)) {
+                                    console.error('pxForm: elemento não encontrado no html', index);
+                                    return;
+                                } else if (_element.context.type === 'checkbox') {
+                                    if (angular.isDefined(index.fieldValueOptions)) {
+                                        if (index.fieldValueOptions.checked === _value) {
+                                            _value = true;
+                                        } else {
+                                            _value = false;
+                                        }
+                                    } else if (_value === '1') {
+                                        _value = true;
+                                    } else {
+                                        _value = false;
+                                    }
+                                }
+
+                                if (angular.isDefined(index.fieldValueOptions) && _element.context.type !== 'checkbox') {
 
                                     if (_element.scope().hasOwnProperty(selectorValue)) {
-                                        _element.scope()[index.field] = _element.scope()[index.field][pxArrayUtil.getIndexByProperty(_element.scope()[index.field], index.fieldValueOptions.selectedItem, response.qQuery[0][index.field])]
+                                        _element.scope()[index.field] = _element.scope()[index.field][pxArrayUtil.getIndexByProperty(_element.scope()[index.field], index.fieldValueOptions.selectedItem, _value)]
                                     } else {
                                         console.error('pxForm:', 'Scope ' + selectorValue + ' sem valor inicial definido');
                                     }
                                 } else {
-                                    _element.scope()[index.field] = response.qQuery[0][index.field];
+                                    _element.scope().pxForm = true;
+                                    if (angular.isDefined(_element.scope().pxForm2mask)) {
+
+                                        //_ngModelCtrl.cleanValue = _value;
+                                        _element.scope().cleanValue = _value;
+                                        _element.scope().pxForm2mask(_value);
+
+                                    }
+                                    _element.scope()[index.field] = _value;
+
+                                    $timeout(function() {
+                                        _element.trigger('keyup');
+                                    }, 0);
+
                                 }
                             }
                         });
+
+                        if ($scope.callback) {
+                            response.action = 'select';
+                            $scope.callback({
+                                event: response
+                            });
+                        }
                     } else {
                         alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                     }
                 });
             }, 0);
+        }
+
+        // Limpar formulário      
+        $scope.clean = function() {
+
+            if (!angular.isDefined($scope.config) || $scope.config === '') {
+                return;
+            }
+
+            var objConfig = JSON.parse($scope.config);
+
+            var table = objConfig.table;
+            var fields = objConfig.fields;
+            if (!angular.isDefined(table)) {
+                table = $scope.table;
+            }
+            if (!angular.isDefined(fields)) {
+                fields = JSON.parse($scope.fields);
+            }
+
+            angular.forEach(fields, function(index) {
+                index.valueObject = {};
+                if (angular.isDefined(index.element)) {
+                    var selectorName = '#' + index.element;
+                    var selectorValue = index.element;
+
+                    // Verifica se o campo é um px-complete
+                    if (angular.isDefined(angular.element($(selectorName + '_pxComplete').get(0)).scope())) {
+
+                        selectorName += '_pxComplete';
+                        selectorValue = 'selectedItem';
+                    }
+
+                    var _ngModelCtrl = angular.element($(selectorName).data('$ngModelController'));
+
+                    var _element = angular.element($(selectorName).get(0));
+
+                    var _value = '';
+
+                    if (angular.isDefined(index.fieldValueOptions)) {
+                        if (_element.scope().hasOwnProperty(selectorValue)) {
+                            _element.scope()[index.field] = _value;
+                        }
+                    } else {
+                        /*
+                        if (angular.isDefined(_element.scope().pxForm2mask)) {
+                            _element.scope().cleanValue = _value;
+                            _element.scope().pxForm2mask(_value);
+                        } 
+                        */
+                        _element.scope()[index.field] = _value;
+                    }
+                }
+            });
         }
     }
 });
