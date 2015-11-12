@@ -13,48 +13,175 @@ define(['../../directives/module'], function(directives) {
                 });
             };
         }])
+        // showErrorsConfig
+        // https://github.com/paulyoder/angular-bootstrap-show-errors
+        .provider('showErrorsConfig', function() {
+            var _showSuccess, _trigger;
+            _showSuccess = false;
+            _trigger = 'blur';
+            this.showSuccess = function(showSuccess) {
+                return _showSuccess = showSuccess;
+            };
+            this.trigger = function(trigger) {
+                return _trigger = trigger;
+            };
+            this.$get = function() {
+                return {
+                    showSuccess: _showSuccess,
+                    trigger: _trigger
+                };
+            };
+        })
+        // showErrors: https://github.com/paulyoder/angular-bootstrap-show-errors
+        // https://github.com/paulyoder/angular-bootstrap-show-errors
+        .directive('showErrors', [
+            '$timeout', 'showErrorsConfig', '$interpolate',
+            function($timeout, showErrorsConfig, $interpolate) {
+                var getShowSuccess, getTrigger, linkFn;
+                getTrigger = function(options) {
+                    var trigger;
+                    trigger = showErrorsConfig.trigger;
+                    if (options && (options.trigger != null)) {
+                        trigger = options.trigger;
+                    }
+                    return trigger;
+                };
+                getShowSuccess = function(options) {
+                    var showSuccess;
+                    showSuccess = showErrorsConfig.showSuccess;
+                    if (options && (options.showSuccess != null)) {
+                        showSuccess = options.showSuccess;
+                    }
+                    return showSuccess;
+                };
+                linkFn = function(scope, el, attrs, formCtrl) {
+                    var blurred, inputEl, inputName, inputNgEl, options, showSuccess, toggleClasses, trigger;
+                    blurred = false;
+                    options = scope.$eval(attrs.showErrors);
+                    showSuccess = getShowSuccess(options);
+                    trigger = getTrigger(options);
+                    inputEl = el[0].querySelector('.form-control[name]');
+                    inputNgEl = angular.element(inputEl);
+                    inputName = $interpolate(inputNgEl.attr('name') || '')(scope);
+                    if (!inputName) {
+                        throw "show-errors element has no child input elements with a 'name' attribute and a 'form-control' class";
+                    }
+                    inputNgEl.bind(trigger, function() {
+                        blurred = true;
+                        return toggleClasses(formCtrl[inputName].$invalid);
+                    });
+                    scope.$watch(function() {
+                        return formCtrl[inputName] && formCtrl[inputName].$invalid;
+                    }, function(invalid) {
+                        if (!blurred) {
+                            return;
+                        }
+                        console.info('invalid', invalid);
+                        return toggleClasses(invalid);
+                    });
+                    scope.$on('show-errors-check-validity', function() {
+                        return toggleClasses(formCtrl[inputName].$invalid);
+                    });
+                    scope.$on('show-errors-reset', function() {
+                        return $timeout(function() {
+                            el.removeClass('has-error');
+                            el.removeClass('has-success');
+                            return blurred = false;
+                        }, 0, false);
+                    });
+                    return toggleClasses = function(invalid) {
+                        el.toggleClass('has-error', invalid);
+                        if (showSuccess) {
+                            return el.toggleClass('has-success', !invalid);
+                        }
+                    };
+                };
+                return {
+                    restrict: 'A',
+                    require: '^form',
+                    compile: function(elem, attrs) {
+                        if (attrs['showErrors'].indexOf('skipFormGroupCheck') === -1) {
+                            if (!(elem.hasClass('form-group') || elem.hasClass('input-group'))) {
+                                throw "show-errors element does not have the 'form-group' or 'input-group' class";
+                            }
+                        }
+                        return linkFn;
+                    }
+                };
+            }
+        ])
         // Validar campos
         // http://stackoverflow.com/questions/18063561/access-isolated-parent-scope-from-a-transcluded-directive
         // http://stackoverflow.com/questions/21488803/how-does-one-preserve-scope-with-nested-directives
         // https://groups.google.com/forum/#!topic/angular/BZqs4TXyOcw 
-        .directive('pxValid', ['$timeout', function($timeout) {
+        .directive('pxShowError', ['$timeout', '$rootScope', function($timeout, $rootScope) {
             return {
                 restrict: 'E',
+                require: '^form',
                 replace: true,
                 transclude: false,
-                template: '<small>{{error}}</small>',
+                template: '<p class="help-block px-show-error">{{error}}</p>',
                 scope: {
-                    field: '@pxField'
+                    element: '@pxElement',
+                    confirm: '@pxConfirm',
+                    confirmError: '@pxConfirmError'
                 },
-                link: function(scope, element, attrs) {
+                link: function(scope, element, attrs, formCtrl) {
                     // Chama evento px-init
                     $timeout(scope.init, 0);
                 },
                 controller: ['$scope', function($scope) {
                     // Inicializar validação
                     $scope.init = function() {
+
                         // Armazena mensagem de erro de validação                        
                         $scope.error = '';
                         // Elemento que será validado
-                        var _element = angular.element($('#' + $scope.field).get(0));
+                        var _element = angular.element($('#' + $scope.element).get(0));
                         // ngModelController do elemento
-                        var _ngModelCtrl = angular.element($('#' + $scope.field)).data('$ngModelController');
+                        var _ngModelCtrl = _element.data('$ngModelController');                        
+
+                        var _confirm = angular.element($('#' + $scope.confirm).get(0));
+                        var _confirmModelCtrl = _confirm.data('$ngModelController');
+
                         // Evento blur
-                        _element.on('blur', function(event) {
+                        _element.on('keyup', function(event) {
+                            // Verificar se possui campo de confirmação
+                            if (angular.isDefined($scope.confirm)) {                                
+                                if (String(_confirmModelCtrl.$modelValue) !== String(_ngModelCtrl.$modelValue)) {
+                                    //_ngModelCtrl.$error.confirm = true;
+                                    _ngModelCtrl.$setValidity('confirm', false);
+                                } else {
+                                    //_ngModelCtrl.$error.confirm = null;
+                                    _ngModelCtrl.$setValidity('confirm', true);
+                                }
+                            }
                             // Verificar ser o elemento está inválido
                             if (_ngModelCtrl.$invalid) {
-                                _element.css({
-                                    borderColor: '#DF0707'
-                                });
-                                if (_ngModelCtrl.$error.required) {
-                                    $scope.$apply(function() {
+                                $scope.$apply(function() {
+                                    if (_ngModelCtrl.$error.required) {
                                         $scope.error = 'Campo obrigatório';
-                                    });
-                                }                                
+                                    } else if (_ngModelCtrl.$error.email) {
+                                        $scope.error = 'E-mail inválido';
+                                    } else if (_ngModelCtrl.$error.confirm) {
+                                        if (!angular.isDefined($scope.confirmError)) {
+                                            $scope.error = 'Campo não confere';
+                                        } else {
+                                            $scope.error = $scope.confirmError;
+                                        }
+                                    } else {
+                                        console.warn('px-show-error:', '$error ausente', _ngModelCtrl.$error);
+                                    }
+                                });
+
+                                _element.css({
+                                    borderColor: '#A94442' //'#DF0707'
+                                });
                             } else {
                                 $scope.$apply(function() {
                                     $scope.error = '';
                                 });
+
                                 _element.css({
                                     borderColor: '#CCCCCC'
                                 });
@@ -116,15 +243,28 @@ define(['../../directives/module'], function(directives) {
                     }
 
                     ngModelCtrl.$parsers.push(function(value) {
-                        var clean = value.replace(/[^0-9]+/g, '');
-                        if (value !== clean) {
-                            // Atualizar campo com o valor digitado
-                            ngModelCtrl.$setViewValue(clean);
-                            //ngModelCtrl.$render();
+                        if (angular.isDefined(value)) {
+                            var clean = String(value).replace(/[^0-9]+/g, '');
+                            if (value !== clean) {
+                                // Atualizar campo com o valor digitado
+                                ngModelCtrl.$setViewValue(clean);
+                                //ngModelCtrl.$render();
+                            }
+                            return clean;
                         }
-                        return clean;
                     });
-                }
+
+                    scope.value2mask = function(value) {
+                        ngModelCtrl.$setViewValue(value);
+                    }
+
+                },
+                controller: ['$scope', function($scope) {
+
+                    $scope.pxForm2mask = function(value) {
+                        $scope.value2mask(value);
+                    }
+                }]
             };
         }])
         // pxBrCpfMask
@@ -151,15 +291,28 @@ define(['../../directives/module'], function(directives) {
                     }
 
                     ngModelCtrl.$parsers.push(function(value) {
-                        var clean = value.replace(/[^0-9]+/g, '');
-                        if (value !== clean) {
-                            // Atualizar campo com o valor digitado
-                            ngModelCtrl.$setViewValue(clean);
-                            //ngModelCtrl.$render();
+                        if (angular.isDefined(value)) {
+                            var clean = String(value).replace(/[^0-9]+/g, '');
+                            if (value !== clean) {
+                                // Atualizar campo com o valor digitado
+                                ngModelCtrl.$setViewValue(clean);
+                                //ngModelCtrl.$render();
+                            }
+                            return clean;
                         }
-                        return clean;
                     });
-                }
+
+                    scope.value2mask = function(value) {
+                        ngModelCtrl.$setViewValue(value);
+                    }
+
+                },
+                controller: ['$scope', function($scope) {
+
+                    $scope.pxForm2mask = function(value) {
+                        $scope.value2mask(value);
+                    }
+                }]
             };
         }])
         // pxBrPhoneMask
@@ -189,73 +342,116 @@ define(['../../directives/module'], function(directives) {
                         $compile(element)(scope);
                     }
 
+                    scope.tempValue = scope.tempValue || '';
+
                     // Evento focusout
                     element.bind('focusout', function(event) {
-                        if (scope.cleanValue.length < 11 || !angular.isDefined(scope.validPhone8)) {
-                            // Atualizar uiMask para telefone com 8 dígitos
-                            attrs.$set('uiMask', '(99) 9999-9999');
-                            // Atualizar campo com o valor digitado e váriaveis de controle
-                            ngModelCtrl.$setViewValue(scope.cleanValue);
-                            //ngModelCtrl.$render();
-                            scope.validPhone9 = false;
-                            scope.validPhone8 = true;
+                        if (angular.isDefined(scope.cleanValue)) {
+                            if (scope.cleanValue.length < 11 || !angular.isDefined(scope.validPhone8)) {
+                                // Atualizar uiMask para telefone com 8 dígitos
+                                attrs.$set('uiMask', '(99) 9999-9999');
+                                // Atualizar campo com o valor digitado e váriaveis de controle
+                                ngModelCtrl.$setViewValue(scope.cleanValue);
+                                //ngModelCtrl.$render();
+                                scope.validPhone9 = false;
+                                scope.validPhone8 = true;
+                            }
                         }
                     });
 
                     // Evento focusin
                     element.bind('focusin', function(event) {
-                        if (!angular.isDefined(scope.cleanValue)) {
-                            scope.cleanValue = '';
-                        }
-
-                        // Verifica se o telefone digitado possui menos que 11 dígitos
-                        if (scope.cleanValue.length < 11) {
-                            // Atualizar uiMask para telefone com 8 dígitos, deixando um digitado a mais como opcional
-                            attrs.$set('uiMask', '(99) 9999-9999?9');
-                            // Atualizar campo com o valor digitado e váriaveis de controle
-                            ngModelCtrl.$setViewValue(scope.cleanValue);
-                            //ngModelCtrl.$render();
-                            scope.validPhone9 = false;
-                            scope.validPhone8 = false;
+                        if (angular.isDefined(scope.cleanValue)) {
+                            // Verifica se o telefone digitado possui menos que 11 dígitos
+                            if (scope.cleanValue.length < 11) {
+                                // Atualizar uiMask para telefone com 8 dígitos, deixando um digitado a mais como opcional
+                                attrs.$set('uiMask', '(99) 9999-9999?9');
+                                // Atualizar campo com o valor digitado e váriaveis de controle
+                                ngModelCtrl.$setViewValue(scope.cleanValue);
+                                //ngModelCtrl.$render();
+                                scope.validPhone9 = false;
+                                scope.validPhone8 = false;
+                            }
                         }
                     });
 
                     element.bind('keyup', function(event) {
-                        // Se possuir 11 dígitos e não estiver validado
-                        // Telefone com 11 dígitos é um telefone com 9 dígitos mais dois dígitos do DDD
-                        if (scope.cleanValue.length === 11 && scope.validPhone9 === false || !angular.isDefined(scope.validPhone9)) {
+                        if (angular.isDefined(scope.cleanValue)) {
+                            // Se possuir 11 dígitos e não estiver validado
+                            // Telefone com 11 dígitos é um telefone com 9 dígitos mais dois dígitos do DDD
+                            if (scope.cleanValue.length === 11 && scope.validPhone9 === false || !angular.isDefined(scope.validPhone9)) {
 
-                            // Atualizar uiMask para telefone com 9 dígitos
-                            attrs.$set('uiMask', '(99) ?99999-9999');
-                            // Atualizar campo com o valor digitado e váriaveis de controle
-                            ngModelCtrl.$setViewValue(scope.cleanValue);
-                            //ngModelCtrl.$render();
-                            scope.validPhone9 = true;
-                            scope.validPhone8 = false;
+                                // Atualizar uiMask para telefone com 9 dígitos
+                                attrs.$set('uiMask', '(99) ?99999-9999');
+                                // Atualizar campo com o valor digitado e váriaveis de controle
+                                ngModelCtrl.$setViewValue(scope.cleanValue);
+                                //ngModelCtrl.$render();
+                                scope.validPhone9 = true;
+                                scope.validPhone8 = false;
 
-                        } else if (scope.cleanValue.length === 10 && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
+                            } else if (scope.cleanValue.length === 10 && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
 
-                            // Atualizar uiMask para telefone com 8 dígitos
-                            attrs.$set('uiMask', '(99) 9999-9999?9');
-                            // Atualizar campo com o valor digitado e váriaveis de controle
-                            ngModelCtrl.$setViewValue(scope.cleanValue);
-                            //ngModelCtrl.$render();
-                            scope.validPhone9 = false;
-                            scope.validPhone8 = true;
+                                // Atualizar uiMask para telefone com 8 dígitos
+                                attrs.$set('uiMask', '(99) 9999-9999?9');
+                                // Atualizar campo com o valor digitado e váriaveis de controle
+                                ngModelCtrl.$setViewValue(scope.cleanValue);
+                                //ngModelCtrl.$render();
+                                scope.validPhone9 = false;
+                                scope.validPhone8 = true;
+                            }
+                        } else {
+                            //console.info('keyup', scope.cleanValue);
+                            //console.info('keyup $scope.tempValue', scope.tempValue);
+                            scope.cleanValue = scope.tempValue;
+
+                            // Se possuir 11 dígitos e não estiver validado
+                            // Telefone com 11 dígitos é um telefone com 9 dígitos mais dois dígitos do DDD
+                            if (scope.cleanValue.length === 11 && scope.validPhone9 === false || !angular.isDefined(scope.validPhone9)) {
+
+                                // Atualizar uiMask para telefone com 9 dígitos
+                                attrs.$set('uiMask', '(99) ?99999-9999');
+                                // Atualizar campo com o valor digitado e váriaveis de controle
+                                //ngModelCtrl.$setViewValue(scope.cleanValue);
+                                //ngModelCtrl.$render();
+                                scope.validPhone9 = true;
+                                scope.validPhone8 = false;
+
+                            } else if (scope.cleanValue.length === 10 && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
+
+                                // Atualizar uiMask para telefone com 8 dígitos
+                                attrs.$set('uiMask', '(99) 9999-9999?9');
+                                // Atualizar campo com o valor digitado e váriaveis de controle
+                                //ngModelCtrl.$setViewValue(scope.cleanValue);
+                                //ngModelCtrl.$render();
+                                scope.validPhone9 = false;
+                                scope.validPhone8 = true;
+                            }
                         }
                     });
 
                     ngModelCtrl.$parsers.push(function(value) {
-                        var clean = value.replace(/[^0-9]+/g, '');
-                        scope.cleanValue = clean;
-                        if (value !== clean) {
-                            // Atualizar campo com o valor digitado
-                            ngModelCtrl.$setViewValue(clean);
-                            //ngModelCtrl.$render();
+                        if (angular.isDefined(value)) {
+                            var clean = String(value).replace(/[^0-9]+/g, '');
+                            scope.cleanValue = clean;
+                            if (value !== clean) {
+                                // Atualizar campo com o valor digitado
+                                ngModelCtrl.$setViewValue(clean);
+                                //ngModelCtrl.$render();
+                            }
+                            return clean;
                         }
-                        return clean;
                     });
-                }
+
+                    scope.value2mask = function(value) {
+                        ngModelCtrl.$setViewValue(scope.cleanValue);
+                    }
+
+                },
+                controller: ['$scope', function($scope) {
+                    $scope.pxForm2mask = function(value) {
+                        $scope.value2mask(value);
+                    }
+                }]
             };
         }])
         // pxNumberMask
@@ -561,7 +757,8 @@ define(['../../directives/module'], function(directives) {
                                     url: scope.url,
                                     dataType: 'json',
                                     params: params
-                                }).success(function(response, status, headers, config) {                                    
+                                }).success(function(response, status, headers, config) {
+                                    //console.info('response', response);
                                     if (!angular.isDefined(scope.responseQuery) || scope.responseQuery === '') {
                                         scope.responseQuery = 'qQuery';
                                     }
