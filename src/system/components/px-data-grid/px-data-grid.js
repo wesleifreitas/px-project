@@ -17,6 +17,7 @@ define(['../../directives/module'], function(directives) {
                 orderBy: '@pxOrderBy',
                 columns: '@pxColumns',
                 check: '=pxCheck',
+                edit: '=pxEdit',
                 init: '&pxInit',
                 itemClick: '&pxItemClick',
                 itemEdit: '&pxItemEdit',
@@ -56,7 +57,7 @@ define(['../../directives/module'], function(directives) {
                     angular.forEach(newValue, function(index) {
 
                         // Checkbox  - Start
-                        if (i === -1 && scope.check) {
+                        if (i === -1 && scope.check == true) {
                             scope.columns += '<th class="text-left" width="1px"><input name="select_all" value="1" type="checkbox"></th>';
 
                             aoColumnsData = {};
@@ -68,7 +69,8 @@ define(['../../directives/module'], function(directives) {
                         // Checkbox  - End
 
                         // Edit - Start
-                        if (i === 0) {
+                        // 
+                        if (i === 0 && scope.edit == true) {
                             scope.columns += '<th class="text-center" width="1px"><i class=""></i></th>';
 
                             aoColumnsData = {};
@@ -133,7 +135,7 @@ define(['../../directives/module'], function(directives) {
                     scope.internalControl.removeRow = function(value) {
                         scope.removeRow(value);
                     };
-                    
+
 
                     /**
                      * Remover itens (selecionados) da listagem
@@ -257,26 +259,36 @@ define(['../../directives/module'], function(directives) {
             dataTableConfig.bProcessing = true;
             dataTableConfig.aoColumns = $scope.aoColumns;
             dataTableConfig.destroy = true;
-            // Verifica se possui coluna com checkbox
-            if ($scope.check) {
-                dataTableConfig.columnDefs = [{
-                    "targets": 0,
+
+            dataTableConfig.columnDefs = [];
+            var columnDefs = 0;
+
+            // Verificar se possui coluna com checkbox
+            if ($scope.check === true) {
+                dataTableConfig.columnDefs.push({
+                    "targets": columnDefs,
                     "searchable": false,
                     "orderable": false,
                     "className": "dt-body-center",
                     "render": function(data, type, full, meta) {
                         return "<input type='checkbox'>";
                     }
-                }, {
-                    "targets": 1,
+                });
+                columnDefs++;
+            }
+            if ($scope.edit === true) {
+                dataTableConfig.columnDefs.push({
+                    "targets": columnDefs,
                     "searchable": false,
                     "orderable": false,
                     "className": "dt-body-center",
                     "render": function(data, type, full, meta) {
                         return "<i class='fa fa-pencil'>";
+                        //return "<i class='fa fa-pencil'> <b>Editar</b>";
                     }
-                }];
+                });
             }
+
             dataTableConfig.order = []; //default order
             dataTableConfig.rowCallback = function(row, data, dataIndex) {
                 // Linhda ID
