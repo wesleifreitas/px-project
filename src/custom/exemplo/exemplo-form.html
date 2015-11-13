@@ -1,5 +1,5 @@
 <md-dialog ng-cloak flex="50" aria-label="Formulário">
-    <px-form px-debug="true" px-control="formControl" px-init="formInit()" px-callback="formCallback(event)" px-table="dbo.exemplo" px-config="{{formConfig}}"></px-form>
+    <px-form px-debug="true" px-control="formControl" px-init="formInit()" px-callback="formCallback(event)" px-table="dbo.exemplo" px-config="{{formConfig}}" px-callback="formCallback(event)"></px-form>
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>{{formTitle}}</h2>
@@ -10,29 +10,53 @@
         </div>
     </md-toolbar>
     <form name="form">
-        <md-dialog-content style="max-width:800px;max-height:810px;">
+        <md-dialog-content>
             <div class="md-dialog-content">
                 <div layout="row" layout-sm="column" layout-wrap layout-padding flex="100">
                     <div flex="50" flex-sm="100">
-                        <label>Nome</label>
-                        <input id="nome" ng-model="nome" class="form-control" required>
-                        <px-valid px-field="nome"></px-valid>
+                        <label>
+                            <input id="exe_checkbox" ng-model="exe_checkbox" type="checkbox"> Checkbox (Bit)</label>
+                        <label>
                     </div>
                     <div flex="50" flex-sm="100">
-                        <label>CPF</label>
-                        <input id="cpf" ng-model="cpf" class="form-control" px-br-cpf-mask required>
-                        <px-valid px-field="cpf"></px-valid>
+                        <label>
+                            <input id="exe_checkbox_char" ng-model="exe_checkbox_char" type="checkbox"> Checkbox (Char)</label>
+                        <label>
+                    </div>
+                    <div class="form-group" flex="50" flex-sm="100">
+                        <!-- show-errors -->
+                        <label for="exe_nome">Nome</label>
+                        <input id="exe_nome" name="exe_nome" ng-model="exe_nome" class="form-control" required>
+                        <px-show-error px-element="exe_nome"></px-valid>
+                    </div>
+                    <div flex="50" flex-sm="100">
+                        <label for="exe_cpf">CPF</label>
+                        <input id="exe_cpf" name="exe_cpf" ng-model="exe_cpf" class="form-control" px-br-cpf-mask required>
+                        <px-show-error px-element="exe_cpf"></px-valid>
+                    </div>
+                    <div flex="50" flex-sm="100">
+                        <label for="exe_senha">Senha</label>
+                        <input id="exe_senha" name="exe_senha" ng-model="exe_senha" class="form-control" type="password" required>
+                        <px-show-error px-element="exe_senha"></px-valid>
+                    </div>
+                    <div flex="50" flex-sm="100">
+                        <label for="exe_senha_confirmar">Confirmar Senha</label>
+                        <input id="exe_senha_confirmar" name="exe_senha_confirmar" ng-model="exe_senha_confirmar" class="form-control" type="password" required>
+                        <px-show-error px-element="exe_senha_confirmar" px-confirm="exe_senha" px-confirm-error="Senha não confere"></px-valid>
                     </div>
                 </div>
         </md-dialog-content>
         <div class="md-actions" layout="row">
             <span flex></span>
-            <div class="btn-group" role="group">                
+            <div class="btn-group" role="group">
                 <button type="button" class="btn btn-default" ng-click="formCancel()">
                     <span class="fa fa-remove"></span> <span hide-sm>Cancelar</span>
                 </button>
-                <button type="button" class="btn btn-default" ng-click="insert(form)" style="margin-right:20px;" ng-disabled="form.$invalid">
+                <button type="button" class="btn btn-default" ng-click="formInsert(form)" ng-disabled="form.$invalid === true" ng-show="formAction === 'insert'">
                     <span class="fa fa-plus"></span> <span hide-sm>Adicionar</span>
+                </button>
+                <button type="button" class="btn btn-default" ng-click="formUpdate(form)" ng-show="formAction === 'update'" ng-disabled="form.$invalid">
+                    <span class="fa fa-pencil"></span> <span hide-sm>Salvar</span>
                 </button>
             </div>
         </div>

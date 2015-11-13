@@ -165,7 +165,24 @@ define(['../controllers/module'], function(controllers) {
         $scope.formTitle = "Formulário";
         $scope.add = function(event) {
             $scope.formTitle = "Formulário de Adicionar";
-            $scope.action = "insert";
+            $scope.formAction = "insert";
+
+            formCtrl.$inject = ['$scope', '$mdDialog'];
+            $mdDialog.show({
+                scope: $scope,
+                preserveScope: true,
+                controller: formCtrl,
+                templateUrl: 'custom/exemplo/exemplo-form.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose: false
+            });
+        };
+
+        $scope.edit = function(event) {
+            $scope.formTitle = "Formulário de Editar";
+            $scope.formAction = "update";
+            $scope.formItemEdit = event.itemEdit;
 
             formCtrl.$inject = ['$scope', '$mdDialog'];
             $mdDialog.show({
@@ -194,20 +211,54 @@ define(['../controllers/module'], function(controllers) {
          * @return {void}
          */
         $scope.formInit = function() {
+
+            // Limpar formuário
+            $scope.formControl.clean();
+
+            // Configurar formulário
             $scope.formConfig = {
-                pk: [{
-                    field: 'exe_id',
-                    type: 'int'
-                }],
                 fields: [{
+                    pk: true,
+                    field: 'exe_id',
+                    type: 'string',
+                    identity: true
+                }, {
+                    field: 'exe_checkbox',
+                    type: 'bit',
+                    element: 'exe_checkbox'
+                }, {
+                    field: 'exe_checkbox_char',
+                    type: 'string',
+                    element: 'exe_checkbox_char',
+                    fieldValueOptions: {
+                        checked: 'A',
+                        unchecked: 'B'
+                    }
+                }, {
                     field: 'exe_nome',
                     type: 'string',
-                    element: 'nome'
+                    element: 'exe_nome'
                 }, {
                     field: 'exe_cpf',
                     type: 'string',
-                    element: 'cpf'
+                    element: 'exe_cpf'
+                }, {
+                    field: 'exe_senha',
+                    type: 'string',
+                    element: 'exe_senha',
+                    hash: true
+                }, {
+                    field: 'exe_senha_confirmar',
+                    type: 'string',
+                    element: 'exe_senha_confirmar',
+                    select: false,
+                    insert: false,
+                    update: false
                 }]
+            }
+
+            if ($scope.formAction == 'update') {
+                $scope.formControl.select($scope.formItemEdit);
             }
         };
 
@@ -215,8 +266,17 @@ define(['../controllers/module'], function(controllers) {
          * Inserir registro
          * @return {[type]} [description]
          */
-        $scope.insert = function() {            
+        $scope.formInsert = function() {
             $scope.formControl.insert();
+            $mdDialog.hide();
+        };
+
+        /**
+         * Atualizar
+         * @return {[type]} [description]
+         */
+        $scope.formUpdate = function(form) {
+            $scope.formControl.update();
             $mdDialog.hide();
         };
 
@@ -225,19 +285,35 @@ define(['../controllers/module'], function(controllers) {
          * @param  {object} event retorno do formulário
          * @return {void}
          */
-        $scope.formCallback = function(event) {            
-            // Adicionar registro na listagem
-            $scope.gridControl.addRow(event.data);            
+        $scope.formCallback = function(event) {        
+            if (event.action === 'select') {                
+                $scope.exe_senha_confirmar = event.qQuery[0].EXE_SENHA;
+            } else if (event.action == 'insert') {
+                // Adicionar registro na listagem
+                $scope.gridControl.addDataRow(event.data);
+            } else if (event.action == 'update') {
+                // Adicionar registro na listagem
+                $scope.gridControl.addDataRow(event.data);
+                // Remover linha editada (Para depois adicionar a linha atualizada)
+                $scope.gridControl.removeRow($scope.gridControl.updatedRow);
+            }
         };
 
         /**
          * Fechar formulário
          * @return {void}
          */
-        $scope.formCancel = function() {
-            console.info('validNome',$scope.validNome);
-
+        $scope.formCancel = function() {            
             $mdDialog.cancel();
-        };        
+        };
+
+        /**
+         * Limpar formulário
+         * @return {void}
+         */
+        $scope.formClean = function() {
+            // Limpar formuário
+            $scope.formControl.clean();        
+        };
     }
 });
