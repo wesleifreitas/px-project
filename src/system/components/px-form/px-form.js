@@ -55,9 +55,9 @@ define(['../../directives/module'], function(directives) {
         };
     }]);
 
-    pxFormCtrl.$inject = ['pxFormService', 'pxArrayUtil', '$scope', '$http', '$timeout', '$compile'];
+    pxFormCtrl.$inject = ['pxFormService', 'pxArrayUtil', '$scope', '$http', '$timeout', '$rootScope'];
 
-    function pxFormCtrl(pxFormService, pxArrayUtil, $scope, $http, $timeout, $compile) {
+    function pxFormCtrl(pxFormService, pxArrayUtil, $scope, $http, $timeout, $rootScope) {
         // Inserir dados        
         $scope.insertUpdate = function(action) {
             var objConfig = JSON.parse($scope.config);
@@ -76,17 +76,17 @@ define(['../../directives/module'], function(directives) {
                 index.valueObject = {};
                 if (!angular.isDefined(index.insert) && index.identity !== true) {
                     index.insert = true;
-                } else {
+                } else if (!angular.isDefined(index.insert)) {
                     index.insert = false;
                 }
 
                 if (!angular.isDefined(index.update) && index.identity !== true) {
                     index.update = true;
-                } else {
+                } else if (!angular.isDefined(index.update)) {
                     index.update = false;
                 }
 
-                if (angular.isDefined(index.hash) && index.hash) {                    
+                if (angular.isDefined(index.hash) && index.hash) {
                     if (!angular.isDefined(index.algorithm)) {
                         index.algorithm = 'SHA-512';
                     }
@@ -172,9 +172,42 @@ define(['../../directives/module'], function(directives) {
                     } else {
                         // Se não possuir um valor válido no ng-model o valor recebe vazio
                         index.valueObject = {};
+                        index.insert = false;
+                        index.update = false;
                     }
                 }
-            });
+                // Armazenar id do usuário
+                else if (angular.isDefined(index.user) && index.user) {                
+                    index.type = 'int';
+                    index.valueObject = {
+                        field: index.field,
+                        value: $rootScope.globals.currentUser.usu_id
+                    };                
+                } else if (angular.isDefined(index.insertGetDate) && index.insertGetDate) {
+                    if (action === 'insert') {
+                        index.type = 'datetime';
+                        index.valueObject = {
+                            field: index.field,
+                            value: '',
+                            getDate: true
+                        };
+                    }else{
+                        index.update = false;
+                    }
+                } else if (angular.isDefined(index.updateGetDate) && index.updateGetDate) {
+                    index.type = 'datetime';
+                    index.valueObject = {
+                        field: index.field,
+                        value: '',
+                        getDate: true
+                    };
+                } else {
+                    index.valueObject = {
+                        field: index.field,
+                        value: ''
+                    };
+                }
+            });        
 
             if ($scope.debug) {
                 console.group('$scope.insertUpdate');
@@ -269,7 +302,7 @@ define(['../../directives/module'], function(directives) {
                                 if (!angular.isDefined(response.qQuery[0][index.field])) {
                                     _value = String(response.qQuery[0][index.field.toUpperCase()]);
                                 }
-                                
+
                                 if (!angular.isDefined(_element.context)) {
                                     console.error('pxForm: elemento não encontrado no html', index);
                                     return;

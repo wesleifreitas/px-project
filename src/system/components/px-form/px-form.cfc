@@ -77,6 +77,8 @@
 							#comma# 
 							<cfif isDefined("i.hash") AND i.hash>												
 								<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#hash(i.valueObject.value,i.algorithm)#">
+							<cfelseif isDefined("i.valueObject.getDate") AND i.valueObject.getDate>
+								GETDATE()
 							<cfelse>
 								<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
 							</cfif>
@@ -95,6 +97,8 @@
 							#comma# #i.field# = 
 							<cfif isDefined("i.hash") AND i.hash>												
 								<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#hash(i.valueObject.value,i.algorithm)#">
+							<cfelseif isDefined("i.valueObject.getDate") AND i.valueObject.getDate>
+								GETDATE()
 							<cfelse>
 								<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
 							</cfif>
@@ -117,15 +121,15 @@
 			
 			for(item in arguments.fields) {
 					
-				if(isDefined("item.valueObject.value")){					
-			   		data[item.field] = item.valueObject.value;
-			   	} else if (isDefined("item.pk") AND item.pk){				   		
+				if (isDefined("item.pk") AND item.pk) {				   		
 			   		if(StructKeyExists(arguments.oldForm, item.field)){			   			
 			   			data[item.field] = arguments.oldForm[item.field];
-			   		} else if(arguments.action EQ "insert" AND isDefined("queryResult.IDENTITYCOL")){
+			   		} else if(arguments.action EQ "insert" AND isDefined("queryResult.IDENTITYCOL")) {
 			   			data[item.field] = queryResult.IdentityCol;
 			   		}			   	
-			   	}
+			   	}else if(isDefined("item.valueObject.value")) {					
+			   		data[item.field] = item.valueObject.value;
+			   	}  
 
 			}
 						
