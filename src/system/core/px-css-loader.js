@@ -40,6 +40,8 @@ define(['../services/module'], function(services) {
             }, {
                 file: 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'
             }, {
+                file: pxConfig.PX_PACKAGE + 'system/core/external/jstree/themes/proton/style.css'
+            }, {
                 file: pxConfig.PX_PACKAGE + 'system/login/login.css'
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.css'
