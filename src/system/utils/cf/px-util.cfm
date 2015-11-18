@@ -764,13 +764,13 @@ Version: 1.9 February 20, 2008
     </cfscript>
 </cffunction>
 
-
 <!--- 
 This function converts XML variables into Coldfusion Structures. It also
 returns the attributes for each XML node.
 http://www.anujgakhar.com/2007/11/05/coldfusion-xml-to-struct/
 http://www.anujgakhar.com/wp-content/uploads/2008/02/xml2struct.cfc.txt
 --->
+
 <cffunction name="ConvertXmlToStruct" access="public" returntype="struct" output="false"
                 hint="Parse raw XML response body into ColdFusion structs and arrays and return it.">
     <cfargument name="xmlNode" type="string" required="true" />
