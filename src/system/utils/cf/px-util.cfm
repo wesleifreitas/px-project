@@ -764,6 +764,7 @@ Version: 1.9 February 20, 2008
     </cfscript>
 </cffunction>
 
+
 <!--- 
 This function converts XML variables into Coldfusion Structures. It also
 returns the attributes for each XML node.
