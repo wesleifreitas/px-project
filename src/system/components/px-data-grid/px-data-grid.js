@@ -705,6 +705,11 @@ define(['../../directives/module'], function(directives) {
                 // http://momentjs.com/
                 if (item.moment) {
                     //data[item.field] = moment(Date.parse(data[item.field])).format(item.moment);
+                    if (data[item.field] !== '') {
+                        require(['moment'], function(moment) {
+                            data[item.field] = moment(Date.parse(data[item.field])).format(item.moment);
+                        });
+                    }
                 }
 
                 // Se possuir numeral
