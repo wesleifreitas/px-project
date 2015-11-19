@@ -105,6 +105,11 @@ define(['../../directives/module'], function(directives) {
                         selectorValue = 'selectedItem';
                     }
 
+                    if (!angular.isDefined(element.context)) {
+                        console.error('pxForm: elemento não encontrado no html, verifique a propriedade element', index);
+                        //return;
+                    }
+
                     // Verificar se é um checkbox
                     if (element.context.type === 'checkbox') {
                         if (!angular.isDefined(element.scope()[selectorValue]) || element.scope()[selectorValue] === '') {
@@ -177,12 +182,12 @@ define(['../../directives/module'], function(directives) {
                     }
                 }
                 // Armazenar id do usuário
-                else if (angular.isDefined(index.user) && index.user) {                
+                else if (angular.isDefined(index.user) && index.user) {
                     index.type = 'int';
                     index.valueObject = {
                         field: index.field,
                         value: $rootScope.globals.currentUser.usu_id
-                    };                
+                    };
                 } else if (angular.isDefined(index.insertGetDate) && index.insertGetDate) {
                     if (action === 'insert') {
                         index.type = 'datetime';
@@ -191,7 +196,7 @@ define(['../../directives/module'], function(directives) {
                             value: '',
                             getDate: true
                         };
-                    }else{
+                    } else {
                         index.update = false;
                     }
                 } else if (angular.isDefined(index.updateGetDate) && index.updateGetDate) {
@@ -207,7 +212,7 @@ define(['../../directives/module'], function(directives) {
                         value: ''
                     };
                 }
-            });        
+            });
 
             if ($scope.debug) {
                 console.group('$scope.insertUpdate');
@@ -304,7 +309,7 @@ define(['../../directives/module'], function(directives) {
                                 }
 
                                 if (!angular.isDefined(_element.context)) {
-                                    console.error('pxForm: elemento não encontrado no html', index);
+                                    console.error('pxForm: elemento não encontrado no html, verifique a propriedade element', index);
                                     return;
                                 } else if (_element.context.type === 'checkbox') {
                                     if (angular.isDefined(index.fieldValueOptions)) {
