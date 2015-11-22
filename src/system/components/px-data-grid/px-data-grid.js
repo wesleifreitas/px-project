@@ -301,7 +301,7 @@ define(['../../directives/module'], function(directives) {
                 }
             };
 
-            requirejs(["datatables"], function() {
+            requirejs(["dataTables"], function() {
                 // Inicializa dataTable
                 $('#pxTable').dataTable(
                     dataTableConfig
@@ -316,7 +316,7 @@ define(['../../directives/module'], function(directives) {
                 $scope.getData(0, $scope.rowsProcess);
             }
 
-            requirejs(["datatables"], function() {
+            requirejs(["dataTables"], function() {
                 var table = $('#pxTable').DataTable();
                 $scope.internalControl.table = $('#pxTable').DataTable();
             });
@@ -581,7 +581,7 @@ define(['../../directives/module'], function(directives) {
             if (rowFrom === 0) {
                 $scope.reset();
 
-                requirejs(["datatables"], function() {
+                requirejs(["dataTables"], function() {
                     $('#pxTable').DataTable().clear().draw();
                 });
             }
@@ -612,11 +612,11 @@ define(['../../directives/module'], function(directives) {
                         $scope.nextRowTo = result.rowTo + $scope.rowsProcess;
 
                         var table = $scope.internalControl.table;
-                        requirejs(["datatables"], function() {
+                        requirejs(["dataTables"], function() {
                             $('#pxTable').DataTable().page($scope.currentPage).draw(false);
                         });
 
-                        requirejs(["datatables"], function() {
+                        requirejs(["dataTables"], function() {
                             var info = $('#pxTable').DataTable().page.info();
                             if (info.start === 0) {
                                 info.start = 1;
@@ -727,7 +727,7 @@ define(['../../directives/module'], function(directives) {
             });
 
             // Atualizar dados do dataTable                                        
-            requirejs(["datatables"], function() {
+            requirejs(["dataTables"], function() {
                 $('#pxTable').DataTable().row.add(data).draw();
             });
         }
