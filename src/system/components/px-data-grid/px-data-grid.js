@@ -9,6 +9,7 @@ define(['../../directives/module'], function(directives) {
             templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.html',
             scope: {
                 debug: '=pxDebug',
+                id: '@id',
                 lengthChange: '=pxLengthChange',
                 lengthMenu: '=pxLengthMenu',
                 ajaxUrl: '@pxAjaxUrl',
@@ -27,6 +28,13 @@ define(['../../directives/module'], function(directives) {
                 control: '=pxControl'
             },
             link: function(scope, element, attrs) {
+
+                if (!angular.isDefined(scope.id) || scope.id === '') {
+                    console.warn('pxDataGrid: Existe um px-data-grid sem id, isto pode causar sérios problemas em seu código!');
+                }
+
+                // ID do DataTable
+                scope.id = scope.id || 'pxTable';
 
                 // Quantidade de linhas por consulta
                 scope.rowsProcess = scope.rowsProcess || 100;
@@ -119,7 +127,7 @@ define(['../../directives/module'], function(directives) {
                     scope.internalControl.getData = function() {
                         scope.getData(0, scope.rowsProcess);
                     };
-
+                    
                     /**
                      * Adicionar linha de registro
                      * @param {object} value valor que será inserido na listagem
@@ -303,7 +311,7 @@ define(['../../directives/module'], function(directives) {
 
             requirejs(["dataTables"], function() {
                 // Inicializa dataTable
-                $('#pxTable').dataTable(
+                $('#' + $scope.id + '_pxDataTable').dataTable(
                     dataTableConfig
                 );
             });
@@ -317,13 +325,13 @@ define(['../../directives/module'], function(directives) {
             }
 
             requirejs(["dataTables"], function() {
-                var table = $('#pxTable').DataTable();
-                $scope.internalControl.table = $('#pxTable').DataTable();
+                var table = $('#' + $scope.id + '_pxDataTable').DataTable();
+                $scope.internalControl.table = $('#' + $scope.id + '_pxDataTable').DataTable();
             });
 
             // Evento page.dt
             // https://datatables.net/reference/event/page
-            $('#pxTable').on('page.dt', function() {
+            $('#' + $scope.id + '_pxDataTable').on('page.dt', function() {
 
                 var info = $scope.internalControl.table.page.info();
 
@@ -333,7 +341,7 @@ define(['../../directives/module'], function(directives) {
                     $scope.getData($scope.nextRowFrom, $scope.nextRowTo);
                 }
 
-                //$('#pxTable_length').hide();
+                //$('#'+$scope.id+'_pxDataTable_length').hide();
                 //console.info('pxTable page.dt table.context',table.context[0]);
                 if (info.start === 0) {
                     info.start = 1;
@@ -379,7 +387,7 @@ define(['../../directives/module'], function(directives) {
             };
 
             // Evento click edit
-            $('#pxTable tbody').on('click', 'i[class="fa fa-pencil"]', function(e) {
+            $('#' + $scope.id + '_pxDataTable tbody').on('click', 'i[class="fa fa-pencil"]', function(e) {
 
                 var $row = $(this).closest('tr');
                 $scope.internalControl.updatedRow = $row;
@@ -402,7 +410,7 @@ define(['../../directives/module'], function(directives) {
             });
 
             // Evento click checkbox
-            $('#pxTable tbody').on('click', 'input[type="checkbox"]', function(e) {
+            $('#' + $scope.id + '_pxDataTable tbody').on('click', 'input[type="checkbox"]', function(e) {
                 var $row = $(this).closest('tr');
 
                 // Dados da linha
@@ -436,16 +444,24 @@ define(['../../directives/module'], function(directives) {
                 // Atualizar dataTable (selecionar tudo)
                 $scope.updateDataTableSelectAllCtrl($scope.internalControl.table);
 
-                $scope.$apply(function() {
-                    // Chama função definida em px-item-click
-                    $scope.$eval($scope.itemClick);
-                });
-
                 e.stopPropagation();
             });
 
             // Evento click células
-            $('#pxTable').on('click', 'tbody td, thead th:first-child', function(e) {
+            $('#' + $scope.id + '_pxDataTable').on('click', 'tbody td, thead th:first-child', function(e) {
+
+                // Evento Item Click - Start
+                var $row = $(this).closest('tr');
+                // Dados da linha
+                var data = $scope.internalControl.table.row($row).data();
+                var itemClickEvent = {
+                    itemClick: data
+                }
+                $scope.itemClick({
+                    event: itemClickEvent
+                });
+                // Evento Item Click - End
+
                 // Clicar no edit
                 if (e.target.tagName === 'I') {
                     return;
@@ -454,18 +470,18 @@ define(['../../directives/module'], function(directives) {
             });
 
             // Evento click (selecionar tudo)
-            $('#pxTable thead input[name="select_all"]').on('click', function(e) {
+            $('#' + $scope.id + '_pxDataTable thead input[name="select_all"]').on('click', function(e) {
                 if (this.checked) {
-                    $('#pxTable tbody input[type="checkbox"]:not(:checked)').trigger('click');
+                    $('#' + $scope.id + '_pxDataTable tbody input[type="checkbox"]:not(:checked)').trigger('click');
                 } else {
-                    $('#pxTable tbody input[type="checkbox"]:checked').trigger('click');
+                    $('#' + $scope.id + '_pxDataTable tbody input[type="checkbox"]:checked').trigger('click');
                 }
 
                 e.stopPropagation();
             });
 
             // Evento draw
-            $('#pxTable').on('draw', function() {
+            $('#' + $scope.id + '_pxDataTable').on('draw', function() {
                 // Atualizar dataTable (Selecionar tudo)
                 $scope.updateDataTableSelectAllCtrl(table);
             });
@@ -582,7 +598,7 @@ define(['../../directives/module'], function(directives) {
                 $scope.reset();
 
                 requirejs(["dataTables"], function() {
-                    $('#pxTable').DataTable().clear().draw();
+                    $('#' + $scope.id + '_pxDataTable').DataTable().clear().draw();
                 });
             }
 
@@ -613,17 +629,17 @@ define(['../../directives/module'], function(directives) {
 
                         var table = $scope.internalControl.table;
                         requirejs(["dataTables"], function() {
-                            $('#pxTable').DataTable().page($scope.currentPage).draw(false);
+                            $('#' + $scope.id + '_pxDataTable').DataTable().page($scope.currentPage).draw(false);
                         });
 
                         requirejs(["dataTables"], function() {
-                            var info = $('#pxTable').DataTable().page.info();
+                            var info = $('#' + $scope.id + '_pxDataTable').DataTable().page.info();
                             if (info.start === 0) {
                                 info.start = 1;
                             }
 
-                            //$('#pxTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);                           
-                            $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
+                            //$('#'+$scope.id+'_pxDataTable_info').html('Monstrando de ' + info.start + ' a ' + info.end + ' no total de ' + info.recordsTotal + ' registros carregados.' + '<br>Total de registros na base de dados: ' + $scope.recordCount);                           
+                            $('#' + $scope.id + '_pxDataTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
                         });
                         // Verifica $scope.demand
                         // false: não continua a consulta até que o usuário navegue até a última página
@@ -728,7 +744,7 @@ define(['../../directives/module'], function(directives) {
 
             // Atualizar dados do dataTable                                        
             requirejs(["dataTables"], function() {
-                $('#pxTable').DataTable().row.add(data).draw();
+                $('#' + $scope.id + '_pxDataTable').DataTable().row.add(data).draw();
             });
         }
 
@@ -756,7 +772,7 @@ define(['../../directives/module'], function(directives) {
 
                     $scope.recordCount -= $scope.rowsSelected.length;
 
-                    $('#pxTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
+                    $('#' + $scope.id + '_pxDataTable_info').html(info.recordsTotal + ' registros carregados.' + ' Total de registros na base de dados: ' + $scope.recordCount);
                     // rotina duplicada :( - END
 
                     $scope.internalControl.selectedItems = [];
