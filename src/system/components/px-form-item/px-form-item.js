@@ -124,7 +124,8 @@ define(['../../directives/module'], function(directives) {
                 scope: {
                     element: '@pxElement',
                     confirm: '@pxConfirm',
-                    confirmError: '@pxConfirmError'
+                    confirmError: '@pxConfirmError',
+                    minLengthError: '@pxMinlengthError'
                 },
                 link: function(scope, element, attrs, formCtrl) {
                     // Chama evento px-init
@@ -139,7 +140,7 @@ define(['../../directives/module'], function(directives) {
                         // Elemento que será validado
                         var _element = angular.element($('#' + $scope.element).get(0));
                         // ngModelController do elemento
-                        var _ngModelCtrl = _element.data('$ngModelController');                        
+                        var _ngModelCtrl = _element.data('$ngModelController');
 
                         var _confirm = angular.element($('#' + $scope.confirm).get(0));
                         var _confirmModelCtrl = _confirm.data('$ngModelController');
@@ -147,7 +148,7 @@ define(['../../directives/module'], function(directives) {
                         // Evento blur
                         _element.on('keyup', function(event) {
                             // Verificar se possui campo de confirmação
-                            if (angular.isDefined($scope.confirm)) {                                
+                            if (angular.isDefined($scope.confirm)) {
                                 if (String(_confirmModelCtrl.$modelValue) !== String(_ngModelCtrl.$modelValue)) {
                                     //_ngModelCtrl.$error.confirm = true;
                                     _ngModelCtrl.$setValidity('confirm', false);
@@ -163,6 +164,8 @@ define(['../../directives/module'], function(directives) {
                                         $scope.error = 'Campo obrigatório';
                                     } else if (_ngModelCtrl.$error.email) {
                                         $scope.error = 'E-mail inválido';
+                                    } else if (_ngModelCtrl.$error.minlength) {
+                                        $scope.error = $scope.minLengthError;
                                     } else if (_ngModelCtrl.$error.confirm) {
                                         if (!angular.isDefined($scope.confirmError)) {
                                             $scope.error = 'Campo não confere';
@@ -619,13 +622,16 @@ define(['../../directives/module'], function(directives) {
                 }
             };
         }])
-        // pxComplete
-        .directive('pxComplete', ['pxConfig', 'pxUtil', '$parse', '$http', '$sce', '$timeout', function(pxConfig, pxUtil, $parse, $http, $sce, $timeout) {
+        // pxInputSearch
+        .directive('pxInputSearch', ['pxConfig', 'pxUtil', 'pxArrayUtil', '$parse', '$http', '$sce', '$timeout', '$mdDialog', function(pxConfig, pxUtil, pxArrayUtil, $parse, $http, $sce, $timeout, $mdDialog) {
             return {
                 restrict: 'EA',
                 scope: {
                     id: '@id',
+                    control: '=pxControl',
                     placeholder: '@placeholder',
+                    inputClass: '@pxInputClass',
+                    complete: '=pxComplete',
                     table: '@pxTable',
                     fields: '@pxFields',
                     orderBy: '@pxOrderBy',
@@ -634,16 +640,25 @@ define(['../../directives/module'], function(directives) {
                     url: '@pxUrl',
                     responseQuery: '@pxResponseQuery',
                     localQuery: '@pxLocalQuery',
-                    inputClass: '@pxInputClass',
-                    searchFields: '@searchfields'
+                    searchFields: '@searchfields',
+                    dialog: '=pxDialog',
+                    searchClick: '&pxSearchClick',
+                    templateUrl: '@pxTemplateUrl'
                 },
                 require: '?ngModel',
-                templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-complete.html',
-
+                templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-input-search.html',
                 link: function(scope, element, attrs, ngModelCtrl) {
 
                     if (!ngModelCtrl) {
                         return;
+                    }
+
+                    scope.inputClass = scope.inputClass || 'form-control';
+
+                    if (scope.dialog) {
+                        scope.inputGroup = 'input-group';
+                    } else {
+                        scope.inputGroup = '';
                     }
 
                     scope.lastSearchTerm = null;
@@ -656,9 +671,26 @@ define(['../../directives/module'], function(directives) {
                     scope.minLength = 3;
                     scope.searchStr = null;
 
+                    scope.internalControl = scope.control || {};
+
+                    scope.internalControl.working = false;
+
+                    scope.internalControl.setValue = function(value) {
+                        scope.setValue(value);
+                    };
+
+                    // px-modal - Start                   
+                    // px-modal - End
+
                     var isNewSearchNeeded = function(newTerm, oldTerm) {
                         return newTerm.length >= scope.minLength && newTerm !== oldTerm;
                     };
+
+
+                    // px-complete - Start
+                    if (scope.complete !== true) {
+                        return;
+                    }
 
                     scope.processResults = function(response, str, arrayFields) {
                         if (response && response.length > 0) {
@@ -738,6 +770,8 @@ define(['../../directives/module'], function(directives) {
                                 });
 
                                 var params = {};
+                                params.dsn = pxConfig.PROJECT_DSN;
+                                params.table = scope.table;
                                 params.table = scope.table;
                                 params.fields = angular.toJson(arrayFields);
                                 params.orderBy = scope.orderBy;
@@ -758,7 +792,7 @@ define(['../../directives/module'], function(directives) {
                                     dataType: 'json',
                                     params: params
                                 }).success(function(response, status, headers, config) {
-                                    //console.info('response', response);
+                                    console.info('response', response);
                                     if (!angular.isDefined(scope.responseQuery) || scope.responseQuery === '') {
                                         scope.responseQuery = 'qQuery';
                                     }
@@ -870,7 +904,42 @@ define(['../../directives/module'], function(directives) {
                             scope.$apply();
                         }
                     });
-                }
+                    // px-complete - End
+                },
+                controller: ['$scope', function($scope) {
+                    $scope.showDialog = function(event) {
+                        $scope.searchStr = $scope.lastSearchTerm = '';
+                        $scope.selectedItem = '';
+                        $scope.showDropdown = false;
+                        $scope.results = [];
+
+                        $scope.searchClick({
+                            event: event
+                        });
+                    };
+
+                    $scope.setValue = function(data) {
+                        var arrayFields = JSON.parse($scope.fields);
+
+                        var field = arrayFields[pxArrayUtil.getIndexByProperty(arrayFields, 'labelField', true)].field;
+
+                        var tempValue = data[field];
+                        if (!angular.isDefined(tempValue)) {
+                            tempValue = data[field.toUpperCase()];
+                        }
+
+                        $scope.searchStr = $scope.lastSearchTerm = tempValue;
+                        $scope.selectedItem = data;
+                        $scope.showDropdown = false;
+                        $scope.results = [];
+                        /*
+                        scope.searchStr = scope.lastSearchTerm = result.title;
+                        scope.selectedItem = result.item;
+                        scope.showDropdown = false;
+                        scope.results = [];
+                        */
+                    };
+                }]
             };
         }]);
 });

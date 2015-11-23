@@ -69,7 +69,7 @@
 		</cfif>
 
 		<cftransaction>						
-			<cfquery name="qQuery" datasource="#arguments.dsn#">			
+			<cfquery name="qQuery" result="qResult" datasource="#arguments.dsn#">			
 				SELECT 
 					TOP #arguments.rows#
 					#listFields#
@@ -94,9 +94,10 @@
 
 	</cftry>
 
-	<cfset result['listFields']  = listFields>
-	<cfset result['arguments']   = arguments>
-	<cfset result['qQuery']      = QueryToArray(qQuery)>
+	<cfset result['listFields'] = listFields>
+	<cfset result['arguments'] = arguments>
+	<cfset result['qQuery'] = QueryToArray(qQuery)>
+	<cfset result['qResult'] = qResult>
 
 	<cfreturn result>
 
