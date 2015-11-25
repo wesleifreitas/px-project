@@ -9,34 +9,34 @@
         <div class="contentSearch" layout="row" layout-wrap>
             <div layout="row" layout-sm="column" layout-wrap layout-padding flex="100">
                 <div flex="25" flex-sm="100">
-                    <label>Auto-complete (Nome)</label>
-                    <px-complete id="filtroComplete" ng-model="filtroComplete" px-input-class="form-control" placeholder="  Pesquisar nome" px-enter="getData()" px-table="dbo.vw_exemplo" px-fields="{{filtroCompleteConfig.fields}}"></px-complete>
+                    <label for="filtroSearch">Input Search</label>
+                    <px-input-search id="filtroSearch" name="filtroSearch" ng-model="filtroSearch" px-input-class="form-control" placeholder="Pesquisar categoria" px-enter="getData()" px-control="filtroSearchControl" px-complete="true" px-table="dbo.exemplo2" px-fields="{{exe_input_searchConfig.fields}}" px-dialog="true" px-search-click="filtroSearchClick(event)" px-template-url="custom/exemplo/exemplo-list.html"></px-input-search>
                 </div>
                 <div flex="10" flex-sm="100">
-                    <label>ID</label>
-                    <input id="filtroId" ng-model="filtroId" class="form-control" px-enter="getData()" px-valid-number>
+                    <label for="filtroId">ID</label>
+                    <input id="filtroId" name="filtroId" ng-model="filtroId" class="form-control" px-enter="getData()" px-valid-number>
                 </div>
                 <div flex="15" flex-sm="100">
-                    <label>Status</label>
-                    <select id="filtroStatus" ng-model="filtroStatus" class="form-control" px-enter="getData()" ng-options="option.name for option in dataStatus.optionsAll track by option.id"></select>
+                    <label for="filtroStatus">Status</label>
+                    <select id="filtroStatus" name="filtroStatus" ng-model="filtroStatus" class="form-control" px-enter="getData()" ng-options="option.name for option in dataStatus.optionsAll track by option.id"></select>
                 </div>
                 <div flex="25" flex-sm="100">
-                    <label>Nome</label>
-                    <input id="filtroNome" ng-model="filtroNome" class="form-control" px-enter="getData()">
+                    <label for="filtroNome">Nome</label>
+                    <input id="filtroNome" name="filtroNome" ng-model="filtroNome" class="form-control" px-enter="getData()">
                 </div>
                 <div flex="15" flex-sm="100">
-                    <label>CPF</label>
-                    <input id="filtroCPF" ng-model="filtroCPF" class="form-control" px-enter="getData()" px-br-cpf-mask>
+                    <label for="filtroCPF">CPF</label>
+                    <input id="filtroCPF" name="filtroCPF" ng-model="filtroCPF" class="form-control" px-enter="getData()" px-br-cpf-mask>
                 </div>
                 <div flex="15" flex-sm="100">
-                    <label>Telefone</label>
-                    <input id="filtroTelefone" ng-model="filtroTelefone" class="form-control" px-enter="getData()" px-br-phone-mask>
+                    <label for="filtroTelefone">Telefone</label>
+                    <input id="filtroTelefone" name="filtroTelefone" ng-model="filtroTelefone" class="form-control" px-enter="getData()" px-br-phone-mask>
                 </div>
                 <div flex="20" flex-sm="100">
-                    <label>Valor</label>
+                    <label for="filtroValor">Valor</label>
                     <div class="input-group">
                         <span class="input-group-addon">R$</span>
-                        <input id="filtroValor" ng-model="filtroValor" class="form-control" px-enter="getData()" px-number-mask>
+                        <input id="filtroValor" name="filtroValor" ng-model="filtroValor" class="form-control" px-enter="getData()" px-number-mask>
                     </div>
                 </div>
             </div>
@@ -54,12 +54,12 @@
                 <button type="button" class="btn btn-default" ng-click="remove()">
                     <span class="fa fa-remove"></span> <span hide-sm>Remover</span>
                 </button>
-                <button id="btnAdd" type="button" class="btn btn-default" ng-click="getData()">
-                    <span ng-class="gridControl.working | dataGridRefresh"></span> <span hide-sm>Atualizar</span>
+                <button type="button" class="btn btn-default" ng-click="getData()">
+                    <span ng-class="dgExemplo2Control.working | dataGridRefresh"></span> <span hide-sm>Atualizar</span>
                 </button>
             </div>
         </div>
-        <px-data-grid px-debug="false" px-control="gridControl" px-init="gridInit()" px-table="dbo.vw_exemplo" px-fields="{{gridConfig.fields}}" px-order-by="exe_id DESC" px-data-init="true" px-check="true" px-edit="true" px-item-edit="edit(event)">
-        </px-data-grid>        
+        <px-data-grid id="dgExemplo" px-debug="true" px-control="dgExemploControl" px-init="gridInit()" px-config="{{dgConfig}}" px-order-by="exe_id DESC" px-data-init="true" px-check="true" px-edit="true" px-item-edit="edit(event)">
+        </px-data-grid>
     </div>
 </div>

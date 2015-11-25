@@ -8,7 +8,6 @@ define(['../controllers/module'], function(controllers) {
 
     function exemploCtrl(exemploService, pxConfig, $scope, $element, $attrs, $mdDialog) {
         // Variáveis gerais - Start
-
         /**
          * Variável de controle de visualição do Filtro Avançado
          * @type {Boolean}
@@ -16,7 +15,7 @@ define(['../controllers/module'], function(controllers) {
         $scope.expand = false;
         /**
          * Responsável por realizar o efeito de expandir o Filtro Avançado
-         * @return {void}
+         * @return {Void}
          */
         $scope.showFilter = function() {
             var $header = $('#headerSearch');
@@ -26,6 +25,26 @@ define(['../controllers/module'], function(controllers) {
             $header.blur();
         };
 
+        // Configuração do exe_input_search
+        $scope.exe_input_searchConfig = {
+            fields: [{
+                title: '',
+                labelField: true,
+                field: 'exe2_categoria',
+                search: true,
+                type: 'string',
+                filterOperator: '%LIKE%'
+            }, {
+                title: 'Descrição: ',
+                descriptionField: true,
+                field: 'exe2_descricao',
+            }, {
+                title: '',
+                field: 'exe2_id',
+            }]
+        };
+        // Variáveis gerais - End
+
         // Define as opções de status
         $scope.dataStatus = {
             // Array: opções do select com opção "Todos"
@@ -34,51 +53,51 @@ define(['../controllers/module'], function(controllers) {
             options: exemploService.status(false),
         };
 
+        // Filtro - Start 
+
         // Default de options para o filtro filtroStatus
         $scope.filtroStatus = exemploService.status(true)[0];
 
-        // Configuração do filtro filtroComplete
-        $scope.filtroCompleteConfig = {
-            fields: [{
-                title: '',
-                labelField: true,
-                field: 'exe_nome',
-                search: true,
-                type: 'string',
-                filterOperator: '%LIKE%'
-            }, {
-                title: 'CPF: ',
-                descriptionField: true,
-                field: 'exe_cpf',
-            }, {
-                title: '',
-                field: 'exe_id',
-            }]
-        };
+        $scope.filtroSearchControl = {};
 
-        // Variáveis gerais - End
+        filtroSearchCtrl.$inject = ['$scope', '$mdDialog'];
+        $scope.filtroSearchClick = function() {
+            $mdDialog.show({
+                scope: $scope,
+                preserveScope: true,
+                controller: filtroSearchCtrl,
+                templateUrl: 'custom/exemplo2/exemplo2-list.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose: true
+            });
+        }
+
+        // Filtro - End
 
         // Listagem - Start
 
         /**
          * Controle da listagem
-         * Note que a propriedade 'control' da directive px-data-grid é igual a 'gridControl'
-         * Exemplo: <px-data-grid px-control="gridControl">
+         * Note que a propriedade 'control' da directive px-data-grid é igual a 'dgExemplo'
+         * Exemplo: <px-data-grid px-control="dgExemplo">
          * @type {Object}
          */
-        $scope.gridControl = {};
+        $scope.dgExemploControl = {};
 
         /**
          * Inicializa listagem
-         * @return {void}
+         * @return {Void}
          */
         $scope.gridInit = function() {
             /**
              * Configurações da listagem
              * - fields: Colunas da listagem
-             * @type {object}
+             * @type {Object}
              */
-            $scope.gridConfig = {
+            $scope.dgConfig = {
+                table: 'dbo.exemplo',
+                view: 'dbo.vw_exemplo',
                 fields: [{
                     pk: true,
                     title: 'id',
@@ -103,14 +122,14 @@ define(['../controllers/module'], function(controllers) {
                     filter: 'filtroNome',
                     filterOperator: '%LIKE%'
                 }, {
-                    title: 'Complete',
-                    field: 'exe_complete',
+                    title: 'Categoria',
+                    field: 'exe2_categoria',
                     type: 'bit',
-                    filter: 'filtroComplete',
+                    filter: 'filtroSearch',
                     filterOperator: '=',
                     filterOptions: {
                         field: 'exe_id',
-                        selectedItem: 'exe_id'
+                        selectedItem: 'exe2_id'
                     }
                 }, {
                     title: 'CPF',
@@ -142,32 +161,49 @@ define(['../controllers/module'], function(controllers) {
             };
         };
 
-
         /**
          * Atualizar dados da listagem
-         * @return {void}
+         * @return {Void}
          */
         $scope.getData = function() {
             //Recuperar dados para a listagem
-            $scope.gridControl.getData();
+            $scope.dgExemploControl.getData();
         };
 
         /**
          * Remover itens da listagem
-         * @return {void}
+         * @return {Void}
          */
         $scope.remove = function() {
             // Remover itens (selecionados) da listagem
-            $scope.gridControl.remove();
+            $scope.dgExemploControl.remove();
         };
 
-        // Listagem - End        
-        $scope.formTitle = "Formulário";
-        $scope.add = function(event) {
-            $scope.formTitle = "Formulário de Adicionar";
-            $scope.formAction = "insert";
+        // Listagem - End     
 
-            formCtrl.$inject = ['$scope', '$mdDialog'];
+        // Incializar título do formulário      
+        $scope.formTitle = "Formulário de Adicionar";
+        /**
+         * Alterar título do formulário
+         */
+        $scope.setFormTitle = function() {
+            if ($scope.formShow === 'default') {
+                if ($scope.formAction === 'insert') {
+                    $scope.formTitle = "Formulário de Adicionar";
+                } else {
+                    $scope.formTitle = "Formulário de Editar";
+                }
+            } else if ($scope.formShow === 'exemplo2') {
+                $scope.formTitle = "Selecione uma categoria";
+            }
+        }
+
+
+        formCtrl.$inject = ['$scope', '$mdDialog'];
+        $scope.add = function(event) {
+            $scope.formAction = "insert";
+            $scope.setFormTitle();
+
             $mdDialog.show({
                 scope: $scope,
                 preserveScope: true,
@@ -180,11 +216,10 @@ define(['../controllers/module'], function(controllers) {
         };
 
         $scope.edit = function(event) {
-            $scope.formTitle = "Formulário de Editar";
             $scope.formAction = "update";
             $scope.formItemEdit = event.itemEdit;
+            $scope.setFormTitle();
 
-            formCtrl.$inject = ['$scope', '$mdDialog'];
             $mdDialog.show({
                 scope: $scope,
                 preserveScope: true,
@@ -194,6 +229,13 @@ define(['../controllers/module'], function(controllers) {
                 targetEvent: event,
                 clickOutsideToClose: false
             });
+        };
+    }
+    // Controller - filtroSearch
+    function filtroSearchCtrl($scope, $mdDialog) {
+        $scope.callback = function(event) {
+            $scope.filtroSearchControl.setValue(event.itemClick);
+            $mdDialog.hide();
         };
     }
     // Controller - Formulário
@@ -206,17 +248,29 @@ define(['../controllers/module'], function(controllers) {
          */
         $scope.formControl = {};
 
+        // Controle do campo exe_input_search
+        $scope.exe_input_searchControl = {};
+        // Clicar no botão busca
+        $scope.exe_input_searchClick = function() {
+            $scope.formShow = 'exemplo2';
+            $scope.setFormTitle();
+        };
+
         /**
          * Inicializa formulário
-         * @return {void}
+         * @return {Void}
          */
         $scope.formInit = function() {
+            // Definir formulário default
+            $scope.formShow = 'default';
 
             // Limpar formuário
             $scope.formControl.clean();
 
             // Configurar formulário
             $scope.formConfig = {
+                table: 'dbo.exemplo',
+                view: 'dbo.vw_exemplo',
                 fields: [{
                     pk: true,
                     field: 'exe_id',
@@ -237,11 +291,18 @@ define(['../controllers/module'], function(controllers) {
                 }, {
                     field: 'exe_nome',
                     type: 'string',
-                    element: 'exe_nome'
+                    element: 'exe_nome',
                 }, {
                     field: 'exe_cpf',
                     type: 'string',
                     element: 'exe_cpf'
+                }, {
+                    field: 'exe_input_search',
+                    type: 'string',
+                    element: 'exe_input_search',
+                    fieldValueOptions: {
+                        selectedItem: 'exe2_id'
+                    },
                 }, {
                     field: 'exe_senha',
                     type: 'string',
@@ -282,38 +343,89 @@ define(['../controllers/module'], function(controllers) {
 
         /**
          * Função callback do formulário
-         * @param  {object} event retorno do formulário
-         * @return {void}
+         * @param  {Object} event retorno do formulário
+         * @return {Void}
          */
-        $scope.formCallback = function(event) {        
-            if (event.action === 'select') {                
+        $scope.formCallback = function(event) {
+            if (event.action === 'select') {
                 $scope.exe_senha_confirmar = event.qQuery[0].EXE_SENHA;
             } else if (event.action == 'insert') {
                 // Adicionar registro na listagem
-                $scope.gridControl.addDataRow(event.data);
+                $scope.dgExemploControl.addDataRow(event.data);
             } else if (event.action == 'update') {
                 // Adicionar registro na listagem
-                $scope.gridControl.addDataRow(event.data);
+                $scope.dgExemploControl.addDataRow(event.data);
                 // Remover linha editada (Para depois adicionar a linha atualizada)
-                $scope.gridControl.removeRow($scope.gridControl.updatedRow);
+                $scope.dgExemploControl.removeRow($scope.dgExemplo.updatedRow);
             }
         };
 
         /**
          * Fechar formulário
-         * @return {void}
+         * @return {Void}
          */
-        $scope.formCancel = function() {            
-            $mdDialog.cancel();
+        $scope.formCancel = function() {
+            if ($scope.formShow === 'default') {
+                $mdDialog.cancel();
+            } else {
+                $scope.formShow = 'default';
+            }
         };
 
         /**
          * Limpar formulário
-         * @return {void}
+         * @return {Void}
          */
         $scope.formClean = function() {
             // Limpar formuário
-            $scope.formControl.clean();        
+            $scope.formControl.clean();
+        };
+
+        // Controle da listagem no formulário
+        $scope.dgExemplo2Control = {};
+
+        /**
+         * Inicializar listagem
+         * @return {Void}
+         */
+        $scope.dgExemplo2Init = function() {
+            /**
+             * Configurações da listagem
+             * - fields: Colunas da listagem
+             * @type {Object}
+             */
+            $scope.dgExemplo2Config = {
+                table: 'dbo.exemplo2',                
+                fields: [{
+                    pk: true,
+                    title: 'id',
+                    field: 'exe2_id',
+                    type: 'int'
+                }, {
+                    title: 'Categoria',
+                    field: 'exe2_categoria',
+                    type: 'string',
+                    filter: 'filtroCategoria',
+                    filterOperator: '%LIKE%'
+                }, {
+                    title: 'Descrição',
+                    field: 'exe2_descricao',
+                    type: 'string'
+                }],
+            };
+        };
+
+        // Atualizar listagem do formulário
+        $scope.getDataExemplo2 = function() {
+            //Recuperar dados para a listagem
+            $scope.dgExemplo2Control.getData();
+        };
+
+        // Evento itemClick
+        $scope.dgExemplo2ItemClick = function(event) {
+            $scope.formShow = 'default';
+            $scope.exe_input_searchControl.setValue(event.itemClick);
+            $scope.setFormTitle();
         };
     }
 });

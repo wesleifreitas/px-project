@@ -1,5 +1,5 @@
 <md-dialog ng-cloak flex="50" aria-label="Formulário">
-    <px-form px-debug="true" px-control="formControl" px-init="formInit()" px-callback="formCallback(event)" px-table="dbo.exemplo" px-config="{{formConfig}}" px-callback="formCallback(event)"></px-form>
+    <px-form px-debug="true" px-control="formControl" px-init="formInit()" px-callback="formCallback(event)" px-config="{{formConfig}}" px-callback="formCallback(event)"></px-form>
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>{{formTitle}}</h2>
@@ -9,7 +9,7 @@
             </md-button>
         </div>
     </md-toolbar>
-    <form name="form">
+    <form name="form" ng-show="formShow === 'default'">
         <md-dialog-content>
             <div class="md-dialog-content">
                 <div layout="row" layout-sm="column" layout-wrap layout-padding flex="100">
@@ -34,6 +34,10 @@
                         <input id="exe_cpf" name="exe_cpf" ng-model="exe_cpf" class="form-control" px-br-cpf-mask required>
                         <px-show-error px-element="exe_cpf"></px-valid>
                     </div>
+                    <div flex="100" flex-sm="100">
+                        <label for="exe_input_search">Input Search</label>
+                        <px-input-search id="exe_input_search" name="exe_input_search" ng-model="exe_input_search" px-input-class="form-control" placeholder="Pesquisar categoria" px-control="exe_input_searchControl" px-complete="true" px-table="dbo.exemplo2" px-fields="{{exe_input_searchConfig.fields}}" px-dialog="true" px-search-click="exe_input_searchClick(event)"></px-input-search>
+                    </div>
                     <div flex="50" flex-sm="100">
                         <label for="exe_senha">Senha</label>
                         <input id="exe_senha" name="exe_senha" ng-model="exe_senha" class="form-control" type="password" required>
@@ -45,6 +49,7 @@
                         <px-show-error px-element="exe_senha_confirmar" px-confirm="exe_senha" px-confirm-error="Senha não confere"></px-valid>
                     </div>
                 </div>
+            </div>
         </md-dialog-content>
         <div class="md-actions" layout="row">
             <span flex></span>
@@ -61,4 +66,29 @@
             </div>
         </div>
     </form>
+    <md-dialog-content ng-show="formShow === 'exemplo2'">
+        <div class="md-dialog-content">
+            <div px-fixed px-wrapper=".px-view" px-hfixed="true">
+                <div id="headerSearch" layout="row" layout-align="center center" ng-click="showFilter()"><span>FILTRO AVANÇADO</span><i class="material-icons" ng-show="filterExpand">expand_less</i><i class="material-icons" ng-show="!filterExpand">expand_more</i>
+                </div>
+                <div class="contentSearch" layout="row" layout-wrap>
+                    <div layout="row" layout-sm="column" layout-wrap layout-padding flex="100">
+                        <div flex="50" flex-sm="100">
+                            <label for="filtroCategoria">Nome</label>
+                            <input id="filtroCategoria" name="filtroCategoria" ng-model="filtroCategoria" class="form-control" px-enter="getDataExemplo2()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div px-fixed px-wrapper=".px-view" px-hfixed="true" layout="row" layout-align="end center">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="getDataExemplo2()">
+                        <span ng-class="dgExemploControl.working | dataGridRefresh"></span> <span hide-sm>Atualizar</span>
+                    </button>
+                </div>
+            </div>
+            <px-data-grid id="dgExemplo2" px-debug="true" px-control="dgExemplo2Control" px-init="dgExemplo2Init()" px-config="{{dgExemplo2Config}}" px-order-by="exe2_categoria" px-data-init="true" px-check="false" px-edit="false" px-item-click="dgExemplo2ItemClick(event)">
+            </px-data-grid>
+        </div>
+    </md-dialog-content>
 </md-dialog>
