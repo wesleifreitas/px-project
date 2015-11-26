@@ -145,7 +145,7 @@ define(['../../directives/module'], function(directives) {
                         var _confirm = angular.element($('#' + $scope.confirm).get(0));
                         var _confirmModelCtrl = _confirm.data('$ngModelController');
 
-                        // Evento blur
+                        // Evento keyup
                         _element.on('keyup', function(event) {
                             // Verificar se possui campo de confirmação
                             if (angular.isDefined($scope.confirm)) {
@@ -157,10 +157,10 @@ define(['../../directives/module'], function(directives) {
                                     _ngModelCtrl.$setValidity('confirm', true);
                                 }
                             }
-                            // Verificar ser o elemento está inválido
+                            // Verificar ser o elemento está inválido                          
                             if (_ngModelCtrl.$invalid) {
                                 $scope.$apply(function() {
-                                    if (_ngModelCtrl.$error.required) {
+                                    if (_ngModelCtrl.$error.required || _ngModelCtrl.$error.requiredsearch) {
                                         $scope.error = 'Campo obrigatório';
                                     } else if (_ngModelCtrl.$error.email) {
                                         $scope.error = 'E-mail inválido';
@@ -318,10 +318,59 @@ define(['../../directives/module'], function(directives) {
                 }]
             };
         }])
-        // pxBrPhoneMask
-        // (99) 9999-9999 / (99) 9999-9999?9
-        // (99) 99999-999
-        .directive('pxBrPhoneMask', ['$compile', function($compile) {
+        // pxBrCepMask
+        // 99999-999
+        .directive('pxBrCepMask', ['$compile', function($compile) {
+            return {
+                priority: 100,
+                restrict: 'A',
+                scope: {
+                    cleanValue: '@cleanValue'
+                },
+                require: '?ngModel',
+                link: function(scope, element, attrs, ngModelCtrl) {
+
+                    if (!ngModelCtrl) {
+                        return;
+                    }
+
+                    // Verifica se NÃO possui uiMask definido
+                    if (!angular.isDefined(attrs.uiMask)) {
+                        // Define uiMask
+                        attrs.$set('uiMask', '99999-999');
+                        $compile(element)(scope);
+                    }
+
+                    ngModelCtrl.$parsers.push(function(value) {
+                        if (angular.isDefined(value)) {
+                            var clean = String(value).replace(/[^0-9]+/g, '');
+                            if (value !== clean) {
+                                // Atualizar campo com o valor digitado
+                                ngModelCtrl.$setViewValue(clean);
+                                //ngModelCtrl.$render();
+                            }
+                            return clean;
+                        }
+                    });
+
+                    scope.value2mask = function(value) {
+                        ngModelCtrl.$setViewValue(value);
+                    }
+
+                },
+                controller: ['$scope', function($scope) {
+
+                    $scope.pxForm2mask = function(value) {
+                        $scope.value2mask(value);
+                    }
+                }]
+            };
+        }])
+
+    // pxBrPhoneMask
+    // (99) 9999-9999 / (99) 9999-9999?9
+    // (99) 99999-999
+    .directive('pxBrPhoneMask', ['$compile', function($compile) {
             return {
                 priority: 100,
                 restrict: 'A',
@@ -628,6 +677,7 @@ define(['../../directives/module'], function(directives) {
                 restrict: 'EA',
                 scope: {
                     id: '@id',
+                    required: '@required',
                     control: '=pxControl',
                     placeholder: '@placeholder',
                     inputClass: '@pxInputClass',
@@ -679,19 +729,82 @@ define(['../../directives/module'], function(directives) {
                         scope.setValue(value);
                     };
 
-                    // px-modal - Start                   
-                    // px-modal - End
+                    scope.internalControl.getValue = function() {
+                        return {
+                            selectedItem: scope.selectedItem
+                        };
+                    };
 
+                    $timeout(function() {
+                        var _element = angular.element($('#' + scope.id + '_inputSearch').get(0));
+                        // Evento blur
+                        _element.on('blur', function(event) {
+                            scope.setValidity();
+                        });
+
+                    }, 0);
+
+                    scope.setValidity = function() {
+                            var _element = angular.element($('#' + scope.id + '_inputSearch').get(0));
+                            var _span = angular.element($('#' + scope.id + '_spanInputSearch').get(0));
+                            if (!angular.isDefined(scope.selectedItem) || scope.selectedItem === null) {
+                                ngModelCtrl.$setValidity('requiredsearch', false);
+                                scope.searchStr = scope.lastSearchTerm = '';
+                                scope.selectedItem = '';
+                                scope.showDropdown = false;
+                                scope.results = [];
+                            } else {
+                                var searchStrQuery = '';
+                                if (angular.isDefined(scope.selectedItem)) {
+                                    scope.labelField = JSON.parse(scope.fields)[pxArrayUtil.getIndexByProperty(JSON.parse(scope.fields), 'labelField', true)].field;
+                                    searchStrQuery = scope.selectedItem[scope.labelField];
+                                    if (!angular.isDefined(searchStrQuery)) {
+                                        searchStrQuery = scope.selectedItem[scope.labelField.toUpperCase()];
+                                    }
+                                }
+                                if (scope.searchStr !== searchStrQuery) {
+                                    scope.searchStr = scope.lastSearchTerm = '';
+                                    scope.selectedItem = '';
+                                    scope.showDropdown = false;
+                                    scope.results = [];
+
+                                    ngModelCtrl.$setValidity('requiredsearch', false);
+                                } else {
+                                    ngModelCtrl.$setValidity('requiredsearch', true);
+                                    ngModelCtrl.$setValidity('required', true);
+                                }
+                            }
+                            $timeout(function() {
+                                _element.trigger('keyup');
+                            }, 0);
+                            if (attrs.required === true) {
+                                if (ngModelCtrl.$invalid) {
+                                    _element.css({
+                                        borderColor: '#A94442'
+                                    });
+                                    _span.css({
+                                        borderColor: '#A94442'
+                                    });
+
+                                } else {
+                                    _element.css({
+                                        borderColor: '#CCCCCC'
+                                    });
+                                    _span.css({
+                                        borderColor: '#CCCCCC'
+                                    });
+                                }
+                            }
+                        }
+                        // px-modal - Start                   
+                        // px-modal - End
                     var isNewSearchNeeded = function(newTerm, oldTerm) {
                         return newTerm.length >= scope.minLength && newTerm !== oldTerm;
                     };
-
-
                     // px-complete - Start
                     if (scope.complete !== true) {
                         return;
                     }
-
                     scope.processResults = function(response, str, arrayFields) {
                         if (response && response.length > 0) {
 
@@ -714,7 +827,7 @@ define(['../../directives/module'], function(directives) {
                                             tempValue = response[i][arrayFields[j].field.toUpperCase()];
                                         }
 
-                                        textValue += arrayFields[j].title + tempValue + ' ';
+                                        textValue += arrayFields[j].title + tempValue + '';
                                     }
 
                                     if (arrayFields[j].descriptionField) {
@@ -792,7 +905,9 @@ define(['../../directives/module'], function(directives) {
                                     dataType: 'json',
                                     params: params
                                 }).success(function(response, status, headers, config) {
-                                    console.info('response', response);
+                                    if (scope.debug) {
+                                        console.info('px-input-search getData success', response);
+                                    }
                                     if (!angular.isDefined(scope.responseQuery) || scope.responseQuery === '') {
                                         scope.responseQuery = 'qQuery';
                                     }
@@ -858,6 +973,7 @@ define(['../../directives/module'], function(directives) {
                         scope.showDropdown = false;
                         scope.results = [];
                         //scope.$apply();
+                        scope.setValidity();
                     };
 
                     var inputField = element.find('input');
@@ -932,6 +1048,8 @@ define(['../../directives/module'], function(directives) {
                         $scope.selectedItem = data;
                         $scope.showDropdown = false;
                         $scope.results = [];
+
+                        $scope.setValidity();
                         /*
                         scope.searchStr = scope.lastSearchTerm = result.title;
                         scope.selectedItem = result.item;
