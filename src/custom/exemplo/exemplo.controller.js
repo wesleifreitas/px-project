@@ -98,8 +98,10 @@ define(['../controllers/module'], function(controllers) {
             $scope.dgConfig = {
                 table: 'dbo.exemplo',
                 view: 'dbo.vw_exemplo',
+                group: true,
                 fields: [{
                     pk: true,
+                    visible: false,
                     title: 'id',
                     field: 'exe_id',
                     type: 'int',
@@ -128,7 +130,7 @@ define(['../controllers/module'], function(controllers) {
                     filter: 'filtroSearch',
                     filterOperator: '=',
                     filterOptions: {
-                        field: 'exe_id',
+                        field: 'exe_input_search',
                         selectedItem: 'exe2_id'
                     }
                 }, {
@@ -297,11 +299,16 @@ define(['../controllers/module'], function(controllers) {
                     type: 'string',
                     element: 'exe_cpf'
                 }, {
+                    field: 'exe_cep',
+                    type: 'string',
+                    element: 'exe_cep'
+                }, {
                     field: 'exe_input_search',
                     type: 'string',
                     element: 'exe_input_search',
                     fieldValueOptions: {
-                        selectedItem: 'exe2_id'
+                        selectedItem: 'exe2_id',
+                        labelField: 'exe2_categoria'
                     },
                 }, {
                     field: 'exe_senha',
@@ -353,10 +360,8 @@ define(['../controllers/module'], function(controllers) {
                 // Adicionar registro na listagem
                 $scope.dgExemploControl.addDataRow(event.data);
             } else if (event.action == 'update') {
-                // Adicionar registro na listagem
-                $scope.dgExemploControl.addDataRow(event.data);
-                // Remover linha editada (Para depois adicionar a linha atualizada)
-                $scope.dgExemploControl.removeRow($scope.dgExemplo.updatedRow);
+                // Atualizar registro na listagem
+                $scope.dgExemploControl.updateDataRow(event.data);
             }
         };
 
@@ -395,7 +400,7 @@ define(['../controllers/module'], function(controllers) {
              * @type {Object}
              */
             $scope.dgExemplo2Config = {
-                table: 'dbo.exemplo2',                
+                table: 'dbo.exemplo2',
                 fields: [{
                     pk: true,
                     title: 'id',

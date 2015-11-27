@@ -34,6 +34,11 @@
                         <input id="exe_cpf" name="exe_cpf" ng-model="exe_cpf" class="form-control" px-br-cpf-mask required>
                         <px-show-error px-element="exe_cpf"></px-valid>
                     </div>
+                    <div flex="50" flex-sm="100">
+                        <label for="exe_cep">CEP</label>
+                        <input id="exe_cep" name="exe_cep" ng-model="exe_cep" class="form-control" px-br-cep-mask required>
+                        <px-show-error px-element="exe_cep"></px-valid>
+                    </div>
                     <div flex="100" flex-sm="100">
                         <label for="exe_input_search">Input Search</label>
                         <px-input-search id="exe_input_search" name="exe_input_search" ng-model="exe_input_search" px-input-class="form-control" placeholder="Pesquisar categoria" px-control="exe_input_searchControl" px-complete="true" px-table="dbo.exemplo2" px-fields="{{exe_input_searchConfig.fields}}" px-dialog="true" px-search-click="exe_input_searchClick(event)"></px-input-search>
