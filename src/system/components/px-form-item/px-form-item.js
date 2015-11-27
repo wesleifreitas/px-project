@@ -194,6 +194,18 @@ define(['../../directives/module'], function(directives) {
                 }]
             };
         }])
+        // pxGroupShow
+        // Verificar Group
+        .directive('pxGroupShow', ['$rootScope', function($rootScope) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs, ngModelCtrl) {
+                    if ($rootScope.globals.currentUser.per_developer !== 1) {
+                        element.hide();
+                    }
+                }
+            };
+        }])
         // pxValidNumber
         // Digitar somente números
         .directive('pxValidNumber', [function() {

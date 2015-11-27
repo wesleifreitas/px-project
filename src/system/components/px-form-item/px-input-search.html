@@ -1,7 +1,7 @@
 <div class="pxComplete-holder">
     <div class="{{inputGroup}}">
-        <input id="{{id}}_pxComplete" ng-model="searchStr" type="text" placeholder="{{placeholder}}" class="{{inputClass}}" onmouseup="this.select();" ng-focus="resetHideResults()" ng-blur="hideResults()" ng-disabled="{{!complete}}"/>
-        <span ng-if="dialog" class="input-group-btn"><button class="btn btn-default" type="button" ng-click="showDialog(event)"> 
+        <input id="{{id}}_inputSearch" ng-model="searchStr" type="text" placeholder="{{placeholder}}" class="{{inputClass}}" onmouseup="this.select();" ng-focus="resetHideResults()" ng-blur="hideResults()" ng-disabled="{{!complete}}"/>
+        <span id="{{id}}_spanInputSearch" ng-if="dialog" class="input-group-btn"><button class="btn btn-default" type="button" ng-click="showDialog(event)">
         	<span class="fa fa-search"></span></button>
         </span>
     </div>
