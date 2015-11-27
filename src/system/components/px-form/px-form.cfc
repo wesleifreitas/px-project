@@ -121,7 +121,7 @@
 			
 			for(item in arguments.fields) {
 					
-				if (isDefined("item.pk") AND item.pk) {				   		
+				if (isDefined("item.pk") AND item.pk) {
 			   		if(StructKeyExists(arguments.oldForm, item.field)){			   			
 			   			data[item.field] = arguments.oldForm[item.field];
 			   		} else if(arguments.action EQ "insert" AND isDefined("queryResult.IDENTITYCOL")) {
@@ -129,10 +129,12 @@
 			   		}			   	
 			   	}else if(isDefined("item.valueObject.value")) {					
 			   		data[item.field] = item.valueObject.value;
-			   	}  
-
+			   	}
+				// labelField
+				if (isDefined("item.labelField")) {
+					data[item.labelField.field] = item.labelField.value;
+				}
 			}
-						
 		</cfscript>
 						
 		<cfset result['success'] = true>

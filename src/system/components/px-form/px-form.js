@@ -10,6 +10,7 @@ define(['../../directives/module'], function(directives) {
             scope: {
                 debug: '=pxDebug',
                 config: '@pxConfig',
+                view: '@pxView',
                 table: '@pxTable',
                 fields: '@pxFields',
                 init: '&pxInit',
@@ -72,7 +73,7 @@ define(['../../directives/module'], function(directives) {
             }
 
             angular.forEach(fields, function(index) {
-
+                ''
                 index.valueObject = {};
                 if (!angular.isDefined(index.insert) && index.identity !== true) {
                     index.insert = true;
@@ -92,18 +93,20 @@ define(['../../directives/module'], function(directives) {
                     }
                 }
 
+
+
                 if (angular.isDefined(index.element)) {
 
                     var selectorName = '#' + index.element;
                     var selectorValue = index.element;
-                    var element = angular.element($(selectorName).get(0));
 
                     // Verifica se o campo é um px-complete
-                    if (angular.isDefined(angular.element($(selectorName + '_pxComplete').get(0)).scope())) {
-
-                        selectorName += '_pxComplete';
+                    if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
+                        selectorName += '_inputSearch';
                         selectorValue = 'selectedItem';
                     }
+
+                    var element = angular.element($(selectorName).get(0));
 
                     if (!angular.isDefined(element.context)) {
                         console.error('pxForm: elemento não encontrado no html, verifique a propriedade element', index);
@@ -131,11 +134,6 @@ define(['../../directives/module'], function(directives) {
 
                         var fieldValue = element.scope()[selectorValue];
 
-                        // Verifica se é um checkbox
-                        if (fieldValue === true || fieldValue === false) {
-
-                        }
-
                         // Se filtro for undefined, o filtro será considerado inválido
                         if (!angular.isDefined(fieldValue)) {
                             return;
@@ -146,6 +144,7 @@ define(['../../directives/module'], function(directives) {
 
                         // Se possuir configuração avançada (fieldValueOptions)
                         if (angular.isDefined(index.fieldValueOptions) && angular.element($(selectorName).get(0)).context.type !== 'checkbox') {
+
                             tempField = index.fieldValueOptions.field;
                             // value recebe o que foi configurado em index.fieldValueOptions.selectedItem
                             // por exemplo se o filtro for um select, o ng-model pode ser um objeto {id: 1, name: 'teste'}
@@ -160,6 +159,24 @@ define(['../../directives/module'], function(directives) {
                                 }
                             } else {
                                 tempValue = null;
+                            }
+                            if (angular.isDefined(element.scope().labelField)) {
+                                if (angular.isDefined(fieldValue[element.scope().labelField])) {
+                                    index.labelField = {
+                                        field: element.scope().labelField,
+                                        value: fieldValue[element.scope().labelField]
+                                    };
+                                } else {
+                                    index.labelField = {
+                                        field: element.scope().labelField,
+                                        value: fieldValue[element.scope().labelField.toUpperCase()]
+                                    };
+                                }
+                            } else if (angular.isDefined(index.fieldValueOptions.selectedLabel)) {
+                                index.labelField = {
+                                    field: index.labelField,
+                                    value: fieldValue[index.fieldValueOptions.selectedLabel]
+                                };
                             }
                         }
 
@@ -253,9 +270,13 @@ define(['../../directives/module'], function(directives) {
                 var objConfig = JSON.parse($scope.config);
 
                 var table = objConfig.table;
+                var view = objConfig.view;
                 var fields = objConfig.fields;
                 if (!angular.isDefined(table)) {
                     table = $scope.table;
+                }
+                if (!angular.isDefined(view)) {
+                    view = $scope.view;
                 }
                 if (!angular.isDefined(fields)) {
                     fields = JSON.parse($scope.fields);
@@ -270,13 +291,35 @@ define(['../../directives/module'], function(directives) {
                     } else {
                         index.select = false;
                     }
+
+                    if (angular.isDefined(angular.element($('#' + index.element + '_inputSearch').get(0)).scope())) {
+                        if (angular.element($('#' + index.element + '_inputSearch').get(0)).scope().fields !== '') {
+                            var fieldsSearch = JSON.parse(angular.element($('#' + index.element + '_inputSearch').get(0)).scope().fields);
+
+                            angular.forEach(fieldsSearch, function(j) {
+                                if (j.labelField) {
+                                    fields.push({
+                                        field: j.field,
+                                        select: true
+                                    })
+                                }
+                            });
+                        } else {
+                            console.error('pxForm: componente px-input-search com propriedade fields inválida', index);
+                        }
+                    }
+
                 });
 
                 if ($scope.debug) {
                     console.group('$scope.select');
                     console.info('table:', table);
+                    console.info('view:', view);
                     console.info('fields:', fields);
                     console.groupEnd();
+                }
+                if (angular.isDefined(view) && view !== '') {
+                    table = view;
                 }
 
                 pxFormService.select(table, angular.toJson(fields), function(response) {
@@ -292,11 +335,12 @@ define(['../../directives/module'], function(directives) {
                                 var selectorName = '#' + index.element;
                                 var selectorValue = index.element;
 
-                                // Verifica se o campo é um px-complete
-                                if (angular.isDefined(angular.element($(selectorName + '_pxComplete').get(0)).scope())) {
-
-                                    selectorName += '_pxComplete';
+                                var inputSearch = false;
+                                // Verifica se o campo é um px-input-search
+                                if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
+                                    selectorName += '_inputSearch';
                                     selectorValue = 'selectedItem';
+                                    var inputSearch = true;
                                 }
 
                                 var _ngModelCtrl = angular.element($(selectorName).data('$ngModelController'));
@@ -326,9 +370,18 @@ define(['../../directives/module'], function(directives) {
                                 }
 
                                 if (angular.isDefined(index.fieldValueOptions) && _element.context.type !== 'checkbox') {
-
                                     if (_element.scope().hasOwnProperty(selectorValue)) {
-                                        _element.scope()[index.field] = _element.scope()[index.field][pxArrayUtil.getIndexByProperty(_element.scope()[index.field], index.fieldValueOptions.selectedItem, _value)]
+                                        if (!inputSearch) {
+                                            _element.scope()[index.field] = _element.scope()[index.field][pxArrayUtil.getIndexByProperty(_element.scope()[index.field], index.fieldValueOptions.selectedItem, _value)]
+                                        } else {
+                                            var searchValue = angular.copy(response.qQuery[0]);
+                                            if (!angular.isDefined(index.fieldValueOptions.selectedItem)) {
+                                                console.error('pxForm: selectedItem não definido em fieldValueOptions', index);
+                                            }
+                                            searchValue[index.fieldValueOptions.selectedItem] = _value;
+                                            _element.scope().setValue(searchValue);
+
+                                        }
                                     } else {
                                         console.error('pxForm:', 'Scope ' + selectorValue + ' sem valor inicial definido');
                                     }
@@ -389,9 +442,9 @@ define(['../../directives/module'], function(directives) {
                     var selectorValue = index.element;
 
                     // Verifica se o campo é um px-complete
-                    if (angular.isDefined(angular.element($(selectorName + '_pxComplete').get(0)).scope())) {
+                    if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
 
-                        selectorName += '_pxComplete';
+                        selectorName += '_inputSearch';
                         selectorValue = 'selectedItem';
                     }
 
