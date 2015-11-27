@@ -10,7 +10,14 @@ define(['angular'], function(ng) {
 			PROJECT_SRC: 'px-project/src/', // Source do projeto
 			PROJECT_DSN: 'px_project_sql', // Data Source Name (CF)
 			LOCALE: 'pt-BR', // Locale
-			LOGIN_REQUIRED: true // Login obrigatório?
+			LOGIN_REQUIRED: true, // Login obrigatório?
+			GROUP: true, // Agrupar dados?
+			GROUP_TABLE: 'grupo', // Tabela Group
+			GROUP_ITEM_SUFFIX: '', // Sufixo do campo GROUP_ITEM
+			GROUP_LABEL_SUFFIX: '', // Sufixo do campo GROUP_LABEL
+			GROUP_REPLACE: [], // Substituir no nome do campo GROUP
+			GROUP_ITEM:'grupo_id', // Idetificador de GROUP (Utilizar quando GROUP_ITEM_SUFFIX === '')
+			GROUP_LABEL:'grupo_nome' // Label do GROUP (Utilizar quando GROUP_LABEL_SUFFIX === '')
 		});
 		
 	return config;
