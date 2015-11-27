@@ -1,7 +1,7 @@
 define(['../../directives/module'], function(directives) {
     'use strict';
 
-    directives.directive('pxDataGrid', ['pxConfig', '$timeout', '$sce', function(pxConfig, $timeout, $sce) {
+    directives.directive('pxDataGrid', ['pxConfig', 'pxArrayUtil', '$timeout', '$sce', function(pxConfig, pxArrayUtil, $timeout, $sce) {
         return {
             restrict: 'E',
             replace: true,
@@ -9,6 +9,7 @@ define(['../../directives/module'], function(directives) {
             templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.html',
             scope: {
                 debug: '=pxDebug',
+                config: '@pxConfig',
                 id: '@id',
                 lengthChange: '=pxLengthChange',
                 lengthMenu: '=pxLengthMenu',
@@ -16,6 +17,9 @@ define(['../../directives/module'], function(directives) {
                 table: '@pxTable',
                 fields: '@pxFields',
                 orderBy: '@pxOrderBy',
+                group: '=pxGroup',
+                groupItem: '@pxGroupItem',
+                groupLabel: '@pxGroupLabel',
                 columns: '@pxColumns',
                 check: '=pxCheck',
                 edit: '=pxEdit',
@@ -44,12 +48,15 @@ define(['../../directives/module'], function(directives) {
                     scope.demand = true;
                 }
 
-                scope.$watch('fields', function(newValue, oldValue) {
+                scope.$watch('config', function(newValue, oldValue) {
 
                     // Transformar valor String para Array
                     if (newValue !== '') {
                         newValue = JSON.parse(newValue);
+                    } else {
+                        return;
                     }
+                    scope.fields = newValue.fields;
 
                     scope.dataTable = '';
                     scope.dataTable += '<thead>';
@@ -60,33 +67,112 @@ define(['../../directives/module'], function(directives) {
                     // Colunas para o <table>
                     scope.columns = '';
 
-                    var i = -1;
+                    var objConfig = JSON.parse(scope.config);
+                    scope.table = scope.table || objConfig.table;
+                    scope.view = scope.view || objConfig.view;
+
+                    // Configuração Group
+                    scope.group = scope.group || pxConfig.GROUP;
+                    if (angular.isDefined(objConfig.group)) {
+                        scope.group = objConfig.group;
+                    }
+                    if (angular.isDefined(objConfig.groupItem)) {
+                        scope.groupItem = objConfig.groupItem;
+                    }
+                    if (angular.isDefined(objConfig.groupLabel)) {
+                        scope.groupLabel = objConfig.groupLabel;
+                    }
+
+                    if (scope.group === true) {
+                        if (pxConfig.GROUP_SUFFIX === '') {
+                            scope.groupItem = scope.groupItem || pxConfig.GROUP_ITEM;
+                        } else if (!angular.isDefined(scope.groupItem)) {
+                            scope.groupItem = scope.groupItem || scope.table + '_' + pxConfig.GROUP_ITEM_SUFFIX;
+                            for (var i = 0; i < pxConfig.GROUP_REPLACE.length; i++) {
+                                scope.groupItem = scope.groupItem.replace(pxConfig.GROUP_REPLACE[i], '');
+                            };
+                        }
+                        if (pxConfig.GROUP_SUFFIX === '') {
+                            scope.groupLabel = scope.groupLabel || pxConfig.GROUP_LABEL;
+                        } else if (!angular.isDefined(scope.groupLabel)) {
+                            scope.groupLabel = scope.groupLabel || pxConfig.GROUP_TABLE + '_' + pxConfig.GROUP_LABEL_SUFFIX;
+                            for (var i = 0; i < pxConfig.GROUP_REPLACE.length; i++) {
+                                scope.groupLabel = scope.groupLabel.replace(pxConfig.GROUP_REPLACE[i], '');
+                            };
+                        }
+                    }
+
+                    if (pxArrayUtil.getIndexByProperty(scope.fields, 'field', scope.groupLabel) === -1) {
+                        scope.fields.push({
+                            title: 'Grupo',
+                            field: scope.groupLabel,
+                            type: 'string'
+                        })
+                    }
+
+                    var i = 0;
                     var aoColumnsData = {};
-                    angular.forEach(newValue, function(index) {
+                    var columnDefs = 0;
+                    scope.columnDefs = [];
+
+
+
+                    angular.forEach(scope.fields, function(index) {
 
                         // Checkbox  - Start
-                        if (i === -1 && scope.check == true) {
+                        if (i === 0 && scope.check === true) {
                             scope.columns += '<th class="text-left" width="1px"><input name="select_all" value="1" type="checkbox"></th>';
 
                             aoColumnsData = {};
                             aoColumnsData.mData = 'pxDataGridRowNumber';
 
                             scope.aoColumns.push(aoColumnsData);
+
+                            scope.columnDefs.push({
+                                "targets": columnDefs,
+                                "searchable": false,
+                                "orderable": false,
+                                "className": "dt-body-center",
+                                "render": function(data, type, full, meta) {
+                                    return "<input type='checkbox'>";
+                                }
+                            });
+                            columnDefs++;
                         }
                         i++;
                         // Checkbox  - End
 
-                        // Edit - Start
-                        // 
-                        if (i === 0 && scope.edit == true) {
+                        // Edit - Start                        
+                        if (i === 1 && scope.edit === true) {
                             scope.columns += '<th class="text-center" width="1px"><i class=""></i></th>';
 
                             aoColumnsData = {};
                             aoColumnsData.mData = 'edit';
 
                             scope.aoColumns.push(aoColumnsData);
+
+                            scope.columnDefs.push({
+                                "targets": columnDefs,
+                                "searchable": false,
+                                "orderable": false,
+                                "className": "dt-body-center",
+                                "render": function(data, type, full, meta) {
+                                    return "<i class='fa fa-pencil'>";
+                                    //return "<i class='fa fa-pencil'> <b>Editar</b>";
+                                }
+                            });
+                            columnDefs++;
                         }
                         // Edit - End
+
+                        // Verificar se o campo é visível
+                        if (index.visible === false) {
+                            scope.columnDefs.push({
+                                "targets": columnDefs,
+                                "visible": false
+                            });
+                        }
+                        columnDefs++;
 
                         scope.columns += '<th class="text-left">' + index.title + '</th>';
 
@@ -127,13 +213,21 @@ define(['../../directives/module'], function(directives) {
                     scope.internalControl.getData = function() {
                         scope.getData(0, scope.rowsProcess);
                     };
-                    
+
                     /**
                      * Adicionar linha de registro
                      * @param {object} value valor que será inserido na listagem
                      */
                     scope.internalControl.addDataRow = function(value) {
                         scope.addDataRow(value);
+                    };
+
+                    /**
+                     * Atualizar linha de registro
+                     * @param {object} value valor que será inserido na listagem
+                     */
+                    scope.internalControl.updateDataRow = function(value) {
+                        scope.updateDataRow(value);
                     };
 
                     /**
@@ -268,34 +362,7 @@ define(['../../directives/module'], function(directives) {
             dataTableConfig.aoColumns = $scope.aoColumns;
             dataTableConfig.destroy = true;
 
-            dataTableConfig.columnDefs = [];
-            var columnDefs = 0;
-
-            // Verificar se possui coluna com checkbox
-            if ($scope.check === true) {
-                dataTableConfig.columnDefs.push({
-                    "targets": columnDefs,
-                    "searchable": false,
-                    "orderable": false,
-                    "className": "dt-body-center",
-                    "render": function(data, type, full, meta) {
-                        return "<input type='checkbox'>";
-                    }
-                });
-                columnDefs++;
-            }
-            if ($scope.edit === true) {
-                dataTableConfig.columnDefs.push({
-                    "targets": columnDefs,
-                    "searchable": false,
-                    "orderable": false,
-                    "className": "dt-body-center",
-                    "render": function(data, type, full, meta) {
-                        return "<i class='fa fa-pencil'>";
-                        //return "<i class='fa fa-pencil'> <b>Editar</b>";
-                    }
-                });
-            }
+            dataTableConfig.columnDefs = $scope.columnDefs;
 
             dataTableConfig.order = []; //default order
             dataTableConfig.rowCallback = function(row, data, dataIndex) {
@@ -395,7 +462,7 @@ define(['../../directives/module'], function(directives) {
 
                 var itemEdit = {} //angular.copy(JSON.parse($scope.fields))
 
-                angular.forEach(JSON.parse($scope.fields), function(index) {
+                angular.forEach($scope.fields, function(index) {
                     itemEdit[index.field] = data.edit[index.field]
                 });
 
@@ -407,6 +474,11 @@ define(['../../directives/module'], function(directives) {
                 $scope.itemEdit({
                     event: itemEditEvent
                 });
+
+                //console.info('!!!',d);
+                //d.exe_nome = '888';
+
+
             });
 
             // Evento click checkbox
@@ -457,9 +529,13 @@ define(['../../directives/module'], function(directives) {
                 var itemClickEvent = {
                     itemClick: data
                 }
-                $scope.itemClick({
-                    event: itemClickEvent
-                });
+
+                $timeout(function() {
+                    $scope.itemClick({
+                        event: itemClickEvent
+                    });
+                }, 0);
+
                 // Evento Item Click - End
 
                 // Clicar no edit
@@ -499,7 +575,7 @@ define(['../../directives/module'], function(directives) {
             $scope.internalControl.working = true;
             //alert($scope.internalControl.working);
 
-            var arrayFields = JSON.parse($scope.fields);
+            var arrayFields = $scope.fields; //JSON.parse($scope.fields);
 
             // Loop na configuração de campos
             angular.forEach(arrayFields, function(index) {
@@ -515,9 +591,8 @@ define(['../../directives/module'], function(directives) {
                     var selectorValue = index.filter;
 
                     // Verifica se o filtro é um px-complete
-                    if (angular.isDefined(angular.element($(selectorName + '_pxComplete').get(0)).scope())) {
-
-                        selectorName += '_pxComplete';
+                    if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
+                        selectorName += '_inputSearch';
                         selectorValue = 'selectedItem';
                     }
 
@@ -579,7 +654,12 @@ define(['../../directives/module'], function(directives) {
             // Parâmetros da consulta
             var params = {};
             params.dsn = pxConfig.PROJECT_DSN;
-            params.table = $scope.table;
+
+            if (angular.isDefined($scope.view) && $scope.view !== '') {
+                params.table = $scope.view;
+            } else {
+                params.table = $scope.table;
+            }
             params.fields = angular.toJson(arrayFields);
             params.orderBy = $scope.orderBy;
 
@@ -592,6 +672,10 @@ define(['../../directives/module'], function(directives) {
                 params.rowTo = rowTo;
             }
 
+            params.group = $scope.group;
+            params.groupItem = $scope.groupItem;
+            params.groupLabel = $scope.groupLabel;
+
             // Se for a primeira linha significa que é uma nova consulta ao dados
             // Neste caso é feito um 'clear' na listagem
             if (rowFrom === 0) {
@@ -602,30 +686,25 @@ define(['../../directives/module'], function(directives) {
                 });
             }
 
-            $http({
-                method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.cfc?method=getData',
-                dataType: 'json',
-                params: params
-            }).success(function(result) {
+            pxDataGridService.select(params, function(response) {
                 if ($scope.debug) {
-                    console.info('grid getData success', result);
-                    //console.info('grid getData success JSON.stringify',JSON.stringify(result,null,"    "));
+                    console.info('px-data-grid getData success', response);
+                    //console.info('px-data-grid getData success JSON.stringify',JSON.stringify(response,null,"    "));
                 }
 
-                if (angular.isDefined(result.fault)) {
+                if (angular.isDefined(response.fault)) {
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 } else {
                     // Verifica se a quantidade de registros é maior que 0
-                    if (result.qQuery.length > 0) {
+                    if (response.qQuery.length > 0) {
                         // Loop na query
-                        angular.forEach(result.qQuery, function(index) {
+                        angular.forEach(response.qQuery, function(index) {
                             $scope.addDataRow(index);
                         });
 
-                        $scope.recordCount = result.recordCount;
-                        $scope.nextRowFrom = result.rowFrom + $scope.rowsProcess;
-                        $scope.nextRowTo = result.rowTo + $scope.rowsProcess;
+                        $scope.recordCount = response.recordCount;
+                        $scope.nextRowFrom = response.rowFrom + $scope.rowsProcess;
+                        $scope.nextRowTo = response.rowTo + $scope.rowsProcess;
 
                         var table = $scope.internalControl.table;
                         requirejs(["dataTables"], function() {
@@ -656,13 +735,26 @@ define(['../../directives/module'], function(directives) {
                         $scope.internalControl.working = false;
                     }
                 }
-            }).
-            error(function(data, status, headers, config) {
-                // Erro
-                alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
             });
-
         };
+
+
+        $scope.updateDataRow = function updateDataRow(value) {
+            var data = $scope.internalControl.table.row($scope.internalControl.updatedRow).data();
+            angular.forEach($scope.fields, function(item) {
+                if (angular.isDefined(data[item.field]) && angular.isDefined(value[item.field])) {
+                    if (!angular.isDefined(item.stringMask)) {
+                        data[item.field] = value[item.field];
+                    } else {
+                        data[item.field] = pxMaskUtil.maskFormat(value[item.field], item.stringMask).result;
+                    }
+                }
+            });
+            $scope.internalControl.table
+                .row($scope.internalControl.updatedRow)
+                .data(data)
+                .draw();
+        }
 
         $scope.addDataRow = function addDataRow(value) {
             // Somar currentRecordCount
@@ -675,7 +767,7 @@ define(['../../directives/module'], function(directives) {
             data.edit = {}; //$scope.currentRecordCount;
 
             // Loop nas colunas da grid
-            angular.forEach(JSON.parse($scope.fields), function(item) {
+            angular.forEach($scope.fields, function(item) {
 
                 if (!angular.isDefined(value[item.field])) {
                     // Dados por campo
@@ -696,25 +788,23 @@ define(['../../directives/module'], function(directives) {
                 if (item.stringMask) {
                     switch (item.stringMask) {
                         case 'cpf':
-                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], '###.###.###-##').result;
+                            item.stringMask = '###.###.###-##';
                             break;
                         case 'cnpj':
-                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], '##.###.###/####-##').result;
+                            item.stringMask = '##.###.###/####-##';
                             break;
                         case 'cep':
-                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], '#####-###').result;
+                            item.stringMask = '#####-###';
                             break;
                         case 'brPhone':
                             if (data[item.field].length === 11) {
-                                data[item.field] = pxMaskUtil.maskFormat(data[item.field], '(##) #####-####').result;
+                                item.stringMask = '(##) #####-####';
                             } else {
-                                data[item.field] = pxMaskUtil.maskFormat(data[item.field], '(##) #####-####').result;
+                                item.stringMask = '(##) #####-####';
                             }
                             break;
-                        default:
-                            data[item.field] = pxMaskUtil.maskFormat(data[item.field], item.stringMask).result;
-                            break;
                     }
+                    data[item.field] = pxMaskUtil.maskFormat(data[item.field], item.stringMask).result;
                 }
 
                 // Se possuir moment
@@ -757,10 +847,18 @@ define(['../../directives/module'], function(directives) {
          * @return {void}
          */
         $scope.remove = function remove() {
-            var arrayFields = JSON.parse($scope.fields);
+            var arrayFields = $scope.fields; //JSON.parse($scope.fields);
 
-            pxDataGridService.remove($scope.table, angular.toJson(arrayFields), angular.toJson($scope.internalControl.selectedItems), function(response) {
-                //console.info('pxDataGrid remove: ', response);
+            var objConfig = JSON.parse($scope.config);
+            var table = objConfig.table;
+            if (!angular.isDefined(table)) {
+                table = $scope.table;
+            }
+
+            pxDataGridService.remove(table, angular.toJson(arrayFields), angular.toJson($scope.internalControl.selectedItems), $scope.group, $scope.groupItem, $scope.groupLabel, function(response) {
+                if ($scope.debug) {
+                    console.info('pxDataGrid remove: ', response);
+                }
                 if (response.success) {
                     $scope.internalControl.table.rows('.selected').remove().draw(false);
 

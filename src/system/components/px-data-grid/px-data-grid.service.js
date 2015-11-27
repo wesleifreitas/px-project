@@ -3,22 +3,46 @@ define(['../../services/module'], function(services) {
 
     services.factory('pxDataGridService', pxDataGridService);
 
-    pxDataGridService.$inject = ['pxConfig', '$http'];
+    pxDataGridService.$inject = ['pxConfig', '$http', '$rootScope'];
 
-    function pxDataGridService(pxConfig, $http) {
+    function pxDataGridService(pxConfig, $http, $rootScope) {
         var service = {};
 
+        service.select = select;
         service.remove = remove;
 
         return service;
 
-        function remove(table, fields, selectedItems, callback) {
+        function select(params, callback) {
+            params.dsn = pxConfig.PROJECT_DSN;
+            params.user = $rootScope.globals.currentUser.usu_id;
+
+            $http({
+                method: 'POST',
+                url: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.cfc?method=getData',
+                dataType: 'json',
+                params: params
+            }).success(function(response) {
+                callback(response);
+            }).
+            error(function(data, status, headers, config) {
+                // Erro
+                alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+            });
+
+        }
+
+        function remove(table, fields, selectedItems, group, groupItem, groupLabel, callback) {
 
             var params = {
                 dsn: pxConfig.PROJECT_DSN,
+                user: $rootScope.globals.currentUser.usu_id,
                 table: table,
                 fields: fields,
-                selectedItems: selectedItems
+                selectedItems: selectedItems,
+                group: group,
+                groupItem: groupItem,
+                groupLabel: groupLabel
             };
             $http({
                 method: 'POST',
