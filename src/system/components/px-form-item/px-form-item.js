@@ -135,7 +135,7 @@ define(['../../directives/module'], function(directives) {
                     // Inicializar validação
                     $scope.init = function() {
 
-                        // Armazena mensagem de erro de validação                        
+                        // Armazena mensagem de erro de validação
                         $scope.error = '';
                         // Elemento que será validado
                         var _element = angular.element($('#' + $scope.element).get(0));
@@ -157,7 +157,7 @@ define(['../../directives/module'], function(directives) {
                                     _ngModelCtrl.$setValidity('confirm', true);
                                 }
                             }
-                            // Verificar ser o elemento está inválido                          
+                            // Verificar ser o elemento está inválido
                             if (_ngModelCtrl.$invalid) {
                                 $scope.$apply(function() {
                                     if (_ngModelCtrl.$error.required || _ngModelCtrl.$error.requiredsearch) {
@@ -192,18 +192,6 @@ define(['../../directives/module'], function(directives) {
                         });
                     }
                 }]
-            };
-        }])
-        // pxGroupShow
-        // Verificar Group
-        .directive('pxGroupShow', ['$rootScope', function($rootScope) {
-            return {
-                restrict: 'A',
-                link: function(scope, element, attrs, ngModelCtrl) {
-                    if ($rootScope.globals.currentUser.per_developer !== 1) {
-                        element.hide();
-                    }
-                }
             };
         }])
         // pxValidNumber
@@ -683,12 +671,135 @@ define(['../../directives/module'], function(directives) {
                 }
             };
         }])
+        // pxGroupShow
+        // Verificar Group
+        .directive('pxGroupShow', ['$rootScope', '$timeout', function($rootScope, $timeout) {
+            return {
+                restrict: 'A',
+                require: '?ngModel',
+                link: function(scope, element, attrs, ngModelCtrl) {
+                    if ($rootScope.globals.currentUser.per_developer !== 1) {
+                        element.hide();
+                    }
+
+                    $timeout(function() {
+                        var _element = angular.element($('#' + attrs.pxGroupShow).get(0));
+                        var _ngModelCtrl = _element.data('$ngModelController');
+                        if (_ngModelCtrl) {
+                            _ngModelCtrl.$setValidity('required', true);
+                        }
+                    }, 0)
+                }
+            };
+        }])
+        // pxGroup
+        .directive('pxGroup', ['pxConfig', '$rootScope', '$mdDialog', function(pxConfig, $rootScope, $mdDialog) {
+            return {
+                restrict: 'E',
+                scope: {
+                    id: '@id',
+                    required: '@required',
+                    control: '=pxControl',
+                    placeholder: '@placeholder',
+                    inputClass: '@pxInputClass',
+                    //complete: '=pxComplete',
+                    //table: '@pxTable',
+                    //fields: '@pxFields',
+                    //orderBy: '@pxOrderBy',
+                    //recordCount: '@pxRecordCount',
+                    selectedItem: '=pxSelectedItem',
+                    //url: '@pxUrl',
+                    //responseQuery: '@pxResponseQuery',
+                    //localQuery: '@pxLocalQuery',
+                    //searchFields: '@searchfields',
+                    //dialog: '=pxDialog',
+                    searchClick: '&pxSearchClick',
+                    templateUrl: '@pxTemplateUrl',
+                    for: '@for',
+                },
+                templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-group.html',
+                link: function(scope, element, attrs, ngModelCtrl) {
+                    if ($rootScope.globals.currentUser.per_developer !== 1) {
+                        element.hide();
+                        if (element.parent().children().length === 1) {
+                            element.parent().hide();
+                        }
+                    }
+
+                    // Tabela (SQL)
+                    //scope.table = pxConfig.GROUP_TABLE;
+
+                    // Configuração do input-search
+                    if (pxConfig.GROUP_ITEM === '' && pxConfig.GROUP_LABEL === '') {
+                        scope.groupSearchConfig = {
+                            table: pxConfig.GROUP_TABLE,
+                            fields: [{
+                                title: '',
+                                labelField: true,
+                                field: pxConfig.GROUP_TABLE + '_' + pxConfig.GROUP_LABEL_SUFFIX,
+                                search: true,
+                                type: 'string',
+                                filterOperator: '%LIKE%'
+                            }, {
+                                title: '',
+                                field: pxConfig.GROUP_TABLE + '_' + pxConfig.GROUP_ITEM_SUFFIX
+                            }]
+                        };
+                    } else {
+                        scope.groupSearchConfig = {
+                            fields: [{
+                                title: '',
+                                labelField: true,
+                                field: pxConfig.GROUP_LABEL,
+                                search: true,
+                                type: 'string',
+                                filterOperator: '%LIKE%'
+                            }, {
+                                title: '',
+                                field: pxConfig.GROUP_ITEM
+                            }]
+                        };
+                    }
+
+                    scope.groupSearchControl = {};
+
+                    scope.groupSearchClick = function() {
+                        if (scope.templateUrl && scope.templateUrl !== '') {
+                            $mdDialog.show({
+                                scope: scope,
+                                preserveScope: true,
+                                controller: groupSearchCtrl,
+                                templateUrl: scope.templateUrl,
+                                parent: angular.element(document.body),
+                                targetEvent: event,
+                                clickOutsideToClose: true
+                            });
+                        } else {
+                            scope.searchClick({
+                                event: event
+                            });
+                        }
+                    }
+
+                    groupSearchCtrl.$inject = ['$scope', '$mdDialog'];
+
+                    function groupSearchCtrl($scope, $mdDialog) {
+                        $scope.callback = function(event) {
+                            console.info($scope.groupSearchControl);
+                            $scope.groupSearchControl.setValue(event.itemClick);
+                            $mdDialog.hide();
+                        };
+                    }
+                }
+            };
+        }])
         // pxInputSearch
         .directive('pxInputSearch', ['pxConfig', 'pxUtil', 'pxArrayUtil', '$parse', '$http', '$sce', '$timeout', '$mdDialog', function(pxConfig, pxUtil, pxArrayUtil, $parse, $http, $sce, $timeout, $mdDialog) {
             return {
-                restrict: 'EA',
+                restrict: 'E',
                 scope: {
                     id: '@id',
+                    config: '@pxConfig',
                     required: '@required',
                     control: '=pxControl',
                     placeholder: '@placeholder',
@@ -704,8 +815,7 @@ define(['../../directives/module'], function(directives) {
                     localQuery: '@pxLocalQuery',
                     searchFields: '@searchfields',
                     dialog: '=pxDialog',
-                    searchClick: '&pxSearchClick',
-                    templateUrl: '@pxTemplateUrl'
+                    searchClick: '&pxSearchClick'
                 },
                 require: '?ngModel',
                 templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-input-search.html',
@@ -753,7 +863,11 @@ define(['../../directives/module'], function(directives) {
                         _element.on('blur', function(event) {
                             scope.setValidity();
                         });
-
+                        var objConfig = JSON.parse(scope.config);
+                        scope.table = scope.table || objConfig.table;
+                        scope.fields = scope.fields || objConfig.fields;
+                        scope.orderBy = scope.orderBy || objConfig.orderBy;
+                        scope.recordCount = scope.recordCount || objConfig.recordCount;
                     }, 0);
 
                     scope.setValidity = function() {
@@ -768,7 +882,7 @@ define(['../../directives/module'], function(directives) {
                             } else {
                                 var searchStrQuery = '';
                                 if (angular.isDefined(scope.selectedItem)) {
-                                    scope.labelField = JSON.parse(scope.fields)[pxArrayUtil.getIndexByProperty(JSON.parse(scope.fields), 'labelField', true)].field;
+                                    scope.labelField = scope.fields[pxArrayUtil.getIndexByProperty(scope.fields, 'labelField', true)].field;
                                     searchStrQuery = scope.selectedItem[scope.labelField];
                                     if (!angular.isDefined(searchStrQuery)) {
                                         searchStrQuery = scope.selectedItem[scope.labelField.toUpperCase()];
@@ -808,7 +922,7 @@ define(['../../directives/module'], function(directives) {
                                 }
                             }
                         }
-                        // px-modal - Start                   
+                        // px-modal - Start
                         // px-modal - End
                     var isNewSearchNeeded = function(newTerm, oldTerm) {
                         return newTerm.length >= scope.minLength && newTerm !== oldTerm;
@@ -869,7 +983,7 @@ define(['../../directives/module'], function(directives) {
                     scope.searchTimerComplete = function(str) {
                         // Início da pesquisa
 
-                        var arrayFields = JSON.parse(scope.fields);
+                        var arrayFields = scope.fields;
 
                         if (str.length >= scope.minLength) {
                             if (scope.localQuery) {
@@ -1047,20 +1161,16 @@ define(['../../directives/module'], function(directives) {
                     };
 
                     $scope.setValue = function(data) {
-                        var arrayFields = JSON.parse($scope.fields);
-
+                        var arrayFields = $scope.fields;
                         var field = arrayFields[pxArrayUtil.getIndexByProperty(arrayFields, 'labelField', true)].field;
-
                         var tempValue = data[field];
                         if (!angular.isDefined(tempValue)) {
                             tempValue = data[field.toUpperCase()];
                         }
-
                         $scope.searchStr = $scope.lastSearchTerm = tempValue;
                         $scope.selectedItem = data;
                         $scope.showDropdown = false;
                         $scope.results = [];
-
                         $scope.setValidity();
                         /*
                         scope.searchStr = scope.lastSearchTerm = result.title;
