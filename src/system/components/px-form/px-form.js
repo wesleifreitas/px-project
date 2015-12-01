@@ -56,15 +56,16 @@ define(['../../directives/module'], function(directives) {
         };
     }]);
 
-    pxFormCtrl.$inject = ['pxFormService', 'pxArrayUtil', '$scope', '$http', '$timeout', '$rootScope'];
+    pxFormCtrl.$inject = ['pxConfig', 'pxFormService', 'pxArrayUtil', '$scope', '$http', '$timeout', '$rootScope'];
 
-    function pxFormCtrl(pxFormService, pxArrayUtil, $scope, $http, $timeout, $rootScope) {
+    function pxFormCtrl(pxConfig, pxFormService, pxArrayUtil, $scope, $http, $timeout, $rootScope) {
         // Inserir dados        
         $scope.insertUpdate = function(action) {
             var objConfig = JSON.parse($scope.config);
 
             var table = objConfig.table;
             var fields = objConfig.fields;
+
             if (!angular.isDefined(table)) {
                 table = $scope.table;
             }
@@ -72,8 +73,40 @@ define(['../../directives/module'], function(directives) {
                 fields = JSON.parse($scope.fields);
             }
 
+            // Configuração Group
+            $scope.group = $scope.group || pxConfig.GROUP;
+            if (angular.isDefined(objConfig.group)) {
+                $scope.group = objConfig.group;
+            }
+            if (angular.isDefined(objConfig.groupItem)) {
+                $scope.groupItem = objConfig.groupItem;
+            }
+            if (angular.isDefined(objConfig.groupLabel)) {
+                $scope.groupLabel = objConfig.groupLabel;
+            }
+
+            $scope.table = table;
+
+            if ($scope.group === true) {
+                if (pxConfig.GROUP_SUFFIX === '') {
+                    $scope.groupItem = $scope.groupItem || pxConfig.GROUP_ITEM;
+                } else if (!angular.isDefined($scope.groupItem)) {
+                    $scope.groupItem = $scope.groupItem || $scope.table + '_' + pxConfig.GROUP_ITEM_SUFFIX;
+                    for (var i = 0; i < pxConfig.GROUP_REPLACE.length; i++) {
+                        $scope.groupItem = $scope.groupItem.replace(pxConfig.GROUP_REPLACE[i], '');
+                    };
+                }
+                if (pxConfig.GROUP_SUFFIX === '') {
+                    $scope.groupLabel = $scope.groupLabel || pxConfig.GROUP_LABEL;
+                } else if (!angular.isDefined($scope.groupLabel)) {
+                    $scope.groupLabel = $scope.groupLabel || pxConfig.GROUP_TABLE + '_' + pxConfig.GROUP_LABEL_SUFFIX;
+                    for (var i = 0; i < pxConfig.GROUP_REPLACE.length; i++) {
+                        $scope.groupLabel = $scope.groupLabel.replace(pxConfig.GROUP_REPLACE[i], '');
+                    };
+                }
+            }
+
             angular.forEach(fields, function(index) {
-                ''
                 index.valueObject = {};
                 if (!angular.isDefined(index.insert) && index.identity !== true) {
                     index.insert = true;
@@ -92,8 +125,6 @@ define(['../../directives/module'], function(directives) {
                         index.algorithm = 'SHA-512';
                     }
                 }
-
-
 
                 if (angular.isDefined(index.element)) {
 
@@ -134,8 +165,22 @@ define(['../../directives/module'], function(directives) {
 
                         var fieldValue = element.scope()[selectorValue];
 
-                        // Se filtro for undefined, o filtro será considerado inválido
-                        if (!angular.isDefined(fieldValue)) {
+                        // Se valor do campo for undefined, o filtro será considerado inválido
+                        if (!angular.isDefined(fieldValue)) {                            
+                            if ($rootScope.globals.currentUser.per_developer !== 1 && index.field === $scope.groupItem) {
+                                console.info($rootScope.globals.currentUser)
+                                if (pxConfig.GROUP_ITEM === '') {
+                                    index.valueObject = {
+                                        field: index.field,
+                                        value: $rootScope.globals.currentUser[(pxConfig.GROUP_TABLE + '_' + pxConfig.GROUP_ITEM_SUFFIX).toLowerCase()]
+                                    };
+                                } else {
+                                    index.valueObject = {
+                                        field: index.field,
+                                        value: $rootScope.globals.currentUser[pxConfig.GROUP_ITEM.toLowerCase()]
+                                    };
+                                }
+                            }
                             return;
                         }
 
@@ -182,8 +227,8 @@ define(['../../directives/module'], function(directives) {
 
                         if (tempValue !== null && tempValue !== '') {
                             // Define o objeto de filtro do campo
-                            // field é nome do campo que será filtro no banco de dados
-                            // value é valor do campo, o qual será filtrado                        
+                            // field é nome do campo do banco de dados
+                            // value é valor do campo                        
                             index.valueObject = {
                                 field: tempField,
                                 value: tempValue
@@ -192,6 +237,7 @@ define(['../../directives/module'], function(directives) {
                             index.valueObject = {};
                         }
                     } else {
+                        console.info('index', index);
                         // Se não possuir um valor válido no ng-model o valor recebe vazio
                         index.valueObject = {};
                         index.insert = false;
@@ -294,7 +340,7 @@ define(['../../directives/module'], function(directives) {
 
                     if (angular.isDefined(angular.element($('#' + index.element + '_inputSearch').get(0)).scope())) {
                         if (angular.element($('#' + index.element + '_inputSearch').get(0)).scope().fields !== '') {
-                            var fieldsSearch = JSON.parse(angular.element($('#' + index.element + '_inputSearch').get(0)).scope().fields);
+                            var fieldsSearch = angular.element($('#' + index.element + '_inputSearch').get(0)).scope().fields;
 
                             angular.forEach(fieldsSearch, function(j) {
                                 if (j.labelField) {
@@ -342,11 +388,8 @@ define(['../../directives/module'], function(directives) {
                                     selectorValue = 'selectedItem';
                                     var inputSearch = true;
                                 }
-
                                 var _ngModelCtrl = angular.element($(selectorName).data('$ngModelController'));
-
                                 var _element = angular.element($(selectorName).get(0));
-
                                 var _value = String(response.qQuery[0][index.field]);
                                 if (!angular.isDefined(response.qQuery[0][index.field])) {
                                     _value = String(response.qQuery[0][index.field.toUpperCase()]);
