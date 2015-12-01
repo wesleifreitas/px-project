@@ -117,26 +117,26 @@
 			<cfset arguments.group = false>
 		</cfif>
 
-		<cftransaction>				
+		<cftransaction>
 			<cfquery name="qRecordCount" datasource="#arguments.dsn#">
 				SELECT
 					COUNT(1) as count
 				FROM
 					#arguments.table#
 				<cfset whereInit = "WHERE">
+				<cfif arguments.group>
+					#whereInit# #arguments.groupItem# = <cfqueryparam cfsqltype="cf_sql_integer" value="#qUsuario.grupo_id#">
+					<cfset whereInit = "AND ">
+				</cfif>
 				<cfloop array="#arguments.fields#" index="i">
-					<cfif arguments.group>
-						#whereInit# #arguments.groupItem# = <cfqueryparam cfsqltype="cf_sql_integer" value="#qUsuario.grupo_id#">
-						<cfset whereInit = "AND ">
-					</cfif>
 					<cfif isDefined("i.filterObject.field")>
 						#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
 						<cfset whereInit = "AND ">
-					</cfif>							
+					</cfif>
 				</cfloop>
 			</cfquery>
 			
-			<cfquery name="qQuery" datasource="#arguments.dsn#">			
+			<cfquery name="qQuery" datasource="#arguments.dsn#">
 				WITH pagination AS
 				(
 					SELECT 
@@ -146,24 +146,24 @@
 					FROM 
 						#arguments.table#
 					<cfset whereInit = "WHERE">
-					<cfloop array="#arguments.fields#" index="i">						
-						<cfif arguments.group>
-							#whereInit# #arguments.groupItem# = <cfqueryparam cfsqltype="cf_sql_integer" value="#qUsuario.grupo_id#">
-							<cfset whereInit = "AND ">
-						</cfif>					
+					<cfif arguments.group>
+						#whereInit# #arguments.groupItem# = <cfqueryparam cfsqltype="cf_sql_integer" value="#qUsuario.grupo_id#">
+						<cfset whereInit = "AND ">
+					</cfif>
+					<cfloop array="#arguments.fields#" index="i">
 						<cfif isDefined("i.filterObject.field")>
 							#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
 							<cfset whereInit = "AND ">
-						</cfif>							
+						</cfif>
 					</cfloop>
 				)
 				
 				SELECT 
 					#listFields# 
 					row_number
-				FROM	
+				FROM
 					pagination
-				WHERE	
+				WHERE
 					row_number BETWEEN #arguments.rowFrom+1# AND #arguments.rowTo#
 				ORDER BY 
 					row_number ASC
@@ -171,7 +171,7 @@
 		</cftransaction>
 
 		<cfcatch>
-			<cfset result['fault'] 	= cfcatch>
+			<cfset result['fault'] = cfcatch>
 			<cfset result['arguments'] = arguments>
 			<cfreturn result>
 		</cfcatch>
@@ -231,82 +231,47 @@
 		default=""
 		hint="Itens selecionados">
 
-	<cfargument
-		name="group"
-		type="boolean"
-		required="false"
-		default="true"
-		hint="Agrupar dados?">
-
-	<cfargument
-		name="groupItem"
-		type="string"
-		required="false"
-		default=""
-		hint="Idetificador de GROUP">
-
-	<cfargument
-		name="GroupLabel"
-		type="string"
-		required="false"
-		default=""
-		hint="Label do GROUP">
-
 	<cfset result = structNew()>
 	<cfset result['arguments']  = arguments>
 
 	<cftry>	
-		<cfset arguments.fields 		= decode(arguments.fields)>
-		<cfset arguments.selectedItems 	= decode(arguments.selectedItems)>
-
-		<cfquery name="qUsuario" datasource="#arguments.dsn#">
-			SELECT
-				usu_nome
-				,grupo_id
-			FROM
-				dbo.vw_usuario
-			WHERE
-				usu_id = <cfqueryparam cfsqltype="cf_sql_bigint" value="#arguments.user#">
-		</cfquery>
-
+		<cfset arguments.fields = decode(arguments.fields)>
+		<cfset arguments.selectedItems = decode(arguments.selectedItems)>
+		
 		<!--- Utilize apenas para testes --->
 		<!--- <cfset dump = arrayNew(1)> --->
-		<cfloop array="#arguments.selectedItems#" index="i">	
+		<cfloop array="#arguments.selectedItems#" index="i">
 			<cfquery name="qRemove" datasource="#arguments.dsn#">
 				<!---
 				-- Utilize a instrução abaixo (SELECT) para testes
 				-- Para verificar quais registros estão sendos removidos por exemplo
 				-- Note que no final do loop existe uma variável (dump) para tal ação
-				SELECT						
+				SELECT
 					*
 				FROM
-					#arguments.table#	
+					#arguments.table#
 				--->
 				DELETE FROM #arguments.table#
 
 				<!--- Constroi condição da instrução DELETE (SQL)--->
 				<cfset whereInit = "WHERE">
-				<cfloop array="#arguments.fields#" index="j">		
-					<cfif arguments.group>
-						#whereInit# #arguments.groupItem# = <cfqueryparam cfsqltype="cf_sql_integer" value="#qUsuario.grupo_id#">
-						<cfset whereInit = "AND ">
-					</cfif>
-					<cfif isDefined("j.field") AND isDefined("j.pk") AND j.pk>						
+				<cfloop array="#arguments.fields#" index="j">
+					<cfif isDefined("j.field") AND isDefined("j.pk") AND j.pk>
 						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i[j.field]#">
 						<cfset whereInit = "AND ">
 					</cfif>
-				</cfloop>		
-			</cfquery>			
-			<!--- <cfset arrayAppend(dump, qRemove)> --->		
+				</cfloop>
+			</cfquery>
+			<!--- <cfset arrayAppend(dump, qRemove)> --->
 		</cfloop>
 		
 		<!--- Utilize apenas para testes --->
-		<!--- <cfset result['dump'] = dump>	--->	
-		<cfset result['success']  	= true>
+		<!--- <cfset result['dump'] = dump> --->
+		<cfset result['success'] = true>
 		
 		<cfcatch>
-			<cfset result['success']  = false>
-			<cfset result['cfcatch']  = cfcatch>
+			<cfset result['success'] = false>
+			<cfset result['cfcatch'] = cfcatch>
 		</cfcatch>
 
 	</cftry>

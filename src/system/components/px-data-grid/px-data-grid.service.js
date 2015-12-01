@@ -32,17 +32,14 @@ define(['../../services/module'], function(services) {
 
         }
 
-        function remove(table, fields, selectedItems, group, groupItem, groupLabel, callback) {
+        function remove(table, fields, selectedItems, callback) {
 
             var params = {
                 dsn: pxConfig.PROJECT_DSN,
                 user: $rootScope.globals.currentUser.usu_id,
                 table: table,
                 fields: fields,
-                selectedItems: selectedItems,
-                group: group,
-                groupItem: groupItem,
-                groupLabel: groupLabel
+                selectedItems: selectedItems
             };
             $http({
                 method: 'POST',

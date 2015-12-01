@@ -1,7 +1,7 @@
 define(['../../directives/module'], function(directives) {
     'use strict';
 
-    directives.directive('pxDataGrid', ['pxConfig', 'pxArrayUtil', '$timeout', '$sce', function(pxConfig, pxArrayUtil, $timeout, $sce) {
+    directives.directive('pxDataGrid', ['pxConfig', 'pxArrayUtil', '$timeout', '$sce', '$rootScope', function(pxConfig, pxArrayUtil, $timeout, $sce, $rootScope) {
         return {
             restrict: 'E',
             replace: true,
@@ -102,12 +102,34 @@ define(['../../directives/module'], function(directives) {
                         }
                     }
 
-                    if (pxArrayUtil.getIndexByProperty(scope.fields, 'field', scope.groupLabel) === -1) {
-                        scope.fields.push({
-                            title: 'Grupo',
-                            field: scope.groupLabel,
-                            type: 'string'
-                        })
+                    if (scope.group && pxArrayUtil.getIndexByProperty(scope.fields, 'field', scope.groupLabel) === -1 && $rootScope.globals.currentUser.per_developer === 1) {
+                        if (pxConfig.GROUP_ITEM === '') {
+                            scope.fields.push({
+                                title: 'Grupo',
+                                field: scope.groupLabel,
+                                type: 'string',
+                                filter: scope.id,
+                                filterOperator: '=',
+                                filterOptions: {
+                                    field: scope.groupItem,
+                                    selectedItem: pxConfig.GROUP_TABLE + '_' + pxConfig.GROUP_ITEM_SUFFIX
+                                },
+                                filterGroup: true
+                            });
+                        } else {
+                            scope.fields.push({
+                                title: 'Grupo',
+                                field: scope.groupLabel,
+                                type: 'string',
+                                filter: scope.id,
+                                filterOperator: '=',
+                                filterOptions: {
+                                    field: scope.groupItem,
+                                    selectedItem: pxConfig.GROUP_ITEM
+                                },
+                                filterGroup: true
+                            });
+                        }
                     }
 
                     var i = 0;
@@ -264,9 +286,9 @@ define(['../../directives/module'], function(directives) {
         };
     }]);
 
-    pxDataGridCtrl.$inject = ['pxConfig', 'pxUtil', 'pxMaskUtil', 'pxDataGridService', '$scope', '$http', '$timeout'];
+    pxDataGridCtrl.$inject = ['pxConfig', 'pxUtil', 'pxArrayUtil', 'pxMaskUtil', 'pxDataGridService', '$scope', '$http', '$timeout'];
 
-    function pxDataGridCtrl(pxConfig, pxUtil, pxMaskUtil, pxDataGridService, $scope, $http, $timeout) {
+    function pxDataGridCtrl(pxConfig, pxUtil, pxArrayUtil, pxMaskUtil, pxDataGridService, $scope, $http, $timeout) {
 
         // Verifica se a grid a está preparada para receber os dados
         $scope.pxTableReady = false;
@@ -590,14 +612,19 @@ define(['../../directives/module'], function(directives) {
                     var selectorName = '#' + index.filter;
                     var selectorValue = index.filter;
 
-                    // Verifica se o filtro é um px-complete
-                    if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
+                    // Verifica se o filtro group
+                    if (index.filterGroup) {
+                        selectorName += '_groupSearch_inputSearch';
+                        selectorValue = 'selectedItem';
+                    }
+                    // Verificar se o filtro é um px-complete
+                    else if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
                         selectorName += '_inputSearch';
                         selectorValue = 'selectedItem';
                     }
 
                     // Verifica seu o scope do elemento angular possui valor definido
-                    if (angular.element($(selectorName).get(0)).scope().hasOwnProperty(selectorValue)) {
+                    if (angular.isDefined(angular.element($(selectorName).get(0)).scope()) && angular.element($(selectorName).get(0)).scope().hasOwnProperty(selectorValue)) {
 
                         // filtro
                         var filter = angular.element($(selectorName).get(0)).scope()[selectorValue];
@@ -855,7 +882,8 @@ define(['../../directives/module'], function(directives) {
                 table = $scope.table;
             }
 
-            pxDataGridService.remove(table, angular.toJson(arrayFields), angular.toJson($scope.internalControl.selectedItems), $scope.group, $scope.groupItem, $scope.groupLabel, function(response) {
+
+            pxDataGridService.remove(table, angular.toJson(arrayFields), angular.toJson($scope.internalControl.selectedItems), function(response) {
                 if ($scope.debug) {
                     console.info('pxDataGrid remove: ', response);
                 }
