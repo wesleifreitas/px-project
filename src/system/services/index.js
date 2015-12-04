@@ -6,4 +6,6 @@ define([
 	'../utils/js/px-mask-util',
 	'../components/px-data-grid/px-data-grid.service',
 	'../components/px-form/px-form.service',
+	'../perfil/perfil.service',
+	'../usuario/usuario.service'
 ], function() {});

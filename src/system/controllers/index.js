@@ -1,3 +1,5 @@
 define([
-	'../controllers/controller'	
+	'../controllers/controller',
+	'../perfil/perfil.controller',
+	'../usuario/usuario.controller'
 ], function() {});
