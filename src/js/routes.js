@@ -4,17 +4,17 @@ define(['./app'], function(app) {
     app.config(['pxConfig', '$routeProvider', '$locationProvider', '$mdThemingProvider', function(pxConfig, $routeProvider, $locationProvider, $mdThemingProvider) {
         $routeProvider.when('/login', {
             templateUrl: pxConfig.PX_PACKAGE + 'system/login/login.html',
-            controller: 'loginCtrl',
+            controller: 'LoginCtrl',
             controllerAs: 'vm'
         });
         $routeProvider.when('/home', {
             templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.html',
-            controller: 'homeCtrl',
+            controller: 'HomeCtrl',
             controllerAs: 'vm'
         });
         $routeProvider.when('/', {
             templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.html',
-            controller: 'homeCtrl',
+            controller: 'HomeCtrl',
             controllerAs: 'vm'
         });
         $routeProvider.otherwise({

@@ -1,9 +1,9 @@
 define(['../controllers/module'], function(controllers) {
     'use strict';
 
-    controllers.controller('homeCtrl', ['pxConfig', 'pxCssLoader', 'UserService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$locale', function(pxConfig, pxCssLoader, UserService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $log, $locale) {
+    controllers.controller('HomeCtrl', ['pxConfig', 'pxCssLoader', 'UserService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$locale', function(pxConfig, pxCssLoader, UserService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $log, $locale) {
 
-            pxCssLoader.load();
+            pxCssLoader.load();            
 
             if (pxConfig.LOCALE) {
 
@@ -89,7 +89,7 @@ define(['../controllers/module'], function(controllers) {
                 });
             }
         }])
-        .controller('LeftCtrl'['$scope', '$timeout', '$mdSidenav', '$log', function($scope, $timeout, $mdSidenav, $log) {
+        .controller('LeftCtrl' ['$scope', '$timeout', '$mdSidenav', '$log', function($scope, $timeout, $mdSidenav, $log) {
             $scope.close = function() {
                 $mdSidenav('left').close()
                     .then(function() {
@@ -97,7 +97,7 @@ define(['../controllers/module'], function(controllers) {
                     });
             };
         }])
-        .controller('RightCtrl',['$scope', '$timeout', '$mdSidenav', '$log', function($scope, $timeout, $mdSidenav, $log) {
+        .controller('RightCtrl', ['$scope', '$timeout', '$mdSidenav', '$log', function($scope, $timeout, $mdSidenav, $log) {
             $scope.close = function() {
                 $mdSidenav('right').close()
                     .then(function() {
