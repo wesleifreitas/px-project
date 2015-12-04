@@ -2,11 +2,11 @@ define(['../controllers/module'], function(controllers) {
     'use strict';
 
     // Controller
-    controllers.controller('exemplo2ListCtrl', exemplo2ListCtrl);
+    controllers.controller('Exemplo2ListCtrl', Exemplo2ListCtrl);
 
-    exemplo2ListCtrl.$inject = ['pxConfig', '$scope', '$element', '$attrs', '$mdDialog'];
+    Exemplo2ListCtrl.$inject = ['pxConfig', '$scope', '$element', '$attrs', '$mdDialog'];
 
-    function exemplo2ListCtrl(pxConfig, $scope, $element, $attrs, $mdDialog) {
+    function Exemplo2ListCtrl(pxConfig, $scope, $element, $attrs, $mdDialog) {
         // Variáveis gerais - Start
         /**
          * Variável de controle de visualição do Filtro Avançado
@@ -55,6 +55,7 @@ define(['../controllers/module'], function(controllers) {
             $scope.dgExemplo2Config = {
                 table: 'dbo.exemplo2',
                 group: false,
+                orderBy: 'exe2_categoria',
                 fields: [{
                     pk: true,
                     title: 'id',
@@ -93,7 +94,7 @@ define(['../controllers/module'], function(controllers) {
             $mdDialog.hide();
         };
 
-        $scope.exemplo2ListClose = function() {
+        $scope.close = function() {
             $mdDialog.cancel();
         };
     }

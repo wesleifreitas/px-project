@@ -1,9 +1,9 @@
-<md-dialog aria-label="" ng-cloak ng-controller="exemplo2ListCtrl">
+<md-dialog aria-label="" ng-cloak ng-controller="Exemplo2ListCtrl">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>Selecionar Exemplo</h2>
             <span flex></span>
-            <md-button class="md-icon-button" ng-click="exemplo2ListClose()">
+            <md-button class="md-icon-button" ng-click="close()">
                 <i class="fa fa-close"></i>
             </md-button>
         </div>
@@ -29,7 +29,7 @@
                     </button>
                 </div>
             </div>
-            <px-data-grid id="dgExemplo2" px-debug="true" px-control="dgExemplo2Control" px-init="dgExemplo2Init()" px-config="{{dgExemplo2Config}}" px-order-by="exe2_categoria" px-data-init="true" px-check="false" px-edit="false" px-item-click="callback(event)">
+            <px-data-grid id="dgExemplo2" px-debug="true" px-control="dgExemplo2Control" px-init="dgExemplo2Init()" px-config="{{dgExemplo2Config}}" px-data-init="true" px-check="false" px-edit="false" px-item-click="callback(event)">
             </px-data-grid>
     </md-dialog-content>
 </md-dialog>

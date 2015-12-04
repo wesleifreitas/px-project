@@ -1,4 +1,4 @@
-<md-dialog ng-cloak flex="50" aria-label="Formulário">
+<md-dialog ng-cloak flex="50" aria-label="Formulário" ng-init="formShow = 'default'">
     <px-form px-debug="true" px-control="formControl" px-init="formInit()" px-callback="formCallback(event)" px-config="{{formConfig}}" px-callback="formCallback(event)"></px-form>
     <md-toolbar>
         <div class="md-toolbar-tools">
@@ -27,31 +27,31 @@
                         <!-- show-errors -->
                         <label for="exe_nome">Nome</label>
                         <input id="exe_nome" name="exe_nome" ng-model="exe_nome" class="form-control" required>
-                        <px-show-error px-element="exe_nome"></px-valid>
+                        <px-show-error px-element="exe_nome"></px-show-error>
                     </div>
                     <div flex="50" flex-sm="100">
                         <label for="exe_cpf">CPF</label>
                         <input id="exe_cpf" name="exe_cpf" ng-model="exe_cpf" class="form-control" px-br-cpf-mask required>
-                        <px-show-error px-element="exe_cpf"></px-valid>
+                        <px-show-error px-element="exe_cpf"></px-show-error>
                     </div>
                     <div flex="50" flex-sm="100">
                         <label for="exe_cep">CEP</label>
                         <input id="exe_cep" name="exe_cep" ng-model="exe_cep" class="form-control" px-br-cep-mask required>
-                        <px-show-error px-element="exe_cep"></px-valid>
+                        <px-show-error px-element="exe_cep"></px-show-error>
                     </div>
                     <div flex="100" flex-sm="100">
-                        <label for="exe_input_search">Input Search</label>
-                        <px-input-search id="exe_input_search" name="exe_input_search" ng-model="exe_input_search" px-input-class="form-control" placeholder="Pesquisar categoria" px-control="exe_input_searchControl" px-complete="true" px-table="dbo.exemplo2" px-fields="{{exe_input_searchConfig.fields}}" px-dialog="true" px-search-click="exe_input_searchClick(event)"></px-input-search>
+                        <label for="exe2_id">Input Search</label>
+                        <px-input-search id="exe2_id" name="exe2_id" ng-model="exe2_id" px-input-class="form-control" placeholder="Pesquisar categoria" px-control="exe2_id_searchControl" px-complete="true" px-config="{{exe2_id_searchConfig}}" px-dialog="true" px-search-click="exe2_id_searchClick(event)"></px-input-search>
                     </div>
                     <div flex="50" flex-sm="100">
                         <label for="exe_senha">Senha</label>
                         <input id="exe_senha" name="exe_senha" ng-model="exe_senha" class="form-control" type="password" required>
-                        <px-show-error px-element="exe_senha"></px-valid>
+                        <px-show-error px-element="exe_senha"></px-show-error>
                     </div>
                     <div flex="50" flex-sm="100">
                         <label for="exe_senha_confirmar">Confirmar Senha</label>
                         <input id="exe_senha_confirmar" name="exe_senha_confirmar" ng-model="exe_senha_confirmar" class="form-control" type="password" required>
-                        <px-show-error px-element="exe_senha_confirmar" px-confirm="exe_senha" px-confirm-error="Senha não confere"></px-valid>
+                        <px-show-error px-element="exe_senha_confirmar" px-confirm="exe_senha" px-confirm-error="Senha não confere"></px-show-error>
                     </div>
                 </div>
             </div>

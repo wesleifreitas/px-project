@@ -1,3 +1,4 @@
-define([    
-    '../exemplo/exemplo.controller'    
-], function () {});
+define([
+	'../exemplo/exemplo.controller',
+	'../exemplo2/exemplo2-list.controller'
+], function() {});

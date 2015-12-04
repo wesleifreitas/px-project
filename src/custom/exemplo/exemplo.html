@@ -1,4 +1,4 @@
-<div class="px-view" ng-controller="exemploCtrl">
+<div class="px-view" ng-controller="ExemploCtrl">
     <!-- Directive px-view-header, apresenta o cabeçalho da view atual -->
     <div px-fixed px-wrapper=".px-view" px-hfixed="true" px-vfixed="true" class="px-header">
         <px-view-header px-show-hr="true"></px-view-header>
@@ -9,8 +9,8 @@
         <div class="contentSearch" layout="row" layout-wrap>
             <div layout="row" layout-sm="column" layout-wrap layout-padding flex="100">
                 <div flex="25" flex-sm="100">
-                    <label for="filtroSearch">Input Search</label>
-                    <px-input-search id="filtroSearch" name="filtroSearch" ng-model="filtroSearch" px-input-class="form-control" placeholder="Pesquisar categoria" px-control="filtroSearchControl" px-complete="true" px-table="dbo.exemplo2" px-fields="{{exe_input_searchConfig.fields}}" px-dialog="true" px-search-click="filtroSearchClick(event)"></px-input-search>
+                    <label for="filtro_exe2_id">Input Search</label>
+                    <px-input-search id="filtro_exe2_id" name="filtro_exe2_id" ng-model="filtro_exe2_id" px-input-class="form-control" placeholder="Pesquisar categoria" px-control="filtro_exe2_id_searchControl" px-complete="true" px-config="{{exe2_id_searchConfig}}" px-dialog="true" px-search-click="filtro_exe2_id_searchClick(event)"></px-input-search>
                 </div>
                 <div flex="10" flex-sm="100">
                     <label for="filtroId">ID</label>
@@ -59,7 +59,7 @@
                 </button>
             </div>
         </div>
-        <px-data-grid id="dgExemplo" px-debug="true" px-control="dgExemploControl" px-init="gridInit()" px-config="{{dgConfig}}" px-order-by="exe_id DESC" px-data-init="true" px-check="true" px-edit="true" px-item-edit="edit(event)">
+        <px-data-grid id="dgExemplo" px-debug="true" px-control="dgExemploControl" px-init="gridInit()" px-config="{{dgConfig}}" px-data-init="true" px-check="true" px-edit="true" px-item-edit="edit(event)">
         </px-data-grid>
     </div>
 </div>

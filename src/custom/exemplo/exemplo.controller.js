@@ -2,11 +2,11 @@ define(['../controllers/module'], function(controllers) {
     'use strict';
 
     // Controller
-    controllers.controller('exemploCtrl', exemploCtrl);
+    controllers.controller('ExemploCtrl', ExemploCtrl);
 
-    exemploCtrl.$inject = ['exemploService', 'pxConfig', '$scope', '$element', '$attrs', '$mdDialog'];
+    ExemploCtrl.$inject = ['exemploService', 'pxConfig', '$scope', '$element', '$attrs', '$mdDialog'];
 
-    function exemploCtrl(exemploService, pxConfig, $scope, $element, $attrs, $mdDialog) {
+    function ExemploCtrl(exemploService, pxConfig, $scope, $element, $attrs, $mdDialog) {
         // Variáveis gerais - Start
         /**
          * Variável de controle de visualição do Filtro Avançado
@@ -25,8 +25,10 @@ define(['../controllers/module'], function(controllers) {
             $header.blur();
         };
 
-        // Configuração do exe_input_search
-        $scope.exe_input_searchConfig = {
+        // Configuração do exe2_id
+        $scope.exe2_id_searchConfig = {
+            table: 'dbo.exemplo2',
+            group: false,
             fields: [{
                 title: '',
                 labelField: true,
@@ -58,14 +60,14 @@ define(['../controllers/module'], function(controllers) {
         // Default de options para o filtro filtroStatus
         $scope.filtroStatus = exemploService.status(true)[0];
 
-        $scope.filtroSearchControl = {};
+        $scope.filtro_exe2_id_searchControl = {};
 
-        filtroSearchCtrl.$inject = ['$scope', '$mdDialog'];
-        $scope.filtroSearchClick = function() {
+        filtro_exe2_id_ctrl.$inject = ['$scope', '$mdDialog'];
+        $scope.filtro_exe2_id_searchClick = function() {
             $mdDialog.show({
                 scope: $scope,
                 preserveScope: true,
-                controller: filtroSearchCtrl,
+                controller: filtro_exe2_id_ctrl,
                 templateUrl: 'custom/exemplo2/exemplo2-list.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
@@ -98,6 +100,7 @@ define(['../controllers/module'], function(controllers) {
             $scope.dgConfig = {
                 table: 'dbo.exemplo',
                 view: 'dbo.vw_exemplo',
+                orderBy: 'exe_nome',
                 group: true,
                 fields: [{
                     pk: true,
@@ -127,10 +130,10 @@ define(['../controllers/module'], function(controllers) {
                     title: 'Categoria',
                     field: 'exe2_categoria',
                     type: 'bit',
-                    filter: 'filtroSearch',
+                    filter: 'filtro_exe2_id',
                     filterOperator: '=',
                     filterOptions: {
-                        field: 'exe_input_search',
+                        field: 'exe2_id',
                         selectedItem: 'exe2_id'
                     }
                 }, {
@@ -233,10 +236,10 @@ define(['../controllers/module'], function(controllers) {
             });
         };
     }
-    // Controller - filtroSearch
-    function filtroSearchCtrl($scope, $mdDialog) {
+    // Controller - filtro_exe2_id
+    function filtro_exe2_id_ctrl($scope, $mdDialog) {
         $scope.callback = function(event) {
-            $scope.filtroSearchControl.setValue(event.itemClick);
+            $scope.filtro_exe2_id_searchControl.setValue(event.itemClick);
             $mdDialog.hide();
         };
     }
@@ -250,10 +253,10 @@ define(['../controllers/module'], function(controllers) {
          */
         $scope.formControl = {};
 
-        // Controle do campo exe_input_search
-        $scope.exe_input_searchControl = {};
+        // Controle do campo exe2_id
+        $scope.exe2_id_searchControl = {};
         // Clicar no botão busca
-        $scope.exe_input_searchClick = function() {
+        $scope.exe2_id_searchClick = function() {
             $scope.formShow = 'exemplo2';
             $scope.setFormTitle();
         };
@@ -303,9 +306,9 @@ define(['../controllers/module'], function(controllers) {
                     type: 'string',
                     element: 'exe_cep'
                 }, {
-                    field: 'exe_input_search',
+                    field: 'exe2_id',
                     type: 'string',
-                    element: 'exe_input_search',
+                    element: 'exe2_id',
                     fieldValueOptions: {
                         selectedItem: 'exe2_id',
                         labelField: 'exe2_categoria'
@@ -401,6 +404,7 @@ define(['../controllers/module'], function(controllers) {
              */
             $scope.dgExemplo2Config = {
                 table: 'dbo.exemplo2',
+                group: false,
                 fields: [{
                     pk: true,
                     title: 'id',
@@ -429,7 +433,7 @@ define(['../controllers/module'], function(controllers) {
         // Evento itemClick
         $scope.dgExemplo2ItemClick = function(event) {
             $scope.formShow = 'default';
-            $scope.exe_input_searchControl.setValue(event.itemClick);
+            $scope.exe2_id_searchControl.setValue(event.itemClick);
             $scope.setFormTitle();
         };
     }
