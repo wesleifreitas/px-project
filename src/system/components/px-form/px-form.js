@@ -166,9 +166,8 @@ define(['../../directives/module'], function(directives) {
                         var fieldValue = element.scope()[selectorValue];
 
                         // Se valor do campo for undefined, o filtro será considerado inválido
-                        if (!angular.isDefined(fieldValue)) {                            
+                        if (!angular.isDefined(fieldValue)) {
                             if ($rootScope.globals.currentUser.per_developer !== 1 && index.field === $scope.groupItem) {
-                                console.info($rootScope.globals.currentUser)
                                 if (pxConfig.GROUP_ITEM === '') {
                                     index.valueObject = {
                                         field: index.field,
@@ -234,10 +233,18 @@ define(['../../directives/module'], function(directives) {
                                 value: tempValue
                             };
                         } else {
-                            index.valueObject = {};
+                            if (index.type === 'string') {
+                                index.valueObject = {
+                                    field: tempField,
+                                    value: ''
+                                };
+                            } else {
+                                index.valueObject = {};
+                                index.insert = false;
+                                index.update = false;
+                            }
                         }
                     } else {
-                        console.info('index', index);
                         // Se não possuir um valor válido no ng-model o valor recebe vazio
                         index.valueObject = {};
                         index.insert = false;
@@ -430,17 +437,17 @@ define(['../../directives/module'], function(directives) {
                                     }
                                 } else {
                                     _element.scope().pxForm = true;
-                                    if (angular.isDefined(_element.scope().pxForm2mask)) {
 
+                                    if (angular.isDefined(_element.scope().pxForm2mask)) {
                                         //_ngModelCtrl.cleanValue = _value;
                                         _element.scope().cleanValue = _value;
                                         _element.scope().pxForm2mask(_value);
-
                                     }
+
                                     _element.scope()[index.field] = _value;
 
                                     $timeout(function() {
-                                        _element.trigger('keyup');
+                                        _element.trigger('keyup'); // causa problemas em máscara de telefone :(
                                     }, 0);
 
                                 }
