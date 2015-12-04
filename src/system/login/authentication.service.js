@@ -11,6 +11,8 @@ define(['../services/module'], function(services) {
         service.Login = Login;
         service.SetCredentials = SetCredentials;
         service.ClearCredentials = ClearCredentials;
+        service.Redefine = Redefine;
+        service.Recover = Recover;
 
         return service;
 
@@ -61,7 +63,7 @@ define(['../services/module'], function(services) {
             });
         }
 
-        function SetCredentials(username, password) {
+        function SetCredentials(username, password, response) {
             var authdata = Base64.encode(username + ':' + password);
 
             $rootScope.globals = {
@@ -71,6 +73,10 @@ define(['../services/module'], function(services) {
                 }
             };
 
+            angular.forEach(response.qQuery[0], function(value, key) {
+                $rootScope.globals.currentUser[key.toLowerCase()] = value;
+            });
+
             $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
             $cookieStore.put('globals', $rootScope.globals);
         }
@@ -79,6 +85,43 @@ define(['../services/module'], function(services) {
             $rootScope.globals = {};
             $cookieStore.remove('globals');
             $http.defaults.headers.common.Authorization = 'Basic ';
+        }
+
+        function Redefine(id, username, password, callback) {
+            var params = {
+                id: id,
+                username: username,
+                password: password
+            };
+            $http({
+                method: 'POST',
+                url: 'custom/login/login.cfc?method=redefine',
+                params: params
+            }).success(function(response) {
+                callback(response);
+            }).
+            error(function(data, status, headers, config) {
+                // Erro
+                alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+            });
+        }
+
+        function Recover(username, email, callback) {
+            var params = {
+                username: username,
+                email: email
+            };
+            $http({
+                method: 'POST',
+                url: 'custom/login/login.cfc?method=recover',
+                params: params
+            }).success(function(response) {
+                callback(response);
+            }).
+            error(function(data, status, headers, config) {
+                // Erro
+                alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+            });
         }
     }
 

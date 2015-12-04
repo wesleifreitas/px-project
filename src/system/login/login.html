@@ -1,20 +1,70 @@
 <form role="form" id="loginForm" name="loginForm" ng-submit="vm.login()">
     <div id="loginDiv">
-        <h1>Login</h1>
-        <fieldset>
-            <div class="input-control text">
-                <input id="usuario" type="text" class="form-control" placeholder="Usuário" ng-model="vm.username" required/>
-                <button class="btn-clear"></button>
+        <h1>{{vm.formTitle}}</h1>
+        <div class="animate-switch-container" ng-switch on="vm.selection">
+            <div ng-switch-when="default" class="animate-switch">
+                <fieldset>
+                    <div class="input-control text">
+                        <input id="username" name="username" type="text" class="form-control" placeholder="Usuário" ng-model="vm.username" required/>
+                        <button class="btn-clear"></button>
+                    </div>
+                    <div class="input-control password">
+                        <input id="password" name="password" type="password" class="senha form-control" placeholder="Senha" ng-model="vm.password" required/>
+                        <button class="btn-reveal"></button>
+                    </div>
+                    <div id="loginControl" layout="row" layout-align="center center">
+                        <div class="btn-group">
+                            <button class="btn btn-default" type="submit" name="submit" value="Entrar" ng-disabled="loginForm.$invalid">Entrar</button>
+                        </div>
+                    </div>
+                </fieldset>
+                <a ng-click="vm.showRecover()" class="recover-link">Esqueci minha senha</a>
             </div>
-            <div class="input-control password">
-                <input id="senha" type="password" class="form-control" placeholder="Senha" ng-model="vm.password" required/>
-                <button class="btn-reveal"></button>
+            <div ng-switch-when="recover" class="animate-switch">
+                <fieldset>
+                    <div class="input-control text">
+                        <input id="usernameRecover" name="usernameRecover" type="text" class="form-control" placeholder="Usuário" ng-model="vm.username" required/>
+                        <button class="btn-clear"></button>
+                    </div>
+                    <div class="input-control text">
+                        <input id="email" type="text" class="form-control" placeholder="E-mail" ng-model="vm.email" required/>
+                        <button class="btn-clear"></button>
+                    </div>
+                    <div id="loginRecover" layout="row" layout-align="center center">
+                        <div class="btn-group">
+                            <button class="btn btn-default" type="submit" name="submit" value="Confirmar" ng-disabled="loginForm.$invalid" ng-click="vm.recover()">Confirmar</button>
+                        </div>
+                    </div>
+                </fieldset>
+                <a ng-click="vm.showLogin()" class="recover-link">Login</a>
             </div>
-            <div layout="row" layout-align="center center">
-                <div class="btn-group" role="group" aria-label="...">
-                    <button class="btn btn-default" type="submit" name="submit" value="Entrar" ng-disabled="loginForm.$invalid">Entrar</button>
-                </div>
+            <div ng-switch-when="redefine" class="animate-switch">
+                <fieldset>
+                    <div class="input-control text">
+                        <input id="usu_senha_atual" name="usu_senha_atual" ng-model="vm.usu_senha_atual" class="form-control" type="password" placeholder="Senha atual" required ng-keyup="vm.redefineForm()" />
+                        <button class="btn-clear"></button>
+                        <small ng-show="loginForm.usu_senha_atual.$error.confirm" class="error">Senha atual incorreta</small>
+                    </div>
+                    <div class="input-control text">
+                        <input id="usu_senha" name="usu_senha" ng-model="vm.usu_senha" class="form-control" type="password" placeholder="Nova senha" required ng-minlength="8" ng-keyup="vm.redefineForm()">
+                        <button class="btn-clear"></button>
+                        <small ng-show="loginForm.usu_senha.$error.minlength" class="error">A senha deve ter no mínimo 8 caracteres</small>
+                        <small ng-show="loginForm.usu_senha.$error.equal" class="error">A senha deve diferente da atual</small>
+                    </div>
+                    <div class="input-control text">
+                        <input id="usu_senha_confirmar" name="usu_senha_confirmar" ng-model="vm.usu_senha_confirmar" class="form-control" type="password" placeholder="Confirmar nova senha" required ng-minlength="8" ng-keyup="vm.redefineForm()">
+                        <button class="btn-clear"></button>
+                        <small ng-show="loginForm.usu_senha_confirmar.$error.confirm" class="error">Senha não confere</small>
+                    </div>
+                    <div id="loginredefinir" layout="row" layout-align="center center">
+                        <div class="btn-group">
+                            <button class="btn btn-default" type="submit" name="submit" value="Salvar" ng-disabled="loginForm.$invalid" ng-click="vm.redefine()">Salvar</button>
+                        </div>
+                    </div>
+                </fieldset>
+                <a ng-click="vm.showLogin()" class="recover-link">Cancelar</a>
             </div>
-        </fieldset>
+            <span class="login-message">{{vm.loginMessage}}</span>
+        </div>
     </div>
 </form>
