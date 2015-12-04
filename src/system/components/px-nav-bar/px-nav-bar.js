@@ -17,7 +17,7 @@ define(['../../directives/module'], function(directives) {
                 }
             };
         }])
-        .controller('pxNavBarCtrl', ['pxConfig', '$scope', '$http', function(pxConfig, $scope, $http) {
+        .controller('pxNavBarCtrl', ['pxConfig', '$scope', '$http', '$rootScope', function(pxConfig, $scope, $http, $rootScope) {
             $scope.templates = [{
                 name: '?.html',
                 url: pxConfig.PX_PACKAGE + '?.html'
@@ -35,6 +35,7 @@ define(['../../directives/module'], function(directives) {
                 var params = {};
                 params.pro_id = angular.toJson(pxConfig.PROJECT_ID);
                 params.isMobile = $scope.isMobile();
+                params.user = $rootScope.globals.currentUser.usu_id;
                 $http({
                     method: 'POST',
                     url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
