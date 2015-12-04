@@ -51,11 +51,24 @@
 		required ="false"
 		default  =""	
 		hint     ="Campo ORDER BY da instrução SQL">
+
+	<cfargument 
+		name     ="where" 	
+		type	 ="string"
+		required ="false"
+		default  =""	
+		hint     ="Condição da instrução SQL">
 	
 	<cfset result = structNew()>
 	<cftry>
 
 		<cfset arguments.fields = decode(arguments.fields)>
+		
+		<cfif arguments.where NEQ "">
+			<cfset arguments.where = decode(arguments.where)>
+		<cfelse>
+			<cfset arguments.where = arrayNew(1)>
+		</cfif>
 
 		<cfset listFields = "">
 		<cfloop array="#arguments.fields#" index="i">
@@ -68,6 +81,8 @@
 			<cfset arguments.orderBy = arguments.fields[1].field>
 		</cfif>
 
+		<!--- http://www.bennadel.com/blog/867-ask-ben-protecting-database-table-names-in-coldfusion-cfquery.htm --->
+
 		<cftransaction>						
 			<cfquery name="qQuery" result="qResult" datasource="#arguments.dsn#">			
 				SELECT 
@@ -76,28 +91,48 @@
 					ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS row_number
 				FROM 
 					#arguments.table#
-				<cfset whereInit = 'WHERE'>
+				<cfset whereInit = 'WHERE ('>
 				<cfloop array="#arguments.fields#" index="i">					
 					<cfif isDefined("i.filterObject.field")>
 						#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
 						<cfset whereInit = 'OR '>
-					</cfif>							
-				</cfloop>				
+					</cfif>
+				</cfloop>
+				<cfif whereInit NEQ "WHERE (">
+					)
+					<cfset whereInit = "AND ">	
+				</cfif>
+				<cfloop array="#arguments.where#" index="i">
+					<cfif isDefined("i.filterObject.field")>
+						<cfif i.filterOperator EQ "IN">
+							<cfif i.filterObject.value EQ "">
+								<cfcontinue>
+							</cfif>
+							<cfset inStart= "(">
+							<cfset inEnd= ")">
+						<cfelse>							
+							<cfset inStart= "">
+							<cfset inEnd= "">
+						</cfif>
+						#whereInit# #i.field# #replace(i.filterOperator,"%","","all")# #inStart#<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#" list="#i.filterList#">#inEnd#
+							<cfset whereInit = 'AND '>	
+					</cfif>
+				</cfloop>
 			</cfquery>
 		</cftransaction>
 
 		<cfcatch>
-			<cfset result['fault'] 	= cfcatch>
-			<cfset result['arguments'] = arguments>
+			<cfset result["fault"] 	= cfcatch>
+			<cfset result["arguments"] = arguments>
 			<cfreturn result>
 		</cfcatch>
 
 	</cftry>
 
-	<cfset result['listFields'] = listFields>
-	<cfset result['arguments'] = arguments>
-	<cfset result['qQuery'] = QueryToArray(qQuery)>
-	<cfset result['qResult'] = qResult>
+	<cfset result["listFields"] = listFields>
+	<cfset result["arguments"] = arguments>
+	<cfset result["qQuery"] = QueryToArray(qQuery)>
+	<cfset result["qResult"] = qResult>
 
 	<cfreturn result>
 

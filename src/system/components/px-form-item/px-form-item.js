@@ -224,7 +224,7 @@ define(['../../directives/module'], function(directives) {
         }])
         // pxBrCnpjMask
         // 99.999.999/9999-99
-        .directive('pxBrCnpjMask', ['$compile', function($compile) {
+        .directive('pxBrCnpjMask', ['pxStringUtil', '$compile', function(pxStringUtil, $compile) {
             return {
                 priority: 100,
                 restrict: 'A',
@@ -245,7 +245,7 @@ define(['../../directives/module'], function(directives) {
                         $compile(element)(scope);
                     }
 
-                    ngModelCtrl.$parsers.push(function(value) {
+                    ngModelCtrl.$parsers.push(function(value) {                   
                         if (angular.isDefined(value)) {
                             var clean = String(value).replace(/[^0-9]+/g, '');
                             if (value !== clean) {
@@ -256,14 +256,11 @@ define(['../../directives/module'], function(directives) {
                             return clean;
                         }
                     });
-
                     scope.value2mask = function(value) {
                         ngModelCtrl.$setViewValue(value);
                     }
-
                 },
                 controller: ['$scope', function($scope) {
-
                     $scope.pxForm2mask = function(value) {
                         $scope.value2mask(value);
                     }
@@ -784,8 +781,7 @@ define(['../../directives/module'], function(directives) {
                     groupSearchCtrl.$inject = ['$scope', '$mdDialog'];
 
                     function groupSearchCtrl($scope, $mdDialog) {
-                        $scope.callback = function(event) {
-                            console.info($scope.groupSearchControl);
+                        $scope.callback = function(event) {                           
                             $scope.groupSearchControl.setValue(event.itemClick);
                             $mdDialog.hide();
                         };
@@ -798,6 +794,7 @@ define(['../../directives/module'], function(directives) {
             return {
                 restrict: 'E',
                 scope: {
+                    debug: '=pxDebug',
                     id: '@id',
                     config: '@pxConfig',
                     required: '@required',
@@ -809,6 +806,7 @@ define(['../../directives/module'], function(directives) {
                     fields: '@pxFields',
                     orderBy: '@pxOrderBy',
                     recordCount: '@pxRecordCount',
+                    where: '@pxWhere',
                     selectedItem: '=pxSelectedItem',
                     url: '@pxUrl',
                     responseQuery: '@pxResponseQuery',
@@ -868,6 +866,7 @@ define(['../../directives/module'], function(directives) {
                         scope.fields = scope.fields || objConfig.fields;
                         scope.orderBy = scope.orderBy || objConfig.orderBy;
                         scope.recordCount = scope.recordCount || objConfig.recordCount;
+                        scope.where = scope.where || objConfig.where;
                     }, 0);
 
                     scope.setValidity = function() {
@@ -1014,6 +1013,9 @@ define(['../../directives/module'], function(directives) {
                                 params.table = scope.table;
                                 params.fields = angular.toJson(arrayFields);
                                 params.orderBy = scope.orderBy;
+                                // Definir filterObject para os campos do scope.where
+                                scope.where = pxUtil.setFilterObject(scope.where, false, scope.table)
+                                params.where = angular.toJson(scope.where);
 
                                 if (!angular.isDefined(scope.recordCount) || scope.recordCount === '') {
                                     scope.recordCount = 4;
