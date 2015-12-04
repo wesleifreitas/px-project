@@ -83,8 +83,8 @@ define(['../../directives/module'], function(directives) {
                         scope.groupLabel = objConfig.groupLabel;
                     }
 
-                    if (scope.group === true) {
-                        if (pxConfig.GROUP_SUFFIX === '') {
+                    if (scope.group === true) {                        
+                        if (pxConfig.GROUP_ITEM_SUFFIX === '') {
                             scope.groupItem = scope.groupItem || pxConfig.GROUP_ITEM;
                         } else if (!angular.isDefined(scope.groupItem)) {
                             scope.groupItem = scope.groupItem || scope.table + '_' + pxConfig.GROUP_ITEM_SUFFIX;
@@ -92,7 +92,7 @@ define(['../../directives/module'], function(directives) {
                                 scope.groupItem = scope.groupItem.replace(pxConfig.GROUP_REPLACE[i], '');
                             };
                         }
-                        if (pxConfig.GROUP_SUFFIX === '') {
+                        if (pxConfig.GROUP_LABEL_SUFFIX === '') {
                             scope.groupLabel = scope.groupLabel || pxConfig.GROUP_LABEL;
                         } else if (!angular.isDefined(scope.groupLabel)) {
                             scope.groupLabel = scope.groupLabel || pxConfig.GROUP_TABLE + '_' + pxConfig.GROUP_LABEL_SUFFIX;
@@ -116,7 +116,7 @@ define(['../../directives/module'], function(directives) {
                                 },
                                 filterGroup: true
                             });
-                        } else {
+                        } else {                            
                             scope.fields.push({
                                 title: 'Grupo',
                                 field: scope.groupLabel,
@@ -286,9 +286,9 @@ define(['../../directives/module'], function(directives) {
         };
     }]);
 
-    pxDataGridCtrl.$inject = ['pxConfig', 'pxUtil', 'pxArrayUtil', 'pxMaskUtil', 'pxDataGridService', '$scope', '$http', '$timeout'];
+    pxDataGridCtrl.$inject = ['pxConfig', 'pxUtil', 'pxArrayUtil', 'pxMaskUtil', 'pxStringUtil', 'pxDataGridService', '$scope', '$http', '$timeout'];
 
-    function pxDataGridCtrl(pxConfig, pxUtil, pxArrayUtil, pxMaskUtil, pxDataGridService, $scope, $http, $timeout) {
+    function pxDataGridCtrl(pxConfig, pxUtil, pxArrayUtil, pxMaskUtil, pxStringUtil, pxDataGridService, $scope, $http, $timeout) {
 
         // Verifica se a grid a está preparada para receber os dados
         $scope.pxTableReady = false;
@@ -773,7 +773,12 @@ define(['../../directives/module'], function(directives) {
                     if (!angular.isDefined(item.stringMask)) {
                         data[item.field] = value[item.field];
                     } else {
-                        data[item.field] = pxMaskUtil.maskFormat(value[item.field], item.stringMask).result;
+                        if (angular.isDefined(item.pad)) {
+                            data[item.field] = pxMaskUtil.maskFormat(pxStringUtil.pad(item.pad, value[item.field], true), item.stringMask).result;
+                        } else {
+                            data[item.field] = pxMaskUtil.maskFormat(value[item.field], item.stringMask).result;
+                        }
+
                     }
                 }
             });
@@ -816,12 +821,15 @@ define(['../../directives/module'], function(directives) {
                     switch (item.stringMask) {
                         case 'cpf':
                             item.stringMask = '###.###.###-##';
+                            //item.pad = '00000000000';
                             break;
                         case 'cnpj':
                             item.stringMask = '##.###.###/####-##';
+                            //item.pad = '00000000000000';
                             break;
                         case 'cep':
                             item.stringMask = '#####-###';
+                            //item.pad = '00000000';
                             break;
                         case 'brPhone':
                             if (data[item.field].length === 11) {
@@ -830,8 +838,14 @@ define(['../../directives/module'], function(directives) {
                                 item.stringMask = '(##) #####-####';
                             }
                             break;
+                        default:
+                            break;
                     }
-                    data[item.field] = pxMaskUtil.maskFormat(data[item.field], item.stringMask).result;
+                    if (angular.isDefined(item.pad)) {
+                        data[item.field] = pxMaskUtil.maskFormat(pxStringUtil.pad(item.pad, data[item.field], true), item.stringMask).result;
+                    } else {
+                        data[item.field] = pxMaskUtil.maskFormat(data[item.field], item.stringMask).result;
+                    }
                 }
 
                 // Se possuir moment
