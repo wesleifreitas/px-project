@@ -86,6 +86,13 @@
 		required="false"
 		default=""
 		hint="Label do GROUP">
+
+	<cfargument 
+		name     ="where" 	
+		type	 ="string"
+		required ="false"
+		default  =""	
+		hint     ="Condição da instrução SQL">
 	
 	<cfset result = structNew()>
 	<cftry>
@@ -101,6 +108,12 @@
 
 		<cfif arguments.orderBy EQ "">
 			<cfset arguments.orderBy = arguments.fields[1].field>
+		</cfif>
+
+		<cfif arguments.where NEQ "">
+			<cfset arguments.where = decode(arguments.where)>
+		<cfelse>
+			<cfset arguments.where = arrayNew(1)>
 		</cfif>
 
 		<cfquery name="qUsuario" datasource="#arguments.dsn#">
@@ -134,6 +147,22 @@
 						<cfset whereInit = "AND ">
 					</cfif>
 				</cfloop>
+				<cfloop array="#arguments.where#" index="i">
+					<cfif isDefined("i.filterObject.field")>
+						<cfif i.filterOperator EQ "IN">
+							<cfif i.filterObject.value EQ "">
+								<cfcontinue>
+							</cfif>
+							<cfset inStart= "(">
+							<cfset inEnd= ")">
+						<cfelse>							
+							<cfset inStart= "">
+							<cfset inEnd= "">
+						</cfif>
+						#whereInit# #i.field# #replace(i.filterOperator,"%","","all")# #inStart#<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#" list="#i.filterList#">#inEnd#
+							<cfset whereInit = 'AND '>	
+					</cfif>
+				</cfloop>
 			</cfquery>
 			
 			<cfquery name="qQuery" datasource="#arguments.dsn#">
@@ -154,6 +183,22 @@
 						<cfif isDefined("i.filterObject.field")>
 							#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
 							<cfset whereInit = "AND ">
+						</cfif>
+					</cfloop>
+					<cfloop array="#arguments.where#" index="i">
+						<cfif isDefined("i.filterObject.field")>
+							<cfif i.filterOperator EQ "IN">
+								<cfif i.filterObject.value EQ "">
+									<cfcontinue>
+								</cfif>
+								<cfset inStart= "(">
+								<cfset inEnd= ")">
+							<cfelse>							
+								<cfset inStart= "">
+								<cfset inEnd= "">
+							</cfif>
+							#whereInit# #i.field# #replace(i.filterOperator,"%","","all")# #inStart#<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#" list="#i.filterList#">#inEnd#
+								<cfset whereInit = 'AND '>	
 						</cfif>
 					</cfloop>
 				)

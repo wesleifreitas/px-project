@@ -1,7 +1,7 @@
 define(['../../directives/module'], function(directives) {
     'use strict';
 
-    directives.directive('pxDataGrid', ['pxConfig', 'pxArrayUtil', '$timeout', '$sce', '$rootScope', function(pxConfig, pxArrayUtil, $timeout, $sce, $rootScope) {
+    directives.directive('pxDataGrid', ['pxConfig', 'pxArrayUtil', 'pxUtil', '$timeout', '$sce', '$rootScope', function(pxConfig, pxArrayUtil, pxUtil, $timeout, $sce, $rootScope) {
         return {
             restrict: 'E',
             replace: true,
@@ -20,6 +20,7 @@ define(['../../directives/module'], function(directives) {
                 group: '=pxGroup',
                 groupItem: '@pxGroupItem',
                 groupLabel: '@pxGroupLabel',
+                where: '@pxWhere',
                 columns: '@pxColumns',
                 check: '=pxCheck',
                 edit: '=pxEdit',
@@ -70,6 +71,7 @@ define(['../../directives/module'], function(directives) {
                     var objConfig = JSON.parse(scope.config);
                     scope.table = scope.table || objConfig.table;
                     scope.view = scope.view || objConfig.view;
+                    scope.where = scope.where || objConfig.where;
 
                     // Configuração Group
                     scope.group = scope.group || pxConfig.GROUP;
@@ -83,7 +85,7 @@ define(['../../directives/module'], function(directives) {
                         scope.groupLabel = objConfig.groupLabel;
                     }
 
-                    if (scope.group === true) {                        
+                    if (scope.group === true) {
                         if (pxConfig.GROUP_ITEM_SUFFIX === '') {
                             scope.groupItem = scope.groupItem || pxConfig.GROUP_ITEM;
                         } else if (!angular.isDefined(scope.groupItem)) {
@@ -116,7 +118,7 @@ define(['../../directives/module'], function(directives) {
                                 },
                                 filterGroup: true
                             });
-                        } else {                            
+                        } else {
                             scope.fields.push({
                                 title: 'Grupo',
                                 field: scope.groupLabel,
@@ -219,64 +221,70 @@ define(['../../directives/module'], function(directives) {
                     // Data Grid pronta para consulta
                     scope.pxTableReady = true;
 
-                    // Internal Control - Start
-
-                    // How to call a method defined in an AngularJS directive?
-                    // http://stackoverflow.com/questions/16881478/how-to-call-a-method-defined-in-an-angularjs-directive
-                    scope.internalControl = scope.control || {};
-
-                    // A listagem está processamento?
-                    scope.internalControl.working = false;
-
-                    /**
-                     * Recuperar dados que são carregados na listagem
-                     * @return {void}
-                     */
-                    scope.internalControl.getData = function() {
-                        scope.getData(0, scope.rowsProcess);
-                    };
-
-                    /**
-                     * Adicionar linha de registro
-                     * @param {object} value valor que será inserido na listagem
-                     */
-                    scope.internalControl.addDataRow = function(value) {
-                        scope.addDataRow(value);
-                    };
-
-                    /**
-                     * Atualizar linha de registro
-                     * @param {object} value valor que será inserido na listagem
-                     */
-                    scope.internalControl.updateDataRow = function(value) {
-                        scope.updateDataRow(value);
-                    };
-
-                    /**
-                     * Remover linha
-                     * @param {object} value objeto linha do DataTable
-                     */
-                    scope.internalControl.removeRow = function(value) {
-                        scope.removeRow(value);
-                    };
-
-
-                    /**
-                     * Remover itens (selecionados) da listagem
-                     * @return {void}
-                     */
-                    scope.internalControl.remove = function() {
-                        scope.remove();
-                    };
-
-                    // Armazena itens selecionados da listagem
-                    scope.internalControl.selectedItems = [];
-
-                    // Armazena número atual de linhas carregadas
-                    scope.currentRecordCount = 0;
-
-                    // Internal Control - End
+                    if (scope.where) {
+                        // Definir filterObject para os campos do scope.where                    
+                        scope.where = JSON.parse(newValue.where);
+                    }
                 });
+
+                // Internal Control - Start
+
+                // How to call a method defined in an AngularJS directive?
+                // http://stackoverflow.com/questions/16881478/how-to-call-a-method-defined-in-an-angularjs-directive
+                scope.internalControl = scope.control || {};
+
+                // A listagem está processamento?
+                scope.internalControl.working = false;
+
+                /**
+                 * Recuperar dados que são carregados na listagem
+                 * @return {void}
+                 */
+                scope.internalControl.getData = function() {
+                    scope.getData(0, scope.rowsProcess);
+                };
+
+                /**
+                 * Adicionar linha de registro
+                 * @param {object} value valor que será inserido na listagem
+                 */
+                scope.internalControl.addDataRow = function(value) {
+                    scope.addDataRow(value);
+                };
+
+                /**
+                 * Atualizar linha de registro
+                 * @param {object} value valor que será inserido na listagem
+                 */
+                scope.internalControl.updateDataRow = function(value) {
+                    scope.updateDataRow(value);
+                };
+
+                /**
+                 * Remover linha
+                 * @param {object} value objeto linha do DataTable
+                 */
+                scope.internalControl.removeRow = function(value) {
+                    scope.removeRow(value);
+                };
+
+
+                /**
+                 * Remover itens (selecionados) da listagem
+                 * @return {void}
+                 */
+                scope.internalControl.remove = function() {
+                    scope.remove();
+                };
+
+                // Armazena itens selecionados da listagem
+                scope.internalControl.selectedItems = [];
+
+                // Armazena número atual de linhas carregadas
+                scope.currentRecordCount = 0;
+
+                // Internal Control - End
+
 
                 // Chama evento px-init
                 $timeout(scope.init, 0);
@@ -496,11 +504,6 @@ define(['../../directives/module'], function(directives) {
                 $scope.itemEdit({
                     event: itemEditEvent
                 });
-
-                //console.info('!!!',d);
-                //d.exe_nome = '888';
-
-
             });
 
             // Evento click checkbox
@@ -597,7 +600,7 @@ define(['../../directives/module'], function(directives) {
             $scope.internalControl.working = true;
             //alert($scope.internalControl.working);
 
-            var arrayFields = $scope.fields; //JSON.parse($scope.fields);
+            var arrayFields = $scope.fields; //JSON.parse($scope.fields);            
 
             // Loop na configuração de campos
             angular.forEach(arrayFields, function(index) {
@@ -625,7 +628,6 @@ define(['../../directives/module'], function(directives) {
 
                     // Verifica seu o scope do elemento angular possui valor definido
                     if (angular.isDefined(angular.element($(selectorName).get(0)).scope()) && angular.element($(selectorName).get(0)).scope().hasOwnProperty(selectorValue)) {
-
                         // filtro
                         var filter = angular.element($(selectorName).get(0)).scope()[selectorValue];
 
@@ -674,6 +676,7 @@ define(['../../directives/module'], function(directives) {
 
                     // Armazena valor do filtro que será enviado ao back-end
                     index.filterObject.value = pxUtil.filterOperator(index.filterObject.value, index.filterOperator);
+
                 }
 
             });
@@ -703,6 +706,11 @@ define(['../../directives/module'], function(directives) {
             params.groupItem = $scope.groupItem;
             params.groupLabel = $scope.groupLabel;
 
+            if ($scope.where) {
+                $scope.where = pxUtil.setFilterObject($scope.where, false, pxConfig.GROUP_TABLE);
+                params.where = angular.toJson($scope.where);
+            }
+
             // Se for a primeira linha significa que é uma nova consulta ao dados
             // Neste caso é feito um 'clear' na listagem
             if (rowFrom === 0) {
@@ -715,8 +723,8 @@ define(['../../directives/module'], function(directives) {
 
             pxDataGridService.select(params, function(response) {
                 if ($scope.debug) {
-                    console.info('px-data-grid getData success', response);
-                    //console.info('px-data-grid getData success JSON.stringify',JSON.stringify(response,null,"    "));
+                    console.info('px-data-grid ' + $scope.id + ' getData', response);
+                    //console.info('px-data-grid ' + $scope.id + ' getData JSON.stringify',JSON.stringify(response,null,"    "));
                 }
 
                 if (angular.isDefined(response.fault)) {
