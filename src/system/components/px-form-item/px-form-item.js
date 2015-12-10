@@ -160,7 +160,9 @@ define(['../../directives/module'], function(directives) {
                             // Verificar ser o elemento está inválido
                             if (_ngModelCtrl.$invalid) {
                                 $scope.$apply(function() {
-                                    if (_ngModelCtrl.$error.required || _ngModelCtrl.$error.requiredsearch) {
+                                    if (_ngModelCtrl.$error.deps) {
+                                        $scope.error = _element.scope().depsError;
+                                    } else if (_ngModelCtrl.$error.required || _ngModelCtrl.$error.requiredsearch) {
                                         $scope.error = 'Campo obrigatório';
                                     } else if (_ngModelCtrl.$error.email) {
                                         $scope.error = 'E-mail inválido';
@@ -245,7 +247,7 @@ define(['../../directives/module'], function(directives) {
                         $compile(element)(scope);
                     }
 
-                    ngModelCtrl.$parsers.push(function(value) {                   
+                    ngModelCtrl.$parsers.push(function(value) {
                         if (angular.isDefined(value)) {
                             var clean = String(value).replace(/[^0-9]+/g, '');
                             if (value !== clean) {
@@ -781,7 +783,7 @@ define(['../../directives/module'], function(directives) {
                     groupSearchCtrl.$inject = ['$scope', '$mdDialog'];
 
                     function groupSearchCtrl($scope, $mdDialog) {
-                        $scope.callback = function(event) {                           
+                        $scope.callback = function(event) {
                             $scope.groupSearchControl.setValue(event.itemClick);
                             $mdDialog.hide();
                         };
@@ -813,7 +815,8 @@ define(['../../directives/module'], function(directives) {
                     localQuery: '@pxLocalQuery',
                     searchFields: '@searchfields',
                     dialog: '=pxDialog',
-                    searchClick: '&pxSearchClick'
+                    searchClick: '&pxSearchClick',
+                    dependencies: '@pxDependencies'
                 },
                 require: '?ngModel',
                 templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-input-search.html',
@@ -844,6 +847,7 @@ define(['../../directives/module'], function(directives) {
                     scope.internalControl = scope.control || {};
 
                     scope.internalControl.working = false;
+                    scope.internalControl.selectedItem = null;
 
                     scope.internalControl.setValue = function(value) {
                         scope.setValue(value);
@@ -867,62 +871,75 @@ define(['../../directives/module'], function(directives) {
                         scope.orderBy = scope.orderBy || objConfig.orderBy;
                         scope.recordCount = scope.recordCount || objConfig.recordCount;
                         scope.where = scope.where || objConfig.where;
+                        scope.dependencies = scope.dependencies || objConfig.dependencies;
+
+                        if (scope.dependencies) {
+                            for (var i = 0; i < scope.dependencies.length; i++) {
+
+                                var result = pxUtil.getFieldValueObject(scope.dependencies[i]);
+                                result.element.on('blur', function(event) {
+                                    var result = pxUtil.getFieldValueObject({
+                                        element: $(this).attr('id')
+                                    });
+
+                                    var element = angular.element($('#' + $(this).attr('id')).get(0));
+
+                                    if (result.value === null || result.value === '' || result.value !== element.scope().oldValue) {
+                                        scope.clear();
+                                    }
+
+                                    element.scope().oldValue = angular.copy(result.value); //angular.copy(element.scope().selectedItem);                                    
+                                });
+                            };
+                        }
                     }, 0);
 
-                    scope.setValidity = function() {
-                            var _element = angular.element($('#' + scope.id + '_inputSearch').get(0));
-                            var _span = angular.element($('#' + scope.id + '_spanInputSearch').get(0));
-                            if (!angular.isDefined(scope.selectedItem) || scope.selectedItem === null) {
-                                ngModelCtrl.$setValidity('requiredsearch', false);
-                                scope.searchStr = scope.lastSearchTerm = '';
-                                scope.selectedItem = '';
-                                scope.showDropdown = false;
-                                scope.results = [];
-                            } else {
-                                var searchStrQuery = '';
-                                if (angular.isDefined(scope.selectedItem)) {
-                                    scope.labelField = scope.fields[pxArrayUtil.getIndexByProperty(scope.fields, 'labelField', true)].field;
-                                    searchStrQuery = scope.selectedItem[scope.labelField];
-                                    if (!angular.isDefined(searchStrQuery)) {
-                                        searchStrQuery = scope.selectedItem[scope.labelField.toUpperCase()];
-                                    }
-                                }
-                                if (scope.searchStr !== searchStrQuery) {
-                                    scope.searchStr = scope.lastSearchTerm = '';
-                                    scope.selectedItem = '';
-                                    scope.showDropdown = false;
-                                    scope.results = [];
-
-                                    ngModelCtrl.$setValidity('requiredsearch', false);
-                                } else {
-                                    ngModelCtrl.$setValidity('requiredsearch', true);
-                                    ngModelCtrl.$setValidity('required', true);
+                    scope.setValidity = function() {                        
+                        var _element = angular.element($('#' + scope.id + '_inputSearch').get(0));
+                        var _span = angular.element($('#' + scope.id + '_spanInputSearch').get(0));
+                        if (!angular.isDefined(scope.selectedItem) || scope.selectedItem === null) {
+                            ngModelCtrl.$setValidity('requiredsearch', false);
+                            scope.clear();
+                        } else {
+                            var searchStrQuery = '';
+                            if (angular.isDefined(scope.selectedItem)) {
+                                scope.labelField = scope.fields[pxArrayUtil.getIndexByProperty(scope.fields, 'labelField', true)].field;
+                                searchStrQuery = scope.selectedItem[scope.labelField];
+                                if (!angular.isDefined(searchStrQuery)) {
+                                    searchStrQuery = scope.selectedItem[scope.labelField.toUpperCase()];
                                 }
                             }
-                            $timeout(function() {
-                                _element.trigger('keyup');
-                            }, 0);
-                            if (attrs.required === true) {
-                                if (ngModelCtrl.$invalid) {
-                                    _element.css({
-                                        borderColor: '#A94442'
-                                    });
-                                    _span.css({
-                                        borderColor: '#A94442'
-                                    });
+                            if (scope.searchStr !== searchStrQuery) {
+                                $scope.clear();
 
-                                } else {
-                                    _element.css({
-                                        borderColor: '#CCCCCC'
-                                    });
-                                    _span.css({
-                                        borderColor: '#CCCCCC'
-                                    });
-                                }
+                                ngModelCtrl.$setValidity('requiredsearch', false);
+                            } else {
+                                ngModelCtrl.$setValidity('requiredsearch', true);
+                                ngModelCtrl.$setValidity('required', true);
                             }
                         }
-                        // px-modal - Start
-                        // px-modal - End
+                        $timeout(function() {
+                            _element.trigger('keyup');
+                        }, 0);
+                        if (attrs.required === true) {
+                            if (ngModelCtrl.$invalid) {
+                                _element.css({
+                                    borderColor: '#A94442'
+                                });
+                                _span.css({
+                                    borderColor: '#A94442'
+                                });
+                            } else {
+                                _element.css({
+                                    borderColor: '#CCCCCC'
+                                });
+                                _span.css({
+                                    borderColor: '#CCCCCC'
+                                });
+                            }
+                        }
+                    }
+
                     var isNewSearchNeeded = function(newTerm, oldTerm) {
                         return newTerm.length >= scope.minLength && newTerm !== oldTerm;
                     };
@@ -1074,6 +1091,9 @@ define(['../../directives/module'], function(directives) {
                                 scope.showDropdown = false;
                                 scope.lastSearchTerm = null;
                             } else if (isNewSearchNeeded(scope.searchStr, scope.lastSearchTerm)) {
+
+
+
                                 scope.lastSearchTerm = scope.searchStr;
                                 scope.showDropdown = true;
                                 scope.currentIndex = -1;
@@ -1088,6 +1108,8 @@ define(['../../directives/module'], function(directives) {
                                 scope.searchTimer = $timeout(function() {
                                     scope.searchTimerComplete(scope.searchStr);
                                 }, scope.pause);
+                            } else {
+                                scope.hasDependencies();
                             }
                         } else {
                             event.preventDefault();
@@ -1095,9 +1117,8 @@ define(['../../directives/module'], function(directives) {
                     };
 
                     scope.selectResult = function(result) {
-
                         scope.searchStr = scope.lastSearchTerm = result.title;
-                        scope.selectedItem = result.item;
+                        scope.internalControl.selectedItem = scope.selectedItem = result.item;
                         scope.showDropdown = false;
                         scope.results = [];
                         //scope.$apply();
@@ -1149,18 +1170,37 @@ define(['../../directives/module'], function(directives) {
                         }
                     });
                     // px-complete - End
+
+                    scope.showDialog = function(event) {
+                        if (!scope.hasDependencies()) {
+                            scope.clear();
+                            scope.searchClick({
+                                event: event
+                            });
+                        }
+                    };
+
+                    scope.hasDependencies = function() {
+                        if (scope.dependencies) {
+                            for (var i = 0; i < scope.dependencies.length; i++) {
+                                var result = pxUtil.getFieldValueObject(scope.dependencies[i]);
+                                if (result.value === null || result.value === '') {
+                                    result.element.trigger('blur');
+                                    alert(scope.dependencies[i].message);
+                                    //console.info(scope.dependencies[i].message);
+                                    ngModelCtrl.$setValidity('deps', false);
+                                    scope.setValidity();
+                                    return true;
+                                }
+                            };
+                        }
+                        ngModelCtrl.$setValidity('deps', true);
+                        return false;
+                    };
+
+
                 },
                 controller: ['$scope', function($scope) {
-                    $scope.showDialog = function(event) {
-                        $scope.searchStr = $scope.lastSearchTerm = '';
-                        $scope.selectedItem = '';
-                        $scope.showDropdown = false;
-                        $scope.results = [];
-
-                        $scope.searchClick({
-                            event: event
-                        });
-                    };
 
                     $scope.setValue = function(data) {
                         var arrayFields = $scope.fields;
@@ -1170,16 +1210,25 @@ define(['../../directives/module'], function(directives) {
                             tempValue = data[field.toUpperCase()];
                         }
                         $scope.searchStr = $scope.lastSearchTerm = tempValue;
-                        $scope.selectedItem = data;
+                        $scope.internalControl.selectedItem = $scope.selectedItem = data;
                         $scope.showDropdown = false;
                         $scope.results = [];
                         $scope.setValidity();
+
                         /*
                         scope.searchStr = scope.lastSearchTerm = result.title;
                         scope.selectedItem = result.item;
                         scope.showDropdown = false;
                         scope.results = [];
                         */
+                    };
+
+                    $scope.clear = function() {
+                        $scope.searchStr = $scope.lastSearchTerm = '';
+                        $scope.selectedItem = null;
+                        $scope.showDropdown = false;
+                        $scope.results = [];
+                        $scope.internalControl.selectedItem = null;
                     };
                 }]
             };
