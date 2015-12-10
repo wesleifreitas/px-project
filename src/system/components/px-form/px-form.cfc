@@ -199,8 +199,14 @@
 			<cfset whereInit = 'WHERE'>
 			<cfloop array="#arguments.fields#" index="i">
 				<cfif isDefined("i.pk") AND i.pk>
-					#whereInit# #i.field# = <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
-				<cfset whereInit = 'AND '>
+					<cfif isDefined("i.valueObject.value")>
+						#whereInit# #i.field# = <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
+						<cfset whereInit = 'AND '>
+					<cfelse>
+						<cfset result["success"] = false>
+						<cfset result["message"] = "PK " & i.field & " com valor indefinido">
+						<cfreturn result>
+					</cfif>					
 				</cfif>
 			</cfloop>
 		</cfquery>
