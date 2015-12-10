@@ -42,7 +42,7 @@
 		name     ="fields" 	
 		type	 ="string"
 		required ="false"
-		default  ="250"	
+		default  =""	
 		hint     ="Campos do px-data-grid">
 
 	<cfargument 
