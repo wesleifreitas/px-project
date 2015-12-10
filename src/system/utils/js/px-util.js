@@ -7,6 +7,7 @@ define(['../../services/module'], function(services) {
         var service = {};
         service.filterOperator = filterOperator;
         service.setFilterObject = setFilterObject;
+        service.getFieldValueObject = getFieldValueObject;
         service.isMobile = isMobile;
         return service;
         /**
@@ -74,7 +75,7 @@ define(['../../services/module'], function(services) {
                         selectorName += '_groupSearch_inputSearch';
                         selectorValue = 'selectedItem';
                     }
-                    // Verificar se o filtro é um px-complete
+                    // Verificar se o filtro é um px-input-search
                     else if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
                         selectorName += '_inputSearch';
                         selectorValue = 'selectedItem';
@@ -134,6 +135,64 @@ define(['../../services/module'], function(services) {
                 }
             });
             return array;
+        }
+        /**
+         * Retonar valor de uma estrutura de campo px-project
+         * @param  {Object} object Estrutura do campo, por exemplo {element: txtName}
+         * @return {String}        Valor da estrutura de campo px-project
+         */
+        function getFieldValueObject(object) {
+
+            var selectorName = '#' + object.element;
+            var selectorValue = document.getElementById(object.element).getAttribute('ng-model');
+
+            if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
+                selectorName += '_inputSearch';
+                selectorValue = 'selectedItem';
+            }
+
+            var element = angular.element($(selectorName).get(0));
+
+            // Verificar seu o scope do elemento angular possui valor definido
+            if (angular.isDefined(element.scope()) && element.scope().hasOwnProperty(selectorValue)) {
+                var value = angular.element($(selectorName).get(0)).scope()[selectorValue];
+
+                if (!angular.isDefined(value)) {
+                    return {
+                        value: null,
+                        element: element
+                    };
+                }
+
+                if (angular.isDefined(object.fieldValueOptions)) {
+                    if (value) {
+                        value = value[object.fieldValueOptions.selectedItem];
+                        if (!angular.isDefined(value)) {
+                            value = value[object.fieldValueOptions.selectedItem.toUpperCase()];
+                        }
+                        if (value === '%') {
+                            return {
+                                value: null,
+                                element: element
+                            };
+                        }
+                    } else {
+                        return {
+                            value: null,
+                            element: element
+                        };
+                    }
+                }
+                return {
+                    value: value,
+                    element: element
+                };
+            } else {
+                return {
+                    value: null,
+                    element: element
+                };
+            }
         }
         /**
          * Retornar configuração group
