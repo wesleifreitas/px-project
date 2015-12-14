@@ -71,6 +71,7 @@ define(['../../directives/module'], function(directives) {
                     var objConfig = JSON.parse(scope.config);
                     scope.table = scope.table || objConfig.table;
                     scope.view = scope.view || objConfig.view;
+                    scope.orderBy = scope.orderBy || objConfig.orderBy;
                     scope.where = scope.where || objConfig.where;
 
                     // Configuração Group
