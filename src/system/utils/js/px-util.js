@@ -142,9 +142,9 @@ define(['../../services/module'], function(services) {
          * @return {String}        Valor da estrutura de campo px-project
          */
         function getFieldValueObject(object) {
-
-            var selectorName = '#' + object.element;
-            var selectorValue = document.getElementById(object.element).getAttribute('ng-model');
+            // Definir nome do seletor
+            var selectorName = '#' + object.filter;
+            var selectorValue = document.getElementById(object.filter).getAttribute('ng-model');
 
             if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
                 selectorName += '_inputSearch';
@@ -163,7 +163,6 @@ define(['../../services/module'], function(services) {
                         element: element
                     };
                 }
-
                 if (angular.isDefined(object.fieldValueOptions)) {
                     if (value) {
                         value = value[object.fieldValueOptions.selectedItem];
