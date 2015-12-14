@@ -865,36 +865,43 @@ define(['../../directives/module'], function(directives) {
                         _element.on('blur', function(event) {
                             scope.setValidity();
                         });
-                        var objConfig = JSON.parse(scope.config);
-                        scope.table = scope.table || objConfig.table;
-                        scope.fields = scope.fields || objConfig.fields;
-                        scope.orderBy = scope.orderBy || objConfig.orderBy;
-                        scope.recordCount = scope.recordCount || objConfig.recordCount;
-                        scope.where = scope.where || objConfig.where;
-                        scope.dependencies = scope.dependencies || objConfig.dependencies;
+                        try {
+                            var objConfig = JSON.parse(scope.config);
+                            scope.table = scope.table || objConfig.table;
+                            scope.fields = scope.fields || objConfig.fields;
+                            scope.orderBy = scope.orderBy || objConfig.orderBy;
+                            scope.recordCount = scope.recordCount || objConfig.recordCount;
+                            scope.where = scope.where || objConfig.where;
+                            scope.dependencies = []; //scope.dependencies = scope.dependencies || objConfig.dependencies;                            
+                            if (Array.isArray(scope.where)) {
+                                for (var i = 0; i < scope.where.length; i++) {
+                                    if (scope.where[i].required === true) {
+                                        scope.dependencies.push(scope.where[i]);
+                                    }
+                                }
+                            }
+                        } catch (error) {
+                            console.error('px-form-item: configuração do campo ' + scope.id + ' inválida');
+                        }
 
                         if (scope.dependencies) {
                             for (var i = 0; i < scope.dependencies.length; i++) {
-
                                 var result = pxUtil.getFieldValueObject(scope.dependencies[i]);
                                 result.element.on('blur', function(event) {
                                     var result = pxUtil.getFieldValueObject({
-                                        element: $(this).attr('id')
+                                        filter: $(this).attr('id')
                                     });
-
                                     var element = angular.element($('#' + $(this).attr('id')).get(0));
-
                                     if (result.value === null || result.value === '' || result.value !== element.scope().oldValue) {
                                         scope.clear();
                                     }
-
                                     element.scope().oldValue = angular.copy(result.value); //angular.copy(element.scope().selectedItem);                                    
                                 });
                             };
                         }
                     }, 0);
 
-                    scope.setValidity = function() {                        
+                    scope.setValidity = function() {
                         var _element = angular.element($('#' + scope.id + '_inputSearch').get(0));
                         var _span = angular.element($('#' + scope.id + '_spanInputSearch').get(0));
                         if (!angular.isDefined(scope.selectedItem) || scope.selectedItem === null) {
