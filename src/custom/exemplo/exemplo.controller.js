@@ -302,6 +302,10 @@ define(['../controllers/module'], function(controllers) {
                     type: 'string',
                     element: 'exe_cpf'
                 }, {
+                    field: 'exe_telefone',
+                    type: 'string',
+                    element: 'exe_telefone'
+                }, {
                     field: 'exe_cep',
                     type: 'string',
                     element: 'exe_cep'

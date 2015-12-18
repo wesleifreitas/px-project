@@ -30,6 +30,10 @@
                         <px-show-error px-element="exe_nome"></px-show-error>
                     </div>
                     <div flex="50" flex-sm="100">
+                        <label for="exe_telefone">Telefone</label>
+                        <input id="exe_telefone" name="exe_telefone" ng-model="exe_telefone" class="form-control" px-br-phone-mask>
+                    </div>
+                    <div flex="50" flex-sm="100">
                         <label for="exe_cpf">CPF</label>
                         <input id="exe_cpf" name="exe_cpf" ng-model="exe_cpf" class="form-control" px-br-cpf-mask required>
                         <px-show-error px-element="exe_cpf"></px-show-error>
