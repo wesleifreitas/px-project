@@ -427,14 +427,18 @@ define(['../../directives/module'], function(directives) {
                     });
 
                     element.bind('keyup', function(event) {
+                        /*
                         // Verificar se cleanValue está indefinido
                         if (typeof scope.cleanValue == 'undefined') {
+                           *
                             scope.cleanValue = String(event.target.value).replace(/[^0-9]+/g, '');
                             scope.validPhone9 === false;
                             scope.validPhone8 === false;
                             $(event.target).trigger('focusin');
-
+                           
                         } else {
+                         */
+                        if (typeof scope.cleanValue !== 'undefined') {
                             if (angular.isDefined(scope.cleanValue)) {
                                 // Se possuir 11 dígitos e não estiver validado
                                 // Telefone com 11 dígitos é um telefone com 9 dígitos mais dois dígitos do DDD
