@@ -447,7 +447,7 @@ define(['../../directives/module'], function(directives) {
                                     _element.scope()[index.field] = _value;
 
                                     $timeout(function() {
-                                        _element.trigger('keyup'); // causa problemas em máscara de telefone :(
+                                        _element.trigger('keyup');
                                     }, 0);
 
                                 }
