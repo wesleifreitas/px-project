@@ -49,9 +49,9 @@ define(['../controllers/module'], function(controllers) {
 
         // Define as opções de status
         $scope.dataStatus = {
-            // Array: opções do select com opção "Todos"
+            // Array: opções do select com opção 'Todos'
             optionsAll: exemploService.status(true),
-            // Array: opções do select sem opção "Todos"
+            // Array: opções do select sem opção 'Todos'
             options: exemploService.status(false),
         };
 
@@ -82,7 +82,7 @@ define(['../controllers/module'], function(controllers) {
         /**
          * Controle da listagem
          * Note que a propriedade 'control' da directive px-data-grid é igual a 'dgExemplo'
-         * Exemplo: <px-data-grid px-control="dgExemplo">
+         * Exemplo: <px-data-grid px-control='dgExemplo'>
          * @type {Object}
          */
         $scope.dgExemploControl = {};
@@ -187,26 +187,26 @@ define(['../controllers/module'], function(controllers) {
         // Listagem - End     
 
         // Incializar título do formulário      
-        $scope.formTitle = "Formulário de Adicionar";
+        $scope.formTitle = 'Formulário de Adicionar';
         /**
          * Alterar título do formulário
          */
         $scope.setFormTitle = function() {
             if ($scope.formShow === 'default') {
                 if ($scope.formAction === 'insert') {
-                    $scope.formTitle = "Formulário de Adicionar";
+                    $scope.formTitle = 'Formulário de Adicionar';
                 } else {
-                    $scope.formTitle = "Formulário de Editar";
+                    $scope.formTitle = 'Formulário de Editar';
                 }
             } else if ($scope.formShow === 'exemplo2') {
-                $scope.formTitle = "Selecione uma categoria";
+                $scope.formTitle = 'Selecione uma categoria';
             }
         }
 
 
         formCtrl.$inject = ['$scope', '$mdDialog'];
         $scope.add = function(event) {
-            $scope.formAction = "insert";
+            $scope.formAction = 'insert';
             $scope.setFormTitle();
 
             $mdDialog.show({
@@ -221,7 +221,7 @@ define(['../controllers/module'], function(controllers) {
         };
 
         $scope.edit = function(event) {
-            $scope.formAction = "update";
+            $scope.formAction = 'update';
             $scope.formItemEdit = event.itemEdit;
             $scope.setFormTitle();
 
@@ -248,7 +248,7 @@ define(['../controllers/module'], function(controllers) {
         /**
          * Controle do formulário
          * Note que a propriedade 'control' da directive px-form é igual a 'formControl'
-         * Exemplo: <px-form px-control="formControl">
+         * Exemplo: <px-form px-control='formControl'>
          * @type {Object}
          */
         $scope.formControl = {};
