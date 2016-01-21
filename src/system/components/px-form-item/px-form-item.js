@@ -145,8 +145,8 @@ define(['../../directives/module'], function(directives) {
                         var _confirm = angular.element($('#' + $scope.confirm).get(0));
                         var _confirmModelCtrl = _confirm.data('$ngModelController');
 
-                        // Evento keyup
-                        _element.on('keyup', function(event) {
+                        // Eventos keyup blur
+                        _element.on('keyup blur', function(event) {
                             // Verificar se possui campo de confirmação
                             if (angular.isDefined($scope.confirm)) {
                                 if (String(_confirmModelCtrl.$modelValue) !== String(_ngModelCtrl.$modelValue)) {
