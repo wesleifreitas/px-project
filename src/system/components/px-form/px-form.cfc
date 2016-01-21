@@ -130,8 +130,12 @@
 			   		data[item.field] = item.valueObject.value;
 			   	}
 				// labelField
-				if (isDefined("item.labelField")) {
-					data[item.labelField.field] = item.labelField.value;
+				if (isDefined("item.labelField") AND isDefined("item.labelField.field")) {
+					if(isDefined("item.labelField.value")){
+						data[item.labelField.field] = item.labelField.value;
+					}else{
+						data[item.labelField.field] = null;
+					}
 				}
 			}
 		</cfscript>
