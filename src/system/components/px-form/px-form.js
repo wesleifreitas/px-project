@@ -282,6 +282,12 @@ define(['../../directives/module'], function(directives) {
                         value: ''
                     };
                 }
+                // Verificar default
+                // Se o campo possuir valor default e seu value for inválido
+                if (angular.isDefined(index.default) && (index.valueObject.value === null || index.valueObject.value === '')) {
+                    // Value do campo receber o valor default
+                    index.valueObject.value = index.default;
+                }
             });
 
             if ($scope.debug) {
