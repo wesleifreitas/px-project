@@ -91,13 +91,13 @@ define(['../controllers/module'], function(controllers) {
          * Inicializa listagem
          * @return {Void}
          */
-        $scope.gridInit = function() {
+        $scope.dgExemploInit = function() {
             /**
              * Configurações da listagem
              * - fields: Colunas da listagem
              * @type {Object}
              */
-            $scope.dgConfig = {
+            $scope.dgExemploConfig = {
                 table: 'dbo.exemplo',
                 view: 'dbo.vw_exemplo',
                 orderBy: 'exe_nome',
@@ -186,7 +186,7 @@ define(['../controllers/module'], function(controllers) {
 
         // Listagem - End     
 
-        // Incializar título do formulário      
+        // Inicializar título do formulário      
         $scope.formTitle = 'Formulário de Adicionar';
         /**
          * Alterar título do formulário
