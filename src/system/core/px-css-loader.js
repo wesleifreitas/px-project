@@ -41,9 +41,9 @@ define(['../services/module'], function(services) {
                 file: 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/core/external/jstree/themes/proton/style.css'
-            }, {
+            }/*, {
                 file: pxConfig.PX_PACKAGE + 'system/login/login.css'
-            }, {
+            }*/, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.css'
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.css'
@@ -52,12 +52,16 @@ define(['../services/module'], function(services) {
             }, {
                 file: pxConfig.PX_PACKAGE + 'system/core/px-project.css'
             }];
-
+        
             // Loop em cssLoader
             $.each(cssLoader, function(i, item) {
                 $('<link rel="stylesheet"/>').attr('href', item.file).appendTo($('head'));
+            });           
+            
+            // Loop em pxConfig.PROJECT_CSS
+            $.each(pxConfig.PROJECT_CSS, function(i, item) {
+                $('<link rel="stylesheet"/>').attr('href', item).appendTo($('head'));
             });
-            $('<link rel="stylesheet"/>').attr('href', 'styles.css').appendTo($('head'));            
         }
     }
 });

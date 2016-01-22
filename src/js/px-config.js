@@ -1,13 +1,16 @@
 define(['angular'], function(ng) {
 	'use strict';
 
+	var PX_PACKAGE = '' // Pacote Phoenix Project
+
 	var config = ng.module('pxConfig', [])
 		.constant('pxConfig', {
-			PX_PACKAGE: '', // Pacote Phoenix Project
+			PX_PACKAGE: PX_PACKAGE, // Pacote Phoenix Project
 			LIB: 'lib/', // Componentes externos
 			PROJECT_ID: 0, // Identificação do projeto (table: px.project)
 			PROJECT_NAME: 'Phoenix Project', // Nome do projeto
 			PROJECT_SRC: 'px-project/src/', // Source do projeto
+			PROJECT_CSS: [PX_PACKAGE + 'system/login/login.css','styles.css'], // Arquivos .css
 			PROJECT_DSN: 'px_project_sql', // Data Source Name (CF)
 			LOCALE: 'pt-BR', // Locale
 			LOGIN_REQUIRED: true, // Login obrigatório?
