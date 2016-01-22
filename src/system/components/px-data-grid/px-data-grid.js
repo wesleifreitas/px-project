@@ -146,7 +146,7 @@ define(['../../directives/module'], function(directives) {
 
                         // Checkbox  - Start
                         if (i === 0 && scope.check === true) {
-                            scope.columns += '<th class="text-left" width="1px"><input name="select_all" value="1" type="checkbox"></th>';
+                            scope.columns += '<th class="text-left" width="1%"><input name="select_all" value="1" type="checkbox"></th>';
 
                             aoColumnsData = {};
                             aoColumnsData.mData = 'pxDataGridRowNumber';
@@ -169,7 +169,7 @@ define(['../../directives/module'], function(directives) {
 
                         // Edit - Start                        
                         if (i === 1 && scope.edit === true) {
-                            scope.columns += '<th class="text-center" width="1px"><i class=""></i></th>';
+                            scope.columns += '<th class="text-center" width="1%"><i class=""></i></th>';
 
                             aoColumnsData = {};
                             aoColumnsData.mData = 'edit';
