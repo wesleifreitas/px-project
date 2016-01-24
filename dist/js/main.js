@@ -15,7 +15,8 @@ require.config({
         'dataTables': '../lib/datatables/media/js/jquery.dataTables.min',
         'moment': '../lib/moment/min/moment-with-locales.min',
         'numeral': '../lib/numeral/min/numeral.min',
-        'numeral-languages': '../lib/numeral/min/languages.min',        
+        'numeral-languages': '../lib/numeral/min/languages.min',
+        'jstree': '../lib/jstree/dist/jstree.min',
         'metro': '../system/core/external/metro',
         'docs': '../system/core/external/docs',
         'px-config': 'px-config'
@@ -52,13 +53,16 @@ require.config({
             deps: ['angular']
         },
         'metro': {
-            deps: ['jquery', 'jquery-ui','docs']
+            deps: ['jquery', 'jquery-ui', 'docs']
         },
         'docs': {
             deps: ['jquery']
         },
         'numeral-languages': {
             deps: ['numeral']
+        },
+        'jstree': {
+            deps: ['jquery']
         }
     }
 });

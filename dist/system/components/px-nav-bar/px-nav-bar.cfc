@@ -9,7 +9,7 @@
     output       ="true" 
     returntype   ="any" 
     returnformat ="JSON" 
-    hint         ="Retorna px-project menu">
+    hint         ="Retornar menu">
     
     <cfargument 
         name     ="dsn"     
@@ -26,11 +26,11 @@
         hint     ="Identificação do projeto">
 
     <cfargument 
-        name     ="per_id"  
+        name     ="user"  
         type     ="numeric"  
         required ="false"   
         default  ="-1"          
-        hint     ="Código do perfil">
+        hint     ="ID do usuário">
 
     <cfargument 
         name     ="isMobile"  
@@ -45,8 +45,20 @@
     <cfif isArray(arguments.pro_id)>
         <cfset inPro_id = arrayToList(arguments.pro_id, ",")>
     <cfelse>
-         <cfset inPro_id = arguments.pro_id>
+        <cfset inPro_id = arguments.pro_id>
     </cfif>
+
+    <cfquery datasource="#arguments.dsn#" name="qUsuario">
+        SELECT
+            usu_nome
+            ,per_id
+            ,per_developer
+            ,grupo_nome
+        FROM
+            dbo.vw_usuario
+        WHERE
+            usu_id = <cfqueryparam cfsqltype="cf_sql_bigint" value="#arguments.user#">
+    </cfquery>
     
     <cfquery datasource="#arguments.dsn#" name="qMenu">
 
@@ -61,30 +73,53 @@
                 SELECT 
                     COUNT(1) 
                 FROM 
-                    px.menu AS submenu 
+                    dbo.menu AS submenu
+                <cfif qUsuario.per_developer NEQ 1>
+                    INNER JOIN dbo.acesso AS acesso
+                    ON submenu.men_id = acesso.men_id
+                </cfif> 
                 WHERE 
                     pro_id      IN (#inPro_id#)
                 AND menu.men_id = submenu.men_idPai 
                 AND men_ativo   = 1
                 AND men_sistema = 1
+                <cfif qUsuario.per_developer NEQ 1>
+                    AND acesso.per_id = <cfqueryparam cfsqltype="cf_sql_bigint" value="#qUsuario.per_id#">
+                </cfif>
             ) AS count_submenu
             ,(
                 SELECT 
                     COUNT(1) 
                 FROM 
-                    px.menu AS submenu 
+                    dbo.menu AS submenu 
+                <cfif qUsuario.per_developer NEQ 1>
+                    INNER JOIN dbo.acesso AS acesso
+                    ON submenu.men_id = acesso.men_id
+                </cfif>
                 WHERE 
                     pro_id              IN (#inPro_id#)
                 AND submenu.men_idPai   = menu.men_idPai
                 AND men_ativo           = 1 
                 AND men_sistema         = 1
+                <cfif qUsuario.per_developer NEQ 1>
+                    AND acesso.per_id = <cfqueryparam cfsqltype="cf_sql_bigint" value="#qUsuario.per_id#">
+                </cfif>
             ) AS count_menu
         FROM
-            px.menu AS menu
+            dbo.menu AS menu
+
+        <cfif qUsuario.per_developer NEQ 1>
+            INNER JOIN dbo.acesso AS acesso
+            ON menu.men_id = acesso.men_id
+        </cfif>
+
         WHERE
             pro_id      IN (#inPro_id#)
         AND men_ativo   = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
         AND men_sistema = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
+        <cfif qUsuario.per_developer NEQ 1>
+            AND acesso.per_id = <cfqueryparam cfsqltype="cf_sql_bigint" value="#qUsuario.per_id#">
+        </cfif>
         ORDER BY
             menu.men_idPai
             ,menu.men_ordem             
@@ -192,7 +227,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 
               <li class="#arguments.cssFit#">
 
-                <a class='dropdown-toggle #arguments.cssFit# px-pointer'>#LOCAL.qMenu.men_nome# </a>
+                <a class='dropdown-toggle #arguments.cssFit# px-pointer'>#LOCAL.qMenu.men_nome#</a>
 
                 <ul class='dropdown-menu #arguments.cssFit#' data-role='dropdown'>
 
@@ -293,7 +328,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                 ,com_view
                 ,com_icon
             FROM 
-                px.vw_menu 
+                dbo.vw_menu 
             WHERE 
                 (men_idPai IS NULL OR men_idPai = 0)
                                     
@@ -310,7 +345,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                 ,m.com_view
                 ,m.com_icon
             FROM 
-                px.vw_menu m 
+                dbo.vw_menu m 
             INNER JOIN 
                 pxProjectMenuRecursivo c 
             ON 

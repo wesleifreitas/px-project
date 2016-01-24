@@ -1,11 +1,11 @@
 define(['angular'], function(ng) {
 	'use strict';
 
-	var PX_PACKAGE = '' // Pacote Phoenix Project
+	var PX_PACKAGE = '' // Package Phoenix Project
 
 	var config = ng.module('pxConfig', [])
 		.constant('pxConfig', {
-			PX_PACKAGE: PX_PACKAGE, // Pacote Phoenix Project
+			PX_PACKAGE: PX_PACKAGE, // Package Phoenix Project
 			LIB: 'lib/', // Componentes externos
 			PROJECT_ID: 0, // Identificação do projeto (table: px.project)
 			PROJECT_NAME: 'Phoenix Project', // Nome do projeto
