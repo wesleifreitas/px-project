@@ -60,21 +60,32 @@ gulp.task('build-system-others', function() {
 			'./src/system/**/*.woff',
 			'./src/system/**/*.tff',
 			'./src/system/**/*.cfm',
+			'./src/system/**/*.cfc',
 			'./src/system/**/*.cfc'
 		])		
 		.pipe(gulp.dest('dist/system'));
+});
+
+gulp.task('build-assets', function() {
+	return gulp
+		.src([			
+			'./src/system/assets/richsolutions/*.jpg'
+		])		
+		.pipe(gulp.dest('dist/system/assets/richsolutions'));
 });
 
 gulp.task('watch', function() {
 	gulp.watch('src/js/**/*.js', ['build-js']);
 	gulp.watch('./src/system/**/*.js', ['build-system-js']);	
 	gulp.watch('./src/system/**/*.css', ['build-system-css']);
-	gulp.watch('./src/system/**/*.js', ['build-system-others']);
+	gulp.watch('./src/system/**/*.*', ['build-system-others']);
+	gulp.watch('./src/system/assets/richsolutions/*.jpg', ['build-assets']);
 });
 
 gulp.task('default', [
 	'build-js',
 	'build-system-js',	
 	'build-system-css',
-	'build-system-others'
+	'build-system-others',
+	'build-assets'
 ]);
