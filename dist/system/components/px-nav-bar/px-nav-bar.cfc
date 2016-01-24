@@ -38,9 +38,7 @@
         required ="false"   
         default  ="false"          
         hint     ="O acesso é feito por browser mobile?">
-
-    <cfset response = structNew()>
-
+    
     <cfset arguments.pro_id = decode(arguments.pro_id)>
     <cfif isArray(arguments.pro_id)>
         <cfset inPro_id = arrayToList(arguments.pro_id, ",")>
@@ -74,7 +72,7 @@
                     COUNT(1) 
                 FROM 
                     dbo.menu AS submenu
-                <cfif qUsuario.per_developer NEQ 1>
+                <cfif arguments.user GT -1 AND qUsuario.per_developer NEQ 1>
                     INNER JOIN dbo.acesso AS acesso
                     ON submenu.men_id = acesso.men_id
                 </cfif> 
@@ -83,7 +81,7 @@
                 AND menu.men_id = submenu.men_idPai 
                 AND men_ativo   = 1
                 AND men_sistema = 1
-                <cfif qUsuario.per_developer NEQ 1>
+                <cfif arguments.user GT -1 AND qUsuario.per_developer NEQ 1>
                     AND acesso.per_id = <cfqueryparam cfsqltype="cf_sql_bigint" value="#qUsuario.per_id#">
                 </cfif>
             ) AS count_submenu
@@ -92,7 +90,7 @@
                     COUNT(1) 
                 FROM 
                     dbo.menu AS submenu 
-                <cfif qUsuario.per_developer NEQ 1>
+                <cfif arguments.user GT -1 AND qUsuario.per_developer NEQ 1>
                     INNER JOIN dbo.acesso AS acesso
                     ON submenu.men_id = acesso.men_id
                 </cfif>
@@ -101,14 +99,14 @@
                 AND submenu.men_idPai   = menu.men_idPai
                 AND men_ativo           = 1 
                 AND men_sistema         = 1
-                <cfif qUsuario.per_developer NEQ 1>
+                <cfif arguments.user GT -1 AND qUsuario.per_developer NEQ 1>
                     AND acesso.per_id = <cfqueryparam cfsqltype="cf_sql_bigint" value="#qUsuario.per_id#">
                 </cfif>
             ) AS count_menu
         FROM
             dbo.menu AS menu
 
-        <cfif qUsuario.per_developer NEQ 1>
+        <cfif arguments.user GT -1 AND qUsuario.per_developer NEQ 1>
             INNER JOIN dbo.acesso AS acesso
             ON menu.men_id = acesso.men_id
         </cfif>
@@ -117,7 +115,7 @@
             pro_id      IN (#inPro_id#)
         AND men_ativo   = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
         AND men_sistema = <cfqueryparam cfsqltype="cf_sql_bit" value="1"/>
-        <cfif qUsuario.per_developer NEQ 1>
+        <cfif arguments.user GT -1 AND qUsuario.per_developer NEQ 1>
             AND acesso.per_id = <cfqueryparam cfsqltype="cf_sql_bigint" value="#qUsuario.per_id#">
         </cfif>
         ORDER BY
