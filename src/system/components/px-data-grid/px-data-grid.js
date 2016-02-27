@@ -17,7 +17,7 @@ define(['../../directives/module'], function(directives) {
                 table: '@pxTable',
                 fields: '@pxFields',
                 orderBy: '@pxOrderBy',
-                group: '=pxGroup',
+                group: '@pxGroup',
                 groupItem: '@pxGroupItem',
                 groupLabel: '@pxGroupLabel',
                 where: '@pxWhere',
@@ -28,8 +28,8 @@ define(['../../directives/module'], function(directives) {
                 itemClick: '&pxItemClick',
                 itemEdit: '&pxItemEdit',
                 dataInit: '=pxDataInit',
-                rowsProcess: '=pxRowsProcess',
-                demand: '=pxDemand',
+                rowsProcess: '@pxRowsProcess',
+                demand: '@pxDemand',
                 control: '=pxControl'
             },
             link: function(scope, element, attrs) {
@@ -42,11 +42,21 @@ define(['../../directives/module'], function(directives) {
                 scope.id = scope.id || 'pxTable';
 
                 // Quantidade de linhas por consulta
-                scope.rowsProcess = scope.rowsProcess || 100;
+                scope.rowsProcess = parseInt(scope.rowsProcess) || 100;
 
-                // Consulta por demanda?                    
+
+                // Consulta por demanda?
                 if (!angular.isDefined(scope.demand)) {
                     scope.demand = true;
+                }else{
+                    scope.demand = (scope.demand === "true");
+                }
+
+                // Group
+                if (!angular.isDefined(scope.group)) {
+                    scope.group = true;
+                }else{
+                    scope.group = (scope.group === "true");
                 }
 
                 scope.$watch('config', function(newValue, oldValue) {

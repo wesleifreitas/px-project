@@ -821,7 +821,7 @@ define(['../../directives/module'], function(directives) {
                     orderBy: '@pxOrderBy',
                     recordCount: '@pxRecordCount',
                     where: '@pxWhere',
-                    selectedItem: '=pxSelectedItem',
+                    selectedItem: '@pxSelectedItem',
                     url: '@pxUrl',
                     responseQuery: '@pxResponseQuery',
                     localQuery: '@pxLocalQuery',
