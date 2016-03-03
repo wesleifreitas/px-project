@@ -1,13 +1,13 @@
 define(['../controllers/module'], function(controllers) {
     'use strict';
 
-    controllers.controller('LoginCtrl', ['pxCssLoader', '$scope', '$location', 'AuthenticationService', 'FlashService', function(pxCssLoader, $scope, $location, AuthenticationService, FlashService) {
+    controllers.controller('LoginCtrl', ['$timeout', 'pxCssLoader', '$scope', '$location', 'AuthenticationService', 'FlashService', '$mdDialog', function($timeout, pxCssLoader, $scope, $location, AuthenticationService, FlashService, $mdDialog) {
 
         pxCssLoader.load();
-
+        
         var vm = this;
 
-        vm.formTitle = 'Phoenix Project';
+        vm.formTitle = 'Login';
         vm.loginMessage = '';
 
         vm.initController = function initController() {
@@ -19,16 +19,19 @@ define(['../controllers/module'], function(controllers) {
             if (vm.selection === 'default') {
                 vm.dataLoading = true;
                 AuthenticationService.Login(vm.username, vm.password, function(response) {
-                    vm.loginMessage = response.message;
                     console.info(response);
+                    vm.loginMessage = response.message;
                     if (response.success) {
                         if (response.qQuery[0].USU_MUDARSENHA === 1) {
+                            vm.dataLoading = false;
                             vm.formTitle = "Alteração de senha";
                             vm.selection = 'redefine';
                             vm.id = response.qQuery[0].USU_ID;
                             return;
                         }
+
                         AuthenticationService.SetCredentials(vm.username, vm.password, response);
+                        //document.body.style.background = "#000000 url('') no-repeat center center fixed";
                         $location.path('/');
                     } else {
                         FlashService.Error(response.message);
@@ -42,11 +45,6 @@ define(['../controllers/module'], function(controllers) {
                     }
                 });
             }
-        };
-
-        vm.recover = function recover() {
-            vm.dataLoading = true;
-            alert('recover');
         };
 
         vm.redefine = function redefine() {
@@ -92,7 +90,7 @@ define(['../controllers/module'], function(controllers) {
             }
         };
 
-        vm.recover = function redefine() {
+        vm.recover = function recover() {
             vm.dataLoading = true;
             AuthenticationService.Recover(vm.username, vm.email, function(response) {
                 if (response.success) {
@@ -131,5 +129,19 @@ define(['../controllers/module'], function(controllers) {
         };
 
         vm.selection = 'default';
+
+        vm.showNewUser = function showNewUser() {
+            // Inicializar título do formulário      
+            $scope.formTitle = 'Cadastro de usuário';
+            $scope.formAction = 'insert';
+            $mdDialog.show({
+                scope: $scope,
+                preserveScope: true,
+                templateUrl: 'custom/register/register-form.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose: true
+            });
+        };
     }]);
 });

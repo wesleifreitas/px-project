@@ -1,5 +1,6 @@
 define(['../../directives/module'], function(directives) {
     'use strict';
+
     directives.directive('pxNavBar', ['pxConfig', '$compile', '$parse', '$timeout', function(pxConfig, $compile, $parse, $timeout) {
             return {
                 restrict: 'E',
@@ -12,30 +13,33 @@ define(['../../directives/module'], function(directives) {
                         element.html($parse(attrs.content)(scope));
                         $compile(element.contents())(scope);
                     }, true);
+
                     // Inicializar menu
                     $timeout(scope.getNavBar, 1000);
                 }
             };
         }])
         .controller('pxNavBarCtrl', ['pxConfig', '$scope', '$http', '$rootScope', function(pxConfig, $scope, $http, $rootScope) {
+
             $scope.templates = [{
                 name: '?.html',
-                url: pxConfig.PX_PACKAGE + '?.html'
+                url: '?.html'
             }, {
                 name: '',
                 url: ''
             }];
+
             $scope.template = $scope.templates[1];
-            // Globalstyles
-            // http://metroui.org.ua/v2/global.html
-            // Metro UI Colors
-            // https://colorlib.com/etc/metro-colors/
-            $scope.navBar = '<div class="navbar-content px-no-radius"><a class="pull-menu" href=""></a><ul id="menu" class="element-menu px-no-radius"><span class="element bg-dark" title="">Por favor aguarde, carregando barra de navegação...</span><div class="element place-right px-pointer" ng-click="toggleRight()"><a class="element-menu"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></a></div><span class="element-divider place-right"></span><button class="element image-button image-left place-right bg-dark">Phoenix Project - pxproject.com.br<img id="topMenuImgLogo" ng-src="{{logo}}" /></button></ul></div>';
+
+            $scope.navBar = '<div class="app-bar darcula px-no-radius"><span class="app-bar-element place-left" href="...">Por favor aguarde, carregando barra de navegação...</span></div>';
+
             $scope.getNavBar = function() {
+
                 var params = {};
-                params.pro_id = angular.toJson(pxConfig.PROJECT_ID);
+                params.pro_id = 0;                
                 params.isMobile = $scope.isMobile();
                 params.user = $rootScope.globals.currentUser.usu_id;
+                
                 $http({
                     method: 'POST',
                     url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
@@ -48,21 +52,30 @@ define(['../../directives/module'], function(directives) {
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 });
             };
+
             $scope.showView = function(view) {
-                if ($scope.isMobile()) {
-                    // "Minimizar" menu
-                    document.getElementById("menu").style.display = "none";
+                console.info($scope.isMobile());
+
+                if ($scope.isMobile() || $('.app-bar-pullbutton.automatic')) {
+                    // "Resetar" menu                    
+                    $('.app-bar-pullbutton.automatic').trigger('click');                    
                 }
+
                 var params = {};
                 params.men_id = view;
                 params.pathname = pxConfig.PROJECT_SRC; //document.location.pathname;
-                params.pxProjectPackage = pxConfig.PX_PACKAGE;
+                params.pxProjectPackage = '';
+
                 $http({
                     method: 'POST',
                     url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getView',
                     params: params
                 }).success(function(response) {
+                    //console.info('response',response);
+                    //$location.path('/'+response.qView.COM_VIEW);
+
                     var headerView = response.qView[0].MEN_NOMECAMINHO.split(response.qView[0].MEN_NOMECAMINHO.split('»')[response.qView[0].MEN_NOMECAMINHO.split('»').length - 1]);
+
                     $scope.view = {};
                     $scope.view.response = response;
                     $scope.view.men_id = response.qView[0].MEN_ID;
@@ -70,14 +83,17 @@ define(['../../directives/module'], function(directives) {
                     $scope.view.header = headerView[0];
                     $scope.view.titulo = response.qView[0].MEN_NOMECAMINHO.split('»')[response.qView[0].MEN_NOMECAMINHO.split('»').length - 1];
                     $scope.view.icon = response.qView[0].COM_ICON;
+
                     $scope.templates[1].name = response.qView[0].COM_VIEW;
                     $scope.templates[1].url = response.qView[0].COM_VIEW;
+
                 }).
                 error(function(data, status, headers, config) {
                     // Erro
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 });
             };
+
             $scope.isMobile = function() {
                 var userAgent = navigator.userAgent.toLowerCase();
                 if (userAgent.search(/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i) != -1) {

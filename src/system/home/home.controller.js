@@ -1,9 +1,45 @@
 define(['../controllers/module'], function(controllers) {
     'use strict';
 
-    controllers.controller('HomeCtrl', ['pxConfig', 'pxCssLoader', 'UserService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$locale', function(pxConfig, pxCssLoader, UserService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $log, $locale) {
+    controllers.controller('HomeCtrl', ['pxConfig', 'pxCssLoader', 'UserService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$mdDialog', '$log', '$locale', function(pxConfig, pxCssLoader, UserService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $mdDialog, $log, $locale) {
 
-            pxCssLoader.load();            
+            pxCssLoader.load();
+
+            $scope.menus = [{
+                name: 'Exemplo', // Nome do ícone
+                title: 'Phoenix » View - Exemplo', // Título do dialog
+                icon: 'glyphicon glyphicon-education home-icon', // Ícone
+                view: 'custom/exemplo/exemplo.html' // Tela
+            }];
+
+            $scope.iconShowView = function iconShowView(event, menu) {
+                if (angular.isDefined(menu.view)) {
+                    // Inicializar título do formulário      
+                    $scope.formTitle = menu.title;
+                    $mdDialog.show({
+                        scope: $scope,
+                        preserveScope: true,
+                        templateUrl: menu.view,
+                        parent: angular.element(document.body),
+                        targetEvent: event,
+                        clickOutsideToClose: false
+                    });
+                } else {
+                    alert('Função não disponível no momento')
+                        /*            
+                        $mdDialog.show(
+                            $mdDialog.alert()
+                            .parent(angular.element(document.body))
+                            .clickOutsideToClose(true)
+                            .title('Aviso')
+                            .textContent('Função não disponível no momento.')
+                            .ariaLabel('')
+                            .ok('Fechar')
+                            .targetEvent(ev)
+                        );
+                        */
+                }
+            }
 
             if (pxConfig.LOCALE) {
 

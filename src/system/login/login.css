@@ -12,20 +12,23 @@
 #loginControl {
   padding-top: 10px;
 }
-#loginDiv {
-  margin: 0px auto;
-  width: 300px;
-}
-#loginDiv h1 {  
+#headerDiv {
+  font-family: 'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif;
+  height: 88px;
   background-color: #282830;
   border-radius: 5px 5px 0 0;
   color: #FFFFFF;
   font-size: 25px;
-  padding: 20px;
+  padding: 25px;
   text-align: center;
+  margin-bottom: 7px;
+}
+#loginDiv {
+  margin: 0px auto;
+  width: 300px;
 }
 #loginDiv fieldset {
-  background: #EEEEEE;
+  background: #DDDDDD;
   border-radius: 0 0 5px 5px;
   font-size: 16px;
   padding: 20px;
@@ -51,9 +54,31 @@
   display: block;
   margin-top: 5px;
   cursor: pointer;
+  /*text-shadow: 0 0 0.2em #000, 0 0 0.2em #000*/
 }
 #loginDiv .recover-link:hover {
   color: #FFFFFF;
+}
+#loginDiv .working {
+  width: 100%;
+  text-align: center;
+  color: #FFFFFF;
+  font-weight: 400;
+  display: block;
+  margin-top: 5px;  
+}
+#loginDiv .new-user-link {
+  width: 100%;
+  text-align: center;
+  color: #FFFFFF;
+  font-weight: 400;
+  display: block;
+  margin-top: 5px;
+  cursor: pointer;
+  /*text-shadow: 0 0 0.2em #000, 0 0 0.2em #000*/
+}
+#loginDiv .new-user-link:hover {
+  color: #EEEEEE;
 }
 #loginDiv .login-message {
   width: 100%;
@@ -87,4 +112,7 @@
 }
 .animate-switch.ng-leave, .animate-switch.ng-enter.ng-enter-active {
   top: 0;
+}
+#loginDiv .error {
+  color: #A94442;
 }

@@ -1,3264 +1,10034 @@
-var METRO_AUTO_REINIT, METRO_LOCALE, METRO_WEEK_START, METRO_DIALOG = !1;
-(function(c) {
-	c.Metro = function(a) {
-		c.extend({}, a)
-	};
-	c.Metro.getDeviceSize = function() {
-		return {
-			width: 0 < window.innerWidth ? window.innerWidth : screen.width,
-			height: 0 < window.innerHeight ? window.innerHeight : screen.height
-		}
-	}
-})(jQuery);
-$(function() {
-	$("html").on("click", function(c) {
-		$(".dropdown-menu").each(function(a, b) {
-			$(b).hasClass("keep-open") || "block" != $(b).css("display") || $(b).hide()
-		})
-	})
-});
-$(function() {
-	$(window).on("resize", function() {
-		if (METRO_DIALOG) {
-			var c = ($(window).height() - METRO_DIALOG.outerHeight()) / 2,
-				a = ($(window).width() - METRO_DIALOG.outerWidth()) / 2;
-			METRO_DIALOG.css({
-				top: c,
-				left: a
-			})
-		}
-	})
-});
-(function(c) {
-	c.Metro.currentLocale = "en";
-	c.Metro.currentLocale = void 0 != METRO_LOCALE ? METRO_LOCALE : "en";
-	c.Metro.Locale = {
-		en: {
-			months: "January February March April May June July August September October November December Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" "),
-			days: "Sunday Monday Tuesday Wednesday Thursday Friday Saturday Su Mo Tu We Th Fr Sa".split(" "),
-			buttons: "Today Clear Cancel Help Prior Next Finish".split(" ")
-		},
-		fr: {
-			months: "Janvier F\u00e9vrier Mars Avril Mai Juin Juillet Ao\u00fbt Septembre Octobre Novembre D\u00e9cembre Jan F\u00e9v Mars Avr Mai Juin Juil Ao\u00fbt Sept Oct Nov D\u00e9c".split(" "),
-			days: "Dimanche Lundi Mardi Mercredi Jeudi Vendredi Samedi Di Lu Ma Me Je Ve Sa".split(" "),
-			buttons: "Aujourd'hui Effacer Annuler Aide Pr\u00e9cedent Suivant Fin".split(" ")
-		},
-		nl: {
-			months: "Januari Februari Maart April Mei Juni Juli Augustus September Oktober November December Jan Feb Mrt Apr Mei Jun Jul Aug Sep Okt Nov Dec".split(" "),
-			days: "Zondag Maandag Dinsdag Woensdag Donderdag Vrijdag Zaterdag Zo Ma Di Wo Do Vr Za".split(" "),
-			buttons: "Vandaag Verwijderen Annuleren Hulp Vorige Volgende Einde".split(" ")
-		},
-		ua: {
-			months: "\u0421\u0456\u0447\u0435\u043d\u044c \u041b\u044e\u0442\u0438\u0439 \u0411\u0435\u0440\u0435\u0437\u0435\u043d\u044c \u041a\u0432\u0456\u0442\u0435\u043d\u044c \u0422\u0440\u0430\u0432\u0435\u043d\u044c \u0427\u0435\u0440\u0432\u0435\u043d\u044c \u041b\u0438\u043f\u0435\u043d\u044c \u0421\u0435\u0440\u043f\u0435\u043d\u044c \u0412\u0435\u0440\u0435\u0441\u0435\u043d\u044c \u0416\u043e\u0432\u0442\u0435\u043d\u044c \u041b\u0438\u0441\u0442\u043e\u043f\u0430\u0434 \u0413\u0440\u0443\u0434\u0435\u043d\u044c \u0421\u0456\u0447 \u041b\u044e\u0442 \u0411\u0435\u0440 \u041a\u0432\u0456 \u0422\u0440\u0430 \u0427\u0435\u0440 \u041b\u0438\u043f \u0421\u0435\u0440 \u0412\u0435\u0440 \u0416\u043e\u0432 \u041b\u0438\u0441 \u0413\u0440\u0443".split(" "),
-			days: "\u041d\u0435\u0434\u0456\u043b\u044f \u041f\u043e\u043d\u0435\u0434\u0456\u043b\u043e\u043a \u0412\u0456\u0432\u0442\u043e\u0440\u043e\u043a \u0421\u0435\u0440\u0435\u0434\u0430 \u0427\u0435\u0442\u0432\u0435\u0440 \u041f\u2019\u044f\u0442\u043d\u0438\u0446\u044f \u0421\u0443\u0431\u043e\u0442\u0430 \u041d\u0434 \u041f\u043d \u0412\u0442 \u0421\u0440 \u0427\u0442 \u041f\u0442 \u0421\u0431".split(" "),
-			buttons: "\u0421\u044c\u043e\u0433\u043e\u0434\u043d\u0456 \u041e\u0447\u0438\u0441\u0442\u0438\u0442\u0438 \u0421\u043a\u0430\u0441\u0443\u0432\u0430\u0442\u0438 \u0414\u043e\u043f\u043e\u043c\u043e\u0433\u0430 \u041d\u0430\u0437\u0430\u0434 \u0412\u043f\u0435\u0440\u0435\u0434 \u0413\u043e\u0442\u043e\u0432\u043e".split(" ")
-		},
-		ru: {
-			months: "\u042f\u043d\u0432\u0430\u0440\u044c \u0424\u0435\u0432\u0440\u0430\u043b\u044c \u041c\u0430\u0440\u0442 \u0410\u043f\u0440\u0435\u043b\u044c \u041c\u0430\u0439 \u0418\u044e\u043d\u044c \u0418\u044e\u043b\u044c \u0410\u0432\u0433\u0443\u0441\u0442 \u0421\u0435\u043d\u0442\u044f\u0431\u0440\u044c \u041e\u043a\u0442\u044f\u0431\u0440\u044c \u041d\u043e\u044f\u0431\u0440\u044c \u0414\u0435\u043a\u0430\u0431\u0440\u044c \u042f\u043d\u0432 \u0424\u0435\u0432 \u041c\u0430\u0440 \u0410\u043f\u0440 \u041c\u0430\u0439 \u0418\u044e\u043d \u0418\u044e\u043b \u0410\u0432\u0433 \u0421\u0435\u043d \u041e\u043a\u0442 \u041d\u043e\u044f \u0414\u0435\u043a".split(" "),
-			days: "\u0412\u043e\u0441\u043a\u0440\u0435\u0441\u0435\u043d\u044c\u0435 \u041f\u043e\u043d\u0435\u0434\u0435\u043b\u044c\u043d\u0438\u043a \u0412\u0442\u043e\u0440\u043d\u0438\u043a \u0421\u0440\u0435\u0434\u0430 \u0427\u0435\u0442\u0432\u0435\u0440\u0433 \u041f\u044f\u0442\u043d\u0438\u0446\u0430 \u0421\u0443\u0431\u0431\u043e\u0442\u0430 \u0412\u0441 \u041f\u043d \u0412\u0442 \u0421\u0440 \u0427\u0442 \u041f\u0442 \u0421\u0431".split(" "),
-			buttons: "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u041e\u0447\u0438\u0441\u0442\u0438\u0442\u044c \u041e\u0442\u043c\u0435\u043d\u0438\u0442\u044c \u041f\u043e\u043c\u043e\u0449\u044c \u041d\u0430\u0437\u0430\u0434 \u0412\u043f\u0435\u0440\u0435\u0434 \u0413\u043e\u0442\u043e\u0432\u043e".split(" ")
-		},
-		zhCN: {
-			months: "\u4e00\u6708 \u4e8c\u6708 \u4e09\u6708 \u56db\u6708 \u4e94\u6708 \u516d\u6708 \u4e03\u6708 \u516b\u6708 \u4e5d\u6708 \u5341\u6708 \u5341\u4e00\u6708 \u5341\u4e8c\u6708 \u4e00\u6708 \u4e8c\u6708 \u4e09\u6708 \u56db\u6708 \u4e94\u6708 \u516d\u6708 \u4e03\u6708 \u516b\u6708 \u4e5d\u6708 \u5341\u6708 \u5341\u4e00\u6708 \u5341\u4e8c\u6708".split(" "),
-			days: "\u661f\u671f\u65e5 \u661f\u671f\u4e00 \u661f\u671f\u4e8c \u661f\u671f\u4e09 \u661f\u671f\u56db \u661f\u671f\u4e94 \u661f\u671f\u516d \u65e5 \u4e00 \u4e8c \u4e09 \u56db \u4e94 \u516d".split(" "),
-			buttons: "\u4eca\u65e5 \u6e05\u9664 Cancel Help Prior Next Finish".split(" ")
-		},
-		it: {
-			months: "Gennaio;Febbraio;Marzo;Aprile;Maggio;Giugno;Luglio;Agosto;Settembre;Ottobre;Novembre;Dicembre;Gen; Feb;Mar;Apr;Mag;Giu;Lug;Ago;Set;Ott;Nov;Dic".split(";"),
-			days: "Luned\u00ec Marted\u00ec Mercoled\u00ec Gioved\u00ec Venerd\u00ec Sabato Domenica Lun Mar Mer Gio Ven Sab Dom".split(" "),
-			buttons: "Oggi Cancella Cancel Help Prior Next Finish".split(" ")
-		},
-		de: {
-			months: "Januar Februar M\u00e4rz April Mai Juni Juli August September Oktober November Dezember Jan Feb Mrz Apr Mai Jun Jul Aug Sep Okt Nov Dez".split(" "),
-			days: "Sonntag Montag Dienstag Mittwoch Donnerstag Freitag Samstag So Mo Di Mi Do Fr Sa".split(" "),
-			buttons: "Heute Zur\u00fccksetzen Abbrechen Hilfe Fr\u00fcher Sp\u00e4ter Fertig".split(" ")
-		},
-		es: {
-			months: "Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre Ene Feb Mar Abr May Jun Jul Ago Sept Oct Nov Dic".split(" "),
-			days: "Domingo Lunes Martes Mi\u00e9rcoles Jueves Viernes S\u00e1bado Do Lu Mar Mi\u00e9 Jue Vi S\u00e1b".split(" "),
-			buttons: "Hoy Limpiar Cancel Help Prior Next Finish".split(" ")
-		}
-	};
-	c.Metro.setLocale = function(a, b) {
-		c.Metro.Locale[a] = b
-	}
-})(jQuery);
-var hasTouch = "ontouchend" in window,
-	eventTimer, moveDirection = "undefined",
-	startX, startY, deltaX, deltaY, mouseDown = !1;
+/*!
+ * Metro UI CSS v3.0.13 (http://metroui.org.ua)
+ * Copyright 2012-2015 Sergey Pimenov
+ * Licensed under MIT (http://metroui.org.ua/license.html)
+ */
 
-function addTouchEvents(c) {
-	hasTouch && (c.addEventListener("touchstart", touch2Mouse, !0), c.addEventListener("touchmove", touch2Mouse, !0), c.addEventListener("touchend", touch2Mouse, !0))
-}
+(function(factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['jquery'], factory);
+    } else {
+        factory(jQuery);
+    }
+}(function(jQuery) {
+    'use strict';
 
-function touch2Mouse(c) {
-	var a = c.changedTouches[0],
-		b;
-	switch (c.type) {
-		case "touchstart":
-			b = "mousedown";
-			break;
-		case "touchend":
-			b = "mouseup";
-			break;
-		case "touchmove":
-			b = "mousemove";
-			break;
-		default:
-			return
-	}
-	"mousedown" == b && (eventTimer = (new Date).getTime(), startX = a.clientX, startY = a.clientY, mouseDown = !0);
-	"mouseup" == b && (500 >= (new Date).getTime() - eventTimer ? b = "click" : 1E3 < (new Date).getTime() - eventTimer && (b = "longclick"), eventTimer = 0, mouseDown = !1);
-	"mousemove" == b && mouseDown && (deltaX = a.clientX - startX, deltaY = a.clientY - startY,
-		moveDirection = deltaX > deltaY ? "horizontal" : "vertical");
-	var d = document.createEvent("MouseEvent");
-	d.initMouseEvent(b, !0, !0, window, 1, a.screenX, a.screenY, a.clientX, a.clientY, !1, !1, !1, !1, 0, null);
-	a.target.dispatchEvent(d);
-	c.preventDefault()
-};
-(function(c) {
-	c.widget("metro.accordion", {
-		version: "1.0.0",
-		options: {
-			closeAny: !0,
-			open: function(a) {},
-			action: function(a) {}
-		},
-		_frames: {},
-		_create: function() {
-			var a = this.element;
-			void 0 != a.data("closeany") && (this.options.closeAny = a.data("closeany"));
-			this._frames = a.children(".accordion-frame");
-			this.init()
-		},
-		init: function() {
-			var a = this;
-			this._frames.each(function() {
-				var b = this,
-					d = c(this).children(".heading"),
-					e = c(this).children(".content");
-				c(d).hasClass("active") && !c(d).attr("disabled") && "none" != c(d).data("action") ?
-					(c(e).show(), c(d).removeClass("collapsed")) : c(d).addClass("collapsed");
-				d.on("click", function(d) {
-					d.preventDefault();
-					c(this).attr("disabled") || "none" == c(this).data("action") || (a.options.closeAny && a._closeFrames(), c(e).is(":hidden") ? (c(e).slideDown(), c(this).removeClass("collapsed"), a._trigger("frame", d, {
-						frame: b
-					}), a.options.open(b)) : (c(e).slideUp(), c(this).addClass("collapsed")), a.options.action(b))
-				})
-			})
-		},
-		_closeFrames: function() {
-			this._frames.children(".content").slideUp().parent().children(".heading").addClass("collapsed")
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.buttonset", {
-		version: "1.0.0",
-		options: {
-			click: function(a, b) {}
-		},
-		_buttons: {},
-		_create: function() {
-			this._buttons = this.element.find("button, .button");
-			this.init()
-		},
-		init: function() {
-			var a = this;
-			this._buttons.each(function() {
-				var b = c(this);
-				b.on("click", function(d) {
-					d.preventDefault();
-					b.toggleClass("active");
-					a.options.click(b, b.hasClass("active"));
-					a._trigger("click", null, {
-						button: b,
-						on: b.hasClass("active")
-					})
-				})
-			})
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a,
-				b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.buttongroup", {
-		version: "1.0.0",
-		options: {
-			click: function(a, b) {}
-		},
-		_buttons: {},
-		_create: function() {
-			this._buttons = this.element.find("button, .button");
-			this.init()
-		},
-		init: function() {
-			var a = this;
-			this._buttons.each(function() {
-				var b = c(this);
-				b.on("click", function(d) {
-					d.preventDefault();
-					a._buttons.removeClass("active");
-					b.addClass("active");
-					a.options.click(b, b.hasClass("active"));
-					a._trigger("click", null, {
-						button: b,
-						on: b.hasClass("active")
-					})
-				})
-			})
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption",
-				a, b)
-		}
-	})
-})(jQuery);
-var dateFormat = function() {
-	var c = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
-		a = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
-		b = /[^-+\dA-Z]/g,
-		d = function(a, b) {
-			a = String(a);
-			for (b = b || 2; a.length < b;) a = "0" + a;
-			return a
-		};
-	return function(e, f, g) {
-		var h = dateFormat;
-		1 != arguments.length || ("[object String]" != Object.prototype.toString.call(e) || /\d/.test(e)) || (f = e, e = void 0);
-		e = e ? new Date(e) : new Date;
-		f = String(h.masks[f] ||
-			f || h.masks["default"]);
-		"UTC:" == f.slice(0, 4) && (f = f.slice(4), g = !0);
-		locale = $.Metro.currentLocale;
-		var k = g ? "getUTC" : "get",
-			h = e[k + "Date"](),
-			l = e[k + "Day"](),
-			n = e[k + "Month"](),
-			p = e[k + "FullYear"](),
-			m = e[k + "Hours"](),
-			q = e[k + "Minutes"](),
-			u = e[k + "Seconds"](),
-			k = e[k + "Milliseconds"](),
-			r = g ? 0 : e.getTimezoneOffset(),
-			s = {
-				d: h,
-				dd: d(h),
-				ddd: $.Metro.Locale[locale].days[l],
-				dddd: $.Metro.Locale[locale].days[l + 7],
-				m: n + 1,
-				mm: d(n + 1),
-				mmm: $.Metro.Locale[locale].months[n],
-				mmmm: $.Metro.Locale[locale].months[n + 12],
-				yy: String(p).slice(2),
-				yyyy: p,
-				h: m % 12 || 12,
-				hh: d(m % 12 || 12),
-				H: m,
-				HH: d(m),
-				M: q,
-				MM: d(q),
-				s: u,
-				ss: d(u),
-				l: d(k, 3),
-				L: d(99 < k ? Math.round(k / 10) : k),
-				t: 12 > m ? "a" : "p",
-				tt: 12 > m ? "am" : "pm",
-				T: 12 > m ? "A" : "P",
-				TT: 12 > m ? "AM" : "PM",
-				Z: g ? "UTC" : (String(e).match(a) || [""]).pop().replace(b, ""),
-				o: (0 < r ? "-" : "+") + d(100 * Math.floor(Math.abs(r) / 60) + Math.abs(r) % 60, 4),
-				S: ["th", "st", "nd", "rd"][3 < h % 10 ? 0 : (10 != h % 100 - h % 10) * h % 10]
-			};
-		return f.replace(c, function(a) {
-			return a in s ? s[a] : a.slice(1, a.length - 1)
-		})
-	}
-}();
-dateFormat.masks = {
-	"default": "ddd mmm dd yyyy HH:MM:ss",
-	shortDate: "m/d/yy",
-	mediumDate: "mmm d, yyyy",
-	longDate: "mmmm d, yyyy",
-	fullDate: "dddd, mmmm d, yyyy",
-	shortTime: "h:MM TT",
-	mediumTime: "h:MM:ss TT",
-	longTime: "h:MM:ss TT Z",
-	isoDate: "yyyy-mm-dd",
-	isoTime: "HH:MM:ss",
-	isoDateTime: "yyyy-mm-dd'T'HH:MM:ss",
-	isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'"
-};
-dateFormat.i18n = {
-	dayNames: "Sun Mon Tue Wed Thu Fri Sat Sunday Monday Tuesday Wednesday Thursday Friday Saturday".split(" "),
-	monthNames: "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec January February March April May June July August September October November December".split(" ")
-};
-Date.prototype.format = function(c, a) {
-	return dateFormat(this, c, a)
-};
-(function(c) {
-	c.widget("metro.calendar", {
-		version: "1.0.0",
-		options: {
-			format: "yyyy-mm-dd",
-			multiSelect: !1,
-			startMode: "day",
-			weekStart: void 0 != METRO_WEEK_START ? METRO_WEEK_START : 0,
-			otherDays: !1,
-			date: new Date,
-			buttons: !0,
-			locale: c.Metro.currentLocale,
-			getDates: function(a) {},
-			click: function(a, b) {},
-			_storage: []
-		},
-		_year: 0,
-		_month: 0,
-		_day: 0,
-		_today: new Date,
-		_event: "",
-		_mode: "day",
-		_distance: 0,
-		_events: [],
-		_create: function() {
-			var a = this.element;
-			void 0 != a.data("multiSelect") && (this.options.multiSelect = a.data("multiSelect"));
-			void 0 !=
-				a.data("format") && (this.options.format = a.data("format"));
-			void 0 != a.data("date") && (this.options.date = new Date(a.data("date")));
-			void 0 != a.data("locale") && (this.options.locale = a.data("locale"));
-			void 0 != a.data("startMode") && (this.options.startMode = a.data("startMode"));
-			void 0 != a.data("weekStart") && (this.options.weekStart = a.data("weekStart"));
-			void 0 != a.data("otherDays") && (this.options.otherDays = a.data("otherDays"));
-			this._year = this.options.date.getFullYear();
-			this._distance = parseInt(this.options.date.getFullYear()) -
-				4;
-			this._month = this.options.date.getMonth();
-			this._day = this.options.date.getDate();
-			this._mode = this.options.startMode;
-			a.data("_storage", []);
-			this._renderCalendar()
-		},
-		_renderMonth: function() {
-			var a = this._year,
-				b = this._month,
-				d = 28;
-			1 == b && (0 != a % 100 && 0 == a % 4 || 0 == a % 400) && (d = 29);
-			var e = ["31", "" + d + "", "31", "30", "31", "30", "31", "31", "30", "31", "30", "31"],
-				f = e[b],
-				g = (new Date(a, b, 1)).getDay(),
-				h, k;
-			this.element.html("");
-			d = c("<table/>").addClass("bordered");
-			h = c("<tr/>");
-			c("<td/>").addClass("text-center").html("<a class='btn-previous-year' href='#'><i class='icon-previous'></i></a>").appendTo(h);
-			c("<td/>").addClass("text-center").html("<a class='btn-previous-month' href='#'><i class='icon-arrow-left-4'></i></a>").appendTo(h);
-			c("<td/>").attr("colspan", 3).addClass("text-center").html("<a class='btn-select-month' href='#'>" + c.Metro.Locale[this.options.locale].months[b] + " " + a + "</a>").appendTo(h);
-			c("<td/>").addClass("text-center").html("<a class='btn-next-month' href='#'><i class='icon-arrow-right-4'></i></a>").appendTo(h);
-			c("<td/>").addClass("text-center").html("<a class='btn-next-year' href='#'><i class='icon-next'></i></a>").appendTo(h);
-			h.addClass("calendar-header").appendTo(d);
-			var l;
-			h = c("<tr/>");
-			for (k = 0; 7 > k; k++) this.options.weekStart ? (l = k + 1, 7 == l && (l = 0), c("<td/>").addClass("text-center day-of-week").html(c.Metro.Locale[this.options.locale].days[l + 7]).appendTo(h)) : c("<td/>").addClass("text-center day-of-week").html(c.Metro.Locale[this.options.locale].days[k + 7]).appendTo(h);
-			h.addClass("calendar-subheader").appendTo(d);
-			h = this._month - 1;
-			0 > h && (h = 11);
-			e = e[h];
-			l = (this.options.weekStart ? g + 6 : g) % 7;
-			var n = "";
-			h = c("<tr/>");
-			for (k = 0; k < l; k++) this.options.otherDays &&
-				(n = e - (l - k - 1)), c("<td/>").addClass("empty").html("<small class='other-day'>" + n + "</small>").appendTo(h);
-			g = (this.options.weekStart ? g + 6 : g) % 7;
-			for (k = 1; k <= f; k++) g %= 7, 0 == g && (h.appendTo(d), h = c("<tr/>")), e = c("<td/>").addClass("text-center day").html("<a href='#'>" + k + "</a>"), a == this._today.getFullYear() && (b == this._today.getMonth() && this._today.getDate() == k) && e.addClass("today"), l = (new Date(this._year, this._month, k)).format("yyyy-mm-dd"), 0 <= this.element.data("_storage").indexOf(l) && e.find("a").addClass("selected"),
-				e.appendTo(h), g++;
-			a = "";
-			for (k = g + 1; 7 >= k; k++) this.options.otherDays && (a = k - g), c("<td/>").addClass("empty").html("<small class='other-day'>" + a + "</small>").appendTo(h);
-			h.appendTo(d);
-			this.options.buttons && (h = c("<tr/>").addClass("calendar-actions"), e = c("<td/>").attr("colspan", 7).addClass("text-left").html("<button class='button calendar-btn-today small success'>" + c.Metro.Locale[this.options.locale].buttons[0] + "</button>&nbsp;<button class='button calendar-btn-clear small warning'>" + c.Metro.Locale[this.options.locale].buttons[1] +
-				"</button>"), e.appendTo(h), h.appendTo(d));
-			d.appendTo(this.element);
-			this.options.getDates(this.element.data("_storage"))
-		},
-		_renderMonths: function() {
-			var a, b, d, e, f;
-			this.element.html("");
-			a = c("<table/>").addClass("bordered");
-			b = c("<tr/>");
-			c("<td/>").addClass("text-center").html("<a class='btn-previous-year' href='#'><i class='icon-arrow-left-4'></i></a>").appendTo(b);
-			c("<td/>").attr("colspan", 2).addClass("text-center").html("<a class='btn-select-year' href='#'>" + this._year + "</a>").appendTo(b);
-			c("<td/>").addClass("text-center").html("<a class='btn-next-year' href='#'><i class='icon-arrow-right-4'></i></a>").appendTo(b);
-			b.addClass("calendar-header").appendTo(a);
-			b = c("<tr/>");
-			for (e = f = 0; 12 > e; e++) d = c("<td/>").addClass("text-center month").html("<a href='#' data-month='" + e + "'>" + c.Metro.Locale[this.options.locale].months[e + 12] + "</a>"), this._month == e && (new Date).getFullYear() == this._year && d.addClass("today"), d.appendTo(b), 0 == (f + 1) % 4 && (b.appendTo(a), b = c("<tr/>")), f += 1;
-			a.appendTo(this.element)
-		},
-		_renderYears: function() {
-			var a, b, d, e, f;
-			this.element.html("");
-			a = c("<table/>").addClass("bordered");
-			b = c("<tr/>");
-			c("<td/>").addClass("text-center").html("<a class='btn-previous-year' href='#'><i class='icon-arrow-left-4'></i></a>").appendTo(b);
-			c("<td/>").attr("colspan", 2).addClass("text-center").html(this._distance + "-" + (this._distance + 11)).appendTo(b);
-			c("<td/>").addClass("text-center").html("<a class='btn-next-year' href='#'><i class='icon-arrow-right-4'></i></a>").appendTo(b);
-			b.addClass("calendar-header").appendTo(a);
-			b = c("<tr/>");
-			f = 0;
-			for (e = this._distance; e < this._distance + 12; e++) d = c("<td/>").addClass("text-center year").html("<a href='#' data-year='" + e + "'>" + e + "</a>"), (new Date).getFullYear() == e && d.addClass("today"), d.appendTo(b), 0 == (f +
-				1) % 4 && (b.appendTo(a), b = c("<tr/>")), f += 1;
-			a.appendTo(this.element)
-		},
-		_renderCalendar: function() {
-			switch (this._mode) {
-				case "year":
-					this._renderYears();
-					break;
-				case "month":
-					this._renderMonths();
-					break;
-				default:
-					this._renderMonth()
-			}
-			this._initButtons()
-		},
-		_initButtons: function() {
-			var a = this,
-				b = this.element.find("table");
-			"day" == this._mode ? (b.find(".btn-select-month").on("click", function(b) {
-				b.preventDefault();
-				b.stopPropagation();
-				a._mode = "month";
-				a._renderCalendar()
-			}), b.find(".btn-previous-month").on("click", function(b) {
-				a._event =
-					"eventPrevious";
-				b.preventDefault();
-				b.stopPropagation();
-				a._month -= 1;
-				0 > a._month && (a._year -= 1, a._month = 11);
-				a._renderCalendar()
-			}), b.find(".btn-next-month").on("click", function(b) {
-				a._event = "eventNext";
-				b.preventDefault();
-				b.stopPropagation();
-				a._month += 1;
-				12 == a._month && (a._year += 1, a._month = 0);
-				a._renderCalendar()
-			}), b.find(".btn-previous-year").on("click", function(b) {
-				a._event = "eventPrevious";
-				b.preventDefault();
-				b.stopPropagation();
-				a._year -= 1;
-				a._renderCalendar()
-			}), b.find(".btn-next-year").on("click", function(b) {
-				a._event =
-					"eventNext";
-				b.preventDefault();
-				b.stopPropagation();
-				a._year += 1;
-				a._renderCalendar()
-			}), b.find(".calendar-btn-today").on("click", function(b) {
-				a._event = "eventNext";
-				b.preventDefault();
-				b.stopPropagation();
-				a.options.date = new Date;
-				a._year = a.options.date.getFullYear();
-				a._month = a.options.date.getMonth();
-				a._day = a.options.date.getDate();
-				a._renderCalendar()
-			}), b.find(".calendar-btn-clear").on("click", function(b) {
-				b.preventDefault();
-				b.stopPropagation();
-				a.options.date = new Date;
-				a._year = a.options.date.getFullYear();
-				a._month =
-					a.options.date.getMonth();
-				a._day = a.options.date.getDate();
-				a.element.data("_storage", []);
-				a._renderCalendar()
-			}), b.find(".day a").on("click", function(d) {
-				d.preventDefault();
-				d.stopPropagation();
-				d = (new Date(a._year, a._month, parseInt(c(this).html()))).format(a.options.format, null);
-				var e = new Date(a._year, a._month, parseInt(c(this).html()));
-				a.options.multiSelect ? (c(this).toggleClass("selected"), c(this).hasClass("selected") ? a._addDate(d) : a._removeDate(d)) : (b.find(".day a").removeClass("selected"), c(this).addClass("selected"),
-					a.element.data("_storage", []), a._addDate(d));
-				a.options.getDates(a.element.data("_storage"));
-				a.options.click(d, e)
-			})) : "month" == this._mode ? (b.find(".month a").on("click", function(b) {
-				a._event = "eventNext";
-				b.preventDefault();
-				b.stopPropagation();
-				a._month = parseInt(c(this).data("month"));
-				a._mode = "day";
-				a._renderCalendar()
-			}), b.find(".btn-previous-year").on("click", function(b) {
-				a._event = "eventPrevious";
-				b.preventDefault();
-				b.stopPropagation();
-				a._year -= 1;
-				a._renderCalendar()
-			}), b.find(".btn-next-year").on("click",
-				function(b) {
-					a._event = "eventNext";
-					b.preventDefault();
-					b.stopPropagation();
-					a._year += 1;
-					a._renderCalendar()
-				}), b.find(".btn-select-year").on("click", function(b) {
-				a._event = "eventNext";
-				b.preventDefault();
-				b.stopPropagation();
-				a._mode = "year";
-				a._renderCalendar()
-			})) : (b.find(".year a").on("click", function(b) {
-				a._event = "eventNext";
-				b.preventDefault();
-				b.stopPropagation();
-				a._year = parseInt(c(this).data("year"));
-				a._mode = "month";
-				a._renderCalendar()
-			}), b.find(".btn-previous-year").on("click", function(b) {
-				a._event = "eventPrevious";
-				b.preventDefault();
-				b.stopPropagation();
-				a._distance -= 10;
-				a._renderCalendar()
-			}), b.find(".btn-next-year").on("click", function(b) {
-				a._event = "eventNext";
-				b.preventDefault();
-				b.stopPropagation();
-				a._distance += 10;
-				a._renderCalendar()
-			}))
-		},
-		_addDate: function(a) {
-			0 > this.element.data("_storage").indexOf(a) && this.element.data("_storage").push(a)
-		},
-		_removeDate: function(a) {
-			a = this.element.data("_storage").indexOf(a);
-			this.element.data("_storage").splice(a, 1)
-		},
-		setDate: function(a) {
-			a = new Date(a);
-			a = (new Date(a.getFullYear() +
-				"/" + (a.getMonth() + 1) + "/" + a.getDate())).format("yyyy-mm-dd");
-			this._addDate(a);
-			this._renderCalendar()
-		},
-		getDate: function(a) {
-			return (new Date(void 0 != a ? this.element.data("_storage")[a] : this.element.data("_storage")[0])).format(this.options.format)
-		},
-		getDates: function() {
-			return this.element.data("_storage")
-		},
-		unsetDate: function(a) {
-			a = new Date(a);
-			a = (new Date(a.getFullYear() + "-" + (a.getMonth() + 1) + "-" + a.getDate())).format("yyyy-mm-dd");
-			this._removeDate(a);
-			this._renderCalendar()
-		},
-		_destroy: function() {},
-		_setOption: function(a,
-			b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.datepicker", {
-		version: "1.0.0",
-		options: {
-			format: "dd.mm.yyyy",
-			date: void 0,
-			effect: "none",
-			position: "bottom",
-			locale: c.Metro.currentLocale,
-			weekStart: void 0 != METRO_WEEK_START ? METRO_WEEK_START : 0,
-			otherDays: !1,
-			selected: function(a, b) {},
-			_calendar: void 0
-		},
-		_create: function() {
-			var a = this,
-				b = this.element,
-				d = b.children("input"),
-				e = b.children("button.btn-date");
-			void 0 != b.data("date") && (this.options.date = b.data("date"));
-			void 0 != b.data("format") && (this.options.format = b.data("format"));
-			void 0 !=
-				b.data("effect") && (this.options.effect = b.data("effect"));
-			void 0 != b.data("position") && (this.options.position = b.data("position"));
-			void 0 != b.data("locale") && (this.options.locale = b.data("locale"));
-			void 0 != b.data("weekStart") && (this.options.weekStart = b.data("weekStart"));
-			void 0 != b.data("otherDays") && (this.options.otherDays = b.data("otherDays"));
-			this._createCalendar(b, this.options.date);
-			d.attr("readonly", !0);
-			e.on("click", function(b) {
-				b.stopPropagation();
-				"none" == a.options._calendar.css("display") ? a._show() :
-					a._hide()
-			});
-			b.on("click", function(b) {
-				b.stopPropagation();
-				"none" == a.options._calendar.css("display") ? a._show() : a._hide()
-			});
-			c("html").on("click", function(a) {
-				c(".calendar-dropdown").hide()
-			})
-		},
-		_createCalendar: function(a, b) {
-			var d, e = this;
-			d = c("<div/>").css({
-				position: "absolute",
-				display: "none",
-				"max-width": 260,
-				"z-index": 1E3
-			}).addClass("calendar calendar-dropdown").appendTo(a);
-			void 0 != e.options.date && d.data("date", e.options.date);
-			d.calendar({
-				multiSelect: !1,
-				format: e.options.format,
-				buttons: !1,
-				locale: e.options.locale,
-				otherDays: e.options.otherDays,
-				weekStart: e.options.weekStart,
-				click: function(b, c) {
-					d.calendar("setDate", c);
-					a.children("input[type=text]").val(b);
-					e.options.selected(b, c);
-					e._hide()
-				}
-			});
-			void 0 != b && (d.calendar("setDate", b), a.children("input[type=text]").val(d.calendar("getDate")));
-			switch (this.options.position) {
-				case "top":
-					d.css({
-						top: 0 - d.height(),
-						left: 0
-					});
-					break;
-				default:
-					d.css({
-						top: "100%",
-						left: 0
-					})
-			}
-			this.options._calendar = d
-		},
-		_show: function() {
-			"slide" == this.options.effect ? (c(".calendar-dropdown").slideUp("fast"),
-				this.options._calendar.slideDown("fast")) : "fade" == this.options.effect ? (c(".calendar-dropdown").fadeOut("fast"), this.options._calendar.fadeIn("fast")) : (c(".calendar-dropdown").hide(), this.options._calendar.show())
-		},
-		_hide: function() {
-			"slide" == this.options.effect ? this.options._calendar.slideUp("fast") : "fade" == this.options.effect ? this.options._calendar.fadeOut("fast") : this.options._calendar.hide()
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.carousel", {
-		version: "1.0.0",
-		options: {
-			auto: !0,
-			period: 2E3,
-			duration: 500,
-			effect: "slowdown",
-			direction: "left",
-			markers: {
-				show: !0,
-				type: "default",
-				position: "left"
-			},
-			controls: !0,
-			stop: !0,
-			width: "100%",
-			height: 300
-		},
-		_slides: {},
-		_currentIndex: 0,
-		_interval: 0,
-		_outPosition: 0,
-		_create: function() {
-			var a = this,
-				b = this.options,
-				c = carousel = this.element,
-				e = carousel.find(".controls");
-			void 0 != c.data("auto") && (b.auto = c.data("auto"));
-			void 0 != c.data("period") && (b.period = c.data("period"));
-			void 0 != c.data("duration") &&
-				(b.duration = c.data("duration"));
-			void 0 != c.data("effect") && (b.effect = c.data("effect"));
-			void 0 != c.data("direction") && (b.direction = c.data("direction"));
-			void 0 != c.data("width") && (b.width = c.data("width"));
-			void 0 != c.data("height") && (b.height = c.data("height"));
-			void 0 != c.data("stop") && (b.stop = c.data("stop"));
-			void 0 != c.data("controls") && (b.controls = c.data("controls"));
-			void 0 != c.data("markersShow") && (b.markers.show = c.data("markersShow"));
-			void 0 != c.data("markersType") && (b.markers.type = c.data("markersType"));
-			void 0 != c.data("markersPosition") && (b.markers.position = c.data("markersPosition"));
-			carousel.css({
-				width: this.options.width,
-				height: this.options.height
-			});
-			this._slides = carousel.find(".slide");
-			if (!(1 >= this._slides.length)) {
-				!1 !== this.options.markers && (this.options.markers.show && 1 < this._slides.length) && this._markers(a);
-				this.options.controls && 1 < this._slides.length ? (carousel.find(".controls.left").on("click", function() {
-						a._slideTo("prior")
-					}), carousel.find(".controls.right").on("click", function() {
-						a._slideTo("next")
-					})) :
-					e.hide();
-				if (this.options.stop) carousel.on("mouseenter", function() {
-					clearInterval(a._interval)
-				}).on("mouseleave", function() {
-					a.options.auto && (a._autoStart(), a.options.period)
-				});
-				this.options.auto && this._autoStart()
-			}
-		},
-		_autoStart: function() {
-			var a = this;
-			this._interval = setInterval(function() {
-				"left" == a.options.direction ? a._slideTo("next") : a._slideTo("prior")
-			}, this.options.period)
-		},
-		_slideTo: function(a) {
-			var b = this._slides[this._currentIndex];
-			void 0 == a && (a = "next");
-			"prior" === a ? (this._currentIndex -= 1, 0 > this._currentIndex &&
-				(this._currentIndex = this._slides.length - 1), this._outPosition = this.element.width()) : "next" === a && (this._currentIndex += 1, this._currentIndex >= this._slides.length && (this._currentIndex = 0), this._outPosition = -this.element.width());
-			a = this._slides[this._currentIndex];
-			switch (this.options.effect) {
-				case "switch":
-					this._effectSwitch(b, a);
-					break;
-				case "slowdown":
-					this._effectSlowdown(b, a, this.options.duration);
-					break;
-				case "fade":
-					this._effectFade(b, a, this.options.duration);
-					break;
-				default:
-					this._effectSlide(b, a, this.options.duration)
-			}
-			var d =
-				this;
-			this.element.find(".markers ul li a").each(function() {
-				c(this).data("num") === d._currentIndex ? c(this).parent().addClass("active") : c(this).parent().removeClass("active")
-			})
-		},
-		_slideToSlide: function(a) {
-			var b = this._slides[this._currentIndex],
-				c = this._slides[a];
-			this._outPosition = a > this._currentIndex ? -this.element.width() : this.element.width();
-			switch (this.options.effect) {
-				case "switch":
-					this._effectSwitch(b, c);
-					break;
-				case "slowdown":
-					this._effectSlowdown(b, c, this.options.duration);
-					break;
-				case "fade":
-					this._effectFade(b,
-						c, this.options.duration);
-					break;
-				default:
-					this._effectSlide(b, c, this.options.duration)
-			}
-			this._currentIndex = a
-		},
-		_markers: function(a) {
-			var b, d, e, f;
-			b = c('<div class="markers ' + this.options.markers.type + '" />');
-			d = c("<ul></ul>").appendTo(b);
-			for (f = 0; f < this._slides.length; f++) e = c('<li><a href="javascript:void(0)" data-num="' + f + '"></a></li>'), 0 === f && e.addClass("active"), e.appendTo(d);
-			d.find("li a").removeClass("active").on("click", function() {
-				var b = c(this),
-					e = b.data("num");
-				d.find("li").removeClass("active");
-				b.parent().addClass("active");
-				if (e == a._currentIndex) return !0;
-				a._slideToSlide(e);
-				return !0
-			});
-			b.appendTo(this.element);
-			switch (this.options.markers.position) {
-				case "top-left":
-					b.css({
-						left: "10px",
-						right: "auto",
-						bottom: "auto",
-						top: "10px"
-					});
-					break;
-				case "top-right":
-					b.css({
-						left: "auto",
-						right: "10px",
-						bottom: "auto",
-						top: "0px"
-					});
-					break;
-				case "top-center":
-					b.css({
-						left: this.element.width() / 2 - b.width() / 2,
-						right: "auto",
-						bottom: "auto",
-						top: "0px"
-					});
-					break;
-				case "bottom-left":
-					b.css({
-						left: "10px",
-						right: "auto"
-					});
-					break;
-				case "bottom-right":
-					b.css({
-						right: "10px",
-						left: "auto"
-					});
-					break;
-				case "bottom-center":
-					b.css({
-						left: this.element.width() / 2 - b.width() / 2,
-						right: "auto"
-					})
-			}
-		},
-		_effectSwitch: function(a, b) {
-			c(a).hide();
-			c(b).css({
-				left: 0
-			}).show()
-		},
-		_effectSlide: function(a, b, d) {
-			c(a).animate({
-				left: this._outPosition
-			}, d);
-			c(b).css("left", -1 * this._outPosition).show().animate({
-				left: 0
-			}, d)
-		},
-		_effectSlowdown: function(a, b, d) {
-			d = {
-				duration: d,
-				easing: "doubleSqrt"
-			};
-			c.easing.doubleSqrt = function(a) {
-				return Math.sqrt(Math.sqrt(a))
-			};
-			c(a).animate({
-				left: this._outPosition
-			}, d);
-			c(b).css("left", -1 * this._outPosition).show().animate({
-					left: 0
-				},
-				d)
-		},
-		_effectFade: function(a, b, d) {
-			c(a).fadeOut(d);
-			c(b).css({
-				left: 0
-			}).fadeIn(d)
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.countdown", {
-		version: "1.0.0",
-		options: {
-			style: {
-				background: "bg-dark",
-				foreground: "fg-white",
-				divider: "fg-dark"
-			},
-			blink: !0,
-			days: 1,
-			stoptimer: 0,
-			ontick: function(a, b, c, e) {},
-			onstop: function() {}
-		},
-		wrappers: {},
-		_interval: 0,
-		_create: function() {
-			var a = this,
-				b = this.element;
-			c.each(["Days", "Hours", "Minutes", "Seconds"], function() {
-				c('<span class="count' + this + '">').html('<span class="digit-wrapper">                        <span class="digit">0</span>                    </span>                    <span class="digit-wrapper">                        <span class="digit">0</span>                    </span>').appendTo(b);
-				"Seconds" != this && b.append('<span class="divider"></span>')
-			});
-			this.wrappers = this.element.find(".digit-wrapper");
-			void 0 != b.data("blink") && (this.options.blink = b.data("blick"));
-			void 0 != b.data("styleBackground") && (this.options.style.background = b.data("styleBackground"));
-			void 0 != b.data("styleForeground") && (this.options.style.foreground = b.data("styleForeground"));
-			void 0 != b.data("styleDivider") && (this.options.style.divider = b.data("styleDivider"));
-			"default" != this.options.style.background && this.element.find(".digit").addClass(this.options.style.background);
-			"default" != this.options.style.foreground && this.element.find(".digit").addClass(this.options.style.foreground);
-			"default" != this.options.style.divider && this.element.find(".divider").addClass(this.options.style.divider);
-			void 0 != b.data("stoptimer") && (this.options.stoptimer = new Date(b.data("stoptimer")));
-			0 == this.options.stoptimer && (this.options.stoptimer = (new Date).getTime() + 864E5 * this.options.days);
-			setTimeout(function() {
-				a.tick()
-			}, 1E3)
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption",
-				a, b)
-		},
-		tick: function() {
-			var a = this;
-			this._interval = setInterval(function() {
-				var b, c, e, f;
-				b = Math.floor((a.options.stoptimer - new Date) / 1E3);
-				0 > b && (b = 0);
-				c = Math.floor(b / 86400);
-				a.updateDuo(0, 1, c);
-				b -= 86400 * c;
-				e = Math.floor(b / 3600);
-				a.updateDuo(2, 3, e);
-				b -= 3600 * e;
-				f = Math.floor(b / 60);
-				a.updateDuo(4, 5, f);
-				b -= 60 * f;
-				a.updateDuo(6, 7, b);
-				a.options.ontick(c, e, f, b);
-				a.blinkDivider();
-				0 === c && (0 === e && 0 === f && 0 === b) && (a.options.onstop(), a.stopDigit(), a._trigger("alarm"), clearInterval(a._interval))
-			}, 1E3)
-		},
-		blinkDivider: function() {
-			this.options.blink &&
-				this.element.find(".divider").toggleClass("no-visible")
-		},
-		stopDigit: function() {
-			this.wrappers.each(function() {
-				c(this).children(".digit").addClass("stop")
-			})
-		},
-		updateDuo: function(a, b, c) {
-			this.switchDigit(this.wrappers.eq(a), Math.floor(c / 10) % 10);
-			this.switchDigit(this.wrappers.eq(b), c % 10)
-		},
-		switchDigit: function(a, b) {
-			var d = a.find(".digit");
-			if (d.is(":animated") || a.data("digit") == b) return !1;
-			a.data("digit", b);
-			var e = c("<span>", {
-				"class": "digit",
-				css: {
-					top: "-2.1em",
-					opacity: 0
-				},
-				html: b
-			});
-			e.addClass(this.options.style.background);
-			e.addClass(this.options.style.foreground);
-			d.before(e).removeClass("static").animate({
-				top: "2.5em"
-			}, "fast", function() {
-				d.remove()
-			});
-			e.delay(100).animate({
-				top: 0,
-				opacity: 1
-			}, "fast");
-			return !0
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.dropdown", {
-		version: "1.0.1",
-		options: {
-			effect: "slide",
-			toggleElement: !1
-		},
-		_create: function() {
-			var a = this,
-				b = this.element,
-				d = this.name,
-				e = this.element.parent(),
-				e = this.options.toggleElement || e.children(".dropdown-toggle");
-			void 0 != b.data("effect") && (this.options.effect = b.data("effect"));
-			e.on("click." + d, function(d) {
-				d.preventDefault();
-				d.stopPropagation();
-				"block" != b.css("display") || b.hasClass("keep-open") ? (c(".dropdown-menu").each(function(d, e) {
-					b.parents(".dropdown-menu").is(e) || (c(e).hasClass("keep-open") ||
-						"block" != c(e).css("display")) || a._close(e)
-				}), a._open(b)) : a._close(b)
-			});
-			c(b).find("li.disabled a").on("click", function(a) {
-				a.preventDefault()
-			})
-		},
-		_open: function(a) {
-			switch (this.options.effect) {
-				case "fade":
-					c(a).fadeIn("fast");
-					break;
-				case "slide":
-					c(a).slideDown("fast");
-					break;
-				default:
-					c(a).hide()
-			}
-			this._trigger("onOpen", null, a)
-		},
-		_close: function(a) {
-			switch (this.options.effect) {
-				case "fade":
-					c(a).fadeOut("fast");
-					break;
-				case "slide":
-					c(a).slideUp("fast");
-					break;
-				default:
-					c(a).hide()
-			}
-			this._trigger("onClose", null, a)
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.inputControl", {
-		version: "1.0.0",
-		options: {},
-		_create: function() {
-			var a = this.element;
-			a.hasClass("text") ? this.initTextInput(a, this) : a.hasClass("password") ? this.initPasswordInput(a, this) : a.hasClass("checkbox") || a.hasClass("radio") || a.hasClass("switch") ? this.initCheckboxInput(a, this) : a.hasClass("file") && this.initFileInput(a, this)
-		},
-		initCheckboxInput: function(a, b) {},
-		initFileInput: function(a, b) {
-			var d, e, f;
-			f = c("<input type='text' id='__input_file_wrapper__' readonly style='z-index: 1; cursor: default;'>");
-			d = a.children(".btn-file");
-			e = a.children('input[type="file"]');
-			e.css("z-index", 0);
-			f.insertAfter(e);
-			e.attr("tabindex", "-1");
-			d.attr("type", "button");
-			e.on("change", function() {
-				var a = c(this).val();
-				"" != a && f.val(a)
-			});
-			d.on("click", function() {
-				e.trigger("click")
-			})
-		},
-		initTextInput: function(a, b) {
-			var d = a.children(".btn-clear"),
-				e = a.children("input[type=text]");
-			if (0 != d.length && (d.attr("tabindex", "-1"), d.attr("type", "button"), d.on("click", function() {
-					e = a.children("input");
-					e.prop("readonly") || (e.val(""), e.focus(), b._trigger("onClear",
-						null, a))
-				}), !e.attr("disabled"))) e.on("click", function() {
-				c(this).focus()
-			})
-		},
-		initPasswordInput: function(a, b) {
-			var d = a.children(".btn-reveal"),
-				e = a.children("input[type=password]");
-			if (0 != d.length && (d.attr("tabindex", "-1"), d.attr("type", "button"), d.on("mousedown", function(a) {
-					e.attr("type", "text")
-				}), d.on("mouseup, mouseleave, blur", function(a) {
-					e.attr("type", "password").focus()
-				}), !e.attr("disabled"))) e.on("click", function() {
-				c(this).focus()
-			})
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption",
-				a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.inputTransform", {
-		version: "1.0.0",
-		options: {
-			transformType: "text"
-		},
-		_create: function() {
-			var a = this.element,
-				b;
-			if (!a.parent().hasClass("input-control")) {
-				b = a.get(0).tagName.toLowerCase();
-				"textarea" == b ? this.options.transformType = "textarea" : "select" == b ? this.options.transformType = "select" : void 0 != a.data("transformType") ? this.options.transformType = a.data("transformType") : this.options.transformType = a.attr("type");
-				a = void 0;
-				switch (this.options.transformType) {
-					case "password":
-						a = this._createInputPassword();
-						break;
-					case "file":
-						a = this._createInputFile();
-						break;
-					case "checkbox":
-						a = this._createInputCheckbox();
-						break;
-					case "radio":
-						a = this._createInputRadio();
-						break;
-					case "switch":
-						a = this._createInputSwitch();
-						break;
-					case "select":
-						a = this._createInputSelect();
-						break;
-					case "textarea":
-						a = this._createInputTextarea();
-						break;
-					case "search":
-						a = this._createInputSearch();
-						break;
-					case "email":
-						a = this._createInputEmail();
-						break;
-					case "tel":
-						a = this._createInputTel();
-						break;
-					case "number":
-						a = this._createInputNum();
-						break;
-					default:
-						a = this._createInputText()
-				}
-				a.inputControl()
-			}
-		},
-		_createInputTextarea: function() {
-			var a = this.element,
-				b = c("<div/>").addClass("input-control").addClass("textarea"),
-				d = a.clone(!0);
-			a.parent();
-			d.appendTo(b);
-			b.insertBefore(a);
-			a.remove();
-			return b
-		},
-		_createInputSelect: function() {
-			var a = this.element,
-				b = c("<div/>").addClass("input-control").addClass("select"),
-				d = a.clone(!0);
-			a.parent();
-			d.val(a.val()).appendTo(b);
-			b.insertBefore(a);
-			a.remove();
-			return b
-		},
-		_createInputSwitch: function() {
-			var a = this.element,
-				b = c("<div/>").addClass("input-control").addClass("switch"),
-				d = c("<label/>"),
-				e = c("<span/>").addClass("check"),
-				f = a.clone(!0);
-			a.parent();
-			var g = c("<span/>").addClass("caption").html(void 0 != a.data("caption") ? a.data("caption") : "");
-			d.appendTo(b);
-			f.appendTo(d);
-			e.appendTo(d);
-			g.appendTo(d);
-			b.insertBefore(a);
-			a.remove();
-			return b
-		},
-		_createInputCheckbox: function() {
-			var a = this.element,
-				b = c("<div/>").addClass("input-control").addClass("checkbox"),
-				d = c("<label/>"),
-				e = c("<span/>").addClass("check"),
-				f = a.clone(!0);
-			a.parent();
-			var g = c("<span/>").addClass("caption").html(void 0 != a.data("caption") ?
-				a.data("caption") : "");
-			d.appendTo(b);
-			f.appendTo(d);
-			e.appendTo(d);
-			g.appendTo(d);
-			b.insertBefore(a);
-			a.remove();
-			return b
-		},
-		_createInputRadio: function() {
-			var a = this.element,
-				b = c("<div/>").addClass("input-control").addClass("radio"),
-				d = c("<label/>"),
-				e = c("<span/>").addClass("check"),
-				f = a.clone(!0);
-			a.parent();
-			var g = c("<span/>").addClass("caption").html(void 0 != a.data("caption") ? a.data("caption") : "");
-			d.appendTo(b);
-			f.appendTo(d);
-			e.appendTo(d);
-			g.appendTo(d);
-			b.insertBefore(a);
-			a.remove();
-			return b
-		},
-		_createInputSearch: function() {
-			return this._createInputVal("text",
-				"btn-search")
-		},
-		_createInputNum: function() {
-			return this._createInputVal("number", "btn-clear")
-		},
-		_createInputTel: function() {
-			return this._createInputVal("tel", "btn-clear")
-		},
-		_createInputEmail: function() {
-			return this._createInputVal("email", "btn-clear")
-		},
-		_createInputText: function() {
-			return this._createInputVal("text", "btn-clear")
-		},
-		_createInputPassword: function() {
-			return this._createInputVal("password", "btn-reveal")
-		},
-		_createInputFile: function() {
-			return this._createInputVal("file", "btn-file")
-		},
-		_createInputVal: function(a,
-			b) {
-			var d = this.element,
-				e = c("<div/>").addClass("input-control").addClass(a),
-				f = c("<button/>").addClass(b),
-				g = d.clone(!0);
-			d.parent();
-			g.appendTo(e);
-			f.appendTo(e);
-			e.insertBefore(d);
-			d.remove();
-			return e
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.livetile", {
-		version: "1.0.0",
-		options: {
-			effect: "slideLeft",
-			period: 4E3,
-			duration: 700,
-			easing: "doubleSqrt"
-		},
-		_frames: {},
-		_currentIndex: 0,
-		_interval: 0,
-		_outPosition: 0,
-		_size: {},
-		_create: function() {
-			var a = this,
-				b = this.element;
-			void 0 != b.data("effect") && (this.options.effect = b.data("effect"));
-			void 0 != b.data("direction") && (this.options.direction = b.data("direction"));
-			void 0 != b.data("period") && (this.options.period = b.data("period"));
-			void 0 != b.data("duration") && (this.options.duration = b.data("duration"));
-			void 0 != b.data("easing") && (this.options.easing = b.data("easing"));
-			this._frames = b.children("[class*='-content']");
-			1 >= this._frames.length || (c.easing.doubleSqrt = function(a) {
-				return Math.sqrt(Math.sqrt(a))
-			}, this._size = {
-				width: b.width(),
-				height: b.height()
-			}, b.on("mouseenter", function() {
-				a.stop()
-			}), b.on("mouseleave", function() {
-				a.start()
-			}), this.start())
-		},
-		start: function() {
-			var a = this;
-			this._interval = setInterval(function() {
-				a._animate()
-			}, this.options.period)
-		},
-		stop: function() {
-			clearInterval(this._interval)
-		},
-		_animate: function() {
-			var a =
-				this._frames[this._currentIndex],
-				b;
-			this._currentIndex += 1;
-			this._currentIndex >= this._frames.length && (this._currentIndex = 0);
-			b = this._frames[this._currentIndex];
-			switch (this.options.effect) {
-				case "slideLeft":
-					this._effectSlideLeft(a, b);
-					break;
-				case "slideRight":
-					this._effectSlideRight(a, b);
-					break;
-				case "slideDown":
-					this._effectSlideDown(a, b);
-					break;
-				case "slideUpDown":
-					this._effectSlideUpDown(a, b);
-					break;
-				case "slideLeftRight":
-					this._effectSlideLeftRight(a, b);
-					break;
-				default:
-					this._effectSlideUp(a, b)
-			}
-		},
-		_effectSlideLeftRight: function(a,
-			b) {
-			0 == this._currentIndex % 2 ? this._effectSlideLeft(a, b) : this._effectSlideRight(a, b)
-		},
-		_effectSlideUpDown: function(a, b) {
-			0 == this._currentIndex % 2 ? this._effectSlideUp(a, b) : this._effectSlideDown(a, b)
-		},
-		_effectSlideUp: function(a, b) {
-			var d = this._size.height,
-				e = {
-					duration: this.options.duration,
-					easing: this.options.easing
-				};
-			c(a).animate({
-				top: -d
-			}, e);
-			c(b).css({
-				top: d
-			}).show().animate({
-				top: 0
-			}, e)
-		},
-		_effectSlideDown: function(a, b) {
-			var d = this._size.height,
-				e = {
-					duration: this.options.duration,
-					easing: this.options.easing
-				};
-			c(a).animate({
-					top: d
-				},
-				e);
-			c(b).css({
-				top: -d
-			}).show().animate({
-				top: 0
-			}, e)
-		},
-		_effectSlideLeft: function(a, b) {
-			var d = this._size.width,
-				e = {
-					duration: this.options.duration,
-					easing: this.options.easing
-				};
-			c(a).animate({
-				left: -1 * d
-			}, e);
-			c(b).css({
-				left: d
-			}).show().animate({
-				left: 0
-			}, e)
-		},
-		_effectSlideRight: function(a, b) {
-			var d = this._size.width,
-				e = {
-					duration: this.options.duration,
-					easing: this.options.easing
-				};
-			c(a).animate({
-				left: d
-			}, e);
-			c(b).css({
-				left: -d
-			}).show().animate({
-				left: 0
-			}, e)
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption",
-				a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.dragtile", {
-		version: "1.0.0",
-		options: {},
-		_create: function() {
-			var a = (tile = this.element).parents(".tile-area");
-			a.find(".tile");
-			a.find(".tile-group");
-			tile.attr("draggable", "true");
-			addTouchEvents(tile[0]);
-			tile[0].addEventListener("dragstart", this._dragStart, !1);
-			tile[0].addEventListener("dragend", this._dragEnd, !1);
-			tile.on("mousedown", function(a) {});
-			tile.on("mouseup", function(a) {})
-		},
-		_dragStart: function(a) {
-			c(this).css("opacity", 0.4)
-		},
-		_dragEnd: function(a) {
-			c(this).css("opacity", 1)
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.progressbar", {
-		version: "1.0.1",
-		options: {
-			value: 0,
-			color: "bg-cyan",
-			animate: !1,
-			max: 100,
-			onchange: function(a) {}
-		},
-		_create: function() {
-			var a = this.element,
-				b = this.options;
-			void 0 != a.data("value") && this.value(a.data("value") + "%");
-			void 0 != a.data("color") && (b.color = a.data("color"));
-			void 0 != a.data("animate") && (b.animate = a.data("animate"));
-			void 0 != a.data("max") && (b.max = a.data("max"));
-			b.max = 0 > b.max ? 0 : b.max;
-			b.max = 100 < b.max ? 100 : b.max;
-			this._showBar()
-		},
-		_showBar: function(a) {
-			a = a || this.options.value;
-			var b = this.element;
-			b.html("");
-			var d = c("<div />");
-			d.addClass("bar");
-			this.options.color.indexOf("bg-") + 1 ? d.addClass(this.options.color) : d.css("background", this.options.color);
-			d.appendTo(b);
-			this.options.animate ? d.css("width", this.value() + "%").animate({
-				width: a + "%"
-			}) : d.css("width", a + "%");
-			this.options.onchange(this.value())
-		},
-		value: function(a) {
-			if (void 0 != a) a = parseInt(a), a = a > this.max ? this.max : a, a = 0 > a ? 0 : a, this._showBar(a), this.options.value = a;
-			else return parseInt(this.options.value)
-		},
-		color: function(a) {
-			this.options.color =
-				a;
-			this.options.color.indexOf("bg-") + 1 ? this.element.find(".bar").addClass(this.options.color) : this.element.find(".bar").css("background", this.options.color);
-			this._showBar()
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.rating", {
-		version: "1.0.0",
-		options: {
-			score: 0,
-			half: !1,
-			stars: 5,
-			"static": !0,
-			hints: ["bad", "poor", "regular", "good", "gorgeous"],
-			showHint: !1,
-			showScore: !1,
-			scoreHint: "Current score: ",
-			click: function(a, b) {}
-		},
-		_create: function() {
-			var a = this.element;
-			void 0 != a.data("score") && (this.options.score = a.data("score"));
-			void 0 != a.data("half") && (this.options.half = a.data("half"));
-			void 0 != a.data("stars") && (this.options.stars = a.data("stars"));
-			void 0 != a.data("showHint") && (this.options.showHint = a.data("showHint"));
-			void 0 != a.data("static") && (this.options.static = a.data("static"));
-			void 0 != a.data("showScore") && (this.options.showScore = a.data("showScore"));
-			void 0 != a.data("scoreHint") && (this.options.scoreHint = a.data("scoreHint"));
-			this._showRating()
-		},
-		rate: function(a) {
-			this.options.score = a;
-			this._showRating()
-		},
-		_showRating: function() {
-			var a = this,
-				b = this.element,
-				d = this.options,
-				e, f;
-			b.addClass("rating");
-			b.html("");
-			e = c("<ul/>");
-			d.static || b.addClass("active");
-			for (var g = 0; g < d.stars; g++) f = c("<li/>"), f.data("value", g + 1), d.showHint &&
-				f.attr("title", d.hints[g]), g <= d.score - 1 && f.addClass("rated"), f.on("click", function() {
-					d.click(c(this).data("value"), a)
-				}), f.appendTo(e);
-			e.appendTo(b);
-			d.showScore ? (c("<span/>").addClass("score-hint").html(d.scoreHint + d.score).appendTo(b), b.css("height", "auto")) : b.find("ul").css("margin-bottom", 0)
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.slider", {
-		version: "1.0.2",
-		options: {
-			position: 0,
-			accuracy: 0,
-			color: "default",
-			completeColor: "default",
-			markerColor: "default",
-			colors: [],
-			showHint: !1,
-			change: function(a, b) {},
-			changed: function(a, b) {},
-			min: 0,
-			max: 100,
-			animate: !0,
-			_slider: {
-				vertical: !1,
-				offset: 0,
-				length: 0,
-				marker: 0,
-				ppp: 0,
-				start: 0,
-				stop: 0
-			}
-		},
-		_create: function() {
-			var a = this,
-				b = this.element,
-				c = this.options,
-				e = this.options._slider;
-			void 0 != b.data("accuracy") && (c.accuracy = 0 < b.data("accuracy") ? b.data("accuracy") : 0);
-			void 0 != b.data("animate") &&
-				(c.animate = b.data("animate"));
-			void 0 != b.data("min") && (c.min = b.data("min"));
-			c.min = 0 > c.min ? 0 : c.min;
-			c.min = c.min > c.max ? c.max : c.min;
-			void 0 != b.data("max") && (c.max = b.data("max"));
-			c.max = 100 < c.max ? 100 : c.max;
-			c.max = c.max < c.min ? c.min : c.max;
-			void 0 != b.data("position") && (c.position = this._correctValue(b.data("position") > this.options.min ? b.data("position") > this.options.max ? this.options.max : b.data("position") : this.options.min));
-			void 0 != b.data("color") && (c.color = b.data("color"));
-			void 0 != b.data("completeColor") && (c.completeColor =
-				b.data("completeColor"));
-			void 0 != b.data("markerColor") && (c.markerColor = b.data("markerColor"));
-			void 0 != b.data("colors") && (c.colors = b.data("colors").split(","));
-			void 0 != b.data("showHint") && (c.showHint = b.data("showHint"));
-			e.vertical = b.hasClass("vertical");
-			this._createSlider();
-			this._initPoints();
-			this._placeMarker(c.position);
-			addTouchEvents(b[0]);
-			b.children(".marker").on("mousedown", function(b) {
-				b.preventDefault();
-				a._startMoveMarker(b)
-			});
-			b.on("mousedown", function(b) {
-				b.preventDefault();
-				a._startMoveMarker(b)
-			})
-		},
-		_startMoveMarker: function(a) {
-			var b = this.element,
-				d = this.options,
-				e = this,
-				f = b.children(".hint");
-			c(document).mousemove(function(a) {
-				e._movingMarker(a);
-				b.hasClass("permanent-hint") || f.css("display", "block")
-			});
-			c(document).mouseup(function() {
-				c(document).off("mousemove");
-				c(document).off("mouseup");
-				b.data("value", e.options.position);
-				b.trigger("changed", e.options.position);
-				d.changed(e.options.position, b);
-				b.hasClass("permanent-hint") || f.css("display", "none")
-			});
-			this._initPoints();
-			this._movingMarker(a)
-		},
-		_movingMarker: function(a) {
-			var b;
-			b = this.options._slider.vertical;
-			var c = this.options._slider.offset,
-				e = this.options._slider.start,
-				f = this.options._slider.stop,
-				g = this.options._slider.length,
-				h = this.options._slider.marker;
-			a = b ? a.pageY - c : a.pageX - c;
-			a < e ? a = e : a > f && (a = f);
-			b = this._pixToPerc(b ? g - a - h / 2 : a - h / 2);
-			this._placeMarker(b);
-			this.options.position = b;
-			this.options.change(Math.round(b), this.element)
-		},
-		_placeMarker: function(a) {
-			var b, c, e = this.options,
-				f = 0,
-				g = f = 0,
-				h = this.element.children(".marker"),
-				k = this.element.children(".complete"),
-				l = this.element.children(".hint");
-			c = this._percToPix(this.options.position);
-			f = e.colors.length;
-			g = e._slider.length / f;
-			if (this.options._slider.vertical) {
-				var n = this._percToPix(this.options.position) + this.options._slider.marker,
-					p = this.options._slider.length - n;
-				b = this._percToPix(a) + this.options._slider.marker;
-				c = this.options._slider.length - b;
-				this._animate(h.css("top", p), {
-					top: c
-				});
-				this._animate(k.css("height", n), {
-					height: b
-				});
-				f && (f = Math.round(b / g) - 1, k.css("background-color", e.colors[0 > f ? 0 : f]));
-				e.showHint && l.html(Math.round(a)).css("top", c - l.height() /
-					2)
-			} else b = this._percToPix(a), this._animate(h.css("left", c), {
-				left: b
-			}), this._animate(k.css("width", c), {
-				width: b
-			}), f && (f = Math.round(b / g) - 1, k.css("background-color", e.colors[0 > f ? 0 : f])), e.showHint && this._animate(l.html(Math.round(a)).css("left", c - l.width() / 2), {
-				left: b - l.width() / 2
-			})
-		},
-		_animate: function(a, b) {
-			this.options.animate ? a.stop(!0).animate(b) : a.css(b)
-		},
-		_pixToPerc: function(a) {
-			return this._correctValue(a * this.options._slider.ppp)
-		},
-		_percToPix: function(a) {
-			return 0 === this.options._slider.ppp ? 0 : a / this.options._slider.ppp
-		},
-		_correctValue: function(a) {
-			var b = this.options.accuracy,
-				c = this.options.max,
-				e = this.options.min;
-			if (0 === b) return a;
-			if (a === c) return c;
-			if (a === e) return e;
-			a = Math.floor(a / b) * b + Math.round(a % b / b) * b;
-			return a > c ? c : a < e ? e : a
-		},
-		_initPoints: function() {
-			var a = this.options._slider,
-				b = this.element;
-			a.vertical ? (a.offset = b.offset().top, a.length = b.height(), a.marker = b.children(".marker").height()) : (a.offset = b.offset().left, a.length = b.width(), a.marker = b.children(".marker").width());
-			a.ppp = this.options.max / (a.length - a.marker);
-			a.start =
-				a.marker / 2;
-			a.stop = a.length - a.marker / 2
-		},
-		_createSlider: function() {
-			var a = this.element,
-				b = this.options,
-				d, e;
-			a.html("");
-			d = c("<div/>").addClass("complete").appendTo(a);
-			e = c("<a/>").addClass("marker").appendTo(a);
-			b.showHint && c("<span/>").addClass("hint").appendTo(a);
-			"default" != b.color && a.css("background-color", b.color);
-			"default" != b.completeColor && d.css("background-color", b.completeColor);
-			"default" != b.markerColor && e.css("background-color", b.markerColor)
-		},
-		value: function(a) {
-			a = a > this.options.max ? this.options.max :
-				a;
-			a = a < this.options.min ? this.options.min : a;
-			return "undefined" !== typeof a ? (this._placeMarker(parseInt(a)), this.options.position = parseInt(a), this.options.change(Math.round(parseInt(a)), this.element), this) : Math.round(this.options.position)
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.tabcontrol", {
-		version: "1.0.0",
-		options: {
-			effect: "none",
-			activateStoredTab: !1,
-			tabclick: function(a) {},
-			tabchange: function(a) {}
-		},
-		_create: function() {
-			var a = this,
-				b = this.element,
-				d = c(b.children(".tabs")).children("li"),
-				e = c(b.children(".frames")).children(".frame"),
-				f = b.attr("id");
-			void 0 != b.data("effect") && (this.options.effect = b.data("effect"));
-			this.init(d, e);
-			d.each(function() {
-				var b = c(this).children("a");
-				b.on("click", function(h) {
-					h.preventDefault();
-					a.options.tabclick(this);
-					if (c(this).parent().hasClass("disabled")) return !1;
-					d.removeClass("active");
-					b.parent("li").addClass("active");
-					e.hide();
-					h = c(b.attr("href"));
-					switch (a.options.effect) {
-						case "slide":
-							h.slideDown();
-							break;
-						case "fade":
-							h.fadeIn();
-							break;
-						default:
-							h.show()
-					}
-					a._trigger("change", null, h);
-					a.options.tabchange(this);
-					void 0 != f && window.localStorage.setItem(f + "-current-tab", c(this).attr("href"))
-				})
-			});
-			this.options.activateStoredTab && this._activateStoredTab(d)
-		},
-		init: function(a, b) {
-			var d = this;
-			a.each(function() {
-				if (c(this).hasClass("active")) {
-					var a = c(c(c(this).children("a")).attr("href"));
-					b.hide();
-					a.show();
-					d._trigger("change", null, a)
-				}
-			})
-		},
-		_activateStoredTab: function(a) {
-			var b = window.localStorage.getItem(this.element.attr("id") + "-current-tab");
-			void 0 != b && a.each(function() {
-				var a = c(this).children("a");
-				a.attr("href") == b && a.click()
-			})
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.tablecontrol", {
-		version: "1.0.0",
-		options: {
-			width: "100%",
-			height: "auto",
-			cls: "table",
-			checkRow: !1,
-			colModel: [],
-			data: []
-		},
-		_create: function() {
-			var a = this.element;
-			a.css({
-				width: this.options.width,
-				height: this.options.height
-			});
-			a = this.createTable(a);
-			this.addHeader(a, this.options.colModel);
-			this.addTableData(a, this.options.data);
-			a.addClass(this.options.cls)
-		},
-		addHeader: function(a, b) {
-			var d = c("<thead/>").appendTo(a),
-				e = c("<tr/>").appendTo(d);
-			c.each(b, function(a, b) {
-				c("<th/>").addClass(b.hcls).html(b.caption).appendTo(e)
-			})
-		},
-		createTable: function(a) {
-			return c("<table/>").appendTo(a)
-		},
-		addTableData: function(a, b) {
-			var d = this,
-				e = c("<tbody/>").appendTo(a);
-			c.each(b, function(a, b) {
-				d.addRowData(e, b)
-			})
-		},
-		addRowData: function(a, b) {
-			var d = c("<tr/>").appendTo(a);
-			void 0 != b.__row_class && d.addClass(b.__row_class);
-			c.each(this.options.colModel, function(a, f) {
-				c("<td/>").css("width", f.width).addClass(f.cls).html(b[f.field]).appendTo(d)
-			})
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-$(function() {
-	$("[data-role=table]").tablecontrol()
-});
-(function(c) {
-	c.widget("metro.times", {
-		version: "1.0.0",
-		options: {
-			style: {
-				background: "bg-dark",
-				foreground: "fg-white",
-				divider: "fg-dark"
-			},
-			blink: !0,
-			alarm: {
-				h: 0,
-				m: 0,
-				s: 0
-			},
-			ontick: function(a, b, c) {},
-			onalarm: function() {}
-		},
-		wrappers: {},
-		_interval: 0,
-		_create: function() {
-			var a = this,
-				b = this.element;
-			c.each(["Hours", "Minutes", "Seconds"], function() {
-				c('<span class="count' + this + '">').html('<span class="digit-wrapper">                        <span class="digit">0</span>                    </span>                    <span class="digit-wrapper">                        <span class="digit">0</span>                    </span>').appendTo(b);
-				"Seconds" != this && b.append('<span class="divider"></span>')
-			});
-			this.wrappers = this.element.find(".digit-wrapper");
-			void 0 != b.data("blink") && (this.options.blink = b.data("blick"));
-			void 0 != b.data("styleBackground") && (this.options.style.background = b.data("styleBackground"));
-			void 0 != b.data("styleForeground") && (this.options.style.foreground = b.data("styleForeground"));
-			void 0 != b.data("styleDivider") && (this.options.style.divider = b.data("styleDivider"));
-			"default" != this.options.style.background && this.element.find(".digit").addClass(this.options.style.background);
-			"default" != this.options.style.foreground && this.element.find(".digit").addClass(this.options.style.foreground);
-			"default" != this.options.style.divider && this.element.find(".divider").addClass(this.options.style.divider);
-			if (void 0 != b.data("alarm")) {
-				var d = b.data("alarm").split(":");
-				this.options.alarm.h = void 0 != d[0] ? d[0] : 0;
-				this.options.alarm.m = void 0 != d[1] ? d[1] : 0;
-				this.options.alarm.s = void 0 != d[2] ? d[2] : 0
-			}
-			b.data("onalarm");
-			setTimeout(function() {
-				a.tick()
-			}, 1E3)
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption",
-				a, b)
-		},
-		tick: function() {
-			var a = this;
-			this._interval = setInterval(function() {
-				var b = new Date,
-					c, e;
-				c = b.getHours();
-				a.updateDuo(0, 1, c);
-				e = b.getMinutes();
-				a.updateDuo(2, 3, e);
-				b = b.getSeconds();
-				a.updateDuo(4, 5, b);
-				a.options.ontick(c, e, b);
-				a.blinkDivider();
-				var f = a.options.alarm;
-				f && (void 0 != f.h && f.h == c && void 0 != f.m && f.m == e && void 0 != f.s && f.s == b) && (a.options.onalarm(), a._trigger("alarm"))
-			}, 1E3)
-		},
-		blinkDivider: function() {
-			this.options.blink && this.element.find(".divider").toggleClass("no-visible")
-		},
-		updateDuo: function(a, b, c) {
-			this.switchDigit(this.wrappers.eq(a),
-				Math.floor(c / 10) % 10);
-			this.switchDigit(this.wrappers.eq(b), c % 10)
-		},
-		switchDigit: function(a, b) {
-			var d = a.find(".digit");
-			if (d.is(":animated") || a.data("digit") == b) return !1;
-			a.data("digit", b);
-			var e = c("<span>", {
-				"class": "digit",
-				css: {
-					top: "-2.1em",
-					opacity: 0
-				},
-				html: b
-			});
-			e.addClass(this.options.style.background);
-			e.addClass(this.options.style.foreground);
-			d.before(e).removeClass("static").animate({
-				top: "2.5em",
-				opacity: 0
-			}, "fast", function() {
-				d.remove()
-			});
-			e.delay(100).animate({
-				top: 0,
-				opacity: 1
-			}, "fast");
-			return !0
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.Dialog = function(a) {
-		if (c.Dialog.opened) return METRO_DIALOG;
-		c.Dialog.opened = !0;
-		c.Dialog.settings = a;
-		a = c.extend({
-			icon: !1,
-			title: "",
-			content: "",
-			flat: !1,
-			shadow: !1,
-			overlay: !1,
-			width: "auto",
-			height: "auto",
-			position: "default",
-			padding: !1,
-			overlayClickClose: !0,
-			sysButtons: {
-				btnClose: !0
-			},
-			onShow: function(a) {},
-			sysBtnCloseClick: function(a) {},
-			sysBtnMinClick: function(a) {},
-			sysBtnMaxClick: function(a) {}
-		}, a);
-		var b, d, e, f;
-		b = c("<div/>").addClass("metro window-overlay");
-		a.overlay && b.css({
-			backgroundColor: "rgba(0,0,0,.7)"
-		});
-		d = c("<div/>").addClass("window");
-		a.flat && d.addClass("flat");
-		a.shadow && d.addClass("shadow").css("overflow", "hidden");
-		e = c("<div/>").addClass("caption");
-		f = c("<div/>").addClass("content");
-		f.css({
-			paddingTop: 32 + a.padding,
-			paddingLeft: a.padding,
-			paddingRight: a.padding,
-			paddingBottom: a.padding
-		});
-		a.sysButtons && (a.sysButtons.btnClose && c("<button/>").addClass("btn-close").on("click", function(b) {
-			b.preventDefault();
-			b.stopPropagation();
-			c.Dialog.close();
-			a.sysBtnCloseClick(b)
-		}).appendTo(e), a.sysButtons.btnMax && c("<button/>").addClass("btn-max").on("click",
-			function(b) {
-				b.preventDefault();
-				b.stopPropagation();
-				a.sysBtnMaxClick(b)
-			}).appendTo(e), a.sysButtons.btnMin && c("<button/>").addClass("btn-min").on("click", function(b) {
-			b.preventDefault();
-			b.stopPropagation();
-			a.sysBtnMinClick(b)
-		}).appendTo(e));
-		a.icon && c(a.icon).addClass("icon").appendTo(e);
-		c("<div/>").addClass("title").html(a.title).appendTo(e);
-		f.html(a.content);
-		e.appendTo(d);
-		f.appendTo(d);
-		d.appendTo(b);
-		"auto" != a.width && d.css("min-width", a.width);
-		"auto" != a.height && d.css("min-height", a.height);
-		b.hide().appendTo("body").fadeIn("fast");
-		METRO_DIALOG = d;
-		d.css("position", "fixed").css("z-index", parseInt(b.css("z-index")) + 1).css("top", (c(window).height() - METRO_DIALOG.outerHeight()) / 2).css("left", (c(window).width() - d.outerWidth()) / 2);
-		addTouchEvents(d[0]);
-		if (a.draggable) e.on("mousedown", function(a) {
-			c.Dialog.drag = !0;
-			e.css("cursor", "move");
-			d.css("z-index");
-			var b = d.outerHeight(),
-				f = d.outerWidth(),
-				l = d.offset().top + b - a.pageY,
-				n = d.offset().left + f - a.pageX;
-			d.css("z-index", 99999).parents().on("mousemove", function(a) {
-				var e = 0 < a.pageY ? a.pageY + l - b : 0;
-				a = 0 < a.pageX ? a.pageX + n - f : 0;
-				c.Dialog.drag && (0 <= e && e <= window.innerHeight - d.outerHeight() && d.offset({
-					top: e
-				}), 0 <= a && a <= window.innerWidth - d.outerWidth() && d.offset({
-					left: a
-				}))
-			});
-			a.preventDefault()
-		}).on("mouseup", function() {
-			d.removeClass("draggable");
-			c.Dialog.drag = !1;
-			e.css("cursor", "default")
-		});
-		d.on("click", function(a) {
-			a.stopPropagation()
-		});
-		if (a.overlayClickClose) b.on("click", function(a) {
-			a.preventDefault();
-			c.Dialog.close()
-		});
-		a.onShow(METRO_DIALOG);
-		c.Dialog.autoResize();
-		return METRO_DIALOG
-	};
-	c.Dialog.content =
-		function(a) {
-			return c.Dialog.opened && void 0 != METRO_DIALOG ? a ? (METRO_DIALOG.children(".content").html(a), c.Dialog.autoResize(), !0) : METRO_DIALOG.children(".content").html() : !1
-		};
-	c.Dialog.title = function(a) {
-		if (!c.Dialog.opened || void 0 == METRO_DIALOG) return !1;
-		var b = METRO_DIALOG.children(".caption").children(".title");
-		a ? b.html(a) : b.html();
-		return !0
-	};
-	c.Dialog.autoResize = function() {
-		if (!c.Dialog.opened || void 0 == METRO_DIALOG) return !1;
-		var a = METRO_DIALOG.children(".content"),
-			b = (c(window).height() - METRO_DIALOG.outerHeight()) /
-			2,
-			d = (c(window).width() - METRO_DIALOG.outerWidth()) / 2;
-		METRO_DIALOG.css({
-			width: a.outerWidth(),
-			height: a.outerHeight(),
-			top: b,
-			left: d
-		});
-		return !0
-	};
-	c.Dialog.close = function() {
-		if (!c.Dialog.opened || void 0 == METRO_DIALOG) return !1;
-		c.Dialog.opened = !1;
-		METRO_DIALOG.parent(".window-overlay").fadeOut(function() {
-			c(this).remove()
-		});
-		return !1
-	}
-})(jQuery);
-(function(c) {
-	var a = !1,
-		b = [],
-		d = {
-			_container: null,
-			_notify: null,
-			_timer: null,
-			options: {
-				icon: "",
-				caption: "",
-				content: "",
-				shadow: !0,
-				width: "auto",
-				height: "auto",
-				style: !1,
-				position: "right",
-				timeout: 3E3
-			},
-			init: function(a) {
-				this.options = c.extend({}, this.options, a);
-				this._build();
-				return this
-			},
-			_build: function() {
-				a = this._container = a || c("<div/>").addClass("metro notify-container").appendTo("body");
-				var d = this.options;
-				if ("" == d.content || void 0 == d.content) return !1;
-				this._notify = c("<div/>").addClass("notify");
-				d.shadow && this._notify.addClass("shadow");
-				d.style && void 0 != d.style.background && this._notify.css("background-color", d.style.background);
-				d.style && void 0 != d.style.color && this._notify.css("color", d.style.color);
-				"" != d.caption && void 0 != d.caption && c("<div/>").addClass("caption").html(d.caption).appendTo(this._notify);
-				"" != d.content && void 0 != d.content && c("<div/>").addClass("content").html(d.content).appendTo(this._notify);
-				"auto" != d.width && this._notify.css("min-width", d.width);
-				"auto" != d.height && this._notify.css("min-height", d.height);
-				this._notify.hide().appendTo(this._container).fadeIn("slow");
-				b.push(this._notify);
-				this.close(d.timeout)
-			},
-			close: function(a) {
-				this.clear();
-				if (a == parseInt(a)) {
-					var b = this;
-					this._timer = setTimeout(function() {
-						b._timer = null;
-						b._hide()
-					}, a)
-				} else if (void 0 == a) return this._hide();
-				return this
-			},
-			clear: function() {
-				return null != this._timer ? (clearTimeout(this._timer), this._timer = null, this) : !1
-			},
-			_hide: function() {
-				this.clear();
-				return void 0 != this._notify ? (this._notify.hide("slow", function() {
-					this.remove();
-					b.splice(b.indexOf(this._notify), 1)
-				}), this) : !1
-			},
-			closeAll: function() {
-				b.forEach(function(a) {
-					a.hide("slow",
-						function() {
-							a.remove();
-							b.splice(b.indexOf(a), 1)
-						})
-				});
-				return this
-			}
-		};
-	c.Notify = function(a) {
-		return Object.create(d).init(a)
-	};
-	c.Notify.show = function(a, b) {
-		return c.Notify({
-			content: a,
-			caption: b
-		})
-	}
-})(jQuery);
-(function(c) {
-	c.widget("metro.listview", {
-		version: "1.0.0",
-		options: {
-			onGroupExpand: function(a) {},
-			onGroupCollapse: function(a) {},
-			onListClick: function(a) {}
-		},
-		_create: function() {
-			var a = this,
-				b = this.element;
-			b.children(".collapsed").children(".group-content").hide();
-			b.find(".group-title").on("click", function(b) {
-				var e = c(this).parent(".list-group"),
-					f = e.children(".group-content");
-				e.toggleClass("collapsed");
-				e.hasClass("collapsed") ? (f.slideUp(), a.options.onGroupCollapse(e)) : (f.slideDown(), a.options.onGroupExpand(e));
-				b.preventDefault()
-			});
-			b.find(".list").on("click", function(d) {
-				b.find(".list").removeClass("active");
-				c(this).toggleClass("active");
-				a.options.onListClick(c(this));
-				d.preventDefault()
-			})
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.treeview", {
-		version: "1.0.0",
-		options: {
-			onNodeClick: function(a) {},
-			onNodeCollapsed: function(a) {},
-			onNodeExpanded: function(a) {}
-		},
-		_create: function() {
-			var a = this,
-				b = this.element;
-			b.find(".node.collapsed").find("ul").hide();
-			b.find(".node-toggle").on("click", function(b) {
-				var e = c(this).parent().parent("li");
-				e.hasClass("keep-open") || (e.toggleClass("collapsed"), e.hasClass("collapsed") ? (e.children("ul").fadeOut("fast"), a.options.onNodeCollapsed(e)) : (e.children("ul").fadeIn("fast"), a.options.onNodeExpanded(e)),
-					a.options.onNodeClick(e), b.preventDefault(), b.stopPropagation())
-			});
-			b.find("a").each(function() {
-				var a = c(this);
-				a.css({
-					paddingLeft: 10 * (a.parents("ul").length - 1)
-				})
-			});
-			b.find("a").on("click", function(d) {
-				var e = c(this),
-					f = e.parent("li");
-				b.find("a").removeClass("active");
-				e.toggleClass("active");
-				a.options.onNodeClick(f);
-				d.preventDefault()
-			})
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.fluentmenu", {
-		version: "1.0.0",
-		options: {
-			onSpecialClick: function(a, b) {},
-			onTabClick: function(a, b) {}
-		},
-		_create: function() {
-			var a = this,
-				b = this.element,
-				d = this.options,
-				e = b.find(".tabs-holder > li > a");
-			this._hidePanels();
-			this._showPanel();
-			e.on("click", function(e) {
-				if (c(this).parent("li").hasClass("special")) d.onSpecialClick(e, c(this));
-				else {
-					var g = c(c(this).attr("href"));
-					a._hidePanels();
-					a._showPanel(g);
-					b.find(".tabs-holder > li").removeClass("active");
-					c(this).parent("li").addClass("active");
-					d.onTabClick(e, c(this))
-				}
-				e.preventDefault()
-			})
-		},
-		_hidePanels: function() {
-			this.element.find(".tab-panel").hide()
-		},
-		_showPanel: function(a) {
-			void 0 == a && (a = this.element.find(".tabs-holder li.active a").attr("href"));
-			c(a).show()
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.hint", {
-		version: "1.0.0",
-		options: {
-			position: "bottom",
-			background: "#FFFCC0",
-			shadow: !1,
-			border: !1,
-			_hint: void 0
-		},
-		_create: function() {
-			var a = this,
-				b = this.options;
-			this.element.on("mouseenter", function(c) {
-				a.createHint();
-				b._hint.stop().fadeIn();
-				c.preventDefault()
-			});
-			this.element.on("mouseleave", function(a) {
-				b._hint.stop().fadeOut(function() {
-					b._hint.remove()
-				});
-				a.preventDefault()
-			})
-		},
-		createHint: function() {
-			var a = this.element,
-				b = a.data("hint").split("|"),
-				d = this.options;
-			void 0 != a.data("hintPosition") &&
-				(d.position = a.data("hintPosition"));
-			void 0 != a.data("hintBackground") && (d.background = a.data("hintBackground"));
-			void 0 != a.data("hintShadow") && (d.shadow = a.data("hintShadow"));
-			void 0 != a.data("hintBorder") && (d.border = a.data("hintBorder"));
-			if ("TD" == a[0].tagName || "TH" == a[0].tagName) {
-				var e = c("<div/>").css("display", "inline-block").html(a.html());
-				a.html(e);
-				a = e
-			}
-			var e = 1 < b.length ? b[0] : !1,
-				f = 1 < b.length ? b[1] : b[0],
-				b = c("<div/>").addClass("hint").appendTo("body");
-			e && c("<div/>").addClass("hint-title").html(e).appendTo(b);
-			c("<div/>").addClass("hint-text").html(f).appendTo(b);
-			b.addClass(d.position);
-			d.shadow && b.addClass("shadow");
-			d.background && b.css("background-color", d.background);
-			d.border && b.css("border-color", d.border);
-			"top" == d.position ? b.css({
-				top: a.offset().top - c(window).scrollTop() - b.outerHeight() - 20,
-				left: a.offset().left - c(window).scrollLeft()
-			}) : "bottom" == d.position ? b.css({
-				top: a.offset().top - c(window).scrollTop() + a.outerHeight(),
-				left: a.offset().left - c(window).scrollLeft()
-			}) : "right" == d.position ? b.css({
-				top: a.offset().top -
-					10 - c(window).scrollTop(),
-				left: a.offset().left + a.outerWidth() + 10 - c(window).scrollLeft()
-			}) : "left" == d.position && b.css({
-				top: a.offset().top - 10 - c(window).scrollTop(),
-				left: a.offset().left - b.outerWidth() - 10 - c(window).scrollLeft()
-			});
-			d._hint = b
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.streamer", {
-		version: "1.0.0",
-		options: {
-			scrollBar: !1,
-			meter: {
-				start: 9,
-				stop: 19,
-				interval: 20
-			},
-			slideToGroup: 1,
-			slideToTime: "10:20",
-			slideSleep: 1E3,
-			slideSpeed: 1E3,
-			onClick: function(a) {},
-			onLongClick: function(a) {}
-		},
-		_create: function() {
-			var a = this,
-				b = this.element,
-				d = this.options,
-				e = b.find(".stream"),
-				f = b.find(".event"),
-				g = b.find(".events"),
-				h = b.find(".events-area"),
-				k = b.find(".event-group"),
-				l = b.find(".event-stream");
-			void 0 != b.data("scrollBar") && (d.scrollBar = b.data("scrollBar"));
-			void 0 != b.data("meterStart") &&
-				(d.meter.start = parseInt(b.data("meterStart")));
-			void 0 != b.data("meterStop") && (d.meter.stop = parseInt(b.data("meterStop")));
-			void 0 != b.data("meterInterval") && (d.meter.interval = b.data("meterInterval"));
-			void 0 != b.data("slideToGroup") && (d.slideToGroup = parseInt(b.data("slideToGroup")));
-			void 0 != b.data("slideSleep") && (d.slideSleep = parseInt(b.data("slideSleep")));
-			void 0 != b.data("slideSpeed") && (d.slideSpeed = parseInt(b.data("slideSpeed")));
-			b.data("streamSelect", -1);
-			var n = c("<ul/>").addClass("meter"),
-				p, m, q, u = d.meter.stop,
-				r = d.meter.interval,
-				s = [];
-			for (p = d.meter.start; p < u; p++)
-				for (m = 0; 60 > m; m += r) q = (10 > p ? "0" + p : p) + ":" + (10 > m ? "0" + m : m), c("<li/>").addClass("js-interval-" + q.replace(":", "-")).html("<em>" + q + "</em>").appendTo(n), s.push(q);
-			b.data("intervals", s);
-			n.insertBefore(b.find(".events-grid"));
-			b.find(".event-stream").each(function(a, b) {
-				var d = 0,
-					f = c(b).find(".event");
-				f.each(function(a, b) {
-					d += c(b).outerWidth()
-				});
-				c(b).css({
-					width: d + 2 * (f.length - 1) + 1
-				});
-				c(b).find(".time").css("background-color", c(e[a]).css("background-color"))
-			});
-			g.css({
-				"overflow-x": d.scrollBar ?
-					"scroll" : "hidden"
-			});
-			b.css({
-				height: b.find(".streams").outerHeight() + (d.scrollBar ? 20 : 0)
-			});
-			var t = 0;
-			k.each(function(a, b) {
-				t += c(b).outerWidth()
-			});
-			t += 2 * (k.length - 1) + 10;
-			h.css("width", t);
-			f.each(function(a, b) {
-				addTouchEvents(b)
-			});
-			f.mousedown(function(a) {
-				a.altKey && c(this).toggleClass("selected")
-			});
-			b.mousewheel(function(a, b) {
-				var c = 50 * b;
-				g.scrollLeft(g.scrollLeft() - c);
-				return !1
-			});
-			e.each(function(a, d) {
-				c(d).mousedown(function(d) {
-					b.data("streamSelect") == a ? (f.removeClass("event-disable"), b.data("streamSelect", -1)) : (b.data("streamSelect",
-						a), f.addClass("event-disable"), c(l[a]).find(".event").removeClass("event-disable"))
-				})
-			});
-			f.on("click", function(a) {
-				a.preventDefault();
-				d.onClick(c(this))
-			});
-			f.on("longclick", function(a) {
-				c(this).toggleClass("selected");
-				a.preventDefault();
-				d.onLongClick(c(this))
-			});
-			b.find(".js-go-previous-time").on("click", function(c) {
-				c = b.data("intervals").indexOf(b.data("current-time"));
-				0 != c && (c--, c = b.data("intervals")[c], a.slideToTime(c, 0, d.slideSpeed))
-			});
-			b.find(".js-go-next-time").on("click", function(c) {
-				c = b.data("intervals").indexOf(b.data("current-time"));
-				c != b.data("intervals").length - 1 && (c++, c = b.data("intervals")[c], a.slideToTime(c, 0, d.slideSpeed))
-			});
-			b.find(".js-show-all-streams").on("click", function(a) {
-				b.find(".event").removeClass("event-disable");
-				b.data("streamSelect", -1);
-				a.preventDefault()
-			});
-			b.find(".js-schedule-mode").on("click", function(a) {
-				c(this).toggleClass("inverse");
-				b.data("schedule-mode", c(this).hasClass("inverse"));
-				a.preventDefault()
-			});
-			d.slideToTime ? this.slideToTime(d.slideToTime, d.slideSleep, d.slideSpeed) : this.slideToGroup(d.slideToGroup,
-				d.slideSleep, d.slideSpeed)
-		},
-		slideToTime: function(a, b, c) {
-			var e = this,
-				f = this.element,
-				g = f.find(".meter li.js-interval-" + a.replace(":", "-"))[0],
-				h = f.find(".streams").outerWidth() + 2;
-			setTimeout(function() {
-				f.find(".events").animate({
-					scrollLeft: "+=" + (g.offsetLeft - h)
-				}, c, function() {
-					e._afterSlide()
-				})
-			}, b);
-			f.data("current-time", a)
-		},
-		slideToGroup: function(a, b, c) {
-			var e = this,
-				f = this.element,
-				g = f.find(".event-group"),
-				h = f.find(".streams").outerWidth() + 2;
-			setTimeout(function() {
-				f.find(".events").animate({
-					scrollLeft: "+=" + (g[a -
-						1].offsetLeft - h)
-				}, c, function() {
-					e._afterSlide()
-				})
-			}, b)
-		},
-		_afterSlide: function() {},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.scrollbar", {
-		version: "1.0.0",
-		options: {
-			height: "100%",
-			width: "100%",
-			axis: ["x", "y"],
-			wheel: 55
-		},
-		startSize: {
-			width: null,
-			height: null
-		},
-		elemPadding: !1,
-		bothScroll: !1,
-		scrollbar: null,
-		contentHeight: 0,
-		contentWidth: 0,
-		contentMinHeight: 0,
-		contentMinWidth: 0,
-		dragElem: null,
-		dragStart: !1,
-		startCoords: {
-			x: 0,
-			y: 0
-		},
-		currCoords: {
-			x: 0,
-			y: 0
-		},
-		handlers: !1,
-		_create: function() {
-			var a = this.element,
-				b = this;
-			if (void 0 != a.data("scroll")) {
-				var d = a.data("scroll");
-				"vertical" == d && (this.options.axis = "y");
-				"horizontal" == d && (this.options.axis =
-					"x");
-				"both" == d && (this.options.axis = ["x", "y"])
-			}
-			void 0 != a.data("height") && (this.options.height = a.data("height"));
-			void 0 != a.data("width") && (this.options.width = a.data("width"));
-			void 0 != a.data("wheel") && (this.options.wheel = a.data("wheel"));
-			a.css({
-				position: "relative"
-			});
-			var d = a.outerWidth(),
-				e = a.outerHeight();
-			this.contentMinWidth = d;
-			this.contentMinHeight = e;
-			this.startSize.width = this.options.width;
-			this.startSize.height = this.options.height;
-			var f = this.startSize.width == parseInt(this.startSize.width) ? this.startSize.width +
-				"px" : this.startSize.width,
-				g = this.startSize.height == parseInt(this.startSize.height) ? this.startSize.height + "px" : this.startSize.height;
-			a.wrap('<div class="scrollbar" style="width: ' + f + "; height: " + g + ';"></div>');
-			this.scrollbar = a.parents(".scrollbar").first();
-			this.scrollbar.parents().first().css({
-				overflow: "hidden"
-			});
-			this._build(d, e);
-			c(window).resize(function() {
-				b._resize()
-			})
-		},
-		_resize: function() {
-			var a = this.element;
-			if (!isNaN(parseInt(this.element.css("left"))) && 0 != parseInt(this.element.css("left")) || !isNaN(parseInt(this.element.css("top"))) &&
-				parseInt(this.element.css("top"))) {
-				var b = Math.abs(parseInt(this.element.css("left"))),
-					c = Math.abs(parseInt(this.element.css("top"))),
-					e = this.scrollbar.width(),
-					f = this.scrollbar.height();
-				this.contentWidth - b < e && (b -= e - (this.contentWidth - b), 0 > b && (b = 0), this.element.css("left", -1 * b));
-				this.element.css("left", -1 * b);
-				this.contentHeight - c < f && (c -= f - (this.contentHeight - c), 0 > c && (c = 0), this.element.css("top", -1 * c))
-			}
-			this.options.width = this.startSize.width;
-			this.options.height = this.startSize.height;
-			this.scrollbar.css({
-				padding: 0
-			});
-			this.elemPadding && (this.element.css({
-				paddingRight: "-=5",
-				paddingBottom: "-=5"
-			}), this.elemPadding = !1);
-			0 < this.scrollbar.find(".scrollbar-v").length && this.scrollbar.find(".scrollbar-v").remove();
-			0 < this.scrollbar.find(".scrollbar-h").length && this.scrollbar.find(".scrollbar-h").remove();
-			0 < this.scrollbar.find(".scrollbar-both").length && this.scrollbar.find(".scrollbar-both").remove();
-			b = a.outerWidth();
-			a = a.outerHeight();
-			this.contentWidth = b;
-			this.contentHeight = a;
-			this._removeHandlers();
-			this._build(b, a)
-		},
-		_build: function(a,
-			b) {
-			var c = this.element;
-			this.options.width = "100%" == this.options.width ? this.scrollbar.outerWidth() : this.options.width;
-			this.options.height = "100%" == this.options.height ? this.scrollbar.outerHeight() : this.options.height;
-			this.scrollbar.css({
-				width: this.startSize.width,
-				height: this.startSize.height
-			});
-			this.contentWidth = a;
-			this.contentHeight = b;
-			"y" == this.options.axis ? this.contentHeight > this.options.height ? (this.scrollbar.css({
-					paddingRight: 20,
-					paddingBottom: 0
-				}), a = c.outerWidth(), b = c.outerHeight(), this.contentWidth =
-				a, this.contentHeight = b, this._verticalScrollbar(), this._startHandlers()) : (0 < this.scrollbar.find(".scrollbar-v").length && this.scrollbar.find(".scrollbar-v").hide(), this.scrollbar.css({
-				paddingRight: 0,
-				paddingBottom: 0
-			})) : "x" == this.options.axis ? this.contentWidth > this.options.width ? ("100%" == this.startSize.height && (this.scrollbar.css({
-				paddingBottom: 20,
-				paddingRight: 0
-			}), a = c.outerWidth(), b = c.outerHeight(), this.contentWidth = a, this.contentHeight = b), this._horizontalScrollbar(), this._startHandlers()) : (0 < this.scrollbar.find(".scrollbar-h").length &&
-				this.scrollbar.find(".scrollbar-h").hide(), this.scrollbar.css({
-					paddingBottom: 0,
-					paddingRight: 0
-				})) : this.contentHeight > this.options.height && this.contentWidth > this.options.width ? (this.bothScroll = !0, 0 < this.scrollbar.find(".scrollbar-both").length ? this.scrollbar.find(".scrollbar-both").show() : this.scrollbar.append('<div class="scrollbar-both"></div>'), this.elemPadding || (this.element.css({
-					paddingRight: "+=5",
-					paddingBottom: "+=5"
-				}), this.elemPadding = !0), a = c.outerWidth(), b = c.outerHeight(), this.contentWidth = a,
-				this.contentHeight = b, this._verticalScrollbar(), this._horizontalScrollbar(), this._startHandlers()) : (this.bothScroll = !1, 0 < this.scrollbar.find(".scrollbar-both").length && this.scrollbar.find(".scrollbar-both").hide(), this.elemPadding && (this.element.css({
-				paddingRight: "-=5",
-				paddingBottom: "-=5"
-			}), this.elemPadding = !1), this.contentWidth > this.options.width ? ("100%" == this.startSize.height && (this.scrollbar.css({
-					paddingBottom: 20,
-					paddingRight: 0
-				}), a = c.outerWidth(), b = c.outerHeight(), this.contentWidth = a, this.contentHeight =
-				b), this._horizontalScrollbar(), this._startHandlers()) : (0 < this.scrollbar.find(".scrollbar-h").length && this.scrollbar.find(".scrollbar-h").hide(), this.scrollbar.css({
-				paddingBottom: 0,
-				paddingRight: 0
-			})), this.contentHeight > this.options.height ? (this.scrollbar.css({
-				paddingRight: 20,
-				paddingBottom: 0
-			}), a = c.outerWidth(), b = c.outerHeight(), this.contentWidth = a, this.contentHeight = b, this._verticalScrollbar(), this._startHandlers()) : (0 < this.scrollbar.find(".scrollbar-v").length && this.scrollbar.find(".scrollbar-v").hide(),
-				this.scrollbar.css({
-					paddingRight: 0,
-					paddingBottom: 0
-				})))
-		},
-		_verticalScrollbar: function() {
-			if (1 > this.scrollbar.find(".scrollbar-v").length) {
-				var a = [];
-				a[a.length] = '<div class="scrollbar-v">';
-				a[a.length] = '<div class="scrollbar-v-up"></div>';
-				a[a.length] = '<div class="scrollbar-v-down"></div>';
-				a[a.length] = '<div class="scrollbar-line-v">';
-				a[a.length] = '<div class="scrollbar-line-v-btn"></div>';
-				a[a.length] = "</div>";
-				a[a.length] = "</div>";
-				a = a.join("");
-				this.scrollbar.append(a)
-			} else this.scrollbar.find(".scrollbar-v").show();
-			var b = this.scrollbar.find(".scrollbar-line-v"),
-				a = this.scrollbar.find(".scrollbar-line-v-btn"),
-				c = this.scrollbar.find(".scrollbar-v");
-			if (this.bothScroll) {
-				c.height(this.options.height);
-				var e = c.height() - 15;
-				this.options.height = e;
-				c.height(e)
-			} else c.height(this.options.height);
-			c = this.options.height - 32;
-			e = c / this.contentHeight;
-			b.height(c);
-			e >= (this.contentHeight - 32) / this.contentHeight ? a.hide() : (b = e * this.options.height, a.show().height(b))
-		},
-		_horizontalScrollbar: function() {
-			if (1 > this.scrollbar.find(".scrollbar-h").length) {
-				var a =
-					[];
-				a[a.length] = '<div class="scrollbar-h">';
-				a[a.length] = '<div class="scrollbar-h-up"></div>';
-				a[a.length] = '<div class="scrollbar-h-down"></div>';
-				a[a.length] = '<div class="scrollbar-line-h">';
-				a[a.length] = '<div class="scrollbar-line-h-btn"></div>';
-				a[a.length] = "</div>";
-				a[a.length] = "</div>";
-				a = a.join("");
-				this.scrollbar.append(a)
-			} else this.scrollbar.find(".scrollbar-h").show();
-			var a = this.scrollbar.find(".scrollbar-line-h"),
-				b = this.scrollbar.find(".scrollbar-line-h-btn"),
-				c = this.scrollbar.find(".scrollbar-h");
-			if (this.bothScroll) {
-				c.width(this.options.width);
-				var e = c.width() - 15;
-				this.options.width = e;
-				c.width(e)
-			} else c.width(this.options.width);
-			var c = this.options.width - 32,
-				e = c / this.contentWidth,
-				f = e * this.options.width,
-				g = isNaN(parseInt(this.element.css("left"))) ? 0 : parseInt(this.element.css("left")),
-				g = Math.abs(g) * e;
-			a.width(c);
-			e >= (this.contentWidth - 32) / this.contentWidth ? b.hide() : b.show().width(f).css({
-				left: g
-			})
-		},
-		_startHandlers: function() {
-			if (this.handlers) return !1;
-			this.handlers = !0;
-			var a = this;
-			c(document).mousemove(function(b) {
-				a._drag(b)
-			});
-			c(document).mouseup(function(b) {
-				a._dragEnd(b)
-			});
-			this.scrollbar.find(".scrollbar-line-v-btn,.scrollbar-line-h-btn").on("mousedown", function(b) {
-				a._dragStart(b, c(this))
-			});
-			this.scrollbar.find(".scrollbar-line-v,.scrollbar-line-h").on("click", function(b) {
-				a._clickPos(b, c(this))
-			});
-			this.scrollbar.find(".scrollbar-v-up,.scrollbar-h-up").on("click", function(b) {
-				a._fixScroll(1, c(this))
-			});
-			this.scrollbar.find(".scrollbar-v-down,.scrollbar-h-down").on("click", function(b) {
-				a._fixScroll(-1, c(this))
-			});
-			this.scrollbar.mousewheel(function(b,
-				c) {
-				a._fixScroll(c);
-				return !1
-			})
-		},
-		_removeHandlers: function() {
-			if (!this.handlers) return !1;
-			this.handlers = !1;
-			c(document).mousemove(function(a) {
-				return !1
-			});
-			c(document).mouseup(function(a) {
-				return !1
-			});
-			this.scrollbar.find(".scrollbar-line-v-btn,.scrollbar-line-h-btn").off("mousedown");
-			this.scrollbar.find(".scrollbar-line-v,.scrollbar-line-h").off("click");
-			this.scrollbar.find(".scrollbar-v-up,.scrollbar-h-up").off("click");
-			this.scrollbar.find(".scrollbar-v-down,.scrollbar-h-down").off("click")
-		},
-		_clickPos: function(a,
-			b) {
-			if ("scrollbar-line-v" == c(a.target).attr("class") || "scrollbar-line-h" == c(a.target).attr("class")) {
-				var d = b.offset();
-				if ("scrollbar-line-v" == c(a.target).attr("class")) {
-					var e = a.pageY - d.top,
-						f = b.find(".scrollbar-line-v-btn");
-					this.dragElem = {
-						elem: f,
-						width: f.width(),
-						height: f.height(),
-						parent: b,
-						parentWidth: b.width(),
-						parentHeight: b.height(),
-						parentOffset: d
-					};
-					this._scrollTo(0, e, "y")
-				} else e = a.pageX - d.left, f = b.find(".scrollbar-line-h-btn"), this.dragElem = {
-					elem: f,
-					width: f.width(),
-					height: f.height(),
-					parent: b,
-					parentWidth: b.width(),
-					parentHeight: b.height(),
-					parentOffset: d
-				}, this._scrollTo(e, 0, "x");
-				this.dragElem = null
-			}
-		},
-		_fixScroll: function(a, b) {
-			var c, e, f, g = this.options.wheel;
-			if (void 0 !== b && (b.hasClass("scrollbar-h-up") || b.hasClass("scrollbar-h-down")) || "x" == this.options.axis || "x" != this.options.axis && "y" != this.options.axis && 1 > this.scrollbar.find(".scrollbar-v").length) {
-				var h = 100 * (g / this.contentWidth);
-				e = (this.options.width - 32) / 100 * h;
-				h = parseInt(this.element.css("left"));
-				f = isNaN(h) ? 0 : Math.abs(h);
-				h = this.scrollbar.find(".scrollbar-line-h-btn");
-				c = this.scrollbar.find(".scrollbar-line-h");
-				var k = parseFloat(h.css("left")),
-					k = isNaN(k) ? 0 : k;
-				0 < a ? (g = f - g, f = k - e) : (g = f + g, f = k + e);
-				0 > g && (g = 0);
-				g > this.contentWidth - this.options.width && (g = this.contentWidth - this.options.width);
-				e = c.width();
-				c.height();
-				c = h.width();
-				h.height();
-				0 > f && (f = 0);
-				f + c > e && (f = e - c);
-				this.element.css({
-					left: -1 * g
-				});
-				h.css({
-					left: f
-				})
-			} else h = 100 * (g / this.contentHeight), e = (this.options.height - 32) / 100 * h, h = parseInt(this.element.css("top")), f = isNaN(h) ? 0 : Math.abs(h), h = this.scrollbar.find(".scrollbar-line-v-btn"),
-				c = this.scrollbar.find(".scrollbar-line-v"), k = parseFloat(h.css("top")), k = isNaN(k) ? 0 : k, 0 < a ? (g = f - g, e = k - e) : (g = f + g, e = k + e), 0 > g && (g = 0), g > this.contentHeight - this.options.height && (g = this.contentHeight - this.options.height), c.width(), f = c.height(), h.width(), c = h.height(), 0 > e && (e = 0), e + c > f && (e = f - c), this.element.css({
-					top: -1 * g
-				}), h.css({
-					top: e
-				})
-		},
-		_scrollTo: function(a, b, c) {
-			"x" == c ? (c = (this.options.width - 32) / this.contentWidth, b = a / c, 0 > b && (b = 0), b > this.contentWidth - this.options.width && (b = this.contentWidth - this.options.width),
-				0 > a && (a = 0), a > this.dragElem.parentWidth - this.dragElem.width && (a = this.dragElem.parentWidth - this.dragElem.width), this.dragElem.elem.css({
-					left: a
-				}), this.element.css({
-					left: -1 * b
-				})) : (c = (this.options.height - 32) / this.contentHeight, a = b / c, 0 > a && (a = 0), a > this.contentHeight - this.options.height && (a = this.contentHeight - this.options.height), 0 > b && (b = 0), b > this.dragElem.parentHeight - this.dragElem.height && (b = this.dragElem.parentHeight - this.dragElem.height), this.dragElem.elem.css({
-				top: b
-			}), this.element.css({
-				top: -1 * a
-			}))
-		},
-		_scroll: function() {
-			if (this.dragElem.elem.hasClass("scrollbar-line-h-btn")) {
-				var a =
-					(this.options.width - 32) / this.contentWidth,
-					b = parseInt(this.dragElem.elem.css("left")),
-					a = (isNaN(b) ? 0 : Math.abs(b)) / a;
-				0 > a && (a = 0);
-				a > this.contentWidth - this.options.width && (a = this.contentWidth - this.options.width);
-				this.element.css({
-					left: -1 * a
-				})
-			} else a = (this.options.height - 32) / this.contentHeight, b = parseInt(this.dragElem.elem.css("top")), a = (isNaN(b) ? 0 : Math.abs(b)) / a, 0 > a && (a = 0), a > this.contentHeight - this.options.height && (a = this.contentHeight - this.options.height), this.element.css({
-				top: -1 * a
-			})
-		},
-		_startCoordsDiff: function(a) {
-			var b =
-				this.dragElem.elem.offset();
-			this.startCoords.x = a.pageX - b.left;
-			this.startCoords.y = a.pageY - b.top
-		},
-		_dragStart: function(a, b) {
-			var c = b.parents().first();
-			this.dragElem = {
-				elem: b,
-				width: b.width(),
-				height: b.height(),
-				parent: c,
-				parentWidth: c.width(),
-				parentHeight: c.height(),
-				parentOffset: c.offset()
-			};
-			this.dragStart = !0;
-			this.currCoords.x = a.pageX;
-			this.currCoords.y = a.pageY;
-			this._startCoordsDiff(a)
-		},
-		_drag: function(a) {
-			if (this.dragStart) {
-				this.currCoords.x = a.pageX;
-				this.currCoords.y = a.pageY;
-				a = this.currCoords.x - this.startCoords.x -
-					this.dragElem.parentOffset.left;
-				var b = this.currCoords.y - this.startCoords.y - this.dragElem.parentOffset.top;
-				0 > a && (a = 0);
-				a + this.dragElem.width >= this.dragElem.parentWidth && (a = this.dragElem.parentWidth - this.dragElem.width);
-				0 > b && (b = 0);
-				b + this.dragElem.height > this.dragElem.parentHeight && (b = this.dragElem.parentHeight - this.dragElem.height);
-				this.dragElem.elem.css({
-					left: a,
-					top: b
-				});
-				this._scroll()
-			}
-		},
-		_dragEnd: function(a) {
-			this.dragStart && (this.dragElem = null, this.dragStart = !1, this.startCoords.x = 0, this.startCoords.y =
-				0, this.currCoords.x = null, this.currCoords.y = null)
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.stepper", {
-		version: "1.0.0",
-		options: {
-			steps: 3,
-			start: 1,
-			onStep: function(a, b) {}
-		},
-		_create: function() {
-			var a = this.element,
-				b = this.options;
-			void 0 != a.data("steps") && (b.steps = a.data("steps"));
-			void 0 != a.data("start") && (b.start = a.data("start"));
-			this._createStepper();
-			this._positioningSteps();
-			this._stepTo(b.start)
-		},
-		_createStepper: function() {
-			var a = this.element,
-				b = this.options,
-				d, e;
-			e = c("<ul/>");
-			for (d = 0; d < b.steps; d++) c("<li/>").appendTo(e);
-			e.appendTo(a)
-		},
-		_positioningSteps: function() {
-			var a =
-				this.element,
-				b = a.find("li"),
-				d = a.width(),
-				e = b.length - 1,
-				f = c(b[0]).width();
-			c.each(b, function(a, b) {
-				var k = 0 == a ? 0 : (d - f) / e * a;
-				c(b).animate({
-					left: k
-				})
-			})
-		},
-		_stepTo: function(a) {
-			var b = this.options,
-				d = this.element.find("li");
-			d.removeClass("current").removeClass("complete");
-			c.each(d, function(d, f) {
-				d < a - 1 && c(f).addClass("complete");
-				d == a - 1 && (c(f).addClass("current"), b.onStep(d + 1, f))
-			})
-		},
-		first: function() {
-			var a = this.options;
-			a.start = 1;
-			this._stepTo(a.start)
-		},
-		last: function() {
-			var a = this.options,
-				b = this.element.find("li");
-			a.start =
-				b.length;
-			this._stepTo(a.start)
-		},
-		next: function() {
-			var a = this.options,
-				b = this.element.find("li");
-			a.start + 1 > b.length || (a.start++, this._stepTo(a.start))
-		},
-		prior: function() {
-			var a = this.options;
-			0 != a.start - 1 && (a.start--, this._stepTo(a.start))
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.pullmenu", {
-		version: "1.0.0",
-		options: {},
-		_create: function() {
-			var a = this.element,
-				b = void 0 != a.data("relation") ? a.data("relation") : a.parent().children(".element-menu, .horizontal-menu");
-			addTouchEvents(a[0]);
-			a.on("click", function(a) {
-				b.slideToggle();
-				a.preventDefault();
-				a.stopPropagation()
-			})
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-$(window).resize(function() {
-	800 < (0 < window.innerWidth ? window.innerWidth : screen.width) ? $(".element-menu").show() : $(".element-menu").hide()
-});
-(function(c) {
-	c.widget("metro.wizard", {
-		version: "1.0.0",
-		options: {
-			stepper: !0,
-			stepperType: "default",
-			locale: c.Metro.currentLocale,
-			finishStep: "default",
-			buttons: {
-				cancel: !0,
-				help: !1,
-				prior: !0,
-				next: !0,
-				finish: !0
-			},
-			onCancel: function(a, b) {},
-			onHelp: function(a, b) {},
-			onPrior: function(a, b) {
-				return !0
-			},
-			onNext: function(a, b) {
-				return !0
-			},
-			onFinish: function(a, b) {},
-			onPage: function(a, b) {}
-		},
-		_stepper: void 0,
-		_currentStep: 0,
-		_steps: void 0,
-		_create: function() {
-			var a = this.element,
-				b = this.options,
-				c = a.find(".step");
-			this._steps = c;
-			b.stepper &&
-				(this._stepper = this._createStepper(c.length).insertBefore(a.find(".steps")));
-			void 0 != a.data("locale") && (b.locale = a.data("locale"));
-			this._createEvents();
-			this.options.onPage(this._currentStep + 1, a)
-		},
-		_createStepper: function(a) {
-			var b = this.options;
-			a = c("<div/>").addClass("stepper").attr("data-role", "stepper").attr("data-steps", a);
-			"default" != b.stepperType && a.addClass(b.stepperType);
-			return a
-		},
-		_createEvents: function() {
-			var a = this,
-				b = this.element,
-				d = this.options;
-			if (d.buttons) {
-				var e = c("<div/>").addClass("actions").appendTo(b),
-					f = c("<div/>").addClass("group-left").appendTo(e),
-					e = c("<div/>").addClass("group-right").appendTo(e);
-				if (d.buttons.cancel) c("<button type='button'/>").addClass("btn-cancel").html(c.Metro.Locale[d.locale].buttons[2]).appendTo(f).on("click", function() {
-					d.onCancel(a._currentStep + 1, b)
-				});
-				if (d.buttons.help) c("<button type='button'/>").addClass("btn-help").html(c.Metro.Locale[d.locale].buttons[3]).appendTo(e).on("click", function() {
-					d.onHelp(a._currentStep + 1, b)
-				});
-				if (d.buttons.prior) c("<button type='button'/>").addClass("btn-prior").html(c.Metro.Locale[d.locale].buttons[4]).appendTo(e).on("click",
-					function() {
-						d.onPrior(a._currentStep + 1, b) && a.prior()
-					});
-				if (d.buttons.next) c("<button type='button'/>").addClass("btn-next").html(c.Metro.Locale[d.locale].buttons[5]).appendTo(e).on("click", function() {
-					d.onNext(a._currentStep + 1, b) && a.next()
-				});
-				if (d.buttons.finish) c("<button type='button' disabled/>").addClass("btn-finish").html(c.Metro.Locale[d.locale].buttons[6]).appendTo(e).on("click", function() {
-					d.onFinish(a._currentStep + 1, b)
-				})
-			}
-		},
-		next: function() {
-			var a = this._currentStep + 1;
-			if (a == this._steps.length) return !1;
-			this._currentStep = a;
-			this._steps.hide();
-			c(this._steps[a]).show();
-			this.options.onPage(this._currentStep + 1, this.element);
-			this._stepper.stepper("next");
-			var b = parseInt("default" == this.options.finishStep ? this._steps.length - 1 : this.options.finishStep);
-			a == b ? this.element.find(".btn-finish").attr("disabled", !1) : this.element.find(".btn-finish").attr("disabled", !0);
-			return !0
-		},
-		prior: function() {
-			var a = this._currentStep - 1;
-			if (0 > a) return !1;
-			this._currentStep = a;
-			this._steps.hide();
-			c(this._steps[a]).show();
-			this.options.onPage(this._currentStep +
-				1, this.element);
-			this._stepper.stepper("prior");
-			var b = parseInt("default" == this.options.finishStep ? this._steps.length - 1 : this.options.finishStep);
-			a == b ? this.element.find(".btn-finish").attr("disabled", !1) : this.element.find(".btn-finish").attr("disabled", !0);
-			return !0
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.panel", {
-		version: "1.0.0",
-		options: {
-			onCollapse: function() {},
-			onExpand: function() {}
-		},
-		_create: function() {
-			var a = this.element,
-				b = this.options,
-				c = a.children(".panel-header"),
-				e = a.children(".panel-content");
-			c.on("click", function() {
-				e.slideToggle("fast", function() {
-					a.toggleClass("collapsed");
-					if (a.hasClass("collapsed")) b.onCollapse();
-					else b.onExpand()
-				})
-			})
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.widget("metro.tileTransform", {
-		version: "1.0.0",
-		options: {},
-		_create: function() {
-			var a = this.element,
-				b = a.width(),
-				d = a.height();
-			a.on("click", function(a) {});
-			a.on("mousedown", function(e) {
-				var f = e.pageX - c(this).offset().left;
-				e = e.pageY - c(this).offset().top;
-				var g = "top";
-				f < 1 * b / 3 && (e < 1 * d / 2 || e > 1 * d / 2) ? g = "left" : f > 2 * b / 3 && (e < 1 * d / 2 || e > 1 * d / 2) ? g = "right" : f > 1 * b / 3 && (f < 2 * b / 3 && e > d / 2) && (g = "bottom");
-				c(this).addClass("tile-transform-" + g);
-				"A" == a[0].tagName && a.attr("href") && setTimeout(function() {
-					document.location.href =
-						a.attr("href")
-				}, 500)
-			});
-			a.on("mouseup", function() {
-				c(this).removeClass("tile-transform-left").removeClass("tile-transform-right").removeClass("tile-transform-top").removeClass("tile-transform-bottom")
-			});
-			a.on("mouseleave", function() {
-				c(this).removeClass("tile-transform-left").removeClass("tile-transform-right").removeClass("tile-transform-top").removeClass("tile-transform-bottom")
-			})
-		},
-		_destroy: function() {},
-		_setOption: function(a, b) {
-			this._super("_setOption", a, b)
-		}
-	})
-})(jQuery);
-(function(c) {
-	c.Metro.initAccordions = function(a) {
-		void 0 != a ? c(a).find("[data-role=accordion]").accordion() : c("[data-role=accordion]").accordion()
-	};
-	c.Metro.initButtonSets = function(a) {
-		void 0 != a ? (c(a).find("[data-role=button-set]").buttonset(), c(a).find("[data-role=button-group]").buttongroup()) : (c("[data-role=button-set]").buttonset(), c("[data-role=button-group]").buttongroup())
-	};
-	c.Metro.initCalendars = function(a) {
-		void 0 != a ? c(a).find("[data-role=calendar]").calendar() : c("[data-role=calendar]").calendar()
-	};
-	c.Metro.initCarousels = function(a) {
-		void 0 != a ? c(a).find("[data-role=carousel]").carousel() : c("[data-role=carousel]").carousel()
-	};
-	c.Metro.initCountdowns = function(a) {
-		void 0 != a ? c(a).find("[data-role=countdown]").countdown() : c("[data-role=countdown]").countdown()
-	};
-	c.Metro.initDatepickers = function(a) {
-		void 0 != a ? c(a).find("[data-role=datepicker]").datepicker() : c("[data-role=datepicker]").datepicker()
-	};
-	c.Metro.initDropdowns = function(a) {
-		void 0 != a ? c(a).find("[data-role=dropdown]").dropdown() : c("[data-role=dropdown]").dropdown()
-	};
-	c.Metro.initFluentMenus = function(a) {
-		void 0 != a ? c(a).find("[data-role=fluentmenu]").fluentmenu() : c("[data-role=fluentmenu]").fluentmenu()
-	};
-	c.Metro.initHints = function(a) {
-		void 0 != a ? c(a).find("[data-hint]").hint() : c("[data-hint]").hint()
-	};
-	c.Metro.initInputs = function(a) {
-		void 0 != a ? c(a).find("[data-role=input-control], .input-control").inputControl() : c("[data-role=input-control], .input-control").inputControl()
-	};
-	c.Metro.transformInputs = function(a) {
-		void 0 != a ? c(a).find("[data-transform=input-control]").inputTransform() :
-			c("[data-transform=input-control]").inputTransform()
-	};
-	c.Metro.initListViews = function(a) {
-		void 0 != a ? c(a).find("[data-role=listview]").listview() : c("[data-role=listview]").listview()
-	};
-	c.Metro.initLives = function(a) {
-		void 0 != a ? c(a).find("[data-role=live-tile], [data-role=live]").livetile() : c("[data-role=live-tile], [data-role=live]").livetile()
-	};
-	c.Metro.initProgreeBars = function(a) {
-		void 0 != a ? c(a).find("[data-role=progress-bar]").progressbar() : c("[data-role=progress-bar]").progressbar()
-	};
-	c.Metro.initRatings =
-		function(a) {
-			void 0 != a ? c(a).find("[data-role=rating]").rating() : c("[data-role=rating]").rating()
-		};
-	c.Metro.initScrolls = function(a) {
-		void 0 != a ? c(a).find("[data-role=scrollbox]").scrollbar() : c("[data-role=scrollbox]").scrollbar()
-	};
-	c.Metro.initSliders = function(a) {
-		void 0 != a ? c(a).find("[data-role=slider]").slider() : c("[data-role=slider]").slider()
-	};
-	c.Metro.initTabs = function(a) {
-		void 0 != a ? c(a).find("[data-role=tab-control]").tabcontrol() : c("[data-role=tab-control]").tabcontrol()
-	};
-	c.Metro.initTimes = function(a) {
-		void 0 !=
-			a ? c(a).find("[data-role=times]").times() : c("[data-role=times]").times()
-	};
-	c.Metro.initTrees = function(a) {
-		void 0 != a ? c(a).find("[data-role=treeview]").treeview() : c("[data-role=treeview]").treeview()
-	};
-	c.Metro.initSteppers = function(a) {
-		void 0 != a ? c(a).find("[data-role=stepper]").stepper() : c("[data-role=stepper]").stepper()
-	};
-	c.Metro.initStreamers = function(a) {
-		void 0 != a ? c(a).find("[data-role=streamer]").streamer() : c("[data-role=streamer]").streamer()
-	};
-	c.Metro.initDragTiles = function(a) {
-		void 0 != a ? c(a).find("[data-role=drag-drop]").dragtile() :
-			c("[data-role=drag-drop]").dragtile()
-	};
-	c.Metro.initPulls = function(a) {
-		void 0 != a && c(a).find("[data-role=pull-menu], .pull-menu").pullmenu();
-		c("[data-role=pull-menu], .pull-menu").pullmenu()
-	};
-	c.Metro.initPanels = function(a) {
-		void 0 != a && c(a).find("[data-role=panel]").panel();
-		c("[data-role=panel]").panel()
-	};
-	c.Metro.initTileTransform = function(a) {
-		void 0 != a && c(a).find("[data-click=transform]").tileTransform();
-		c("[data-click=transform]").tileTransform()
-	};
-	c.Metro.initAll = function(a) {
-		c.Metro.initAccordions(a);
-		c.Metro.initButtonSets(a);
-		c.Metro.initCalendars(a);
-		c.Metro.initCarousels(a);
-		c.Metro.initCountdowns(a);
-		c.Metro.initDatepickers(a);
-		c.Metro.initDropdowns(a);
-		c.Metro.initFluentMenus(a);
-		c.Metro.initHints(a);
-		c.Metro.initInputs(a);
-		c.Metro.transformInputs(a);
-		c.Metro.initListViews(a);
-		c.Metro.initLives(a);
-		c.Metro.initProgreeBars(a);
-		c.Metro.initRatings(a);
-		c.Metro.initScrolls(a);
-		c.Metro.initSliders(a);
-		c.Metro.initTabs(a);
-		c.Metro.initTimes(a);
-		c.Metro.initTrees(a);
-		c.Metro.initSteppers(a);
-		c.Metro.initStreamers(a);
-		c.Metro.initDragTiles(a);
-		c.Metro.initPulls(a);
-		c.Metro.initPanels(a);
-		c.Metro.initTileTransform(a)
-	}
-})(jQuery);
-$(function() {
-	$.Metro.initAll()
-});
-$(function() {
-	if (METRO_AUTO_REINIT) {
-		var c = $(".metro").html(),
-			a;
-		setInterval(function() {
-			a = $(".metro").html();
-			c !== a && (c = a, $.Metro.initAll())
-		}, 500)
-	}
-});
+    var $ = jQuery;
+
+    // Source: js/requirements.js
+    if (typeof jQuery === 'undefined') {
+        throw new Error('Metro\'s JavaScript requires jQuery');
+    }
+
+    // Source: js/global.js
+    window.METRO_VERSION = '3.0.13';
+
+    if (window.METRO_AUTO_REINIT === undefined) window.METRO_AUTO_REINIT = true;
+    if (window.METRO_LANGUAGE === undefined) window.METRO_LANGUAGE = 'en';
+    if (window.METRO_LOCALE === undefined) window.METRO_LOCALE = 'EN_en';
+    if (window.METRO_CURRENT_LOCALE === undefined) window.METRO_CURRENT_LOCALE = 'en';
+    if (window.METRO_SHOW_TYPE === undefined) window.METRO_SHOW_TYPE = 'slide';
+    if (window.METRO_DEBUG === undefined) window.METRO_DEBUG = true;
+    if (window.METRO_CALENDAR_WEEK_START === undefined) window.METRO_CALENDAR_WEEK_START = 0;
+
+    window.canObserveMutation = 'MutationObserver' in window;
+
+    String.prototype.isUrl = function() {
+        var regexp = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+        return regexp.test(this);
+    };
+
+    String.prototype.isColor = function() {
+        return /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(this);
+    };
+
+    Array.prototype.shuffle = function() {
+        var currentIndex = this.length,
+            temporaryValue, randomIndex;
+
+        while (0 !== currentIndex) {
+
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            temporaryValue = this[currentIndex];
+            this[currentIndex] = this[randomIndex];
+            this[randomIndex] = temporaryValue;
+        }
+
+        return this;
+    };
+
+    Array.prototype.clone = function() {
+        return this.slice(0);
+    };
+
+    Array.prototype.unique = function() {
+        var a = this.concat();
+        for (var i = 0; i < a.length; ++i) {
+            for (var j = i + 1; j < a.length; ++j) {
+                if (a[i] === a[j])
+                    a.splice(j--, 1);
+            }
+        }
+
+        return a;
+    };
+
+    window.uniqueId = function(prefix) {
+        var d = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+        return uuid;
+    };
+
+    window.isTouchDevice = function() {
+        return (('ontouchstart' in window) || (navigator.MaxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
+    };
+
+    window.METRO_LOCALES = {
+        'en': {
+            months: [
+                "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December",
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ],
+            days: [
+                "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+                "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"
+            ],
+            buttons: [
+                "Today", "Clear", "Cancel", "Help", "Prior", "Next", "Finish"
+            ]
+        },
+        'fr': {
+            months: [
+                "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
+                "Jan", "Fév", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"
+            ],
+            days: [
+                "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi",
+                "Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"
+            ],
+            buttons: [
+                "Aujourd'hui", "Effacer", "Annuler", "Aide", "Précedent", "Suivant", "Fin"
+            ]
+        },
+        'nl': {
+            months: [
+                "Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December",
+                "Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
+            ],
+            days: [
+                "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag",
+                "Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"
+            ],
+            buttons: [
+                "Vandaag", "Verwijderen", "Annuleren", "Hulp", "Vorige", "Volgende", "Einde"
+            ]
+        },
+        'ua': {
+            months: [
+                "Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень",
+                "Січ", "Лют", "Бер", "Кві", "Тра", "Чер", "Лип", "Сер", "Вер", "Жов", "Лис", "Гру"
+            ],
+            days: [
+                "Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П’ятниця", "Субота",
+                "Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"
+            ],
+            buttons: [
+                "Сьогодні", "Очистити", "Скасувати", "Допомога", "Назад", "Вперед", "Готово"
+            ]
+        },
+        'ru': {
+            months: [
+                "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
+                "Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"
+            ],
+            days: [
+                "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота",
+                "Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"
+            ],
+            buttons: [
+                "Сегодня", "Очистить", "Отменить", "Помощь", "Назад", "Вперед", "Готово"
+            ]
+        },
+        /** By NoGrief (nogrief@gmail.com) */
+        'zhCN': {
+            months: [
+                "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月",
+                "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"
+            ],
+            days: [
+                "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六",
+                "日", "一", "二", "三", "四", "五", "六"
+            ],
+            buttons: [
+                "今日", "清除", "Cancel", "Help", "Prior", "Next", "Finish"
+            ]
+        },
+        'it': {
+            months: [
+                'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre',
+                'Gen', ' Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'
+            ],
+            days: [
+                'Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato',
+                'Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'
+            ],
+            buttons: [
+                "Oggi", "Cancella", "Cancel", "Help", "Prior", "Next", "Finish"
+            ]
+        },
+        'de': {
+            months: [
+                "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember",
+                "Jan", "Feb", "Mrz", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"
+            ],
+            days: [
+                "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag",
+                "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"
+            ],
+            buttons: [
+                "Heute", "Zurücksetzen", "Abbrechen", "Hilfe", "Früher", "Später", "Fertig"
+            ]
+        },
+        /** By Javier Rodríguez (javier.rodriguez at fjrodriguez.com) */
+        'es': {
+            months: [
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+                "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"
+            ],
+            days: [
+                "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado",
+                "Do", "Lu", "Mar", "Mié", "Jue", "Vi", "Sáb"
+            ],
+            buttons: [
+                "Hoy", "Limpiar", "Cancel", "Help", "Prior", "Next", "Finish"
+            ]
+        },
+        'pt': {
+            months: [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+                'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+            ],
+            days: [
+                'Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado',
+                'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'
+            ],
+            buttons: [
+                "Hoje", "Limpar", "Cancelar", "Ajuda", "Anterior", "Seguinte", "Terminar"
+            ]
+        },
+        'pl': {
+            months: [
+                "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień",
+                "Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"
+            ],
+            days: [
+                "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota",
+                "Nd", "Pon", "Wt", "Śr", "Czw", "Pt", "Sob"
+            ],
+            buttons: [
+                "Dzisiaj", "Wyczyść", "Anuluj", "Pomoc", "Poprzedni", "Następny", "Koniec"
+            ]
+        },
+        'cs': {
+            months: [
+                "Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec",
+                "Led", "Ún", "Bř", "Dub", "Kvě", "Če", "Čer", "Srp", "Zá", "Ří", "Li", "Pro"
+            ],
+            days: [
+                "Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota",
+                "Ne", "Po", "Út", "St", "Čt", "Pá", "So"
+            ],
+            buttons: [
+                "Dnes", "Vyčistit", "Zrušit", "Pomoc", "Předešlý", "Další", "Dokončit"
+            ]
+        },
+        /* By Satit Rianpit <rianpit@gmail.com> */
+        'th': {
+            months: [
+                "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม",
+                "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
+            ],
+            days: [
+                "อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์",
+                "อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."
+            ],
+            buttons: [
+                "วันนี้", "ล้าง", "ยกเลิก", "ช่วยเหลือ", "กลับ", "ต่อไป", "เสร็จ"
+            ]
+        }
+    };
+
+    /*
+     * Date Format 1.2.3
+     * (c) 2007-2009 Steven Levithan <stevenlevithan.com>
+     * MIT license
+     *
+     * Includes enhancements by Scott Trenda <scott.trenda.net>
+     * and Kris Kowal <cixar.com/~kris.kowal/>
+     *
+     * Accepts a date, a mask, or a date and a mask.
+     * Returns a formatted version of the given date.
+     * The date defaults to the current date/time.
+     * The mask defaults to dateFormat.masks.default.
+     */
+    // this is a temporary solution
+
+    var dateFormat = function() {
+
+        var token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
+            timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
+            timezoneClip = /[^-+\dA-Z]/g,
+            pad = function(val, len) {
+                val = String(val);
+                len = len || 2;
+                while (val.length < len) {
+                    val = "0" + val;
+                }
+                return val;
+            };
+
+        // Regexes and supporting functions are cached through closure
+        return function(date, mask, utc) {
+            var dF = dateFormat;
+
+            // You can't provide utc if you skip other args (use the "UTC:" mask prefix)
+            if (arguments.length === 1 && Object.prototype.toString.call(date) === "[object String]" && !/\d/.test(date)) {
+                mask = date;
+                date = undefined;
+            }
+
+            //console.log(arguments);
+
+            // Passing date through Date applies Date.parse, if necessary
+            date = date ? new Date(date) : new Date();
+            //if (isNaN(date)) throw SyntaxError("invalid date");
+
+            mask = String(dF.masks[mask] || mask || dF.masks["default"]);
+
+            // Allow setting the utc argument via the mask
+            if (mask.slice(0, 4) === "UTC:") {
+                mask = mask.slice(4);
+                utc = true;
+            }
+
+            //console.log(locale);
+
+            var locale = window.METRO_CURRENT_LOCALE || 'en';
+
+            var _ = utc ? "getUTC" : "get",
+                d = date[_ + "Date"](),
+                D = date[_ + "Day"](),
+                m = date[_ + "Month"](),
+                y = date[_ + "FullYear"](),
+                H = date[_ + "Hours"](),
+                M = date[_ + "Minutes"](),
+                s = date[_ + "Seconds"](),
+                L = date[_ + "Milliseconds"](),
+                o = utc ? 0 : date.getTimezoneOffset(),
+                flags = {
+                    d: d,
+                    dd: pad(d),
+                    ddd: window.METRO_LOCALES[locale].days[D],
+                    dddd: window.METRO_LOCALES[locale].days[D + 7],
+                    m: m + 1,
+                    mm: pad(m + 1),
+                    mmm: window.METRO_LOCALES[locale].months[m],
+                    mmmm: window.METRO_LOCALES[locale].months[m + 12],
+                    yy: String(y).slice(2),
+                    yyyy: y,
+                    h: H % 12 || 12,
+                    hh: pad(H % 12 || 12),
+                    H: H,
+                    HH: pad(H),
+                    M: M,
+                    MM: pad(M),
+                    s: s,
+                    ss: pad(s),
+                    l: pad(L, 3),
+                    L: pad(L > 99 ? Math.round(L / 10) : L),
+                    t: H < 12 ? "a" : "p",
+                    tt: H < 12 ? "am" : "pm",
+                    T: H < 12 ? "A" : "P",
+                    TT: H < 12 ? "AM" : "PM",
+                    Z: utc ? "UTC" : (String(date).match(timezone) || [""]).pop().replace(timezoneClip, ""),
+                    o: (o > 0 ? "-" : "+") + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
+                    S: ["th", "st", "nd", "rd"][d % 10 > 3 ? 0 : (d % 100 - d % 10 !== 10) * d % 10]
+                };
+
+            return mask.replace(token, function($0) {
+                return $0 in flags ? flags[$0] : $0.slice(1, $0.length - 1);
+            });
+        };
+    }();
+
+    // Some common format strings
+    dateFormat.masks = {
+        "default": "ddd mmm dd yyyy HH:MM:ss",
+        shortDate: "m/d/yy",
+        mediumDate: "mmm d, yyyy",
+        longDate: "mmmm d, yyyy",
+        fullDate: "dddd, mmmm d, yyyy",
+        shortTime: "h:MM TT",
+        mediumTime: "h:MM:ss TT",
+        longTime: "h:MM:ss TT Z",
+        isoDate: "yyyy-mm-dd",
+        isoTime: "HH:MM:ss",
+        isoDateTime: "yyyy-mm-dd'T'HH:MM:ss",
+        isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'"
+    };
+
+    // For convenience...
+    Date.prototype.format = function(mask, utc) {
+        return dateFormat(this, mask, utc);
+    };
+
+    // Source: js/widget.js
+    var widget_uuid = 0,
+        widget_slice = Array.prototype.slice;
+
+    $.cleanData = (function(orig) {
+        return function(elems) {
+            var events, elem, i;
+            for (i = 0;
+                (elem = elems[i]) != null; i++) {
+                try {
+
+                    // Only trigger remove when necessary to save time
+                    events = $._data(elem, "events");
+                    if (events && events.remove) {
+                        $(elem).triggerHandler("remove");
+                    }
+
+                    // http://bugs.$.com/ticket/8235
+                } catch (e) {}
+            }
+            orig(elems);
+        };
+    })($.cleanData);
+
+    $.widget = function(name, base, prototype) {
+        var fullName, existingConstructor, constructor, basePrototype,
+            // proxiedPrototype allows the provided prototype to remain unmodified
+            // so that it can be used as a mixin for multiple widgets (#8876)
+            proxiedPrototype = {},
+            namespace = name.split(".")[0];
+
+        name = name.split(".")[1];
+        fullName = namespace + "-" + name;
+
+        if (!prototype) {
+            prototype = base;
+            base = $.Widget;
+        }
+
+        // create selector for plugin
+        $.expr[":"][fullName.toLowerCase()] = function(elem) {
+            return !!$.data(elem, fullName);
+        };
+
+        $[namespace] = $[namespace] || {};
+        existingConstructor = $[namespace][name];
+        constructor = $[namespace][name] = function(options, element) {
+            // allow instantiation without "new" keyword
+            if (!this._createWidget) {
+                return new constructor(options, element);
+            }
+
+            // allow instantiation without initializing for simple inheritance
+            // must use "new" keyword (the code above always passes args)
+            if (arguments.length) {
+                this._createWidget(options, element);
+            }
+        };
+        // extend with the existing constructor to carry over any static properties
+        $.extend(constructor, existingConstructor, {
+            version: prototype.version,
+            // copy the object used to create the prototype in case we need to
+            // redefine the widget later
+            _proto: $.extend({}, prototype),
+            // track widgets that inherit from this widget in case this widget is
+            // redefined after a widget inherits from it
+            _childConstructors: []
+        });
+
+        basePrototype = new base();
+        // we need to make the options hash a property directly on the new instance
+        // otherwise we'll modify the options hash on the prototype that we're
+        // inheriting from
+        basePrototype.options = $.widget.extend({}, basePrototype.options);
+        $.each(prototype, function(prop, value) {
+            if (!$.isFunction(value)) {
+                proxiedPrototype[prop] = value;
+                return;
+            }
+            proxiedPrototype[prop] = (function() {
+                var _super = function() {
+                        return base.prototype[prop].apply(this, arguments);
+                    },
+                    _superApply = function(args) {
+                        return base.prototype[prop].apply(this, args);
+                    };
+                return function() {
+                    var __super = this._super,
+                        __superApply = this._superApply,
+                        returnValue;
+
+                    this._super = _super;
+                    this._superApply = _superApply;
+
+                    returnValue = value.apply(this, arguments);
+
+                    this._super = __super;
+                    this._superApply = __superApply;
+
+                    return returnValue;
+                };
+            })();
+        });
+        constructor.prototype = $.widget.extend(basePrototype, {
+            // TODO: remove support for widgetEventPrefix
+            // always use the name + a colon as the prefix, e.g., draggable:start
+            // don't prefix for widgets that aren't DOM-based
+            widgetEventPrefix: existingConstructor ? (basePrototype.widgetEventPrefix || name) : name
+        }, proxiedPrototype, {
+            constructor: constructor,
+            namespace: namespace,
+            widgetName: name,
+            widgetFullName: fullName
+        });
+
+        // If this widget is being redefined then we need to find all widgets that
+        // are inheriting from it and redefine all of them so that they inherit from
+        // the new version of this widget. We're essentially trying to replace one
+        // level in the prototype chain.
+        if (existingConstructor) {
+            $.each(existingConstructor._childConstructors, function(i, child) {
+                var childPrototype = child.prototype;
+
+                // redefine the child widget using the same prototype that was
+                // originally used, but inherit from the new version of the base
+                $.widget(childPrototype.namespace + "." + childPrototype.widgetName, constructor, child._proto);
+            });
+            // remove the list of existing child constructors from the old constructor
+            // so the old child constructors can be garbage collected
+            delete existingConstructor._childConstructors;
+        } else {
+            base._childConstructors.push(constructor);
+        }
+
+        $.widget.bridge(name, constructor);
+
+        return constructor;
+    };
+
+    $.widget.extend = function(target) {
+        var input = widget_slice.call(arguments, 1),
+            inputIndex = 0,
+            inputLength = input.length,
+            key,
+            value;
+        for (; inputIndex < inputLength; inputIndex++) {
+            for (key in input[inputIndex]) {
+                value = input[inputIndex][key];
+                if (input[inputIndex].hasOwnProperty(key) && value !== undefined) {
+                    // Clone objects
+                    if ($.isPlainObject(value)) {
+                        target[key] = $.isPlainObject(target[key]) ?
+                            $.widget.extend({}, target[key], value) :
+                            // Don't extend strings, arrays, etc. with objects
+                            $.widget.extend({}, value);
+                        // Copy everything else by reference
+                    } else {
+                        target[key] = value;
+                    }
+                }
+            }
+        }
+        return target;
+    };
+
+    $.widget.bridge = function(name, object) {
+        var fullName = object.prototype.widgetFullName || name;
+        $.fn[name] = function(options) {
+            var isMethodCall = typeof options === "string",
+                args = widget_slice.call(arguments, 1),
+                returnValue = this;
+
+            if (isMethodCall) {
+                this.each(function() {
+                    var methodValue,
+                        instance = $.data(this, fullName);
+                    if (options === "instance") {
+                        returnValue = instance;
+                        return false;
+                    }
+                    if (!instance) {
+                        return $.error("cannot call methods on " + name + " prior to initialization; " +
+                            "attempted to call method '" + options + "'");
+                    }
+                    if (!$.isFunction(instance[options]) || options.charAt(0) === "_") {
+                        return $.error("no such method '" + options + "' for " + name + " widget instance");
+                    }
+                    methodValue = instance[options].apply(instance, args);
+                    if (methodValue !== instance && methodValue !== undefined) {
+                        returnValue = methodValue && methodValue.jquery ?
+                            returnValue.pushStack(methodValue.get()) :
+                            methodValue;
+                        return false;
+                    }
+                });
+            } else {
+
+                // Allow multiple hashes to be passed on init
+                if (args.length) {
+                    options = $.widget.extend.apply(null, [options].concat(args));
+                }
+
+                this.each(function() {
+                    var instance = $.data(this, fullName);
+                    if (instance) {
+                        instance.option(options || {});
+                        if (instance._init) {
+                            instance._init();
+                        }
+                    } else {
+                        $.data(this, fullName, new object(options, this));
+                    }
+                });
+            }
+
+            return returnValue;
+        };
+    };
+
+    $.Widget = function( /* options, element */ ) {};
+    $.Widget._childConstructors = [];
+
+    $.Widget.prototype = {
+        widgetName: "widget",
+        widgetEventPrefix: "",
+        defaultElement: "<div>",
+        options: {
+            disabled: false,
+
+            // callbacks
+            create: null
+        },
+        _createWidget: function(options, element) {
+            element = $(element || this.defaultElement || this)[0];
+            this.element = $(element);
+            this.uuid = widget_uuid++;
+            this.eventNamespace = "." + this.widgetName + this.uuid;
+
+            this.bindings = $();
+            this.hoverable = $();
+            this.focusable = $();
+
+            if (element !== this) {
+                $.data(element, this.widgetFullName, this);
+                this._on(true, this.element, {
+                    remove: function(event) {
+                        if (event.target === element) {
+                            this.destroy();
+                        }
+                    }
+                });
+                this.document = $(element.style ?
+                    // element within the document
+                    element.ownerDocument :
+                    // element is window or document
+                    element.document || element);
+                this.window = $(this.document[0].defaultView || this.document[0].parentWindow);
+            }
+
+            this.options = $.widget.extend({},
+                this.options,
+                this._getCreateOptions(),
+                options);
+
+            this._create();
+            this._trigger("create", null, this._getCreateEventData());
+            this._init();
+        },
+        _getCreateOptions: $.noop,
+        _getCreateEventData: $.noop,
+        _create: $.noop,
+        _init: $.noop,
+
+        destroy: function() {
+            this._destroy();
+            // we can probably remove the unbind calls in 2.0
+            // all event bindings should go through this._on()
+            this.element
+                .unbind(this.eventNamespace)
+                .removeData(this.widgetFullName)
+                // support: jquery <1.6.3
+                // http://bugs.jquery.com/ticket/9413
+                .removeData($.camelCase(this.widgetFullName));
+            this.widget()
+                .unbind(this.eventNamespace)
+                .removeAttr("aria-disabled")
+                .removeClass(
+                    this.widgetFullName + "-disabled " +
+                    "ui-state-disabled");
+
+            // clean up events and states
+            this.bindings.unbind(this.eventNamespace);
+            this.hoverable.removeClass("ui-state-hover");
+            this.focusable.removeClass("ui-state-focus");
+        },
+        _destroy: $.noop,
+
+        widget: function() {
+            return this.element;
+        },
+
+        option: function(key, value) {
+            var options = key,
+                parts,
+                curOption,
+                i;
+
+            if (arguments.length === 0) {
+                // don't return a reference to the internal hash
+                return $.widget.extend({}, this.options);
+            }
+
+            if (typeof key === "string") {
+                // handle nested keys, e.g., "foo.bar" => { foo: { bar: ___ } }
+                options = {};
+                parts = key.split(".");
+                key = parts.shift();
+                if (parts.length) {
+                    curOption = options[key] = $.widget.extend({}, this.options[key]);
+                    for (i = 0; i < parts.length - 1; i++) {
+                        curOption[parts[i]] = curOption[parts[i]] || {};
+                        curOption = curOption[parts[i]];
+                    }
+                    key = parts.pop();
+                    if (arguments.length === 1) {
+                        return curOption[key] === undefined ? null : curOption[key];
+                    }
+                    curOption[key] = value;
+                } else {
+                    if (arguments.length === 1) {
+                        return this.options[key] === undefined ? null : this.options[key];
+                    }
+                    options[key] = value;
+                }
+            }
+
+            this._setOptions(options);
+
+            return this;
+        },
+        _setOptions: function(options) {
+            var key;
+
+            for (key in options) {
+                this._setOption(key, options[key]);
+            }
+
+            return this;
+        },
+        _setOption: function(key, value) {
+            this.options[key] = value;
+
+            if (key === "disabled") {
+                this.widget()
+                    .toggleClass(this.widgetFullName + "-disabled", !!value);
+
+                // If the widget is becoming disabled, then nothing is interactive
+                if (value) {
+                    this.hoverable.removeClass("ui-state-hover");
+                    this.focusable.removeClass("ui-state-focus");
+                }
+            }
+
+            return this;
+        },
+
+        enable: function() {
+            return this._setOptions({
+                disabled: false
+            });
+        },
+        disable: function() {
+            return this._setOptions({
+                disabled: true
+            });
+        },
+
+        _on: function(suppressDisabledCheck, element, handlers) {
+            var delegateElement,
+                instance = this;
+
+            // no suppressDisabledCheck flag, shuffle arguments
+            if (typeof suppressDisabledCheck !== "boolean") {
+                handlers = element;
+                element = suppressDisabledCheck;
+                suppressDisabledCheck = false;
+            }
+
+            // no element argument, shuffle and use this.element
+            if (!handlers) {
+                handlers = element;
+                element = this.element;
+                delegateElement = this.widget();
+            } else {
+                element = delegateElement = $(element);
+                this.bindings = this.bindings.add(element);
+            }
+
+            $.each(handlers, function(event, handler) {
+                function handlerProxy() {
+                    // allow widgets to customize the disabled handling
+                    // - disabled as an array instead of boolean
+                    // - disabled class as method for disabling individual parts
+                    if (!suppressDisabledCheck &&
+                        (instance.options.disabled === true ||
+                            $(this).hasClass("ui-state-disabled"))) {
+                        return;
+                    }
+                    return (typeof handler === "string" ? instance[handler] : handler)
+                        .apply(instance, arguments);
+                }
+
+                // copy the guid so direct unbinding works
+                if (typeof handler !== "string") {
+                    handlerProxy.guid = handler.guid =
+                        handler.guid || handlerProxy.guid || $.guid++;
+                }
+
+                var match = event.match(/^([\w:-]*)\s*(.*)$/),
+                    eventName = match[1] + instance.eventNamespace,
+                    selector = match[2];
+                if (selector) {
+                    delegateElement.delegate(selector, eventName, handlerProxy);
+                } else {
+                    element.bind(eventName, handlerProxy);
+                }
+            });
+        },
+
+        _off: function(element, eventName) {
+            eventName = (eventName || "").split(" ").join(this.eventNamespace + " ") +
+                this.eventNamespace;
+            element.unbind(eventName).undelegate(eventName);
+
+            // Clear the stack to avoid memory leaks (#10056)
+            this.bindings = $(this.bindings.not(element).get());
+            this.focusable = $(this.focusable.not(element).get());
+            this.hoverable = $(this.hoverable.not(element).get());
+        },
+
+        _delay: function(handler, delay) {
+            function handlerProxy() {
+                return (typeof handler === "string" ? instance[handler] : handler)
+                    .apply(instance, arguments);
+            }
+
+            var instance = this;
+            return setTimeout(handlerProxy, delay || 0);
+        },
+
+        _hoverable: function(element) {
+            this.hoverable = this.hoverable.add(element);
+            this._on(element, {
+                mouseenter: function(event) {
+                    $(event.currentTarget).addClass("ui-state-hover");
+                },
+                mouseleave: function(event) {
+                    $(event.currentTarget).removeClass("ui-state-hover");
+                }
+            });
+        },
+
+        _focusable: function(element) {
+            this.focusable = this.focusable.add(element);
+            this._on(element, {
+                focusin: function(event) {
+                    $(event.currentTarget).addClass("ui-state-focus");
+                },
+                focusout: function(event) {
+                    $(event.currentTarget).removeClass("ui-state-focus");
+                }
+            });
+        },
+
+        _trigger: function(type, event, data) {
+            var prop, orig,
+                callback = this.options[type];
+
+            data = data || {};
+            event = $.Event(event);
+            event.type = (type === this.widgetEventPrefix ?
+                type :
+                this.widgetEventPrefix + type).toLowerCase();
+            // the original event may come from any element
+            // so we need to reset the target on the new event
+            event.target = this.element[0];
+
+            // copy original event properties over to the new event
+            orig = event.originalEvent;
+            if (orig) {
+                for (prop in orig) {
+                    if (!(prop in event)) {
+                        event[prop] = orig[prop];
+                    }
+                }
+            }
+
+            this.element.trigger(event, data);
+            return !($.isFunction(callback) &&
+                callback.apply(this.element[0], [event].concat(data)) === false ||
+                event.isDefaultPrevented());
+        }
+    };
+
+    $.each({
+        show: "fadeIn",
+        hide: "fadeOut"
+    }, function(method, defaultEffect) {
+        $.Widget.prototype["_" + method] = function(element, options, callback) {
+            if (typeof options === "string") {
+                options = {
+                    effect: options
+                };
+            }
+            var hasOptions,
+                effectName = !options ?
+                method :
+                options === true || typeof options === "number" ?
+                defaultEffect :
+                options.effect || defaultEffect;
+            options = options || {};
+            if (typeof options === "number") {
+                options = {
+                    duration: options
+                };
+            }
+            hasOptions = !$.isEmptyObject(options);
+            options.complete = callback;
+            if (options.delay) {
+                element.delay(options.delay);
+            }
+            if (hasOptions && $.effects && $.effects.effect[effectName]) {
+                element[method](options);
+            } else if (effectName !== method && element[effectName]) {
+                element[effectName](options.duration, options.easing, callback);
+            } else {
+                element.queue(function(next) {
+                    $(this)[method]();
+                    if (callback) {
+                        callback.call(element[0]);
+                    }
+                    next();
+                });
+            }
+        };
+    });
+
+    var widget = $.widget;
+
+    // Source: js/initiator.js
+    $.fn.reverse = Array.prototype.reverse;
+
+    $.Metro = function(params) {
+        params = $.extend({}, params);
+    };
+
+    $.Metro.hotkeys = [];
+
+    $.Metro.initWidgets = function() {
+        var widgets = $("[data-role]");
+
+        var hotkeys = $("[data-hotkey]");
+        $.each(hotkeys, function() {
+            var element = $(this);
+            var hotkey = element.data('hotkey').toLowerCase();
+
+            //if ($.Metro.hotkeys.indexOf(hotkey) > -1) {
+            //    return;
+            //}
+            if (element.data('hotKeyBonded') === true) {
+                return;
+            }
+
+            $.Metro.hotkeys.push(hotkey);
+
+            $(document).on('keyup', null, hotkey, function(e) {
+                if (element === undefined) return;
+
+                if (element[0].tagName === 'A' &&
+                    element.attr('href') !== undefined &&
+                    element.attr('href').trim() !== '' &&
+                    element.attr('href').trim() !== '#') {
+                    document.location.href = element.attr('href');
+                } else {
+                    element.click();
+                }
+                return false;
+            });
+
+            element.data('hotKeyBonded', true);
+        });
+
+        $.each(widgets, function() {
+            var $this = $(this),
+                w = this;
+            var roles = $this.data('role').split(/\s*,\s*/);
+            roles.map(function(func) {
+                try {
+                    //$(w)[func]();
+                    if ($.fn[func] !== undefined && $this.data(func + '-initiated') !== true) {
+                        $.fn[func].call($this);
+                        $this.data(func + '-initiated', true);
+                    }
+                } catch (e) {
+                    if (window.METRO_DEBUG) {
+                        console.log(e.message, e.stack);
+                    }
+                }
+            });
+        });
+    };
+
+    $.Metro.init = function() {
+        $.Metro.initWidgets();
+
+        if (window.METRO_AUTO_REINIT) {
+            if (!window.canObserveMutation) {
+                var originalDOM = $('body').html(),
+                    actualDOM;
+
+                setInterval(function() {
+                    actualDOM = $('body').html();
+
+                    if (originalDOM !== actualDOM) {
+                        originalDOM = actualDOM;
+
+                        $.Metro.initWidgets();
+                    }
+                }, 100);
+            } else {
+                var observer, observerOptions, observerCallback;
+                observerOptions = {
+                    'childList': true,
+                    'subtree': true
+                };
+                observerCallback = function(mutations) {
+
+                    //console.log(mutations);
+
+                    mutations.map(function(record) {
+
+                        if (record.addedNodes) {
+
+                            /*jshint loopfunc: true */
+                            var obj, widgets, plugins, hotkeys;
+
+                            for (var i = 0, l = record.addedNodes.length; i < l; i++) {
+                                obj = $(record.addedNodes[i]);
+
+                                plugins = obj.find("[data-role]");
+
+                                hotkeys = obj.find("[data-hotkey]");
+
+                                $.each(hotkeys, function() {
+                                    var element = $(this);
+                                    var hotkey = element.data('hotkey').toLowerCase();
+
+                                    //if ($.Metro.hotkeys.indexOf(hotkey) > -1) {
+                                    //    return;
+                                    //}
+
+                                    if (element.data('hotKeyBonded') === true) {
+                                        return;
+                                    }
+
+                                    $.Metro.hotkeys.push(hotkey);
+
+                                    $(document).on('keyup', null, hotkey, function() {
+                                        if (element === undefined) return;
+
+                                        if (element[0].tagName === 'A' &&
+                                            element.attr('href') !== undefined &&
+                                            element.attr('href').trim() !== '' &&
+                                            element.attr('href').trim() !== '#') {
+                                            document.location.href = element.attr('href');
+                                        } else {
+                                            element.click();
+                                        }
+                                        return false;
+                                    });
+
+                                    element.data('hotKeyBonded', true);
+                                    //console.log($.Metro.hotkeys);
+                                });
+
+                                if (obj.data('role') !== undefined) {
+                                    widgets = $.merge(plugins, obj);
+                                } else {
+                                    widgets = plugins;
+                                }
+
+                                if (widgets.length) {
+                                    $.each(widgets, function() {
+                                        var _this = $(this);
+                                        var roles = _this.data('role').split(/\s*,\s*/);
+                                        roles.map(function(func) {
+                                            try {
+                                                if ($.fn[func] !== undefined && _this.data(func + '-initiated') !== true) {
+                                                    $.fn[func].call(_this);
+                                                    _this.data(func + '-initiated', true);
+                                                }
+                                            } catch (e) {
+                                                if (window.METRO_DEBUG) {
+                                                    console.log(e.message, e.stack);
+                                                }
+                                            }
+                                        });
+                                    });
+                                }
+                            }
+                        }
+                    });
+                };
+
+                //console.log($(document));
+                observer = new MutationObserver(observerCallback);
+                observer.observe(document, observerOptions);
+            }
+        }
+    };
+
+    // Source: js/utils/easing.js
+    $.easing['jswing'] = $.easing['swing'];
+
+    $.extend($.easing, {
+        def: 'easeOutQuad',
+        swing: function(x, t, b, c, d) {
+            //alert($.easing.default);
+            return $.easing[$.easing.def](x, t, b, c, d);
+        },
+        easeInQuad: function(x, t, b, c, d) {
+            return c * (t /= d) * t + b;
+        },
+        easeOutQuad: function(x, t, b, c, d) {
+            return -c * (t /= d) * (t - 2) + b;
+        },
+        easeInOutQuad: function(x, t, b, c, d) {
+            if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+            return -c / 2 * ((--t) * (t - 2) - 1) + b;
+        },
+        easeInCubic: function(x, t, b, c, d) {
+            return c * (t /= d) * t * t + b;
+        },
+        easeOutCubic: function(x, t, b, c, d) {
+            return c * ((t = t / d - 1) * t * t + 1) + b;
+        },
+        easeInOutCubic: function(x, t, b, c, d) {
+            if ((t /= d / 2) < 1) return c / 2 * t * t * t + b;
+            return c / 2 * ((t -= 2) * t * t + 2) + b;
+        },
+        easeInQuart: function(x, t, b, c, d) {
+            return c * (t /= d) * t * t * t + b;
+        },
+        easeOutQuart: function(x, t, b, c, d) {
+            return -c * ((t = t / d - 1) * t * t * t - 1) + b;
+        },
+        easeInOutQuart: function(x, t, b, c, d) {
+            if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
+            return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+        },
+        easeInQuint: function(x, t, b, c, d) {
+            return c * (t /= d) * t * t * t * t + b;
+        },
+        easeOutQuint: function(x, t, b, c, d) {
+            return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
+        },
+        easeInOutQuint: function(x, t, b, c, d) {
+            if ((t /= d / 2) < 1) return c / 2 * t * t * t * t * t + b;
+            return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
+        },
+        easeInSine: function(x, t, b, c, d) {
+            return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
+        },
+        easeOutSine: function(x, t, b, c, d) {
+            return c * Math.sin(t / d * (Math.PI / 2)) + b;
+        },
+        easeInOutSine: function(x, t, b, c, d) {
+            return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+        },
+        easeInExpo: function(x, t, b, c, d) {
+            return (t == 0) ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
+        },
+        easeOutExpo: function(x, t, b, c, d) {
+            return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+        },
+        easeInOutExpo: function(x, t, b, c, d) {
+            if (t == 0) return b;
+            if (t == d) return b + c;
+            if ((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
+            return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
+        },
+        easeInCirc: function(x, t, b, c, d) {
+            return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
+        },
+        easeOutCirc: function(x, t, b, c, d) {
+            return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
+        },
+        easeInOutCirc: function(x, t, b, c, d) {
+            if ((t /= d / 2) < 1) return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
+            return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
+        },
+        easeInElastic: function(x, t, b, c, d) {
+            var s = 1.70158;
+            var p = 0;
+            var a = c;
+            if (t == 0) return b;
+            if ((t /= d) == 1) return b + c;
+            if (!p) p = d * .3;
+            if (a < Math.abs(c)) {
+                a = c;
+                s = p / 4;
+            } else s = p / (2 * Math.PI) * Math.asin(c / a);
+            return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+        },
+        easeOutElastic: function(x, t, b, c, d) {
+            var s = 1.70158;
+            var p = 0;
+            var a = c;
+            if (t == 0) return b;
+            if ((t /= d) == 1) return b + c;
+            if (!p) p = d * .3;
+            if (a < Math.abs(c)) {
+                a = c;
+                s = p / 4;
+            } else s = p / (2 * Math.PI) * Math.asin(c / a);
+            return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
+        },
+        easeInOutElastic: function(x, t, b, c, d) {
+            var s = 1.70158;
+            var p = 0;
+            var a = c;
+            if (t == 0) return b;
+            if ((t /= d / 2) == 2) return b + c;
+            if (!p) p = d * (.3 * 1.5);
+            if (a < Math.abs(c)) {
+                a = c;
+                s = p / 4;
+            } else s = p / (2 * Math.PI) * Math.asin(c / a);
+            if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+            return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
+        },
+        easeInBack: function(x, t, b, c, d, s) {
+            if (s == undefined) s = 1.70158;
+            return c * (t /= d) * t * ((s + 1) * t - s) + b;
+        },
+        easeOutBack: function(x, t, b, c, d, s) {
+            if (s == undefined) s = 1.70158;
+            return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
+        },
+        easeInOutBack: function(x, t, b, c, d, s) {
+            if (s == undefined) s = 1.70158;
+            if ((t /= d / 2) < 1) return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
+            return c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b;
+        },
+        easeInBounce: function(x, t, b, c, d) {
+            return c - $.easing.easeOutBounce(x, d - t, 0, c, d) + b;
+        },
+        easeOutBounce: function(x, t, b, c, d) {
+            if ((t /= d) < (1 / 2.75)) {
+                return c * (7.5625 * t * t) + b;
+            } else if (t < (2 / 2.75)) {
+                return c * (7.5625 * (t -= (1.5 / 2.75)) * t + .75) + b;
+            } else if (t < (2.5 / 2.75)) {
+                return c * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375) + b;
+            } else {
+                return c * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375) + b;
+            }
+        },
+        easeInOutBounce: function(x, t, b, c, d) {
+            if (t < d / 2) return $.easing.easeInBounce(x, t * 2, 0, c, d) * .5 + b;
+            return $.easing.easeOutBounce(x, t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+        }
+    });
+
+    // Source: js/utils/hotkeys.js
+    $.hotkeys = {
+        version: "0.8",
+
+        specialKeys: {
+            8: "backspace",
+            9: "tab",
+            10: "return",
+            13: "return",
+            16: "shift",
+            17: "ctrl",
+            18: "alt",
+            19: "pause",
+            20: "capslock",
+            27: "esc",
+            32: "space",
+            33: "pageup",
+            34: "pagedown",
+            35: "end",
+            36: "home",
+            37: "left",
+            38: "up",
+            39: "right",
+            40: "down",
+            45: "insert",
+            46: "del",
+            59: ";",
+            61: "=",
+            96: "0",
+            97: "1",
+            98: "2",
+            99: "3",
+            100: "4",
+            101: "5",
+            102: "6",
+            103: "7",
+            104: "8",
+            105: "9",
+            106: "*",
+            107: "+",
+            109: "-",
+            110: ".",
+            111: "/",
+            112: "f1",
+            113: "f2",
+            114: "f3",
+            115: "f4",
+            116: "f5",
+            117: "f6",
+            118: "f7",
+            119: "f8",
+            120: "f9",
+            121: "f10",
+            122: "f11",
+            123: "f12",
+            144: "numlock",
+            145: "scroll",
+            173: "-",
+            186: ";",
+            187: "=",
+            188: ",",
+            189: "-",
+            190: ".",
+            191: "/",
+            192: "`",
+            219: "[",
+            220: "\\",
+            221: "]",
+            222: "'"
+        },
+
+        shiftNums: {
+            "`": "~",
+            "1": "!",
+            "2": "@",
+            "3": "#",
+            "4": "$",
+            "5": "%",
+            "6": "^",
+            "7": "&",
+            "8": "*",
+            "9": "(",
+            "0": ")",
+            "-": "_",
+            "=": "+",
+            ";": ": ",
+            "'": "\"",
+            ",": "<",
+            ".": ">",
+            "/": "?",
+            "\\": "|"
+        },
+
+        // excludes: button, checkbox, file, hidden, image, password, radio, reset, search, submit, url
+        textAcceptingInputTypes: [
+            "text", "password", "number", "email", "url", "range", "date", "month", "week", "time", "datetime",
+            "datetime-local", "search", "color", "tel"
+        ],
+
+        // default input types not to bind to unless bound directly
+        textInputTypes: /textarea|input|select/i,
+
+        options: {
+            filterInputAcceptingElements: true,
+            filterTextInputs: true,
+            filterContentEditable: true
+        }
+    };
+
+    function keyHandler(handleObj) {
+        if (typeof handleObj.data === "string") {
+            handleObj.data = {
+                keys: handleObj.data
+            };
+        }
+
+        // Only care when a possible input has been specified
+        if (!handleObj.data || !handleObj.data.keys || typeof handleObj.data.keys !== "string") {
+            return;
+        }
+
+        var origHandler = handleObj.handler,
+            keys = handleObj.data.keys.toLowerCase().split(" ");
+
+        handleObj.handler = function(event) {
+            //      Don't fire in text-accepting inputs that we didn't directly bind to
+            if (this !== event.target &&
+                ($.hotkeys.options.filterInputAcceptingElements &&
+                    $.hotkeys.textInputTypes.test(event.target.nodeName) ||
+                    ($.hotkeys.options.filterContentEditable && $(event.target).attr('contenteditable')) ||
+                    ($.hotkeys.options.filterTextInputs &&
+                        $.inArray(event.target.type, $.hotkeys.textAcceptingInputTypes) > -1))) {
+                return;
+            }
+
+            var special = event.type !== "keypress" && $.hotkeys.specialKeys[event.which],
+                character = String.fromCharCode(event.which).toLowerCase(),
+                modif = "",
+                possible = {};
+
+            $.each(["alt", "ctrl", "shift"], function(index, specialKey) {
+
+                if (event[specialKey + 'Key'] && special !== specialKey) {
+                    modif += specialKey + '+';
+                }
+            });
+
+            // metaKey is triggered off ctrlKey erronously
+            if (event.metaKey && !event.ctrlKey && special !== "meta") {
+                modif += "meta+";
+            }
+
+            if (event.metaKey && special !== "meta" && modif.indexOf("alt+ctrl+shift+") > -1) {
+                modif = modif.replace("alt+ctrl+shift+", "hyper+");
+            }
+
+            if (special) {
+                possible[modif + special] = true;
+            } else {
+                possible[modif + character] = true;
+                possible[modif + $.hotkeys.shiftNums[character]] = true;
+
+                // "$" can be triggered as "Shift+4" or "Shift+$" or just "$"
+                if (modif === "shift+") {
+                    possible[$.hotkeys.shiftNums[character]] = true;
+                }
+            }
+
+            for (var i = 0, l = keys.length; i < l; i++) {
+                if (possible[keys[i]]) {
+                    return origHandler.apply(this, arguments);
+                }
+            }
+        };
+    }
+
+    $.each(["keydown", "keyup", "keypress"], function() {
+        $.event.special[this] = {
+            add: keyHandler
+        };
+    });
+
+    // Source: js/utils/mousewheel.js
+    var toFix = ['wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+    var toBind = 'onwheel' in document || document.documentMode >= 9 ? ['wheel'] : ['mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'];
+    var lowestDelta, lowestDeltaXY;
+
+    if ($.event.fixHooks) {
+        for (var i = toFix.length; i;) {
+            $.event.fixHooks[toFix[--i]] = $.event.mouseHooks;
+        }
+    }
+
+    $.event.special.mousewheel = {
+        setup: function() {
+            if (this.addEventListener) {
+                for (var i = toBind.length; i;) {
+                    this.addEventListener(toBind[--i], handler, false);
+                }
+            } else {
+                this.onmousewheel = handler;
+            }
+        },
+
+        teardown: function() {
+            if (this.removeEventListener) {
+                for (var i = toBind.length; i;) {
+                    this.removeEventListener(toBind[--i], handler, false);
+                }
+            } else {
+                this.onmousewheel = null;
+            }
+        }
+    };
+
+    $.fn.extend({
+        mousewheel: function(fn) {
+            return fn ? this.bind("mousewheel", fn) : this.trigger("mousewheel");
+        },
+
+        unmousewheel: function(fn) {
+            return this.unbind("mousewheel", fn);
+        }
+    });
+
+
+    function handler(event) {
+        var orgEvent = event || window.event,
+            args = [].slice.call(arguments, 1),
+            delta = 0,
+            deltaX = 0,
+            deltaY = 0,
+            absDelta = 0,
+            absDeltaXY = 0,
+            fn;
+        event = $.event.fix(orgEvent);
+        event.type = "mousewheel";
+
+        // Old school scrollwheel delta
+        if (orgEvent.wheelDelta) {
+            delta = orgEvent.wheelDelta;
+        }
+        if (orgEvent.detail) {
+            delta = orgEvent.detail * -1;
+        }
+
+        // New school wheel delta (wheel event)
+        if (orgEvent.deltaY) {
+            deltaY = orgEvent.deltaY * -1;
+            delta = deltaY;
+        }
+        if (orgEvent.deltaX) {
+            deltaX = orgEvent.deltaX;
+            delta = deltaX * -1;
+        }
+
+        // Webkit
+        if (orgEvent.wheelDeltaY !== undefined) {
+            deltaY = orgEvent.wheelDeltaY;
+        }
+        if (orgEvent.wheelDeltaX !== undefined) {
+            deltaX = orgEvent.wheelDeltaX * -1;
+        }
+
+        // Look for lowest delta to normalize the delta values
+        absDelta = Math.abs(delta);
+        if (!lowestDelta || absDelta < lowestDelta) {
+            lowestDelta = absDelta;
+        }
+        absDeltaXY = Math.max(Math.abs(deltaY), Math.abs(deltaX));
+        if (!lowestDeltaXY || absDeltaXY < lowestDeltaXY) {
+            lowestDeltaXY = absDeltaXY;
+        }
+
+        // Get a whole value for the deltas
+        fn = delta > 0 ? 'floor' : 'ceil';
+        delta = Math[fn](delta / lowestDelta);
+        deltaX = Math[fn](deltaX / lowestDeltaXY);
+        deltaY = Math[fn](deltaY / lowestDeltaXY);
+
+        // Add event and delta to the front of the arguments
+        args.unshift(event, delta, deltaX, deltaY);
+
+        return ($.event.dispatch || $.event.handle).apply(this, args);
+    }
+
+    // Source: js/utils/pre-code.js
+    function preCode(selector) {
+        var els = Array.prototype.slice.call(document.querySelectorAll(selector), 0);
+
+        els.forEach(function(el, idx, arr) {
+            var txt = el.textContent
+                .replace(/^[\r\n]+/, "") // strip leading newline
+                .replace(/\s+$/g, "");
+
+            if (/^\S/gm.test(txt)) {
+                el.textContent = txt;
+                return;
+            }
+
+            var mat, str, re = /^[\t ]+/gm,
+                len, min = 1e3;
+
+            while (mat = re.exec(txt)) {
+                len = mat[0].length;
+
+                if (len < min) {
+                    min = len;
+                    str = mat[0];
+                }
+            }
+
+            if (min == 1e3)
+                return;
+
+            el.textContent = txt.replace(new RegExp("^" + str, 'gm'), "");
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        preCode("pre code, textarea");
+    }, false);
+    // Source: js/utils/touch-handler.js
+    var hasTouch = 'ontouchend' in window,
+        eventTimer;
+    var moveDirection = 'undefined',
+        startX, startY, deltaX, deltaY, mouseDown = false;
+
+    var addTouchEvents = function(element) {
+        if (hasTouch) {
+            element.addEventListener("touchstart", touch2Mouse, true);
+            element.addEventListener("touchmove", touch2Mouse, true);
+            element.addEventListener("touchend", touch2Mouse, true);
+        }
+    };
+
+    function touch2Mouse(e) {
+        var theTouch = e.changedTouches[0];
+        var mouseEv;
+
+        switch (e.type) {
+            case "touchstart":
+                mouseEv = "mousedown";
+                break;
+            case "touchend":
+                mouseEv = "mouseup";
+                break;
+            case "touchmove":
+                mouseEv = "mousemove";
+                break;
+            default:
+                return;
+        }
+
+
+        if (mouseEv == "mousedown") {
+            eventTimer = (new Date()).getTime();
+            startX = theTouch.clientX;
+            startY = theTouch.clientY;
+            mouseDown = true;
+        }
+
+        if (mouseEv == "mouseup") {
+            if ((new Date()).getTime() - eventTimer <= 500) {
+                mouseEv = "click";
+            } else if ((new Date()).getTime() - eventTimer > 1000) {
+                mouseEv = "longclick";
+            }
+            eventTimer = 0;
+            mouseDown = false;
+        }
+
+        if (mouseEv == "mousemove") {
+            if (mouseDown) {
+                deltaX = theTouch.clientX - startX;
+                deltaY = theTouch.clientY - startY;
+                moveDirection = deltaX > deltaY ? 'horizontal' : 'vertical';
+            }
+        }
+
+        var mouseEvent = document.createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(mouseEv, true, true, window, 1, theTouch.screenX, theTouch.screenY, theTouch.clientX, theTouch.clientY, false, false, false, false, 0, null);
+        theTouch.target.dispatchEvent(mouseEvent);
+
+        e.preventDefault();
+    }
+
+    // Source: js/widgets/accordion.js
+    $.widget("metro.accordion", {
+
+        version: "3.0.0",
+
+        options: {
+            closeAny: false,
+            speed: 'fast',
+            onFrameOpen: function(frame) {
+                return true;
+            },
+            onFrameOpened: function(frame) {},
+            onFrameClose: function(frame) {
+                return true;
+            },
+            onFrameClosed: function(frame) {}
+        },
+
+        init: function() {
+            var that = this,
+                element = this.element;
+
+            element.on('click', '.heading', function(e) {
+                var frame = $(this).parent();
+
+                if (frame.hasClass('disabled')) {
+                    return false;
+                }
+
+                if (!frame.hasClass('active')) {
+                    that._openFrame(frame);
+                } else {
+                    that._closeFrame(frame);
+                }
+
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        },
+
+        _closeAllFrames: function() {
+            var that = this;
+            var frames = this.element.children('.frame.active');
+            $.each(frames, function() {
+                that._closeFrame($(this));
+            });
+        },
+
+        _openFrame: function(frame) {
+            var o = this.options;
+            var content = frame.children('.content');
+            var result;
+
+            if (typeof o.onFrameOpen === 'function') {
+                if (!o.onFrameOpen(frame)) {
+                    return false;
+                }
+            } else {
+                if (typeof window[o.onFrameOpen] === 'function') {
+                    if (!window[o.onFrameOpen](frame)) {
+                        return false;
+                    }
+                } else {
+                    result = eval("(function(){" + o.onFrameOpen + "})");
+                    if (!result.call(frame)) {
+                        return false;
+                    }
+                }
+            }
+
+            if (o.closeAny) {
+                this._closeAllFrames();
+            }
+
+            content.slideDown(o.speed);
+            frame.addClass('active');
+
+            if (typeof o.onFrameOpened === 'function') {
+                o.onFrameOpened(frame);
+            } else {
+                if (typeof window[o.onFrameOpened] === 'function') {
+                    window[o.onFrameOpened](frame);
+                } else {
+                    result = eval("(function(){" + o.onFrameOpened + "})");
+                    result.call(frame);
+                }
+            }
+        },
+
+        _closeFrame: function(frame) {
+            var o = this.options;
+            var content = frame.children('.content');
+            var result;
+
+            if (typeof o.onFrameClose === 'function') {
+                if (!o.onFrameClose(frame)) {
+                    return false;
+                }
+            } else {
+                if (typeof window[o.onFrameClose] === 'function') {
+                    if (!window[o.onFrameClose](frame)) {
+                        return false;
+                    }
+                } else {
+                    result = eval("(function(){" + o.onFrameClose + "})");
+                    if (!result.call(frame)) {
+                        return false;
+                    }
+                }
+            }
+
+            content.slideUp(o.speed, function() {
+                frame.removeClass("active");
+            });
+
+            if (typeof o.onFrameClosed === 'function') {
+                o.onFrameClosed(frame);
+            } else {
+                if (typeof window[o.onFrameClosed] === 'function') {
+                    window[o.onFrameClosed](frame);
+                } else {
+                    result = eval("(function(){" + o.onFrameClosed + "})");
+                    result.call(frame);
+                }
+            }
+        },
+
+        _create: function() {
+            var that = this,
+                o = this.options,
+                element = this.element;
+
+            $.each(this.element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            that.init();
+            element.data('accordion', this);
+
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/appbar.js
+    $.widget("metro.appbar", {
+        version: "3.0.0",
+        options: {
+            flexstyle: "app-bar-menu", //app-bar-menu | YOUR_OWN class for the pull flexmenu, basic support for "sidebar2" are integrated in the appbar.less file
+            flexclean: false, //true | false. if set all entries except the no-flexible ones will removed
+            flextolerance: 3 //in px. if set the freespace is runnig out a little bit earlier, so floats 
+                //and not no-wrap elements have no chance to wrap. help for rounding errors also
+        },
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._initBar();
+
+            element.data('appbar', this);
+
+        },
+        _calculateFreeSpace: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var menusParentWidth = 0,
+                childrenWidth = 0,
+                children;
+            var freeSpace;
+
+            //get the overall free space from the wrapping parent of the menus
+            menusParentWidth = $(that.menusParent).width();
+
+            //get the width of all visible children
+            children = $(that.menusParent).children(":visible").not(".app-bar-pullmenu");
+
+
+            //margin support: because there could be margins between elements, we do not summarize the width up with a one liner
+            //but calculate width of all children in an intelligent way, we takte the left offsett of the first element and right offset of the right element
+            //for that we have to support float left and right too:
+            //float left and right support: we can not be sure that the first element in dom is on the left and the last is on the right
+            //right floated
+            //   - sort the children as the user see them
+
+            //sort the children as the user see them according to the css float
+            var childrenLeftFloated = [];
+            var childrenRightFloated = [];
+            var childrenAsUsual = [];
+            var floatState;
+
+            for (var i = 0, len = children.length; i < len; i++) {
+                floatState = $(children[i]).css("float");
+                switch (floatState) {
+                    case "left":
+                        childrenLeftFloated.push(children[i]);
+                        break;
+                    case "right":
+                        childrenRightFloated.push(children[i]);
+                        break;
+                    default:
+                        childrenAsUsual.push(children[i]);
+                }
+            }
+            //right floats are from right to left
+            childrenRightFloated.reverse();
+
+            //=== build up the new children jquery object ===
+            //join the left, right and normal children   
+            children = new Array();
+            children = childrenLeftFloated.concat(childrenAsUsual, childrenRightFloated);
+
+            //convert the array to jquery object again
+            children = $(children);
+
+            //=== calculate the width of the elements with margin support ===
+
+            //adds the left margin dedicated to the first child
+            childrenWidth += parseInt($(children).first().css("margin-left"));
+
+            //walk trough the children and add the size, 
+            for (var i = 0, len = children.length - 1; i <= len; i++) {
+                childrenWidth += $(children[i]).outerWidth();
+                if (i !== len) {
+                    //the highest margin between two elements counts
+                    childrenWidth += Math.max(
+                        parseInt($(children[i]).css("margin-right")),
+                        parseInt($(children[i + 1]).css("margin-left"))
+
+                    );
+                }
+            }
+            //the right margin for the right child
+            childrenWidth += parseInt($(children[len]).css("margin-right"));
+
+            //now we have all data for calculation. Yippie-Ya-Yeah, Schweinebacke!! (much cooler German translation of B. W. Yippie-Ya-Yeah, Motherf***er)
+            freeSpace = menusParentWidth - childrenWidth;
+
+            //writing the data we found out to the element's data
+            that.freeSpace = freeSpace; //not used space within the parent(mostly the appbar itself)
+            that.childrenWidth = childrenWidth; //the total width of the children
+            that.menusParentWidth = menusParentWidth; //the width without padding or something
+
+            return freeSpace;
+        },
+        _originIndexMove: function(menu, child) {
+            //find all children which are lower than we
+            var flexChildren = $(menu).children().filter(function() {
+                return parseInt($(this).attr("data-flexorderorigin")) < parseInt($(child).attr("data-flexorderorigin"));
+            });
+
+            if (flexChildren.length > 0) {
+                //because we are greater, we set it after the childern which are lower
+                $(flexChildren).last().after(child);
+            } else {
+                //find all children which are greater than we are
+                flexChildren = $(menu).children().filter(function() {
+                    return parseInt($(this).attr("data-flexorderorigin")) > parseInt($(child).attr("data-flexorderorigin"));
+                });
+                if (flexChildren.length > 0) {
+                    //because we are lower, we set us before the childern which are greater
+                    $(flexChildren).first().before(child);
+                } else {
+                    //we have no children, just append it
+                    $(menu).append(child);
+                }
+            }
+        },
+        _moveMenuEntry: function(direction) {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            direction = direction || "toPullMenu"; // "fromPullMenu" is also an option
+
+            if (direction === "toPullMenu") {
+                //get next candidate which could be moved to the pullmenu, in fact the last which not have a mark as pullmenu-entry
+
+                var nextToHide = $(that.allMenuEntries).not(".app-bar-pullmenu-entry").last();
+
+                if (nextToHide.length === 0) {
+                    //nothing left, we have nothing to do
+                    return false;
+                }
+
+
+                //find out in which menubar we are located in
+                var topMenu = $(nextToHide).parent(); //this is only a appbar-menu not the appbar itself
+                //find out where we have to go
+                var topMenuIndex = $(that.flexVisibles).index($(nextToHide).parent());
+                var pullMenuBar = $(that.pullMenu).find(".app-bar-pullmenubar").eq(topMenuIndex); //TODO: Make the class app-bar-menu configurable - perhaps sidebar
+
+                that._originIndexMove(pullMenuBar, nextToHide);
+                //move it to the pullmenu
+                //                if ($(topMenu).is("[data-flexdirection='reverse']")) {//data-flexdirection="reverse" support
+                //                    $(nextToHide).appendTo(pullMenuBar);
+                //                } else {                                             //normal way
+                //                    $(nextToHide).prependTo(pullMenuBar);
+                //                }
+
+                //mark the entry as a entry of the pullmenu
+                $(nextToHide).addClass("app-bar-pullmenu-entry");
+
+                //the menubar is initiated with the hidden class, so we do not see empty pullmenubars, we must unhide them
+                //it does not matter, if we see it already, we do it always:
+                $(pullMenuBar).removeClass("hidden")
+                    .show();
+
+                //in case there are no more entries in the top menu bar we can hide it
+                if ($(topMenu).children().length === 0) {
+                    $(topMenu).addClass("hidden");
+                }
+
+                //we show the pullbutton now
+                $(that.pullButton).show();
+
+                return nextToHide;
+
+            } else if (direction === "fromPullMenu") {
+                //get next candidate which could be moved to the topbar menu, in fact the first which is still marked as pullmenu-entry
+                var nextToShow = $(that.allMenuEntries).filter(".app-bar-pullmenu-entry").first();
+
+
+                //find out in which pullmenu we are located in
+                var pullMenuBar = $(nextToShow).parent(); //only one single menu, not the whole thing
+
+                //find out where we have to go
+                var topMenuIndex = $(pullMenuBar).index(); //it is the same structur as that.flexVisibles, so we can use the simple index
+                var topMenu = $(that.flexVisibles).eq(topMenuIndex);
+
+                $(topMenu).removeClass("hidden");
+                //remove the mark as a entry of the pullmenu and move it to the normal top menu
+                $(nextToShow).removeClass("app-bar-pullmenu-entry");
+
+                //cosider the flexorder
+
+                //walk trough the children in topMenu and find out what we must do
+
+                //find all children which are lower than we
+                that._originIndexMove(topMenu, nextToShow);
+
+                //in case there are no more entries left, we can hide the pullbar menu from this entry
+                if ($(pullMenuBar).children().length === 0) {
+                    $(pullMenuBar).addClass("hidden")
+                        .hide();
+                }
+
+                //in case we have no more menus in the pullbar area, we hide the pullbar thing
+                if ($(that.pullMenu).children(".app-bar-pullmenubar").not(".hidden").length === 0) {
+                    $(that.pullMenu).hide().addClass("hidden");
+                    $(that.pullButton).hide();
+                }
+
+                if (nextToShow.length === 0) {
+                    //nothing left, we have nothing to do
+                    return false;
+                }
+                return nextToShow;
+            }
+        },
+        _checkMenuEntries: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            var forceEndLoop = false;
+
+            for (var maxLoop = 0, maxLoopLen = that.allMenuEntries.length; maxLoop < maxLoopLen; maxLoop++) { //we do nothing with this, we could use while(true) but there is a danger of infinite loops
+
+                //calculate the empty space within the appbar we can use for hidden children
+                that._calculateFreeSpace();
+                var freeSpace = that.freeSpace;
+
+                if (freeSpace < o.flextolerance || o.flexclean) { //3px is tolerance and to be faster than the wrapping. TODO: make this configurable
+                    //no space left, we hide a menu entry now
+
+                    //move the menu entry to the pullbar and check if there are more menuentries left
+                    if (!(that._moveMenuEntry("toPullMenu"))) {
+                        //nothing left to hide
+                        break;
+                    } else {
+                        //we moved successfully, perhaps we can hide more entries, we recheck the appbar, 
+                        //remember, we are in a endless loop, which checks this for us
+
+                        if (!forceEndLoop) {
+                            continue;
+                        }
+                    }
+
+                } else {
+                    //we have space here, we try to get more entries there
+
+                    //check if there is something to do
+                    if (!(that._moveMenuEntry("fromPullMenu"))) {
+                        //nothing left to show
+                        break;
+                    } else {
+                        forceEndLoop = true;
+                        continue;
+                    }
+
+                }
+
+                //we continue manually. if we reach the end of the loop we end this better so we do not produce infinite loop accidentally
+                break;
+            }
+        },
+        resize: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            if (that.initiatedAsFlex) {
+                this._checkMenuEntries();
+            }
+        },
+        _initBar: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            that.lastFlexAction = undefined;
+
+            that.pullButton = $(element).find('.app-bar-pullbutton');
+            var menus = $(element).find('.app-bar-menu');
+
+            that.initiatedAsFlex = false; //we change it later in the code - conditionally
+            o.flexclean = $(element).is("[data-flexclean='true']") || o.flexclean;
+            o.flexstyle = $(element).attr("data-flexstyle") || o.flexstyle;
+
+            var flexVisible, menuEntries; //temporarly used vars
+
+            that.flexVisibles = $(); //the menus which are directly in the appbar
+            that.allMenuEntries = $(); //all menu entries in a sorted order
+            that.menusParent = $(); //common parent from the menus, which can but do not need to be this.element. We get the max width from it
+            that.pullMenu = $();
+
+            if (menus.length > 0 && $(element).is(":not('.no-flexible')")) {
+                //strip off all .no-flexible menus
+                that.flexVisibles = $(menus).not(".no-flexible");
+
+                if (that.flexVisibles.length > 0) {
+
+                    that.initiatedAsFlex = true;
+
+                    //sort the menus according to the data-flexorder attribute
+                    that.flexVisibles.sort(function(a, b) {
+                        var aValue = (parseInt($(a).data("flexorder")) || $(a).index() + 1);
+                        var bValue = (parseInt($(b).data("flexorder")) || $(b).index() + 1);
+                        return aValue - bValue;
+                    });
+
+                    //get all children in a sorted order according to the data-flexorder attribute
+                    $(that.flexVisibles).each(function() {
+                        flexVisible = this;
+
+                        menuEntries = $(flexVisible).children();
+
+                        //give  all menuEntries a flexorder which have not one and save the original order
+                        $(menuEntries).each(function() {
+                            $(this).attr("data-flexorderorigin", $(this).index());
+
+                            if (!($(this).is("[data-flexorder]"))) {
+                                $(this).attr("data-flexorder", $(this).index() + 1);
+                            }
+                        });
+
+                        menuEntries.sort(function(a, b) {
+                            var aValue = parseInt($(a).data("flexorder"));
+                            var bValue = parseInt($(b).data("flexorder"));
+                            return aValue - bValue;
+                        });
+
+                        //data-flexdirection="reverse" support 
+                        if ($(flexVisible).is("[data-flexdirection='reverse']")) {
+                            menuEntries.reverse();
+                        }
+
+                        $.merge(that.allMenuEntries, $(menuEntries).not(".no-flexible")); //strip off all .no-flexible elements
+                    });
+
+                    //find the parent, which contains all menus
+                    that.menusParent = $(element).find(".app-bar-menu").first().parent();
+
+                    // === create a pull down button + pull menu ===
+                    //check if a pulldown button already exists, if not we create one
+                    if (!(that.pullButton.length > 0)) {
+                        //DOC: We can create a display:none button, if we want to force to not show a pull button
+                        that.pullButton = $('<div class="app-bar-pullbutton automatic"></div>');
+                        $(that.menusParent).append(that.pullButton);
+                    }
+
+                    //create a pullmenu
+                    that.pullMenu = $('<nav class="app-bar-pullmenu hidden" />');
+
+                    //create menubars within the pullmenu
+                    that.flexVisibles.each(function() {
+                        $(that.pullMenu).append($('<ul class="app-bar-pullmenubar hidden ' + o.flexstyle + '" />'));
+                    });
+
+
+
+                    // WORKAROUND: this is because a :after:before clearfix for the pullmenu do not work for some reason
+                    //position: absolute does not work if we do not break the float. another pure css solution should be written in the appbar.less
+                    //after that remove this line
+                    $(that.menusParent).append($('<div class="clearfix" style="width: 0;">'));
+                    //-----------
+
+
+                    $(that.pullMenu).addClass("flexstyle-" + o.flexstyle);
+
+                    $(that.menusParent).append(that.pullMenu);
+
+                    //check for the first time the menu entries /hide them if needed, etc.
+                    that._checkMenuEntries();
+
+
+
+                    //===  EVENTS =================================================
+
+                    //activate the click event for the pull button
+                    $(that.pullButton).on("click", function() {
+
+                        //who am i?
+                        that = $(this).closest("[data-role=appbar]").data("appbar");
+
+                        //we show /hide the pullmenu
+                        if ($(that.pullMenu).is(":hidden")) {
+                            // px-project - bootstrap - start
+                            $(that.pullMenu).removeClass('hidden')
+                                // px-project - bootstrap - end
+                            $(that.pullMenu).show();
+                            $(that.pullMenu).find(".app-bar-pullmenubar")
+                                .hide().not(".hidden").slideDown("fast");
+                        } else {
+                            $(that.pullMenu).find(".app-bar-pullmenubar")
+                                .not(".hidden").show().slideUp("fast", function() {
+                                    // px-project - bootstrap - start
+                                    $(that.pullMenu).addClass('hidden');
+                                    // px-project - bootstrap - end
+                                    $(that.pullMenu).hide();
+                                });
+                        }
+
+                    });
+
+
+                    //we have to calculate everything new, if the user resizes or zooms the window
+                    $(window).resize(function() {
+                        $("[data-role=appbar]:not(.no-flexible)").each(function() {
+                            $(this).data("appbar").resize();
+                        });
+                    });
+
+
+                    //because fonts(also icon-fonts) are often loaded async after the page has loaded and this script walked through already, 
+                    //we have to check again after these elements loaded. Because there is no way to observe only specific elements, we do it for the window
+                    $(window).load(function() {
+                        $("[data-role=appbar]:not(.no-flexible)").each(function() {
+                            $(this).data("appbar").resize();
+                        });
+                    });
+
+                    //pictures (or other outside stuff was loaded - pictures are also often loaded async or have a lazy load or are injected after a while. 
+                    //a picture can change a size of the element from the appbar, so we must recheck it again.
+                    $("[data-role=appbar]:not(.no-flexible) [src]").on("load", function() {
+                        //who am i?
+                        var appbar = $(this).closest("[data-role=appbar]").data("appbar");
+                        appbar.resize();
+                    });
+                }
+            }
+
+        },
+        _destroy: function() {},
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/button-groups.js
+    $.widget("metro.group", {
+
+        version: "3.0.0",
+
+        options: {
+            groupType: 'one-state', // 'multi-state'
+            buttonStyle: false,
+            onChange: function(index, btn) {
+                return true;
+            },
+            onChanged: function(index, btn) {}
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var result;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (!element.hasClass('group-of-buttons')) {
+                element.addClass('group-of-buttons');
+            }
+
+            var buttons = element.find('.button, .toolbar-button');
+
+            for (var i = 0; i < buttons.length; i++) {
+                $(buttons[i]).data('index', i);
+            }
+
+            if (o.buttonStyle !== false) {
+                buttons.addClass(o.buttonStyle);
+            }
+
+            element.on('click', '.button, .toolbar-button', function() {
+
+                var button = $(this),
+                    index = button.data('index');
+
+                if (typeof o.onChange === 'function') {
+                    if (!o.onChange(index, button)) {
+                        return false;
+                    }
+                } else {
+                    if (typeof window[o.onChange] === 'function') {
+                        if (!window[o.onChange](index, button)) {
+                            return false;
+                        }
+                    } else {
+                        result = eval("(function(){" + o.onChange + "})");
+                        if (!result.call(index, button)) {
+                            return false;
+                        }
+                    }
+                }
+
+                if (o.groupType === 'one-state') {
+                    buttons.removeClass('active');
+                    $(this).addClass('active');
+                } else {
+                    $(this).toggleClass('active');
+                }
+
+                if (typeof o.onChanged === 'function') {
+                    o.onChanged(index, button);
+                } else {
+                    if (typeof window[o.onChanged] === 'function') {
+                        window[o.onChanged](index, button);
+                    } else {
+                        result = eval("(function(){" + o.onChanged + "})");
+                        result.call(index, button);
+                    }
+                }
+            });
+
+            element.data('group', this);
+
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/calendar.js
+    $.widget("metro.calendar", {
+
+        version: "3.0.0",
+
+        options: {
+            format: "yyyy-mm-dd",
+            multiSelect: false,
+            startMode: 'day', //year, month, day
+            weekStart: window.METRO_CALENDAR_WEEK_START, // 0 - Sunday, 1 - Monday
+            otherDays: true,
+            date: new Date(),
+            minDate: false,
+            maxDate: false,
+            preset: false,
+            exclude: false,
+            stored: false,
+            buttons: true,
+            buttonToday: true,
+            buttonClear: true,
+            syncCalenderToDateField: true,
+            locale: window.METRO_CURRENT_LOCALE,
+            actions: true,
+            condensedGrid: false,
+            scheme: 'default',
+            getDates: function(d) {},
+            dayClick: function(d, d0) {}
+        },
+
+        //_storage: [],
+        //_exclude: [],
+
+        _year: 0,
+        _month: 0,
+        _day: 0,
+        _today: new Date(),
+        _event: '',
+
+        _mode: 'day', // day, month, year
+        _distance: 0,
+
+        _events: [],
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (typeof o.date === 'string') {
+                o.date = new Date(o.date);
+            }
+
+            if (o.minDate !== false && typeof o.minDate === 'string') {
+                o.minDate = new Date(o.minDate + 'T00:00:00Z') - 24 * 60 * 60 * 1000;
+            }
+
+            if (o.maxDate !== false && typeof o.maxDate === 'string') {
+                o.maxDate = new Date(o.maxDate + 'T00:00:00Z');
+            }
+
+            //console.log(window.METRO_LOCALES);
+
+            this.locales = window.METRO_LOCALES;
+
+            this._year = o.date.getFullYear();
+            this._distance = o.date.getFullYear() - 4;
+            this._month = o.date.getMonth();
+            this._day = o.date.getDate();
+            this._mode = o.startMode;
+
+            element.data("_storage", []);
+            element.data("_exclude", []);
+            element.data("_stored", []);
+            if (!element.hasClass('calendar')) {
+                element.addClass('calendar');
+            }
+
+            var re, dates;
+
+            if (o.preset) {
+                re = /\s*,\s*/;
+                dates = o.preset.split(re);
+                $.each(dates, function() {
+                    if (new Date(this) !== undefined) {
+                        that.setDate(this);
+                    }
+                });
+            }
+
+            if (o.exclude) {
+                re = /\s*,\s*/;
+                dates = o.exclude.split(re);
+                $.each(dates, function() {
+                    if (new Date(this) !== undefined) {
+                        that.setDateExclude(this);
+                    }
+                });
+            }
+
+            if (o.stored) {
+                re = /\s*,\s*/;
+                dates = o.stored.split(re);
+                $.each(dates, function() {
+                    if (new Date(this) !== undefined) {
+                        that.setDateStored(this);
+                    }
+                });
+            }
+
+            if (o.scheme !== 'default') {
+                element.addClass(o.scheme);
+            }
+
+            this._renderCalendar();
+
+            element.data('calendar', this);
+
+        },
+
+        _renderButtons: function(table) {
+            var tr, td, o = this.options;
+
+            if (this.options.buttons) {
+
+                var buttonToday = o.buttonToday ? "<button class='button calendar-btn-today small-button success'>" + this.locales[o.locale].buttons[0] + "</button>" : "";
+                var buttonClear = o.buttonClear ? "<button class='button calendar-btn-clear small-button warning'>" + this.locales[o.locale].buttons[1] + "</button>" : "";
+
+                tr = $("<div/>").addClass("calendar-row calendar-actions");
+                td = $("<div/>").addClass("align-center").html(
+                    buttonToday + buttonClear
+                );
+                td.appendTo(tr);
+                tr.appendTo(table);
+            }
+        },
+
+        _renderMonth: function() {
+            var that = this,
+                o = this.options,
+                year = this._year,
+                month = this._month,
+                day = this._day,
+                event = this._event,
+                feb = 28;
+
+            if (month === 1) {
+                if ((year % 100 !== 0) && (year % 4 === 0) || (year % 400 === 0)) {
+                    feb = 29;
+                }
+            }
+
+            var totalDays = ["31", "" + feb + "", "31", "30", "31", "30", "31", "31", "30", "31", "30", "31"];
+            var daysInMonth = totalDays[month];
+
+            var first_week_day = this._dateFromNumbers(year, month + 1, 1).getDay();
+
+            var table, tr, td, i, div;
+
+            this.element.html("");
+
+            table = $("<div/>").addClass("calendar-grid");
+            if (o.condensedGrid) {
+                table.addClass('condensed no-border');
+            }
+
+            //console.log(this.locales);
+
+            // Add calendar header
+            tr = $("<div/>").addClass('calendar-row no-margin');
+
+            $("<div/>").addClass("calendar-cell align-center").html("<a class='btn-previous-year' href='#'>-</a>").appendTo(tr);
+            $("<div/>").addClass("calendar-cell align-center").html("<a class='btn-previous-month' href='#'>&#12296;</a>").appendTo(tr);
+
+            $("<div/>").addClass("calendar-cell sel-month align-center").html("<a class='btn-select-month' href='#'>" + this.locales[o.locale].months[month] + ' ' + year + "</a>").appendTo(tr);
+
+            $("<div/>").addClass("calendar-cell align-center").html("<a class='btn-next-month' href='#'>&#12297;</a>").appendTo(tr);
+            $("<div/>").addClass("calendar-cell align-center").html("<a class='btn-next-year' href='#'>+</a>").appendTo(tr);
+
+            tr.addClass("calendar-header").appendTo(table);
+
+            // Add day names
+            var j;
+            tr = $("<div/>").addClass('calendar-row week-days');
+            for (i = 0; i < 7; i++) {
+                if (!o.weekStart) {
+                    td = $("<div/>").addClass("calendar-cell align-center day-of-week").appendTo(tr);
+                    div = $("<div/>").html(this.locales[o.locale].days[i + 7]).appendTo(td);
+                } else {
+                    j = i + 1;
+                    if (j === 7) {
+                        j = 0;
+                    }
+                    td = $("<div/>").addClass("calendar-cell align-center day-of-week").appendTo(tr);
+                    div = $("<div/>").html(this.locales[o.locale].days[j + 7]).appendTo(td);
+                }
+            }
+            tr.addClass("calendar-subheader").appendTo(table);
+
+            // Add empty days for previos month
+            var prevMonth = this._month - 1;
+            if (prevMonth < 0) {
+                prevMonth = 11;
+            }
+            var daysInPrevMonth = totalDays[prevMonth];
+            var _first_week_day = ((o.weekStart) ? first_week_day + 6 : first_week_day) % 7;
+            var htmlPrevDay = "";
+            tr = $("<div/>").addClass('calendar-row');
+            for (i = 0; i < _first_week_day; i++) {
+                if (o.otherDays) {
+                    htmlPrevDay = daysInPrevMonth - (_first_week_day - i - 1);
+                }
+                td = $("<div/>").addClass("calendar-cell empty").appendTo(tr);
+                div = $("<div/>").addClass('other-day').html(htmlPrevDay).appendTo(td);
+                if (!o.otherDays) {
+                    div.css('visibility', 'hidden');
+                }
+            }
+
+            // Days for current month
+            var week_day = ((o.weekStart) ? first_week_day + 6 : first_week_day) % 7;
+
+            var d, a, d_html;
+
+            for (i = 1; i <= daysInMonth; i++) {
+                week_day %= 7;
+
+                if (week_day === 0) {
+                    tr.appendTo(table);
+                    tr = $("<div/>").addClass('calendar-row');
+                }
+
+                td = $("<div/>").addClass("calendar-cell align-center day");
+                div = $("<div/>").appendTo(td);
+
+                if (o.minDate !== false && (this._dateFromNumbers(year, month + 1, i) < o.minDate) || o.maxDate !== false && (this._dateFromNumbers(year, month + 1, i) > o.maxDate)) {
+                    td.removeClass("day");
+                    div.addClass("other-day");
+                    d_html = i;
+                } else {
+                    d_html = "<a href='#'>" + i + "</a>";
+                }
+
+                div.html(d_html);
+
+                //console.log(div);
+
+                if (year === this._today.getFullYear() && month === this._today.getMonth() && this._today.getDate() === i) {
+                    td.addClass("today");
+                }
+
+                //console.log('xxx');
+                d = this._dateNumberStringyFy(this._year, this._month + 1, i);
+
+                if (this.element.data('_storage').indexOf(d) >= 0) {
+                    a = td.find("a");
+                    a.parent().parent().addClass("selected");
+                }
+
+                if (this.element.data('_exclude').indexOf(d) >= 0) {
+                    a = td.find("a");
+                    a.parent().parent().addClass("exclude");
+                }
+
+                if (this.element.data('_stored').indexOf(d) >= 0) {
+                    a = td.find("a");
+                    a.parent().parent().addClass("stored");
+                }
+
+                td.appendTo(tr);
+                week_day++;
+            }
+
+
+            // next month other days
+            var htmlOtherDays = "";
+            for (i = week_day + 1; i <= 7; i++) {
+                if (o.otherDays) {
+                    htmlOtherDays = i - week_day;
+                }
+                td = $("<div/>").addClass("calendar-cell empty").appendTo(tr);
+                div = $("<div/>").addClass('other-day').html(htmlOtherDays).appendTo(td);
+                if (!o.otherDays) {
+                    div.css('visibility', 'hidden');
+                }
+            }
+
+            tr.appendTo(table);
+            this._renderButtons(table);
+            table.appendTo(this.element);
+        },
+
+        _renderMonths: function() {
+            var table, tr, td, i, j;
+
+            this.element.html("");
+
+            table = $("<div/>").addClass("calendar-grid");
+            if (this.options.condensedGrid) {
+                table.addClass('condensed no-border');
+            }
+
+            // Add calendar header
+            tr = $("<div/>").addClass('calendar-row');
+
+            $("<div/>").addClass("calendar-cell sel-minus align-center").html("<a class='btn-previous-year' href='#'>-</a>").appendTo(tr);
+            $("<div/>").addClass("calendar-cell sel-year align-center").html("<a class='btn-select-year' href='#'>" + this._year + "</a>").appendTo(tr);
+            $("<div/>").addClass("calendar-cell sel-plus align-center").html("<a class='btn-next-year' href='#'>+</a>").appendTo(tr);
+
+            tr.addClass("calendar-header").appendTo(table);
+
+            tr = $("<div/>").addClass('calendar-row');
+            j = 0;
+            for (i = 0; i < 12; i++) {
+
+                //td = $("<td/>").addClass("text-center month").html("<a href='#' data-month='"+i+"'>"+this.options.monthsShort[i]+"</a>");
+                td = $("<div/>").addClass("calendar-cell month-cell align-center month").html("<a href='#' data-month='" + i + "'>" + this.locales[this.options.locale].months[i + 12] + "</a>");
+
+                if (this._month === i && (new Date()).getFullYear() === this._year) {
+                    td.addClass("today");
+                }
+
+                td.appendTo(tr);
+                if ((j + 1) % 4 === 0) {
+                    tr.appendTo(table);
+                    tr = $("<div/>").addClass('calendar-row');
+                }
+                j += 1;
+            }
+
+            this._renderButtons(table);
+
+            table.appendTo(this.element);
+        },
+
+        _renderYears: function() {
+            var table, tr, td, i, j;
+
+            this.element.html("");
+
+            table = $("<div/>").addClass("calendar-grid");
+            if (this.options.condensedGrid) {
+                table.addClass('condensed no-border');
+            }
+
+            // Add calendar header
+            tr = $("<div/>").addClass('calendar-row cells4');
+
+            $("<div/>").addClass("calendar-cell sel-minus align-center").html("<a class='btn-previous-year' href='#'>-</a>").appendTo(tr);
+            $("<div/>").addClass("calendar-cell sel-year align-center").html("<a class='btn-none-btn'>" + (this._distance) + "-" + (this._distance + 11) + "</a>").appendTo(tr);
+            $("<div/>").addClass("calendar-cell sel-plus align-center").html("<a class='btn-next-year' href='#'>+</a>").appendTo(tr);
+
+            tr.addClass("calendar-header").appendTo(table);
+
+            tr = $("<div/>").addClass('calendar-row');
+
+            j = 0;
+            for (i = this._distance; i < this._distance + 12; i++) {
+                td = $("<div/>").addClass("calendar-cell year-cell align-center year").html("<a href='#' data-year='" + i + "'>" + i + "</a>");
+                if ((new Date()).getFullYear() === i) {
+                    td.addClass("today");
+                }
+                td.appendTo(tr);
+                if ((j + 1) % 4 === 0) {
+                    tr.appendTo(table);
+                    tr = $("<div/>").addClass('calendar-row');
+                }
+                j += 1;
+            }
+
+            this._renderButtons(table);
+
+            table.appendTo(this.element);
+        },
+
+        _renderCalendar: function() {
+            switch (this._mode) {
+                case 'year':
+                    this._renderYears();
+                    break;
+                case 'month':
+                    this._renderMonths();
+                    break;
+                default:
+                    this._renderMonth();
+            }
+            this._initButtons();
+        },
+
+        _initButtons: function() {
+            // Add actions
+            var that = this,
+                o = this.options,
+                table = this.element.find('.calendar-grid');
+
+            if (this._mode === 'day') {
+                table.find('.btn-select-month').on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._mode = 'month';
+                    that._renderCalendar();
+                });
+                table.find('.btn-previous-month').on('click', function(e) {
+                    that._event = 'eventPrevious';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._month -= 1;
+                    if (that._month < 0) {
+                        that._year -= 1;
+                        that._month = 11;
+                    }
+                    that._renderCalendar();
+                });
+                table.find('.btn-next-month').on('click', function(e) {
+                    that._event = 'eventNext';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._month += 1;
+                    if (that._month === 12) {
+                        that._year += 1;
+                        that._month = 0;
+                    }
+                    that._renderCalendar();
+                });
+                table.find('.btn-previous-year').on('click', function(e) {
+                    that._event = 'eventPrevious';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._year -= 1;
+                    that._renderCalendar();
+                });
+                table.find('.btn-next-year').on('click', function(e) {
+                    that._event = 'eventNext';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._year += 1;
+                    that._renderCalendar();
+                });
+                table.find('.day a').on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if ($(this).parent().parent().hasClass('exclude')) {
+                        return false;
+                    }
+
+                    var d = (new Date(that._paddy(that._year, 4), that._paddy(that._month, 2), that._paddy(parseInt($(this).html()), 2)).format(that.options.format, null));
+                    var d0 = (new Date(that._paddy(that._year, 4), that._paddy(that._month, 2), that._paddy(parseInt($(this).html()), 2)));
+
+                    if (that.options.multiSelect) {
+                        $(this).parent().parent().toggleClass("selected");
+
+                        if ($(this).parent().parent().hasClass("selected")) {
+                            that._addDate(that._dateStringyFy(d0));
+                        } else {
+                            that._removeDate(that._dateStringyFy(d0));
+                        }
+                    } else {
+                        table.find('.day a').parent().parent().removeClass('selected');
+                        $(this).parent().parent().addClass("selected");
+                        that.element.data('_storage', []);
+                        that._addDate(that._dateStringyFy(d0));
+                    }
+
+
+                    if (typeof o.dayClick === 'function') {
+                        o.dayClick(d, d0);
+                    } else {
+                        if (typeof window[o.dayClick] === 'function') {
+                            window[o.dayClick](d, d0);
+                        } else {
+                            var result = eval("(function(){" + o.dayClick + "})");
+                            result.call(d, d0);
+                        }
+                    }
+                });
+            } else if (this._mode === 'month') {
+                table.find('.month a').on('click', function(e) {
+                    that._event = 'eventNext';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._month = parseInt($(this).data('month'));
+                    that._mode = 'day';
+                    that._renderCalendar();
+                });
+                table.find('.btn-previous-year').on('click', function(e) {
+                    that._event = 'eventPrevious';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._year -= 1;
+                    that._renderCalendar();
+                });
+                table.find('.btn-next-year').on('click', function(e) {
+                    that._event = 'eventNext';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._year += 1;
+                    that._renderCalendar();
+                });
+                table.find('.btn-select-year').on('click', function(e) {
+                    that._event = 'eventNext';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._mode = 'year';
+                    that._renderCalendar();
+                });
+            } else {
+                table.find('.year a').on('click', function(e) {
+                    that._event = 'eventNext';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._year = parseInt($(this).data('year'));
+                    that._mode = 'month';
+                    that._renderCalendar();
+                });
+                table.find('.btn-previous-year').on('click', function(e) {
+                    that._event = 'eventPrevious';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._distance -= 10;
+                    that._renderCalendar();
+                });
+                table.find('.btn-next-year').on('click', function(e) {
+                    that._event = 'eventNext';
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that._distance += 10;
+                    that._renderCalendar();
+                });
+            }
+
+            table.find('.calendar-btn-today').on('click', function(e) {
+                //that._event = 'eventNext';
+                e.preventDefault();
+                e.stopPropagation();
+                that._mode = that.options.startMode;
+                that.options.date = new Date();
+                that._year = that.options.date.getFullYear();
+                that._month = that.options.date.getMonth();
+                that._day = that.options.date.getDate();
+                that._renderCalendar();
+            });
+            table.find('.calendar-btn-clear').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                that.options.date = new Date();
+                that._year = that.options.date.getFullYear();
+                that._month = that.options.date.getMonth();
+                that._day = that.options.date.getDate();
+                that.element.data('_storage', []);
+                that._renderCalendar();
+            });
+
+        },
+
+        _addDate: function(d) {
+            var index = this.element.data('_storage').indexOf(d);
+            if (index < 0) {
+                this.element.data('_storage').push(d);
+            }
+        },
+
+        _removeDate: function(d) {
+            var index = this.element.data('_storage').indexOf(d);
+            this.element.data('_storage').splice(index, 1);
+        },
+
+        _addDateExclude: function(d) {
+            var index = this.element.data('_exclude').indexOf(d);
+            if (index < 0) {
+                this.element.data('_exclude').push(d);
+            }
+        },
+
+        _addDateStored: function(d) {
+            var index = this.element.data('_stored').indexOf(d);
+            if (index < 0) {
+                this.element.data('_stored').push(d);
+            }
+        },
+
+        _removeDateExclude: function(d) {
+            var index = this.element.data('_exclude').indexOf(d);
+            this.element.data('_exclude').splice(index, 1);
+        },
+
+        _removeDateStored: function(d) {
+            var index = this.element.data('_stored').indexOf(d);
+            this.element.data('_stored').splice(index, 1);
+        },
+
+        _paddy: function paddy(n, p, c) {
+            var pad_char = typeof c !== 'undefined' ? c : '0';
+            var pad = new Array(1 + p).join(pad_char);
+            return (pad + n).slice(-pad.length);
+        },
+
+        _dateFromNumbers: function dateFromNumbers(year, month, day) {
+            return new Date(this._paddy(year, 4) + "/" + this._paddy(month, 2) + "/" + this._paddy(day, 2));
+        },
+
+        _dateNumberStringyFy: function dateNumberStringyFy(year, month, day) {
+            return (this._dateFromNumbers(year, month, day)).format('yyyy-mm-dd')
+        },
+
+        _dateStringyFy: function dateStringyFy(d) {
+            return this._dateNumberStringyFy(d.getFullYear(), d.getMonth() + 1, d.getDate());
+        },
+
+        setDate: function(d) {
+            var r;
+            d = new Date(d);
+            r = this._dateNumberStringyFy(d.getFullYear(), d.getMonth() + 1, d.getDate());
+
+            this._addDate(r);
+            if (this.options.syncCalenderToDateField) {
+                this._year = d.getFullYear();
+                this._month = d.getMonth();
+                this._day = d.getDate();
+            }
+            this._renderCalendar();
+        },
+
+        setDateExclude: function(d) {
+            var r;
+            d = new Date(d);
+            r = this._dateNumberStringyFy(d.getFullYear(), d.getMonth() + 1, d.getDate());
+            this._addDateExclude(r);
+            this._renderCalendar();
+        },
+
+        setDateStored: function(d) {
+            var r;
+            d = new Date(d);
+            r = this._dateNumberStringyFy(d.getFullYear(), d.getMonth() + 1, d.getDate());
+            this._addDateStored(r);
+            this._renderCalendar();
+        },
+
+        getDate: function(index) {
+            return new Date(index !== undefined ? this.element.data('_storage')[index] : this.element.data('_storage')[0]).format(this.options.format);
+        },
+
+        getDates: function() {
+            var res;
+            res = $.merge($.merge([], this.element.data('_storage')), this.element.data('_stored'));
+            return res.unique();
+        },
+
+        unsetDate: function(d) {
+            var r;
+            d = new Date(d);
+            r = this._dateNumberStringyFy(d.getFullYear(), d.getMonth() + 1, d.getDate());
+            this._removeDate(r);
+            this._renderCalendar();
+        },
+
+        unsetDateExclude: function(d) {
+            var r;
+            d = new Date(d);
+            r = this._dateNumberStringyFy(d.getFullYear(), d.getMonth() + 1, d.getDate());
+            this._removeDateExclude(r);
+            this._renderCalendar();
+        },
+
+        unsetDateStored: function(d) {
+            var r;
+            d = new Date(d);
+            r = this._dateNumberStringyFy(d.getFullYear(), d.getMonth() + 1, d.getDate());
+            this._removeDateStored(r);
+            this._renderCalendar();
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/carousel.js
+    $.widget("metro.carousel", {
+
+        version: "3.0.0",
+
+        options: {
+            auto: true,
+            period: 5000,
+            duration: 1000,
+            effect: 'slide', // slide, fade, switch, slowdown
+            effectFunc: 'linear',
+            direction: 'left',
+            controls: true,
+            controlNext: false,
+            controlPrev: false,
+            markers: true,
+            stop: true,
+            width: '100%',
+            height: false,
+
+            _slides: {},
+            _currentIndex: 0,
+            _interval: 0,
+            _outPosition: 0,
+            _animating: false
+        },
+
+
+        _create: function() {
+            var that = this,
+                o = this.options,
+                element = this.element;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            o._slides = element.find('.slide');
+
+            var max_height = 0; //element.find('.slide:nth-child(1)').outerHeight();
+
+
+            $.each(o._slides, function() {
+                var oh, slide = $(this);
+
+                oh = slide.outerHeight();
+
+                if (oh > max_height) {
+                    max_height = oh;
+                }
+            });
+
+            element.css({
+                'width': o.width,
+                'height': o.height ? o.height : max_height
+            });
+
+            if (o._slides.length <= 1) {
+                return;
+            }
+
+            if (o.markers) {
+                this._markers();
+            }
+
+            if (o.controls) {
+                this._controls();
+            }
+
+            if (o.stop) {
+                element
+                    .on('mouseenter', function() {
+                        clearInterval(o._interval);
+                    })
+                    .on('mouseleave', function() {
+                        if (that.options.auto) {
+                            that._autoStart();
+                        } // that.options.period;
+                    });
+            }
+
+            element.find('.slide').hide();
+            element.find('.slide:nth-child(1)').show();
+
+            //this._slideToSlide(0);
+            if (o.auto) {
+                this._autoStart();
+            }
+
+            element.data('carousel', this);
+
+        },
+
+        _autoStart: function() {
+            var that = this,
+                o = this.options;
+            o._interval = setInterval(function() {
+                if (o.direction === 'left') {
+                    that._slideTo('next');
+                } else {
+                    that._slideTo('prior');
+                }
+            }, o.period);
+        },
+
+        _slideTo: function(direction) {
+            var carousel = this.element,
+                that = this,
+                o = this.options;
+            var currentSlide = o._slides[o._currentIndex],
+                nextSlide;
+
+            if (direction === undefined) {
+                direction = 'next';
+            }
+
+            if (direction === 'prior') {
+                o._currentIndex -= 1;
+                if (o._currentIndex < 0) {
+                    o._currentIndex = o._slides.length - 1;
+                }
+
+                o._outPosition = this.element.width();
+
+            } else if (direction === 'next') {
+                o._currentIndex += 1;
+                if (o._currentIndex >= o._slides.length) {
+                    o._currentIndex = 0;
+                }
+
+                o._outPosition = -this.element.width();
+
+            }
+
+            nextSlide = o._slides[o._currentIndex];
+
+            switch (this.options.effect) {
+                case 'switch':
+                    this._effectSwitch(currentSlide, nextSlide);
+                    break;
+                case 'slowdown':
+                    this._effectSlowdown(currentSlide, nextSlide, this.options.duration);
+                    break;
+                case 'fade':
+                    this._effectFade(currentSlide, nextSlide, this.options.duration);
+                    break;
+                default:
+                    this._effectSlide(currentSlide, nextSlide, this.options.duration);
+            }
+
+            carousel.find('.carousel-bullets a').each(function() {
+                var index = $(this).data('num');
+                if (index === o._currentIndex) {
+                    $(this).addClass('bullet-on');
+                } else {
+                    $(this).removeClass('bullet-on');
+                }
+            });
+        },
+
+        _slideToSlide: function(slideIndex) {
+            var o = this.options,
+                currentSlide = o._slides[o._currentIndex],
+                nextSlide = o._slides[slideIndex];
+
+            if (o._currentIndex === slideIndex) {
+                return false;
+            }
+
+            if (slideIndex > o._currentIndex) {
+                o._outPosition = -this.element.width();
+            } else {
+                o._outPosition = this.element.width();
+            }
+
+            switch (this.options.effect) {
+                case 'switch':
+                    this._effectSwitch(currentSlide, nextSlide);
+                    break;
+                case 'slowdown':
+                    this._effectSlowdown(currentSlide, nextSlide);
+                    break;
+                case 'fade':
+                    this._effectFade(currentSlide, nextSlide);
+                    break;
+                default:
+                    this._effectSlide(currentSlide, nextSlide);
+            }
+
+            o._currentIndex = slideIndex;
+        },
+
+        _controls: function() {
+            var next, prev, that = this,
+                element = this.element,
+                o = this.options;
+
+            next = $('<span/>').addClass('carousel-switch-next').html("&gt;");
+            prev = $('<span/>').addClass('carousel-switch-prev').html("&lt;");
+
+            if (o.controlNext) {
+                next.html(o.controlNext);
+            }
+
+            if (o.controlPrev) {
+                prev.html(o.controlPrev);
+            }
+
+            next.appendTo(element);
+            prev.appendTo(element);
+
+            if (o._slides.length > 1) {
+                prev.on('click', function() {
+                    if (o._animating === false) {
+                        that._slideTo('prior');
+                        o._animating = true;
+                        setTimeout(function() {
+                            o._animating = false;
+                        }, o.duration);
+                    }
+                });
+                next.on('click', function() {
+                    if (o._animating === false) {
+                        that._slideTo('next');
+                        o._animating = true;
+                        setTimeout(function() {
+                            o._animating = false;
+                        }, o.duration);
+                    }
+                });
+            } else {
+                next.hide();
+                prev.hide();
+            }
+        },
+
+        _markers: function() {
+            var div, a, i, that = this,
+                o = this.options;
+
+            div = $('<div class="carousel-bullets" />');
+
+            for (i = 0; i < o._slides.length; i++) {
+                a = $('<a class="carousel-bullet" href="javascript:void(0)" data-num="' + i + '"></a>');
+                if (i === 0) {
+                    a.addClass('bullet-on');
+                }
+                a.appendTo(div);
+            }
+
+
+            div.find('a').on('click', function(e) {
+                var _this = $(this),
+                    index = _this.data('num');
+
+
+
+                div.find('a').removeClass('bullet-on');
+                _this.addClass('bullet-on');
+
+                if (index === o._currentIndex) {
+                    return false;
+                }
+
+                that._slideToSlide(index);
+
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            div.appendTo(this.element);
+
+        },
+
+
+        _effectSwitch: function(currentSlide, nextSlide) {
+            $(currentSlide)
+                .hide();
+            $(nextSlide)
+                .css({
+                    left: 0
+                })
+                .show();
+            this.element.css({
+                height: $(nextSlide).outerHeight()
+            });
+        },
+
+        _effectSlide: function(currentSlide, nextSlide) {
+            var o = this.options;
+            $(currentSlide)
+                .animate({
+                    left: o._outPosition
+                }, o.duration, o.effectFunc);
+            $(nextSlide)
+                .css('left', o._outPosition * -1)
+                .show();
+
+            this.element.css({
+                height: $(nextSlide).outerHeight()
+            });
+
+            $(nextSlide).animate({
+                left: 0
+            }, o.duration, o.effectFunc);
+        },
+
+        _effectSlowdown: function(currentSlide, nextSlide) {
+            var o = this.options;
+            var options = {
+                'duration': o.duration,
+                'easing': 'doubleSqrt'
+            };
+            $.easing.doubleSqrt = function(t) {
+                return Math.sqrt(Math.sqrt(t));
+            };
+
+            $(currentSlide)
+                .animate({
+                    left: o._outPosition
+                }, options);
+
+
+            $(nextSlide)
+                .css('left', o._outPosition * -1)
+                .show();
+
+            this.element.css({
+                height: $(nextSlide).outerHeight()
+            });
+
+            $(nextSlide).animate({
+                left: 0
+            }, options);
+        },
+
+        _effectFade: function(currentSlide, nextSlide) {
+            var o = this.options;
+
+            $(currentSlide)
+                .fadeOut(o.duration);
+            $(nextSlide)
+                .css({
+                    left: 0
+                })
+                .fadeIn(o.duration);
+            this.element.css({
+                height: $(nextSlide).outerHeight()
+            });
+        },
+
+        slideTo: function(index) {
+            this._slideToSlide(index);
+        },
+
+        nextSlide: function() {
+            this._slideTo('next');
+        },
+
+        priorSlide: function() {
+            this._slideTo('prior');
+        },
+
+        _destroy: function() {
+
+        },
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/charm.js
+    $.widget("metro.charm", {
+
+        version: "3.0.0",
+
+        options: {
+            position: "right",
+            opacity: 1,
+            outside: false,
+            timeout: 0,
+            duration: 400
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+
+            this._createCharm();
+
+            element.data('charm', this);
+        },
+
+        _createCharm: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            element.addClass("charm").addClass(o.position + "-side").css({
+                opacity: o.opacity
+            }).hide();
+
+            var closer = $("<span/>").addClass("charm-closer").appendTo(element);
+            closer.on('click', function() {
+                that.close();
+            });
+
+            if (o.outside === true) {
+                element.on('mouseleave', function(e) {
+                    that.close();
+                });
+            }
+        },
+
+        _showCharm: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var size;
+
+            if (o.position === "left" || o.position === "right") {
+                size = element.outerWidth();
+                if (o.position === "left") {
+                    element.css({
+                        left: -size
+                    }).show().animate({
+                        left: 0
+                    }, o.duration);
+                } else {
+                    element.css({
+                        right: -size
+                    }).show().animate({
+                        right: 0
+                    }, o.duration);
+                }
+            } else {
+                size = element.outerHeight();
+                if (o.position === "top") {
+                    element.css({
+                        top: -size
+                    }).show().animate({
+                        top: 0
+                    }, o.duration);
+                } else {
+                    element.css({
+                        bottom: -size
+                    }).show().animate({
+                        bottom: 0
+                    }, o.duration);
+                }
+            }
+
+            if (o.timeout > 0) {
+                this._timeout_interval = setInterval(function() {
+                    if (!element.is(":hover")) {
+                        that.close();
+                        clearInterval(that._timeout_interval);
+                    }
+                }, o.timeout);
+            }
+        },
+
+        _hideCharm: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var size;
+
+            if (o.position === "left" || o.position === "right") {
+                size = element.outerWidth();
+                if (o.position === "left") {
+                    element.animate({
+                        left: -size
+                    }, o.duration, function() {
+                        element.hide();
+                    });
+                } else {
+                    element.animate({
+                        right: -size
+                    }, o.duration, function() {
+                        element.hide();
+                    });
+                }
+            } else {
+                size = element.outerHeight();
+                if (o.position === "top") {
+                    element.animate({
+                        top: -size
+                    }, o.duration, function() {
+                        element.hide();
+                    });
+                } else {
+                    element.animate({
+                        bottom: -size
+                    }, o.duration, function() {
+                        element.hide();
+                    });
+                }
+            }
+
+            clearInterval(this._timeout_interval);
+        },
+
+        open: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            if (element.data("opened") === true) {
+                return;
+            }
+
+            element.data("opened", true);
+            this._showCharm();
+        },
+
+        close: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            if (element.data("opened") === false) {
+                return;
+            }
+
+            element.data("opened", false);
+
+            this._hideCharm();
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/clock.js
+    $.widget("metro.clock", {
+
+        version: "1.0.0",
+
+        options: {
+            showTime: true,
+            showDate: true,
+            timeFormat: '24',
+            dateFormat: 'american',
+            divider: "&nbsp;&nbsp;"
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            this._setOptionsFromDOM();
+
+            this._tick();
+            this._clockInterval = setInterval(function() {
+                that._tick();
+            }, 500);
+
+            element.data('clock', this);
+        },
+
+        _addLeadingZero: function(i) {
+            if (i < 10) {
+                i = "0" + i;
+            }
+            return i;
+        },
+
+        _tick: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var timestamp = new Date();
+            var time = timestamp.getTime();
+            var result = "";
+            var h = timestamp.getHours(),
+                i = timestamp.getMinutes(),
+                s = timestamp.getSeconds(),
+                d = timestamp.getDate(),
+                m = timestamp.getMonth() + 1,
+                y = timestamp.getFullYear(),
+                a = '';
+
+            if (o.timeFormat == '12') {
+                a = " AM";
+                if (h > 11) {
+                    a = " PM";
+                }
+                if (h > 12) {
+                    h = h - 12;
+                }
+                if (h == 0) {
+                    h = 12;
+                }
+            }
+
+            h = this._addLeadingZero(h);
+            i = this._addLeadingZero(i);
+            s = this._addLeadingZero(s);
+            m = this._addLeadingZero(m);
+            d = this._addLeadingZero(d);
+
+            if (o.showDate) {
+                if (o.dateFormat == 'american') {
+                    result += "<span class='date-month'>" + m + "</span>";
+                    result += "<span class='date-divider'>-</span>";
+                    result += "<span class='date-day'>" + d + "</span>";
+                    result += "<span class='date-divider'>-</span>";
+                    result += "<span class='date-year'>" + y + "</span>";
+                } else {
+                    result += "<span class='date-day'>" + d + "</span>";
+                    result += "<span class='date-divider'>-</span>";
+                    result += "<span class='date-month'>" + m + "</span>";
+                    result += "<span class='date-divider'>-</span>";
+                    result += "<span class='date-year'>" + y + "</span>";
+                }
+                result += o.divider;
+            }
+
+            if (o.showTime) {
+                result += "<span class='clock-hour'>" + h + "</span>";
+                result += "<span class='clock-divider'>:</span>";
+                result += "<span class='clock-minute'>" + i + "</span>";
+                result += "<span class='clock-divider'>:</span>";
+                result += "<span class='clock-second'>" + s + "</span>";
+            }
+
+            element.html(result);
+        },
+
+        _setOptionsFromDOM: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+        },
+
+        _destroy: function() {
+            clearInterval(this._clockInterval);
+        },
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/countdown.js
+    $.widget("metro.countdown", {
+
+        version: "3.0.0",
+
+        options: {
+            stop: false,
+            days: false,
+            hours: false,
+            minutes: false,
+            seconds: false,
+            backgroundColor: 'bg-cyan',
+            digitColor: 'fg-white',
+            dividerColor: 'fg-dark',
+            labelColor: 'fg-grayLight',
+            labels: {
+                'days': 'days',
+                'hours': 'hours',
+                'minutes': 'mins',
+                'seconds': 'secs'
+            },
+            onTick: function(d, h, m, s) {},
+            onStop: function() {}
+        },
+
+        _interval: 0,
+        _interval2: 0,
+        _alarmOn: undefined,
+
+        _create: function() {
+            //console.log('hi from countdown');
+
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._alarmOn = new Date();
+
+            if (o.stop !== false) {
+                this._alarmOn = new Date(o.stop);
+            }
+
+            var dm = 24 * 60 * 60 * 1000,
+                hm = 60 * 60 * 1000,
+                mm = 60 * 1000,
+                sm = 1000;
+
+            if (o.days !== false) {
+                if (typeof this._alarmOn === 'object') {
+                    this._alarmOn = this._alarmOn.getTime();
+                }
+                this._alarmOn = this._alarmOn + o.days * dm;
+            }
+
+            if (o.hours !== false) {
+                if (typeof this._alarmOn === 'object') {
+                    this._alarmOn = this._alarmOn.getTime();
+                }
+                this._alarmOn = this._alarmOn + o.hours * hm;
+            }
+
+            if (o.minutes !== false) {
+                if (typeof this._alarmOn === 'object') {
+                    this._alarmOn = this._alarmOn.getTime();
+                }
+                this._alarmOn = this._alarmOn + o.minutes * mm;
+            }
+
+            if (o.seconds !== false) {
+                if (typeof this._alarmOn === 'object') {
+                    this._alarmOn = this._alarmOn.getTime();
+                }
+                this._alarmOn = this._alarmOn + o.seconds * sm;
+            }
+
+            this._createDigits();
+
+            element.find('.digit').text('0');
+
+            that._tick();
+
+            element.data('countdown', this);
+
+        },
+
+        _createDigits: function() {
+            var element = this.element,
+                o = this.options;
+            var parts = ['days', 'hours', 'minutes', 'seconds'];
+            var p, d;
+
+            parts.map(function(v) {
+                p = $("<div/>").addClass('part ' + v).attr('data-day-text', o.labels[v]).appendTo(element);
+                $("<div/>").addClass('digit').appendTo(p);
+                $("<div/>").addClass('digit').appendTo(p);
+                if (o.labelColor.isColor()) {
+                    p.css({
+                        color: o.labelColor
+                    });
+                } else {
+                    p.addClass(o.labelColor);
+                }
+
+                if (o.backgroundColor.isColor()) {
+                    p.find('.digit').css({
+                        background: o.backgroundColor
+                    });
+                } else {
+                    p.find('.digit').addClass(o.backgroundColor);
+                }
+
+                if (o.digitColor.isColor()) {
+                    p.find('.digit').css({
+                        color: o.digitColor
+                    });
+                } else {
+                    p.find('.digit').addClass(o.digitColor);
+                }
+
+                if (v !== 'seconds') {
+                    d = $("<div/>").addClass("divider").text(':').appendTo(element);
+                    if (o.dividerColor.isColor()) {
+                        d.css({
+                            'color': o.dividerColor
+                        });
+                    } else {
+                        d.addClass(o.dividerColor);
+                    }
+                }
+
+            });
+
+        },
+
+        _blink: function() {
+            this.element.toggleClass('tick');
+        },
+
+        _tick: function() {
+            var that = this,
+                o = this.options,
+                element = this.element;
+            var days = 24 * 60 * 60,
+                hours = 60 * 60,
+                minutes = 60;
+
+            var left, d, h, m, s;
+
+            this._interval2 = setInterval(function() {
+                that._blink();
+            }, 500);
+
+            this._interval = setInterval(function() {
+                var result;
+
+                left = Math.floor((that._alarmOn - (new Date())) / 1000);
+                if (left < 0) {
+                    left = 0;
+                }
+
+                d = Math.floor(left / days);
+                left -= d * days;
+                that._update('days', d);
+
+                if (d === 0) {
+                    element.find('.part.days').addClass('disabled');
+                }
+
+                h = Math.floor(left / hours);
+                left -= h * hours;
+                that._update('hours', h);
+
+                if (d === 0 && h === 0) {
+                    element.find('.part.hours').addClass('disabled');
+                }
+
+                m = Math.floor(left / minutes);
+                left -= m * minutes;
+                that._update('minutes', m);
+
+                if (d === 0 && h === 0 && m === 0) {
+                    element.find('.part.minutes').addClass('disabled');
+                }
+
+                s = left;
+                that._update('seconds', s);
+
+                if (typeof o.onTick === 'function') {
+                    o.onTick(d, h, m, s);
+                } else {
+                    if (typeof window[o.onTick] === 'function') {
+                        window[o.onTick](d, h, m, s);
+                    } else {
+                        result = eval("(function(){" + o.onTick + "})");
+                        result.call(d, h, m, s);
+                    }
+                }
+
+                //that._blink();
+
+                if (d === 0 && h === 0 && m === 0 && s === 0) {
+                    element.find('.part').addClass('disabled');
+
+                    if (typeof o.onStop === 'function') {
+                        o.onStop();
+                    } else {
+                        if (typeof window[o.onStop] === 'function') {
+                            window[o.onStop]();
+                        } else {
+                            result = eval("(function(){" + o.onStop + "})");
+                            result.call();
+                        }
+                    }
+
+                    that._stop('all');
+                    that._trigger('alarm');
+                    clearInterval(that._interval);
+                }
+
+            }, 1000);
+        },
+
+        _update: function(part, value) {
+            var element = this.element;
+            var major_value = Math.floor(value / 10) % 10;
+            var minor_value = value % 10;
+            var major_digit, minor_digit;
+
+            major_digit = element.find("." + part + " .digit:eq(0)");
+            minor_digit = element.find("." + part + " .digit:eq(1)");
+
+            if (minor_value !== parseInt(minor_digit.text())) {
+                minor_digit.toggleClass('scaleIn');
+                setTimeout(function() {
+                    minor_digit.text(minor_value).toggleClass('scaleIn');
+                }, 500);
+            }
+            if (major_value !== parseInt(major_digit.text())) {
+                major_digit.toggleClass('scaleIn');
+                setTimeout(function() {
+                    major_digit.text(major_value).toggleClass('scaleIn');
+                }, 500);
+            }
+        },
+
+        _stop: function() {
+            clearInterval(this._interval);
+            clearInterval(this._interval2);
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/datatable.js
+    $.widget("metro.datatable", {
+
+        version: "3.0.0",
+
+        options: {},
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                try {
+                    o[key] = $.parseJSON(value);
+                } catch (e) {
+                    o[key] = value;
+                }
+            });
+
+            if ($().dataTable) {
+                try {
+                    element.dataTable(o);
+                } catch (e) {
+
+                }
+            } else {
+                alert('dataTable plugin required');
+            }
+
+            element.data('datatable', this);
+
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/datepicker.js
+    $.widget("metro.datepicker", {
+
+        version: "3.0.0",
+
+        options: {
+            format: "yyyy.mm.dd",
+            preset: false,
+            minDate: false,
+            maxDate: false,
+            effect: 'fade',
+            position: 'bottom',
+            locale: window.METRO_CURRENT_LOCALE,
+            weekStart: window.METRO_CALENDAR_WEEK_START,
+            otherDays: false,
+            exclude: false,
+            stored: false,
+            buttons: false,
+            buttonToday: true,
+            buttonClear: true,
+            condensedGrid: false,
+            scheme: 'default',
+            onSelect: function(d, d0) {}
+        },
+
+        _calendar: undefined,
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options,
+                input = element.children("input"),
+                button = element.children("button");
+
+            //console.log(o);
+
+            $.each(element.data(), function(key, value) {
+                //console.log(typeof key, key, value);
+
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._createCalendar();
+
+            input.attr('readonly', true);
+            button.attr('type', 'button');
+
+            button.on('click', function(e) {
+                e.stopPropagation();
+                if (that._calendar.css('display') === 'none') {
+                    that._show();
+                } else {
+                    that._hide();
+                }
+            });
+
+            element.on('click', function(e) {
+                e.stopPropagation();
+                if (that._calendar.css('display') === 'none') {
+                    that._show();
+                } else {
+                    that._hide();
+                }
+            });
+
+            $('html').on('click', function() {
+                $(".calendar-dropdown").hide();
+            });
+
+            element.data('datepicker', this);
+
+        },
+
+        _createCalendar: function() {
+            var _calendar, that = this,
+                element = this.element,
+                o = this.options;
+
+            _calendar = $("<div/>").css({
+                position: 'absolute',
+                display: 'none',
+                'max-width': 220,
+                'z-index': 1000
+
+            }).addClass('calendar calendar-dropdown').appendTo(element);
+
+            //if (o.date != undefined) {
+            //_calendar.data('date', o.date);
+            //}
+
+
+            _calendar.calendar({
+                multiSelect: false,
+                format: o.format,
+                buttons: false,
+                buttonToday: false,
+                buttonClear: false,
+                locale: o.locale,
+                otherDays: o.otherDays,
+                weekStart: o.weekStart,
+                condensedGrid: o.condensedGrid,
+                exclude: o.exclude,
+                stored: o.stored,
+                date: o.preset ? o.preset : new Date(),
+                minDate: o.minDate,
+                maxDate: o.maxDate,
+                scheme: o.scheme,
+                dayClick: function(d, d0) {
+                    //console.log(d, d0);
+                    _calendar.calendar('setDate', d0);
+                    that.element.children("input[type=text]").val(d);
+                    that.element.children("input[type=text]").trigger('change', d0);
+                    that.element.children("input[type=text]").blur();
+                    that._hide();
+
+                    if (typeof o.onSelect === 'function') {
+                        o.onSelect(d, d0);
+                    } else {
+                        if (typeof window[o.onSelect] === 'function') {
+                            window[o.onSelect](d, d0);
+                        } else {
+                            var result = eval("(function(){" + o.onSelect + "})");
+                            result.call(d, d0);
+                        }
+                    }
+                }
+            });
+
+            if (o.preset !== false) {
+                //console.log(o.preset);
+                _calendar.calendar('setDate', o.preset);
+                element.find("input, .datepicker-output").val(_calendar.calendar('getDate'));
+            }
+
+            // Set position
+            switch (this.options.position) {
+                case 'top':
+                    _calendar.css({
+                        top: (0 - _calendar.height()),
+                        left: 0
+                    });
+                    break;
+                default:
+                    _calendar.css({
+                        top: '100%',
+                        left: 0
+                    });
+            }
+
+            this._calendar = _calendar;
+        },
+
+        _show: function() {
+            if (this.options.effect === 'slide') {
+                $(".calendar-dropdown").slideUp('fast');
+                this._calendar.slideDown('fast');
+            } else if (this.options.effect === 'fade') {
+                $(".calendar-dropdown").fadeOut('fast');
+                this._calendar.fadeIn('fast');
+            } else {
+                $(".calendar-dropdown").hide();
+                this._calendar.show();
+            }
+        },
+        _hide: function() {
+            if (this.options.effect === 'slide') {
+                this._calendar.slideUp('fast');
+            } else if (this.options.effect === 'fade') {
+                this._calendar.fadeOut('fast');
+            } else {
+                this._calendar.hide();
+            }
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/dialog.js
+    $.widget("metro.dialog", {
+
+        version: "3.0.0",
+
+        options: {
+            modal: false,
+            overlay: false,
+            overlayColor: 'default',
+            overlayClickClose: false,
+            type: 'default', // success, alert, warning, info
+            place: 'center', // center, top-left, top-center, top-right, center-left, center-right, bottom-left, bottom-center, bottom-right
+            position: 'default',
+            content: false,
+            hide: false,
+            width: 'auto',
+            height: 'auto',
+            background: 'default',
+            color: 'default',
+            closeButton: false,
+            windowsStyle: false,
+            show: false,
+            _interval: undefined,
+            _overlay: undefined,
+
+            onDialogOpen: function(dialog) {},
+            onDialogClose: function(dialog) {}
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (o.overlay) {
+                this._createOverlay();
+            }
+            this._createDialog();
+
+            element.data('dialog', this);
+
+            if (o.show) {
+                this.open();
+            }
+        },
+
+        _createOverlay: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var overlay = $('body').find('.dialog-overlay');
+
+            if (overlay.length === 0) {
+                overlay = $("<div/>").addClass('dialog-overlay');
+            }
+
+            if (o.overlayColor) {
+                if (o.overlayColor.isColor()) {
+                    overlay.css({
+                        background: o.overlayColor
+                    });
+                } else {
+                    overlay.addClass(o.overlayColor);
+                }
+            }
+
+            o._overlay = overlay;
+        },
+
+        _createDialog: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            element.addClass('dialog');
+
+            if (o.type !== 'default') {
+                element.addClass(o.type);
+            }
+
+            if (o.windowsStyle) {
+                o.width = 'auto';
+
+                element.css({
+                    left: 0,
+                    right: 0
+                });
+            }
+
+            if (o.background !== 'default') {
+                if (o.background.isColor()) {
+                    element.css({
+                        background: o.background
+                    });
+                } else {
+                    element.addClass(o.background);
+                }
+            }
+
+            if (o.color !== 'default') {
+                if (o.color.isColor()) {
+                    element.css({
+                        color: o.color
+                    });
+                } else {
+                    element.addClass(o.color);
+                }
+            }
+
+            element.css({
+                width: o.width,
+                height: o.height
+            });
+
+            if (o.closeButton) {
+                $("<span/>").addClass('dialog-close-button').appendTo(element).on('click', function() {
+                    that.close();
+                });
+            }
+
+            this._hide();
+        },
+
+        _hide: function() {
+            var element = this.element;
+            element.css({
+                visibility: "hidden"
+            });
+        },
+
+        _show: function() {
+            var element = this.element;
+            element.css({
+                visibility: "visible"
+            });
+        },
+
+        _setPosition: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var width = element.width(),
+                height = element.height();
+
+            element.css({
+                left: o.windowsStyle === false ? ($(window).width() - width) / 2 : 0,
+                top: ($(window).height() - height) / 2
+            });
+        },
+
+        toggle: function() {
+            var element = this.element;
+            if (element.data('opened')) {
+                this.close();
+            } else {
+                this.open();
+            }
+        },
+
+        open: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var overlay;
+
+            this._setPosition();
+
+            element.data('opened', true);
+
+            if (o.overlay) {
+                overlay = o._overlay;
+                overlay.appendTo('body').show();
+                if (o.overlayClickClose) {
+                    overlay.on('click', function() {
+                        that.close();
+                    });
+                }
+            }
+
+            //element.fadeIn();
+            this._show();
+
+            if (typeof o.onDialogOpen === 'function') {
+                o.onDialogOpen(element);
+            } else {
+                if (typeof window[o.onDialogOpen] === 'function') {
+                    window[o.onDialogOpen](element);
+                } else {
+                    var result = eval("(function(){" + o.onDialogOpen + "})");
+                    result.call(element);
+                }
+            }
+
+            if (o.hide && parseInt(o.hide) > 0) {
+                o._interval = setTimeout(function() {
+                    that.close();
+                }, parseInt(o.hide));
+            }
+        },
+
+        close: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            clearInterval(o._interval);
+
+            if (o.overlay) {
+                $('body').find('.dialog-overlay').remove();
+            }
+
+            element.data('opened', false);
+
+            //element.fadeOut();
+            this._hide();
+
+            if (typeof o.onDialogClose === 'function') {
+                o.onDialogClose(element);
+            } else {
+                if (typeof window[o.onDialogClose] === 'function') {
+                    window[o.onDialogClose](element);
+                } else {
+                    var result = eval("(function(){" + o.onDialogClose + "})");
+                    result.call(element);
+                }
+            }
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/draggable.js
+    $.widget("metro.draggable", {
+
+        version: "3.0.0",
+
+        options: {
+            dragElement: null,
+            dragArea: null,
+            zIndex: 2000,
+            onDragStart: function(el) {},
+            onDragStop: function(el) {},
+            onDragMove: function(el, offset) {}
+        },
+
+        drag: false,
+        oldCursor: null,
+        oldZindex: null,
+        oldPosition: null,
+
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            this._setOptionsFromDOM();
+            this._createDraggable();
+
+            element.data('draggable', this);
+        },
+
+        _createDraggable: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var dragElement = o.dragElement ? element.find(o.dragElement) : element;
+
+            addTouchEvents(element[0]);
+
+            dragElement.on('mousedown', function(e) {
+                var result, el = $(this);
+
+                that.drag = true;
+
+                if (typeof o.onDragStart === 'function') {
+                    o.onDragStart(element);
+                } else {
+                    if (typeof window[o.onDragStart] === 'function') {
+                        window[o.onDragStart](element);
+                    } else {
+                        result = eval("(function(){" + o.onDragStart + "})");
+                        result.call(element);
+                    }
+                }
+
+                that.oldCursor = el.css('cursor') ? el.css('cursor') : 'default';
+                that.oldZindex = element.css('z-index');
+                dragElement.css({
+                    cursor: 'move'
+                });
+
+                element.css({
+                    'z-index': o.zIndex
+                });
+
+                var dragArea = o.dragArea ? $(o.dragArea) : $(window);
+                var os = {
+                    left: o.dragArea ? dragArea.offset().left : 0,
+                    top: o.dragArea ? dragArea.offset().top : 0
+                };
+
+                var drg_h = element.outerHeight(),
+                    drg_w = element.outerWidth(),
+                    pos_y = element.offset().top + drg_h - e.pageY,
+                    pos_x = element.offset().left + drg_w - e.pageX;
+
+                //console.log(pos_x, pos_y);
+
+                dragArea.on('mousemove', function(e) {
+                    var offset, pageX, pageY;
+
+                    if (!that.drag) return false;
+
+
+                    pageX = e.pageX - os.left;
+                    pageY = e.pageY - os.top;
+
+                    var t = (pageY > 0) ? (pageY + pos_y - drg_h) : (0);
+                    var l = (pageX > 0) ? (pageX + pos_x - drg_w) : (0);
+                    var t_delta = dragArea.innerHeight() + dragArea.scrollTop() - element.outerHeight();
+                    var l_delta = dragArea.innerWidth() + dragArea.scrollLeft() - element.outerWidth();
+
+                    if (t >= 0 && t <= t_delta) {
+                        element.offset({
+                            top: t + os.top
+                        });
+                    }
+                    if (l >= 0 && l <= l_delta) {
+                        element.offset({
+                            left: l + os.left
+                        });
+                    }
+
+                    offset = {
+                        left: l,
+                        top: t
+                    };
+
+                    if (typeof o.onDragMove === 'function') {
+                        o.onDragMove(element, offset);
+                    } else {
+                        if (typeof window[o.onDragMove] === 'function') {
+                            window[o.onDragMove](element, offset);
+                        } else {
+                            result = eval("(function(){" + o.onDragMove + "})");
+                            result.call(element, offset);
+                        }
+                    }
+                });
+
+                //e.preventDefault();
+            });
+
+            dragElement.on('mouseup', function(e) {
+                var result, el = $(this);
+
+                that.drag = false;
+                dragElement.css({
+                    cursor: that.oldCursor
+                });
+                element.css({
+                    'z-index': that.oldZindex,
+                    'position': that.oldPosition
+                });
+
+                if (typeof o.onDragStop === 'function') {
+                    o.onDragStop(element);
+                } else {
+                    if (typeof window[o.onDragStop] === 'function') {
+                        window[o.onDragStop](element);
+                    } else {
+                        result = eval("(function(){" + o.onDragStop + "})");
+                        result.call(element);
+                    }
+                }
+
+                //e.preventDefault();
+            });
+
+        },
+
+        _setOptionsFromDOM: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/dropdown.js
+    $.widget("metro.dropdown", {
+
+        version: "3.0.0",
+
+        options: {
+            effect: window.METRO_SHOW_TYPE,
+            toggleElement: false,
+            noClose: false,
+            onDrop: function(object) {},
+            onUp: function(object) {}
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options,
+                menu = this.element,
+                name = this.name,
+                parent = this.element.parent();
+
+            var toggle;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            toggle = o.toggleElement ? $(o.toggleElement) : parent.children('.dropdown-toggle').length > 0 ? parent.children('.dropdown-toggle') : parent.children('a:nth-child(1)');
+
+            if (METRO_SHOW_TYPE !== undefined) {
+                this.options.effect = METRO_SHOW_TYPE;
+            }
+
+            toggle.on('click.' + name, function(e) {
+                parent.siblings(parent[0].tagName).removeClass("active-container");
+                $(".active-container").removeClass("active-container");
+
+                if (menu.css('display') === 'block' && !menu.hasClass('keep-open')) {
+                    that._close(menu);
+                } else {
+                    $('[data-role=dropdown]').each(function(i, el) {
+                        if (!menu.parents('[data-role=dropdown]').is(el) && !$(el).hasClass('keep-open') && $(el).css('display') === 'block') {
+                            that._close(el);
+                        }
+                    });
+                    if (menu.hasClass('horizontal')) {
+                        menu.css({
+                            'visibility': 'hidden',
+                            'display': 'block'
+                        });
+                        var item_length = $(menu.children('li')[0]).outerWidth();
+                        //var item_length2 = $(menu.children('li')[0]).width();
+                        menu.css({
+                            'visibility': 'visible',
+                            'display': 'none'
+                        });
+                        var menu_width = menu.children('li').length * item_length + (menu.children('li').length - 1);
+                        menu.css('width', menu_width);
+                    }
+                    that._open(menu);
+                    parent.addClass("active-container");
+                }
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            if (o.noClose === true) {
+                element.on('click', function(e) {
+                    // e.preventDefault();
+                    e.stopPropagation();
+                });
+            }
+
+            $(menu).find('li.disabled a').on('click', function(e) {
+                e.preventDefault();
+            });
+
+            $(document).on('click', function(e) {
+                $('[data-role=dropdown]').each(function(i, el) {
+                    if (!$(el).hasClass('keep-open') && $(el).css('display') === 'block') {
+                        that._close(el);
+                    }
+                });
+            });
+
+            element.data('dropdown', this);
+        },
+
+        _open: function(el) {
+            var parent = this.element.parent(),
+                o = this.options;
+            var toggle = o.toggleElement ? $(o.toggleElement) : parent.children('.dropdown-toggle').length > 0 ? parent.children('.dropdown-toggle') : parent.children('a:nth-child(1)');
+
+            switch (this.options.effect) {
+                case 'fade':
+                    $(el).fadeIn('fast');
+                    break;
+                case 'slide':
+                    $(el).slideDown('fast');
+                    break;
+                default:
+                    $(el).show();
+            }
+            this._trigger("onOpen", null, el);
+            toggle.addClass('active-toggle');
+
+            if (typeof o.onDrop === 'function') {
+                o.onDrop(el);
+            } else {
+                if (typeof window[o.onDrop] === 'function') {
+                    window[o.onDrop](el);
+                } else {
+                    var result = eval("(function(){" + o.onDrop + "})");
+                    result.call(el);
+                }
+            }
+        },
+
+        _close: function(el) {
+            var parent = $(el).parent(),
+                o = this.options;
+            var toggle = o.toggleElement ? $(o.toggleElement) : parent.children('.dropdown-toggle').length > 0 ? parent.children('.dropdown-toggle') : parent.children('a:nth-child(1)');
+
+            switch (this.options.effect) {
+                case 'fade':
+                    $(el).fadeOut('fast');
+                    break;
+                case 'slide':
+                    $(el).slideUp('fast');
+                    break;
+                default:
+                    $(el).hide();
+            }
+            this._trigger("onClose", null, el);
+            toggle.removeClass('active-toggle');
+
+            if (typeof o.onUp === 'function') {
+                o.onUp(el);
+            } else {
+                if (typeof window[o.onUp] === 'function') {
+                    window[o.onUp](el);
+                } else {
+                    var result = eval("(function(){" + o.onUp + "})");
+                    result.call(el);
+                }
+            }
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/fit-image.js
+    $.widget("metro.fitImage", {
+
+        version: "3.0.0",
+
+        options: {
+            shadow: false,
+            overlay: false,
+            type: 'default',
+            frameColor: 'default',
+            format: 'hd' // 'sd'
+        },
+
+        _create: function() {
+            var element = this.element,
+                o = this.options;
+            var parent = element.parent();
+            var i_w, i_h, p_w, p_h;
+            var div, src = element.attr('src');
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            $("<img/>")
+                .attr('src', src)
+                .load(function() {
+                    i_w = this.width;
+                    i_h = this.height;
+                }).remove();
+
+            var image_container = $("<div/>").addClass('image-container').css('width', '100%').appendTo(parent);
+            var image_frame = $("<div/>").addClass('frame').appendTo(image_container);
+
+            p_w = image_frame.innerWidth();
+            p_h = image_frame.innerHeight();
+
+            switch (o.format) {
+                case 'sd':
+                    p_h = 3 * p_w / 4;
+                    break;
+                case 'square':
+                    p_h = p_w;
+                    break;
+                case 'cycle':
+                    p_h = p_w;
+                    break;
+                case 'fill-h':
+                    p_h = "100%";
+                    image_container.css('height', '100%');
+                    break;
+                case 'fill':
+                    p_h = "100%";
+                    image_container.css('height', '100%');
+                    break;
+                default:
+                    p_h = 9 * p_w / 16;
+            }
+
+            div = $("<div/>").css({
+                'width': '100%',
+                'height': p_h,
+                'background-image': 'url(' + src + ')',
+                'background-size': 'cover',
+                'background-repeat': 'no-repeat',
+                'border-radius': o.format === 'cycle' ? '50%' : '0'
+            });
+
+            $(window).on('resize', function() {
+                var p_w = image_frame.innerWidth();
+                var p_h = image_frame.innerHeight();
+
+                switch (o.format) {
+                    case 'sd':
+                        p_h = 3 * p_w / 4;
+                        break;
+                    case 'square':
+                        p_h = p_w;
+                        break;
+                    case 'cycle':
+                        p_h = p_w;
+                        break;
+                    case 'fill-h':
+                        p_h = "100%";
+                        image_container.css('height', '100%');
+                        break;
+                    case 'fill':
+                        p_h = "100%";
+                        image_container.css('height', '100%');
+                        break;
+                    default:
+                        p_h = 9 * p_w / 16;
+                }
+
+                div.css({
+                    'height': p_h
+                });
+            });
+
+            if (o.frameColor !== 'default') {
+                if (o.frameColor.isUrl()) {
+                    image_frame.css('background-color', o.frameColor);
+                } else {
+                    image_frame.addClass(o.frameColor);
+                }
+            }
+            if (o.overlay !== false) {
+                var overlay = $("<div/>").addClass('image-overlay').html(o.overlay).appendTo(image_container);
+            }
+            if (o.shadow !== false) {
+                image_container.addClass('block-shadow');
+            }
+            div.appendTo(image_frame);
+
+            switch (o.type) {
+                case 'diamond':
+                    {
+                        image_container.addClass('diamond');
+                        div.addClass('image-replacer');
+                        break;
+                    }
+                case 'bordered':
+                    {
+                        image_container.addClass('bordered');
+                        break;
+                    }
+                case 'polaroid':
+                    {
+                        image_container.addClass('polaroid');
+                        break;
+                    }
+                case 'handing':
+                    {
+                        image_container.addClass('handing');
+                        break;
+                    }
+                case 'handing-ani':
+                    {
+                        image_container.addClass('handing ani');
+                        break;
+                    }
+                case 'handing-ani-hover':
+                    {
+                        image_container.addClass('handing ani-hover');
+                        break;
+                    }
+            }
+
+            image_container.addClass('image-format-' + o.format);
+            //element.css('display', 'none');
+            element.remove();
+
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/fluentmenu.js
+    $.widget("metro.fluentmenu", {
+
+        version: "3.0.0",
+
+        options: {
+            onSpecialClick: function(a, li) {},
+            onTabClick: function(a, li) {},
+            onTabChange: function(a, li) {}
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._createMenu();
+
+            element.data('fluentmenu', this);
+
+        },
+
+        _createMenu: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var active_tab = $(element.find(".tabs-holder > li.active")[0]);
+
+            this.openTab(active_tab);
+
+            element.on("click", ".tabs-holder > li > a", function(e) {
+                var a = $(this);
+                var li = a.parent('li');
+                var result;
+
+                if (li.hasClass('special')) {
+                    if (typeof o.onSpecialClick === 'function') {
+                        o.onSpecialClick(a, li);
+                    } else {
+                        if (typeof window[o.onSpecialClick] === 'function') {
+                            window[o.onSpecialClick](a, li);
+                        } else {
+                            result = eval("(function(){" + o.onSpecialClick + "})");
+                            result.call(a, li);
+                        }
+                    }
+                } else {
+                    var panel = $(a.attr('href'));
+                    that._hidePanels();
+                    that._showPanel(panel);
+                    element.find('.tabs-holder > li').removeClass('active');
+                    a.parent('li').addClass('active');
+
+                    if (typeof o.onTabClick === 'function') {
+                        o.onTabClick(a, li);
+                    } else {
+                        if (typeof window[o.onTabClick] === 'function') {
+                            window[o.onTabClick](a, li);
+                        } else {
+                            result = eval("(function(){" + o.onTabClick + "})");
+                            result.call(a, li);
+                        }
+                    }
+
+                    if (typeof o.onTabChange === 'function') {
+                        o.onTabChange(a, li);
+                    } else {
+                        if (typeof window[o.onTabChange] === 'function') {
+                            window[o.onTabChange](a, li);
+                        } else {
+                            result = eval("(function(){" + o.onTabChange + "})");
+                            result.call(a, li);
+                        }
+                    }
+                }
+                e.preventDefault();
+            });
+        },
+
+        _hidePanels: function() {
+            this.element.find('.tab-panel').hide();
+        },
+
+        _showPanel: function(panel) {
+            if (panel == undefined) {
+                panel = this.element.find('.tabs-holder li.active a').attr('href');
+            }
+            $(panel).show();
+        },
+
+        openTab: function(tab) {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var target_panel = $(tab.children('a').attr('href'));
+            if (target_panel.length === 0) {
+                return false;
+            }
+            this._hidePanels();
+            this._showPanel(target_panel);
+            element.find('.tabs-holder > li').removeClass('active');
+            tab.addClass('active');
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/grid.js
+    $.widget("metro.grid", {
+
+        version: "3.0.0",
+
+        options: {
+            equalHeight: true
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (o.equalHeight) {
+                setTimeout(function() {
+                    that._setEqualHeight();
+                }, 50);
+
+                $(window).on('resize', function() {
+                    that._setEqualHeight();
+                });
+            }
+
+            element.data('grid', this);
+
+        },
+
+        _setEqualHeight: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var rows = element.find('.row');
+
+            $.each(rows, function() {
+                var row = $(this);
+                var cells = row.children('.cell');
+                var maxHeight = 0;
+
+                cells.css('min-height', '0');
+
+                $.each(cells, function() {
+                    //console.log(this.tagName, $(this).outerHeight());
+                    if ($(this).outerHeight() > maxHeight) {
+                        maxHeight = $(this).outerHeight();
+                    }
+                });
+
+                cells.css('min-height', maxHeight);
+            });
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/hint.js
+    $.widget("metro.hint", {
+
+        version: "3.0.0",
+
+        options: {
+            hintPosition: "auto", // bottom, top, left, right, auto
+            hintBackground: '#FFFCC0',
+            hintColor: '#000000',
+            hintMaxSize: 200,
+            hintMode: 'default',
+            hintShadow: false,
+            hintBorder: true,
+            hintTimeout: 0,
+            hintTimeDelay: 0,
+
+            _hint: undefined
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element;
+            var o = this.options;
+
+
+            this.element.on('mouseenter', function(e) {
+                $(".hint, .hint2").remove();
+                if (o.hintTimeDelay > 0) {
+                    setTimeout(function() {
+                        that.createHint();
+                        o._hint.show();
+                    }, o.hintTimeDelay);
+                } else {
+                    that.createHint();
+                    o._hint.show();
+                }
+                e.preventDefault();
+            });
+
+            this.element.on('mouseleave', function(e) {
+                if (o._hint.length) {
+                    o._hint.hide().remove();
+                }
+                e.preventDefault();
+            });
+
+            //element.data('hint', this);
+
+        },
+
+        createHint: function() {
+            var that = this,
+                element = this.element,
+                hint = element.data('hint').split("|"),
+                o = this.options;
+
+            var _hint;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (element[0].tagName === 'TD' || element[0].tagName === 'TH') {
+                var wrp = $("<div/>").css("display", "inline-block").html(element.html());
+                element.html(wrp);
+                element = wrp;
+            }
+
+            var hint_title = hint.length > 1 ? hint[0] : false;
+            var hint_text = hint.length > 1 ? hint[1] : hint[0];
+
+
+            _hint = $("<div/>").appendTo('body');
+            if (o.hintMode === 2) {
+                _hint.addClass('hint2');
+            } else {
+                _hint.addClass('hint');
+            }
+
+            if (!o.hintBorder) {
+                _hint.addClass('no-border');
+            }
+
+            if (hint_title) {
+                $("<div/>").addClass("hint-title").html(hint_title).appendTo(_hint);
+            }
+            $("<div/>").addClass("hint-text").html(hint_text).appendTo(_hint);
+
+            _hint.addClass(o.position);
+
+            if (o.hintShadow) {
+                _hint.addClass("shadow");
+            }
+            if (o.hintBackground) {
+                if (o.hintBackground.isColor()) {
+                    _hint.css("background-color", o.hintBackground);
+                } else {
+                    _hint.addClass(o.hintBackground);
+                }
+            }
+            if (o.hintColor) {
+                if (o.hintColor.isColor()) {
+                    _hint.css("color", o.hintColor);
+                } else {
+                    _hint.addClass(o.hintColor);
+                }
+            }
+
+            if (o.hintMaxSize > 0) {
+                _hint.css({
+                    'max-width': o.hintMaxSize
+                });
+            }
+
+            //if (o.hintMode !== 'default') {
+            //    _hint.addClass(o.hintMode);
+            //}
+
+            if (o.hintPosition === 'top') {
+                _hint.addClass('top');
+                _hint.css({
+                    top: element.offset().top - $(window).scrollTop() - _hint.outerHeight() - 20,
+                    left: o.hintMode === 2 ? element.offset().left + element.outerWidth() / 2 - _hint.outerWidth() / 2 - $(window).scrollLeft() : element.offset().left - $(window).scrollLeft()
+                });
+            } else if (o.hintPosition === 'right') {
+                _hint.addClass('right');
+                _hint.css({
+                    top: o.hintMode === 2 ? element.offset().top + element.outerHeight() / 2 - _hint.outerHeight() / 2 - $(window).scrollTop() - 10 : element.offset().top - 10 - $(window).scrollTop(),
+                    left: element.offset().left + element.outerWidth() + 15 - $(window).scrollLeft()
+                });
+            } else if (o.hintPosition === 'left') {
+                _hint.addClass('left');
+                _hint.css({
+                    top: o.hintMode === 2 ? element.offset().top + element.outerHeight() / 2 - _hint.outerHeight() / 2 - $(window).scrollTop() - 10 : element.offset().top - 10 - $(window).scrollTop(),
+                    left: element.offset().left - _hint.outerWidth() - 10 - $(window).scrollLeft()
+                });
+            } else {
+                _hint.addClass('bottom');
+                _hint.css({
+                    top: element.offset().top - $(window).scrollTop() + element.outerHeight(),
+                    left: o.hintMode === 2 ? element.offset().left + element.outerWidth() / 2 - _hint.outerWidth() / 2 - $(window).scrollLeft() : element.offset().left - $(window).scrollLeft()
+                });
+            }
+
+            o._hint = _hint;
+
+            if (o.hintTimeout > 0) {
+                setTimeout(function() {
+                    if (o._hint.length) {
+                        o._hint.hide().remove();
+                    }
+                }, o.hintTimeout);
+            }
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/inputs.js
+    $.widget("metro.input", {
+
+        version: "3.0.0",
+
+        options: {
+            showLabelOnValue: false,
+            textAutoResize: false,
+            textMaxHeight: 0
+        },
+
+        _create: function() {
+            var element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (element.hasClass('file')) {
+                this._createInputFile();
+            }
+            if (element.hasClass('text')) {
+                this._createInputText();
+            }
+            if (element.hasClass('password')) {
+                this._createInputText();
+            }
+            if (element.hasClass('select')) {
+                this._createInputSelect();
+            }
+            if (element.hasClass('textarea')) {
+                this._createInputTextarea();
+            }
+            if (element.hasClass('modern')) {
+                this._createInputModern();
+            }
+
+            element.data('input', this);
+
+        },
+
+        _createInputModern: function() {
+            var element = this.element;
+            var input = element.find("input");
+            var placeholder = element.find(".placeholder");
+
+            if (input.val() !== "") {
+                placeholder.css({
+                    display: "none"
+                });
+            }
+
+            input.on("blur", function() {
+                if (input.val() !== "") {
+                    placeholder.css({
+                        display: "none"
+                    });
+                } else {
+                    placeholder.css({
+                        display: "block"
+                    });
+                }
+            });
+            input.on("focus", function() {
+                if (input.val() !== "") {
+                    placeholder.css({
+                        display: "none"
+                    });
+                } else {
+                    placeholder.css({
+                        display: "block"
+                    });
+                }
+            });
+        },
+
+        _createInputFile: function() {
+            var element = this.element;
+            var wrapper, button, input;
+            wrapper = $("<input type='text' class='input-file-wrapper' readonly style='z-index: 1; cursor: default;'>");
+            button = element.children('.button');
+            input = element.children('input[type="file"]');
+            input.css('z-index', 0);
+            wrapper.insertAfter(input);
+            input.attr('tabindex', '-1');
+            button.attr('type', 'button');
+            wrapper.attr('placeholder', input.attr('placeholder'));
+
+            input.on('change', function() {
+                var val = $(this).val();
+                if (val !== '') {
+                    wrapper.val(val.replace(/.+[\\\/]/, ""));
+                    wrapper.attr('title', val.replace(/.+[\\\/]/, ""));
+                }
+            });
+
+            element.on('click', '.button, .input-file-wrapper', function() {
+                input.trigger('click');
+            });
+        },
+
+        _createInputText: function() {
+            var element = this.element;
+            var helper_clear = element.find('.helper-button.clear');
+            var helper_reveal = element.find('.helper-button.reveal');
+            var input = element.find('input');
+            var helpers = element.find('.helper-button');
+            var buttons = element.find('.button');
+            var states = element.find('.input-state-error, .input-state-warning, .input-state-info, .input-state-success, .input-state-required');
+            var padding = 0;
+            var rtl = element.attr('dir') === 'rtl' || element.parents("[dir='rtl']").length > 0;
+
+
+            $.each(buttons, function() {
+                var b = $(this);
+                padding += b.outerWidth();
+            });
+
+            if (rtl) {
+                input.css({
+                    'padding-left': padding + 5
+                });
+
+                states.css({
+                    'left': padding + 8
+                });
+            } else {
+                input.css({
+                    'padding-right': padding + 5
+                });
+
+                states.css({
+                    'right': padding + 8
+                });
+            }
+
+            helpers
+                .attr('tabindex', -1)
+                .attr('type', 'button');
+
+            if (helper_clear) {
+                helper_clear.on('click', function() {
+                    input.val('').trigger('change').focus();
+                });
+            }
+            if (helper_reveal && element.hasClass('password')) {
+                helper_reveal
+                    .on('mousedown', function() {
+                        input.attr('type', 'text');
+                    })
+                    .on('mouseup', function() {
+                        input.attr('type', 'password').focus();
+                    });
+            }
+        },
+
+        _createInputSelect: function() {
+
+        },
+
+        _createInputTextarea: function() {
+            var element = this.element,
+                that = this,
+                o = this.options;
+            var textarea = element.find('textarea');
+
+            console.log(textarea);
+
+            var fitTextarea = function() {
+                textarea.css({
+                    "resize": 'none',
+                    "overflow-y": 'hidden'
+                });
+
+                textarea[0].style.height = 0;
+
+                var adjust = textarea[0].scrollHeight;
+
+                if (o.textMaxHeight > 0) {
+                    if (o.textMaxHeight > adjust) {
+                        textarea[0].style.height = adjust + 'px';
+                    } else {
+                        textarea[0].style.height = o.textMaxHeight + 'px';
+                    }
+                } else {
+                    textarea[0].style.height = adjust + 'px';
+                }
+            };
+
+            if (o.textAutoResize) {
+                textarea.on('keyup', fitTextarea);
+                textarea.on('keydown', fitTextarea);
+                textarea.on('change', fitTextarea);
+                textarea.on('focus', fitTextarea);
+                textarea.on('cut', fitTextarea);
+                textarea.on('paste', fitTextarea);
+                textarea.on('drop', fitTextarea);
+            }
+        },
+
+        _destroy: function() {
+
+        },
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/keypad.js
+    $.widget("metro.keypad", {
+
+        version: "3.0.0",
+
+        options: {
+            target: false,
+            shuffle: false,
+            length: false,
+            keys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+            onKey: function(key) {},
+            onChange: function(value) {}
+        },
+
+        //_keys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (typeof o.keys === 'string') {
+                o.keys = o.keys.split(",");
+            }
+
+            if (o.target !== false) {
+                o.target = $(o.target);
+            }
+
+            this._createKeypad();
+
+            element.data('keypad', this);
+
+        },
+
+        _shuffleKeys: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var keys = o.keys.slice(0);
+            var keypad = this._keypad;
+            var keys_length = keys.length + 2;
+
+            if (o.shuffle) {
+                keys = keys.shuffle();
+            }
+
+            keypad.html('').css({
+                width: keys_length / 4 * 32 + (keys_length / 4 + 1) * 2 + 2
+            });
+
+            keys.map(function(i) {
+                $("<div/>").addClass('key').html(i).data('key', i).appendTo(keypad);
+            });
+
+            $("<div/>").addClass('key').html('&larr;').data('key', '&larr;').appendTo(keypad);
+            $("<div/>").addClass('key').html('&times;').data('key', '&times;').appendTo(keypad);
+        },
+
+        _createKeypad: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var keypad;
+
+            if (element.hasClass('input-control')) {
+
+                keypad = $("<div/>").addClass('keypad keypad-dropdown').css({
+                    position: 'absolute',
+                    'z-index': 1000,
+                    display: 'none'
+                }).appendTo(element);
+
+                o.target = element.find('input');
+
+                element.on('click', function(e) {
+                    if (keypad.css('display') === 'none') {
+                        keypad.show();
+                    } else {
+                        keypad.hide();
+                    }
+
+                    var opened_pads = $(".keypad.keypad-dropdown");
+                    $.each(opened_pads, function() {
+                        if (!$(this).is(keypad)) {
+                            $(this).hide();
+                        }
+                    });
+
+                    e.stopPropagation();
+                });
+
+                $('html').on('click', function() {
+                    $(".keypad.keypad-dropdown").hide();
+                });
+            } else {
+                keypad = element;
+                keypad.addClass('keypad');
+            }
+
+            if (o.target !== false) {
+                $(o.target).attr('readonly', true);
+            }
+
+            if (keypad.parent().data('role') === 'dropdown') {
+                keypad.parent().css({
+                    top: '100%'
+                });
+            }
+
+            this._keypad = keypad;
+
+            this._shuffleKeys();
+
+            keypad.on('click', '.key', function(e) {
+                var key = $(this);
+                var result;
+
+                if (o.target) {
+                    if (key.data('key') !== '&larr;' && key.data('key') !== '&times;') {
+                        if (o.length && $(o.target).val().length === o.length) {
+                            return false;
+                        }
+                        $(o.target).val($(o.target).val() + '' + key.data('key'));
+                    } else {
+                        if (key.data('key') === '&times;') {
+                            $(o.target).val('');
+                        }
+                        if (key.data('key') === '&larr;') {
+                            var val = $(o.target).val();
+                            $(o.target).val(val.substring(0, val.length - 1))
+                        }
+                    }
+
+                    o.target.trigger('change');
+                }
+
+                if (typeof o.onKey === 'function') {
+                    o.onKey(key);
+                } else {
+                    if (typeof window[o.onKey] === 'function') {
+                        window[o.onKey](key);
+                    } else {
+                        result = eval("(function(){" + o.onKey + "})");
+                        result.call(key);
+                    }
+                }
+
+                if (typeof o.onChange === 'function') {
+                    o.onChange(o.target.val());
+                } else {
+                    if (typeof window[o.onChange] === 'function') {
+                        window[o.onChange](o.target.val());
+                    } else {
+                        result = eval("(function(){" + o.onChange + "})");
+                        result.call({
+                            value: o.target.val()
+                        });
+                    }
+                }
+
+                if (o.shuffle) {
+                    that._shuffleKeys();
+                }
+
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/listview.js
+    $.widget("metro.listview", {
+
+        version: "3.0.0",
+
+        options: {
+            onExpand: function(group) {},
+            onCollapse: function(group) {},
+            onActivate: function(list) {},
+            onListClick: function(list) {}
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._initList();
+            this._createEvents();
+
+            element.data('listview', this);
+
+        },
+
+        _initList: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var groups = element.find('.list-group');
+
+            $.each(groups, function() {
+                var group = $(this);
+                if (group.hasClass('collapsed')) {
+                    group.find('.list-group-content').hide();
+                }
+            });
+
+        },
+
+        _createEvents: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            element.on('click', '.list-group-toggle', function(e) {
+                var toggle = $(this),
+                    parent = toggle.parent();
+                var result;
+
+                if (toggle.parent().hasClass('keep-open')) {
+                    return;
+                }
+
+                parent.toggleClass('collapsed');
+
+                if (!parent.hasClass('collapsed')) {
+                    toggle.siblings('.list-group-content').slideDown('fast');
+                    if (typeof o.onExpand === 'function') {
+                        o.onExpand(parent);
+                    } else {
+                        if (typeof window[o.onExpand] === 'function') {
+                            window[o.onExpand](parent);
+                        } else {
+                            result = eval("(function(){" + o.onExpand + "})");
+                            result.call(parent);
+                        }
+                    }
+                } else {
+                    toggle.siblings('.list-group-content').slideUp('fast');
+                    if (typeof o.onCollapse === 'function') {
+                        o.onCollapse(parent);
+                    } else {
+                        if (typeof window[o.onCollapse] === 'function') {
+                            window[o.onCollapse](parent);
+                        } else {
+                            result = eval("(function(){" + o.onCollapse + "})");
+                            result.call(parent);
+                        }
+                    }
+                }
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            element.on('click', '.list', function(e) {
+                var list = $(this);
+                var result;
+
+                element.find('.list').removeClass('active');
+                list.addClass('active');
+                if (typeof o.onActivate === 'function') {
+                    o.onActivate(list);
+                } else {
+                    if (typeof window[o.onActivate] === 'function') {
+                        window[o.onActivate](list);
+                    } else {
+                        result = eval("(function(){" + o.onActivate + "})");
+                        result.call(list);
+                    }
+                }
+                if (typeof o.onListClick === 'function') {
+                    o.onListClick(list);
+                } else {
+                    if (typeof window[o.onListClick] === 'function') {
+                        window[o.onListClick](list);
+                    } else {
+                        result = eval("(function(){" + o.onListClick + "})");
+                        result.call(list);
+                    }
+                }
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/notify.js
+    var _notify_container = false;
+    var _notifies = [];
+
+    var Notify = {
+
+        _container: null,
+        _notify: null,
+        _timer: null,
+
+        version: "3.0.0",
+
+        options: {
+            icon: '', // to be implemented
+            caption: '',
+            content: '',
+            shadow: true,
+            width: 'auto',
+            height: 'auto',
+            style: false, // {background: '', color: ''}
+            position: 'right', //right, left
+            timeout: 3000,
+            keepOpen: false,
+            type: 'default' //default, success, alert, info, warning
+        },
+
+        init: function(options) {
+            this.options = $.extend({}, this.options, options);
+            this._build();
+            return this;
+        },
+
+        _build: function() {
+            var that = this,
+                o = this.options;
+
+            this._container = _notify_container || $("<div/>").addClass("notify-container").appendTo('body');
+            _notify_container = this._container;
+
+            if (o.content === '' || o.content === undefined) {
+                return false;
+            }
+
+            this._notify = $("<div/>").addClass("notify");
+
+            if (o.type !== 'default') {
+                this._notify.addClass(o.type);
+            }
+
+            if (o.shadow) {
+                this._notify.addClass("shadow");
+            }
+            if (o.style && o.style.background !== undefined) {
+                this._notify.css("background-color", o.style.background);
+            }
+            if (o.style && o.style.color !== undefined) {
+                this._notify.css("color", o.style.color);
+            }
+
+            // add Icon
+            if (o.icon !== '') {
+                var icon = $(o.icon).addClass('notify-icon').appendTo(this._notify);
+            }
+
+            // add title
+            if (o.caption !== '' && o.caption !== undefined) {
+                $("<div/>").addClass("notify-title").html(o.caption).appendTo(this._notify);
+            }
+            // add content
+            if (o.content !== '' && o.content !== undefined) {
+                $("<div/>").addClass("notify-text").html(o.content).appendTo(this._notify);
+            }
+
+            // add closer
+            var closer = $("<span/>").addClass("notify-closer").appendTo(this._notify);
+            closer.on('click', function() {
+                that.close(0);
+            });
+
+            if (o.width !== 'auto') {
+                this._notify.css('min-width', o.width);
+            }
+            if (o.height !== 'auto') {
+                this._notify.css('min-height', o.height);
+            }
+
+            this._notify.hide().appendTo(this._container).fadeIn('slow');
+            _notifies.push(this._notify);
+
+            if (!o.keepOpen) {
+                this.close(o.timeout);
+            }
+
+        },
+
+        close: function(timeout) {
+            var self = this;
+
+            if (timeout === undefined) {
+                return this._hide();
+            }
+
+            setTimeout(function() {
+                self._hide();
+            }, timeout);
+
+            return this;
+        },
+
+        _hide: function() {
+            var that = this;
+
+            if (this._notify !== undefined) {
+                this._notify.fadeOut('slow', function() {
+                    $(this).remove();
+                    _notifies.splice(_notifies.indexOf(that._notify), 1);
+                });
+                return this;
+            } else {
+                return false;
+            }
+        },
+
+        closeAll: function() {
+            _notifies.forEach(function(notEntry) {
+                notEntry.hide('slow', function() {
+                    notEntry.remove();
+                    _notifies.splice(_notifies.indexOf(notEntry), 1);
+                });
+            });
+            return this;
+        }
+    };
+
+    $.Notify = function(options) {
+        return Object.create(Notify).init(options);
+    };
+
+    $.Notify.show = function(message, title, icon) {
+        return $.Notify({
+            content: message,
+            caption: title,
+            icon: icon
+        });
+    };
+
+
+    // Source: js/widgets/panel.js
+    $.widget("metro.panel", {
+
+        version: "3.0.0",
+
+        options: {
+            onExpand: function(panel) {},
+            onCollapse: function(panel) {}
+        },
+
+        _create: function() {
+            var element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (!element.hasClass('collapsible')) {
+                element.addClass('collapsible');
+            }
+
+            if (element.hasClass("collapsible")) {
+                var toggle = element.children(".heading");
+                var content = element.children(".content");
+
+                toggle.on("click", function() {
+                    var result;
+
+                    if (element.hasClass("collapsed")) {
+                        content.slideDown('fast', function() {
+                            element.removeClass('collapsed');
+                            if (typeof o.onExpand === 'function') {
+                                o.onExpand(element);
+                            } else {
+                                if (typeof window[o.onExpand] === 'function') {
+                                    window[o.onExpand](element);
+                                } else {
+                                    result = eval("(function(){" + o.onExpand + "})");
+                                    result.call(element);
+                                }
+                            }
+                        });
+                    } else {
+                        content.slideUp('fast', function() {
+                            element.addClass('collapsed');
+                            if (typeof o.onCollapse === 'function') {
+                                o.onCollapse(element);
+                            } else {
+                                if (typeof window[o.onCollapse] === 'function') {
+                                    window[o.onCollapse](element);
+                                } else {
+                                    result = eval("(function(){" + o.onCollapse + "})");
+                                    result.call(element);
+                                }
+                            }
+                        });
+                    }
+
+                });
+            }
+
+            element.data('panel', this);
+
+        },
+
+        _destroy: function() {
+
+        },
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/plugin.js
+    $.widget("metro.widget", {
+
+        version: "1.0.0",
+
+        options: {
+            someValue: null
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            this._setOptionsFromDOM();
+
+            element.data('widget', this);
+
+        },
+
+        _setOptionsFromDOM: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/popovers.js
+    $.widget("metro.popover", {
+
+        version: "3.0.0",
+
+        options: {
+            popoverText: '',
+            popoverTimeout: 3000,
+            popoverPosition: 'top', //top, bottom, left, right
+            popoverBackground: 'bg-cyan',
+            popoverColor: 'fg-white',
+            popoverMode: 'none', //click, hover,
+            popoverShadow: true,
+            onPopup: function(popover) {}
+        },
+
+        popover: {},
+
+        _create: function() {
+            var element = this.element;
+
+            this.createPopover();
+            element.data('popover', this);
+
+        },
+
+        createPopover: function() {
+            var that = this,
+                element,
+                o = this.options;
+
+            element = this.element;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            var popover, content_container, marker_class;
+
+            popover = $("<div/>").addClass("popover").appendTo('body').hide();
+            $("<div/>").appendTo(popover);
+
+            if (o.popoverShadow) {
+                popover.addClass("popover-shadow");
+            }
+
+            if (o.popoverBackground) {
+                if (o.popoverBackground[0] === '#') {
+                    popover.css('background-color', o.popoverBackground);
+                } else {
+                    popover.addClass(o.popoverBackground);
+                }
+            }
+            if (o.popoverColor) {
+                if (o.popoverColor[0] === '#') {
+                    popover.css('color', o.popoverColor);
+                } else {
+                    popover.addClass(o.popoverColor);
+                }
+            }
+
+            switch (o.popoverPosition) {
+                case 'left':
+                    marker_class = 'marker-on-right';
+                    break;
+                case 'right':
+                    marker_class = 'marker-on-left';
+                    break;
+                case 'bottom':
+                    marker_class = 'marker-on-top';
+                    break;
+                default:
+                    marker_class = 'marker-on-bottom';
+            }
+
+            popover.css({
+                position: 'fixed'
+            });
+
+            popover.addClass(marker_class);
+
+            this.popover = popover;
+
+            this.setText(o.popoverText);
+
+            element.on(o.popoverMode, function(e) {
+                if (!popover.data('visible')) {
+                    that.show();
+                }
+            });
+
+            $(window).scroll(function() {
+                //that.popover.hide();
+                if (that.popover.data('visible')) {
+                    that.setPosition();
+                }
+            });
+
+        },
+
+        setPosition: function() {
+            var o = this.options,
+                popover = this.popover,
+                element = this.element;
+
+            if (o.popoverPosition === 'top') {
+                popover.css({
+                    top: element.offset().top - $(window).scrollTop() - popover.outerHeight() - 10,
+                    left: element.offset().left + element.outerWidth() / 2 - popover.outerWidth() / 2 - $(window).scrollLeft()
+                });
+            } else if (o.popoverPosition === 'bottom') {
+                popover.css({
+                    top: element.offset().top - $(window).scrollTop() + element.outerHeight() + 10,
+                    left: element.offset().left + element.outerWidth() / 2 - popover.outerWidth() / 2 - $(window).scrollLeft()
+                });
+            } else if (o.popoverPosition === 'right') {
+                popover.css({
+                    top: element.offset().top + element.outerHeight() / 2 - popover.outerHeight() / 2 - $(window).scrollTop(),
+                    left: element.offset().left + element.outerWidth() - $(window).scrollLeft() + 10
+                });
+            } else if (o.popoverPosition === 'left') {
+                popover.css({
+                    top: element.offset().top + element.outerHeight() / 2 - popover.outerHeight() / 2 - $(window).scrollTop(),
+                    left: element.offset().left - popover.outerWidth() - $(window).scrollLeft() - 10
+                });
+            }
+            return this;
+        },
+
+        setText: function(text) {
+            this.popover.children('div').html(text);
+        },
+
+        show: function() {
+            var o = this.options,
+                popover = this.popover;
+
+            this.setPosition();
+
+            popover.fadeIn(function() {
+                popover.data('visible', true);
+
+                if (typeof o.onPopup === 'function') {
+                    o.onPopup(popover);
+                } else {
+                    if (typeof window[o.onPopup] === 'function') {
+                        window[o.onPopup](popover);
+                    } else {
+                        var result = eval("(function(){" + o.onPopup + "})");
+                        result.call(popover);
+                    }
+                }
+
+                setTimeout(function() {
+                    popover.fadeOut(
+                        function() {
+                            popover.data('visible', false);
+                        }
+                    );
+                }, o.popoverTimeout);
+            });
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/preloaders.js
+    $.widget("metro.preloader", {
+
+        version: "3.0.0",
+
+        options: {
+            type: 'ring',
+            style: 'light'
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._createStructure();
+
+            element.data('preloader', this);
+
+        },
+
+        _createRing: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var i, wrap, circle;
+
+            for (i = 0; i < 5; i++) {
+                wrap = $("<div/>").addClass('wrap').appendTo(element);
+                circle = $("<div/>").addClass('circle').appendTo(wrap);
+            }
+        },
+
+        _createMetro: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var i, circle;
+
+            for (i = 0; i < 5; i++) {
+                circle = $("<div/>").addClass('circle').appendTo(element);
+            }
+        },
+
+        _createSquare: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var i, square;
+
+            for (i = 0; i < 4; i++) {
+                square = $("<div/>").addClass('square').appendTo(element);
+            }
+        },
+
+        _createCycle: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var i, cycle;
+
+            //for(i = 0; i < 3 ; i++) {
+            cycle = $("<div/>").addClass('cycle').appendTo(element);
+            //}
+        },
+
+        _createStructure: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            element.addClass("preloader-" + o.type);
+            if (o.style !== 'light') {
+                element.addClass(o.style + '-style');
+            }
+
+            element.html('');
+
+            switch (o.type) {
+                case 'ring':
+                    this._createRing();
+                    break;
+                case 'metro':
+                    this._createMetro();
+                    break;
+                case 'square':
+                    this._createSquare();
+                    break;
+                case 'cycle':
+                    this._createCycle();
+                    break;
+            }
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/presenter.js
+    $.widget("metro.presenter", {
+
+        version: "3.0.0",
+
+        options: {
+            height: '200',
+            width: '100%',
+            effect: 'random',
+            duration: 1000,
+            timeout: 2000,
+            sceneTimeout: 2000,
+            easing: 'swing'
+        },
+
+        _acts: undefined,
+        _currentAct: 0,
+        _actDone: true,
+        _interval: undefined,
+        _effects: ['top', 'bottom', 'left', 'right'],
+        _actor_positions: [],
+
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._createPresenter();
+            this._showScene();
+
+            element.data('presenter', this);
+
+        },
+
+        _createPresenter: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var acts = element.find('.act');
+
+            acts.hide();
+
+            this._acts = acts;
+
+            element.css({
+                height: o.height,
+                width: o.width
+            });
+        },
+
+        _showScene: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            this._interval = setInterval(function() {
+                if (that._actDone) {
+                    that._currentAct++;
+
+                    if (that._currentAct == that._acts.length) {
+                        that._currentAct = 0;
+                    }
+
+                    //that._closeAct();
+                    that._showAct();
+                }
+            }, 500);
+        },
+
+        _closeAct: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var index = this._currentAct;
+            setTimeout(function() {
+                if (that._acts[index] !== undefined) $(that._acts[index]).fadeOut(1000, function() {
+                    that._actDone = true;
+                });
+            }, o.sceneTimeout);
+        },
+
+        _showAct: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            var act = $(this._acts[this._currentAct]);
+            var actors = act.find('.actor');
+            var i;
+
+            this._actDone = false;
+
+            act.fadeIn(1000);
+
+            actors.css({
+                opacity: 0,
+                position: 'absolute',
+                display: 'none'
+            });
+
+            i = 0;
+            $.each(actors, function() {
+                var actor = $(this),
+                    pos = {
+                        top: actor.data('position').split(",")[0],
+                        left: actor.data('position').split(",")[1]
+                    }; //that._actor_positions[$(that._acts[that._currentAct]).attr('id')][actor.attr('id')];
+                var actor_effect, actor_duration, actor_timeout, actor_easing;
+
+                actor_effect = actor.data('effect') !== undefined ? actor.data('effect') : o.effect;
+                if (actor_effect === 'random') {
+                    actor_effect = that._effects[Math.floor(Math.random() * that._effects.length)];
+                }
+                actor_duration = actor.data('duration') !== undefined ? actor.data('duration') : o.duration;
+                actor_timeout = actor.data('timeout') !== undefined ? actor.data('timeout') : o.timeout;
+                actor_easing = actor.data('easing') !== undefined ? actor.data('easing') : o.easing;
+
+                if (actor_effect === 'top') {
+                    setTimeout(function() {
+                        actor.css({
+                            top: -(element.height()),
+                            left: pos.left,
+                            display: 'block'
+                        }).animate({
+                            top: pos.top,
+                            left: pos.left,
+                            opacity: 1
+                        }, actor_duration, actor_easing, function() {
+                            if (actor[0] == actors[actors.length - 1]) that._closeAct();
+                        });
+                    }, i * actor_timeout);
+                } else if (actor_effect === 'bottom') {
+                    setTimeout(function() {
+                        actor.css({
+                            top: element.height(),
+                            left: pos.left,
+                            display: 'block'
+                        }).animate({
+                            top: pos.top,
+                            left: pos.left,
+                            opacity: 1
+                        }, actor_duration, actor_easing, function() {
+                            if (actor[0] == actors[actors.length - 1]) that._closeAct();
+                        });
+                    }, i * actor_timeout);
+                } else if (actor_effect === 'left') {
+                    setTimeout(function() {
+                        actor.css({
+                            left: -element.width(),
+                            top: pos.top,
+                            display: 'block'
+                        }).animate({
+                            top: pos.top,
+                            left: pos.left,
+                            opacity: 1
+                        }, actor_duration, actor_easing, function() {
+                            if (actor[0] == actors[actors.length - 1]) that._closeAct();
+                        });
+                    }, i * actor_timeout);
+                } else if (actor_effect === 'right') {
+                    setTimeout(function() {
+                        actor.css({
+                            left: element.width(),
+                            top: pos.top,
+                            display: 'block'
+                        }).animate({
+                            top: pos.top,
+                            left: pos.left,
+                            opacity: 1
+                        }, actor_duration, actor_easing, function() {
+                            if (actor[0] == actors[actors.length - 1]) that._closeAct();
+                        });
+                    }, i * actor_timeout);
+                } else { //fade
+                    setTimeout(function() {
+                        actor.css({
+                            top: pos.top,
+                            left: pos.left,
+                            display: 'block'
+                        }).animate({
+                            top: pos.top,
+                            left: pos.left,
+                            opacity: 1
+                        }, actor_duration, 'swing', function() {
+                            if (actor[0] == actors[actors.length - 1]) that._closeAct();
+                        });
+                    }, i * actor_timeout);
+                }
+
+                i++;
+            });
+
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/progressbar.js
+    $.widget("metro.progress", {
+
+        version: "3.0.0",
+
+        options: {
+            color: 'default',
+            colors: false,
+            value: 0,
+            animate: false,
+            onProgress: function(value) {}
+        },
+
+        colorsDim: {},
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var bar = element.children('.bar:last-child');
+
+            if (!element.hasClass('progress')) {
+                element.addClass('progress');
+            }
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (bar.length === 0) {
+                bar = $('<div/>').addClass('bar').appendTo(element);
+            }
+
+            if (o.colors) {
+                var p = 0;
+                $.each(o.colors, function(c, v) {
+                    that.colorsDim[c] = [p, v];
+                    p = v + 1;
+                });
+            }
+
+            this.set(o.value);
+            this.color(o.color);
+
+            element.data('progress', this);
+
+        },
+
+        color: function(value) {
+            var element = this.element,
+                o = this.options;
+            var bar = element.children('.bar:last-child');
+            var isOk = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(value);
+
+            if (isOk) {
+                bar.css({
+                    'background-color': value
+                });
+            } else {
+                bar.removeClass(function(index, css) {
+                    return (css.match(/(^|\s)bg-\S+/g) || []).join(' ');
+                }).addClass(value);
+            }
+
+            o.color = value;
+        },
+
+        set: function(value) {
+            if (value !== undefined) {
+                var element = this.element,
+                    o = this.options,
+                    colors = this.colorsDim;
+                var bar = element.children('.bar:last-child');
+                var that = this,
+                    gradient = [];
+
+                if (parseInt(value) < 0) {
+                    return;
+                }
+
+
+                if (o.colors) {
+
+                    $.each(colors, function(c, v) {
+                        if (value >= v[0] && value <= v[1]) {
+                            that.color(c);
+                            return true;
+                        }
+                    });
+                }
+
+                o.value = value;
+
+                if (o.animate !== false) {
+                    var ani_speed = isNaN(o.animate) ? 500 : o.animate;
+                    bar.animate({
+                        width: o.value + '%'
+                    }, ani_speed, function() {
+                        if (typeof o.onProgress === 'function') {
+                            o.onProgress(value);
+                        } else {
+                            if (typeof window[o.onProgress] === 'function') {
+                                window[o.onProgress](value);
+                            } else {
+                                var result = eval("(function(){" + o.onProgress + "})");
+                                result.call(value);
+                            }
+                        }
+                    });
+                } else {
+                    bar.css({
+                        width: o.value + '%'
+                    });
+                    if (typeof o.onProgress === 'function') {
+                        o.onProgress(value);
+                    } else {
+                        if (typeof window[o.onProgress] === 'function') {
+                            window[o.onProgress](value);
+                        } else {
+                            var result = eval("(function(){" + o.onProgress + "})");
+                            result.call(value);
+                        }
+                    }
+                }
+
+            } else {
+                return this.options.value;
+            }
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/rating.js
+    $.widget("metro.rating", {
+
+        version: "3.0.0",
+
+        options: {
+            stars: 5,
+            value: 0,
+            half: true,
+            static: false,
+            showScore: true,
+            scoreTitle: "Current: ",
+            size: 'default',
+            colorRate: false,
+            onRate: function(v, s, w) {
+                return true;
+            },
+            onRated: function(v, s, w) {}
+        },
+
+        _value: 0,
+        _values: [],
+
+        _create: function() {
+            var element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._value = parseFloat(o.value);
+            this._values[0] = Math.ceil(o.stars * 1 / 3);
+            this._values[1] = Math.ceil(o.stars * 2 / 3);
+            this._values[2] = o.stars;
+
+            this._createRating();
+            this._createEvents();
+            this._setValue(this._value);
+            this._setScore(this._value);
+
+            element.data('rating', this);
+
+        },
+
+        _createRating: function() {
+            var element = this.element,
+                o = this.options;
+            var i, star, stars, score;
+
+            if (!element.hasClass('rating')) {
+                element.addClass('rating');
+            }
+            switch (o.size) {
+                case 'small':
+                    element.addClass('small');
+                    break;
+                case 'large':
+                    element.addClass('large');
+                    break;
+                default:
+                    break;
+            }
+
+            if (o.static) {
+                element.addClass('static');
+            }
+
+            for (i = 0; i < o.stars; i++) {
+                star = $("<span/>").addClass('star').appendTo(element).data('star-value', i + 1);
+            }
+
+            if (o.showScore) {
+                score = $("<span/>").addClass('score').appendTo(element);
+            }
+
+        },
+
+        _createEvents: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var stars;
+
+            stars = element.find('.star');
+
+            stars.on('click', function(e) {
+
+                if (o.static || element.hasClass('static') || element.data('static')) {
+                    return false;
+                }
+
+                var result, value = $(this).data('star-value'),
+                    star = this,
+                    rating = that;
+
+                if (typeof o.onRate === 'function') {
+                    if (!o.onRate(value, star, rating)) {
+                        return false;
+                    }
+                } else {
+                    if (typeof window[o.onRate] === 'function') {
+                        if (!window[o.onRate](value, star, rating)) {
+                            return false;
+                        }
+                    } else {
+                        result = eval("(function(){" + o.onRate + "})");
+                        if (!result.call(value, star, rating)) {
+                            return false;
+                        }
+                    }
+                }
+
+                if (typeof o.onRated === 'function') {
+                    o.onRated(value, star, rating);
+                } else {
+                    if (typeof window[o.onRated] === 'function') {
+                        window[o.onRated](value, star, rating);
+                    } else {
+                        result = eval("(function(){" + o.onRated + "})");
+                        result.call(value, star, rating);
+                    }
+                }
+
+                that._value = $(this).data('star-value');
+                that._setValue();
+                that._setScore();
+
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        },
+
+        _setValue: function() {
+            var stars, o = this.options,
+                element = this.element;
+            if (o.stars) {
+                stars = element.find('.star').removeClass('on half');
+                var index = Math.floor(this._value) - 1;
+                var half = (this._value - Math.floor(this._value)) * 10 > 0;
+                $(stars[index]).addClass('on');
+                $(stars[index]).prevAll().addClass('on');
+                if (half) {
+                    $(stars[index]).next().addClass('on half');
+                }
+            }
+
+            if (o.colorRate) {
+                element.removeClass('poor regular good');
+                if (this._value <= this._values[0]) {
+                    element.addClass('poor');
+                } else if (this._value > this._values[0] && this._value <= this._values[1]) {
+                    element.addClass('regular');
+                } else if (this._value > this._values[1]) {
+                    element.addClass('good');
+                }
+            }
+        },
+
+        _setScore: function() {
+            var value = this._value,
+                element = this.element,
+                o = this.options;
+
+            if (value !== undefined) {
+                element.find(".score").html(o.scoreTitle + value);
+            }
+        },
+
+        value: function(value) {
+            if (value !== undefined) {
+                this._value = value;
+                this._setValue();
+                this._setScore();
+            } else {
+                return this._value;
+            }
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/select.js
+    $.widget("metro.select", {
+
+        version: "3.0.0",
+
+        options: {},
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var func_options = [
+                'templateResult',
+                'templateSelection',
+                'matcher',
+                'initSelection',
+                'query'
+            ];
+
+            $.each(element.data(), function(key, value) {
+                try {
+                    o[key] = $.parseJSON(value);
+                } catch (e) {
+                    o[key] = value;
+                }
+            });
+
+            func_options.map(function(func, index) {
+                if (o[func] !== undefined) {
+                    o[func] = window[o[func]];
+                }
+            });
+
+            if (o.dropdownParent !== undefined) {
+                o.dropdownParent = $(o.dropdownParent);
+            }
+
+            if ($().select2) {
+                try {
+                    element.find("select").select2(o);
+                } catch (e) {
+
+                }
+            } else {
+                console.log('You are trying to use support for Select2, but the plugin is not found!');
+            }
+
+            element.data('select', this);
+
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/slider.js
+    $.widget("metro.slider", {
+
+        version: "3.0.0",
+
+        options: {
+            position: 0,
+            accuracy: 0,
+            color: 'default',
+            completeColor: 'default',
+            markerColor: 'default',
+            colors: false,
+            showHint: false,
+            permanentHint: false,
+            hintPosition: 'top',
+            vertical: false,
+            min: 0,
+            max: 100,
+            animate: true,
+            minValue: 0,
+            maxValue: 100,
+            currValue: 0,
+            returnType: 'value',
+            target: false,
+
+            onChange: function(value, slider) {},
+
+            _slider: {
+                vertical: false,
+                offset: 0,
+                length: 0,
+                marker: 0,
+                ppp: 0,
+                start: 0,
+                stop: 0
+            }
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element;
+
+
+            var o = this.options,
+                s = o._slider;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            o.accuracy = o.accuracy < 0 ? 0 : o.accuracy;
+            o.min = o.min < 0 ? 0 : o.min;
+            o.min = o.min > o.max ? o.max : o.min;
+            o.max = o.max > 100 ? 100 : o.max;
+            o.max = o.max < o.min ? o.min : o.max;
+            o.position = this._correctValue(element.data('position') > o.min ? (element.data('position') > o.max ? o.max : element.data('position')) : o.min);
+            o.colors = o.colors ? o.colors.split(",") : false;
+
+            s.vertical = o.vertical;
+            if (o.vertical && !element.hasClass('vertical')) {
+                element.addClass('vertical');
+            }
+            if (o.permanentHint && !element.hasClass('permanent-hint')) {
+                element.addClass('permanent-hint');
+            }
+
+            if (!o.vertical && o.hintPosition === 'bottom') {
+                element.addClass('hint-bottom');
+            }
+
+            if (o.vertical && o.hintPosition === 'left') {
+                element.addClass('hint-left');
+            }
+
+            this._createSlider();
+            this._initPoints();
+            this._placeMarker(o.position);
+
+            var event_down = isTouchDevice() ? 'touchstart' : 'mousedown';
+
+            element.children('.marker').on(event_down, function(e) {
+                e.preventDefault();
+                that._startMoveMarker(e);
+            });
+
+            element.on(event_down, function(e) {
+                e.preventDefault();
+                that._startMoveMarker(e);
+            });
+
+            element.data('slider', this);
+
+        },
+
+        _startMoveMarker: function(e) {
+            var element = this.element,
+                o = this.options,
+                that = this,
+                hint = element.children('.slider-hint');
+            var returnedValue;
+
+            var event_move = isTouchDevice() ? 'touchmove' : 'mousemove';
+            var event_up = isTouchDevice() ? 'touchend' : 'mouseup mouseleave';
+
+            $(element).on(event_move, function(event) {
+                that._movingMarker(event);
+                if (!element.hasClass('permanent-hint')) {
+                    hint.css('display', 'block');
+                }
+            });
+            $(element).on(event_up, function() {
+                $(element).off('mousemove');
+                $(element).off('mouseup');
+                element.data('value', o.position);
+                element.trigger('changed', o.position);
+
+                returnedValue = o.returnType === 'value' ? that._valueToRealValue(o.position) : o.position;
+
+                if (!element.hasClass('permanent-hint')) {
+                    hint.css('display', 'none');
+                }
+            });
+
+            this._initPoints();
+
+            this._movingMarker(e);
+        },
+
+        _movingMarker: function(ev) {
+            var element = this.element,
+                o = this.options;
+            var cursorPos,
+                percents,
+                valuePix,
+
+                vertical = o._slider.vertical,
+                sliderOffset = o._slider.offset,
+                sliderStart = o._slider.start,
+                sliderEnd = o._slider.stop,
+                sliderLength = o._slider.length,
+                markerSize = o._slider.marker;
+
+            var event = !isTouchDevice() ? ev.originalEvent : ev.originalEvent.touches[0];
+
+            //console.log(event);
+
+            if (vertical) {
+                cursorPos = event.pageY - sliderOffset;
+            } else {
+                cursorPos = event.pageX - sliderOffset;
+            }
+
+            if (cursorPos < sliderStart) {
+                cursorPos = sliderStart;
+            } else if (cursorPos > sliderEnd) {
+                cursorPos = sliderEnd;
+            }
+
+            if (vertical) {
+                valuePix = sliderLength - cursorPos - markerSize / 2;
+            } else {
+                valuePix = cursorPos - markerSize / 2;
+            }
+
+            percents = this._pixToPerc(valuePix);
+
+            this._placeMarker(percents);
+
+            o.currValue = this._valueToRealValue(percents);
+            o.position = percents;
+
+            var returnedValue = o.returnType === 'value' ? this._valueToRealValue(o.position) : o.position;
+
+            if (o.target) {
+                $(o.target).val(returnedValue);
+            }
+
+            if (typeof o.onChange === 'function') {
+                o.onChange(returnedValue, element);
+            } else {
+                if (typeof window[o.onChange] === 'function') {
+                    window[o.onChange](returnedValue, element);
+                } else {
+                    var result = eval("(function(){" + o.onChange + "})");
+                    result.call(returnedValue, element);
+                }
+            }
+        },
+
+        _placeMarker: function(value) {
+            var size, size2, o = this.options,
+                colorParts, colorIndex = 0,
+                colorDelta, element = this.element,
+                marker = this.element.children('.marker'),
+                complete = this.element.children('.complete'),
+                hint = this.element.children('.slider-hint'),
+                hintValue,
+                oldPos = this._percToPix(o.position);
+
+            colorParts = o.colors.length;
+            colorDelta = o._slider.length / colorParts;
+
+            if (o._slider.vertical) {
+                var oldSize = this._percToPix(o.position) + o._slider.marker,
+                    oldSize2 = o._slider.length - oldSize;
+                size = this._percToPix(value) + o._slider.marker;
+                size2 = o._slider.length - size;
+                this._animate(marker.css('top', oldSize2), {
+                    top: size2
+                });
+                this._animate(complete.css('height', oldSize), {
+                    height: size
+                });
+
+                if (colorParts) {
+                    colorIndex = Math.round(size / colorDelta) - 1;
+                    complete.css('background-color', o.colors[colorIndex < 0 ? 0 : colorIndex]);
+                }
+                if (o.showHint) {
+                    hintValue = this._valueToRealValue(value);
+                    hint.html(hintValue).css('top', size2 - hint.height() / 2 + (element.hasClass('large') ? 8 : 0));
+                }
+            } else {
+                size = this._percToPix(value);
+                this._animate(marker.css('left', oldPos), {
+                    left: size
+                });
+                this._animate(complete.css('width', oldPos), {
+                    width: size
+                });
+                if (colorParts) {
+                    colorIndex = Math.round(size / colorDelta) - 1;
+                    complete.css('background-color', o.colors[colorIndex < 0 ? 0 : colorIndex]);
+                }
+                if (o.showHint) {
+                    hintValue = this._valueToRealValue(value);
+                    hint.html(hintValue).css({
+                        left: size - hint.width() / 2 + (element.hasClass('large') ? 6 : 0)
+                    });
+                }
+            }
+        },
+
+        _valueToRealValue: function(value) {
+            var o = this.options;
+            var real_value;
+
+            var percent_value = (o.maxValue - o.minValue) / 100;
+
+            real_value = value * percent_value + o.minValue;
+
+            return Math.round(real_value);
+        },
+
+        _animate: function(obj, val) {
+            var o = this.options;
+
+            if (o.animate) {
+                obj.stop(true).animate(val);
+            } else {
+                obj.css(val);
+            }
+        },
+
+        _pixToPerc: function(valuePix) {
+            var valuePerc;
+            valuePerc = valuePix * this.options._slider.ppp;
+            return Math.round(this._correctValue(valuePerc));
+        },
+
+        _percToPix: function(value) {
+            if (this.options._slider.ppp === 0) {
+                return 0;
+            }
+            return Math.round(value / this.options._slider.ppp);
+        },
+
+        _correctValue: function(value) {
+            var o = this.options;
+            var accuracy = o.accuracy;
+            var max = o.max;
+            var min = o.min;
+            if (accuracy === 0) {
+                return value;
+            }
+            if (value === max) {
+                return max;
+            }
+            if (value === min) {
+                return min;
+            }
+            value = Math.floor(value / accuracy) * accuracy + Math.round(value % accuracy / accuracy) * accuracy;
+            if (value > max) {
+                return max;
+            }
+            if (value < min) {
+                return min;
+            }
+            return value;
+        },
+
+        _initPoints: function() {
+            var o = this.options,
+                s = o._slider,
+                element = this.element;
+
+            if (s.vertical) {
+                s.offset = element.offset().top;
+                s.length = element.height();
+                s.marker = element.children('.marker').height();
+            } else {
+                s.offset = element.offset().left;
+                s.length = element.width();
+                s.marker = element.children('.marker').width();
+            }
+
+            s.ppp = o.max / (s.length - s.marker);
+            s.start = s.marker / 2;
+            s.stop = s.length - s.marker / 2;
+        },
+
+        _createSlider: function() {
+            var element = this.element,
+                o = this.options,
+                complete, marker, hint;
+
+            element.html('');
+
+            complete = $("<div/>").addClass("complete").appendTo(element);
+            marker = $("<a/>").addClass("marker").appendTo(element);
+
+            if (o.showHint) {
+                hint = $("<span/>").addClass("slider-hint").appendTo(element);
+            }
+
+            if (o.color !== 'default') {
+                if (o.color.isColor()) {
+                    element.css('background-color', o.color);
+                } else {
+                    element.addClass(o.color);
+                }
+            }
+            if (o.completeColor !== 'default') {
+                if (o.completeColor.isColor()) {
+                    complete.css('background-color', o.completeColor);
+                } else {
+                    complete.addClass(o.completeColor);
+                }
+            }
+            if (o.markerColor !== 'default') {
+                if (o.markerColor.isColor()) {
+                    marker.css('background-color', o.markerColor);
+                } else {
+                    marker.addClass(o.markerColor);
+                }
+            }
+        },
+
+        value: function(value) {
+            var element = this.element,
+                o = this.options,
+                returnedValue;
+
+            if (typeof value !== 'undefined') {
+
+                value = value > o.max ? o.max : value;
+                value = value < o.min ? o.min : value;
+
+                this._placeMarker(parseInt(value));
+                o.position = parseInt(value);
+
+                returnedValue = o.returnType === 'value' ? this._valueToRealValue(o.position) : o.position;
+
+                if (o.target) {
+                    $(o.target).val(returnedValue);
+                }
+
+                if (typeof o.onChange === 'function') {
+                    o.onChange(returnedValue, element);
+                } else {
+                    if (typeof window[o.onChange] === 'function') {
+                        window[o.onChange](returnedValue, element);
+                    } else {
+                        var result = eval("(function(){" + o.onChange + "})");
+                        result.call(returnedValue, element);
+                    }
+                }
+
+                return this;
+            } else {
+                returnedValue = o.returnType === 'value' ? this._valueToRealValue(o.position) : o.position;
+                return returnedValue;
+            }
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/stepper.js
+    $.widget("metro.stepper", {
+
+        version: "3.0.0",
+
+        options: {
+            steps: 3,
+            start: 1,
+            type: 'default',
+            clickable: true,
+            onStep: function(index, step) {},
+            onStepClick: function(index, step) {}
+        },
+
+        _create: function() {
+            var element = this.element,
+                o = this.options,
+                element_id = element.attr('id');
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (!element.hasClass('stepper')) {
+                element.addClass('stepper');
+            }
+            if (element_id === undefined) {
+                element_id = window.uniqueId(this.widgetName + '_');
+                element.attr('id', element_id);
+            }
+
+            this._createStepper();
+            if (o.clickable) {
+                this._createEvents();
+            }
+            this._positioningSteps();
+            this._stepTo(o.start);
+
+            element.data('stepper', this);
+
+        },
+
+        _createEvents: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            element.on('click', 'li', function(e) {
+                var step = $(this).data('step');
+
+
+                if (typeof o.onStepClick === 'function') {
+                    o.onStepClick(step - 1, step);
+                } else {
+                    if (typeof window[o.onStepClick] === 'function') {
+                        window[o.onStepClick](step - 1, step);
+                    } else {
+                        var result = eval("(function(){" + o.onStepClick + "})");
+                        result.call(step - 1, step);
+                    }
+                }
+
+                element.trigger("stepclick", step);
+            });
+        },
+
+        _createStepper: function() {
+            var element = this.element,
+                o = this.options;
+            var i, ul, li;
+
+            ul = $("<ul/>");
+
+            switch (o.type) {
+                case 'diamond':
+                    element.addClass('diamond');
+                    break;
+                case 'cycle':
+                    element.addClass('cycle');
+                    break;
+            }
+
+            for (i = 0; i < o.steps; i++) {
+                li = $("<li/>").data('step', i + 1).appendTo(ul);
+            }
+            ul.appendTo(element);
+        },
+
+        _positioningSteps: function() {
+            var that = this,
+                element = this.element,
+                o = this.options,
+                steps = element.find("li"),
+                element_width = element.width(),
+                steps_length = steps.length - 1,
+                step_width = $(steps[0]).width();
+
+            $.each(steps, function(i, step) {
+                var left = i === 0 ? 0 : (element_width - step_width) / steps_length * i;
+                console.log(element_width);
+                $(step).animate({
+                    left: left
+                });
+            });
+        },
+
+        _stepTo: function(step) {
+            var element = this.element,
+                o = this.options;
+            var steps = element.find("li");
+
+            steps.removeClass('current').removeClass('complete');
+
+            $.each(steps, function(i, s) {
+                if (i < step - 1) {
+                    $(s).addClass('complete');
+                }
+                if (i === step - 1) {
+                    $(s).addClass('current');
+
+                    if (typeof o.onStep === 'function') {
+                        o.onStep(i + 1, s);
+                    } else {
+                        if (typeof window[o.onStep] === 'function') {
+                            window[o.onStep](i + 1, s);
+                        } else {
+                            var result = eval("(function(){" + o.onStep + "})");
+                            result.call(i + 1, s);
+                        }
+                    }
+                }
+            });
+        },
+
+        stepTo: function(step) {
+            this._stepTo(step);
+        },
+
+        first: function() {
+            var o = this.options;
+            o.start = 1;
+            this._stepTo(o.start);
+        },
+
+        last: function() {
+            var element = this.element,
+                o = this.options;
+            var steps = element.find("li");
+
+            o.start = steps.length;
+            this._stepTo(o.start);
+        },
+
+        next: function() {
+            var element = this.element,
+                o = this.options;
+            var steps = element.find("li");
+
+            if (o.start + 1 > steps.length) {
+                return;
+            }
+
+            o.start++;
+            this._stepTo(o.start);
+        },
+
+        prior: function() {
+            var o = this.options;
+
+            if (o.start - 1 === 0) {
+                return;
+            }
+
+            o.start--;
+            this._stepTo(o.start);
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+
+    // Source: js/widgets/streamer.js
+    $.widget("metro.streamer", {
+
+        version: "3.0.0",
+
+        options: {
+            scrollBar: false,
+            meterStart: 9,
+            meterStop: 19,
+            meterInterval: 20,
+            slideToTime: "default",
+            slideSleep: 1000,
+            slideSpeed: 1000,
+            onClick: function(event) {}
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options,
+                streams = element.find(".stream"),
+                events = element.find(".event"),
+                events_container = element.find(".events"),
+                events_area = element.find(".events-area"),
+                groups = element.find(".event-group"),
+                event_streams = element.find(".event-stream");
+
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            element.data('streamSelect', -1);
+
+            var meter = $("<ul/>").addClass("meter");
+            var i, j, m, start = o.meterStart,
+                stop = o.meterStop,
+                interval = o.meterInterval;
+
+            var _intervals = [];
+            for (i = start; i < stop; i++) {
+                for (j = 0; j < 60; j += interval) {
+                    m = (i < 10 ? "0" + i : i) + ":" + (j < 10 ? "0" + j : j);
+                    $("<li/>").addClass("js-interval-" + m.replace(":", "-")).html("<em>" + m + "</em>").appendTo(meter);
+                    _intervals.push(m);
+                }
+            }
+            element.data("intervals", _intervals);
+            meter.insertBefore(element.find(".events-grid"));
+
+            //console.log(element.data("intervals"));
+
+            // Re-Calc all event-stream width and set background for time
+            element.find(".event-stream").each(function(i, s) {
+                var event_stream_width = 0;
+                var events = $(s).find(".event");
+
+                events.each(function(i, el) {
+                    event_stream_width += $(el).outerWidth() + parseInt($(el).css('margin-left'));
+                });
+
+                $(s).css({
+                    width: (event_stream_width + ((events.length - 1) * 2) + 1)
+                });
+
+                $(s).find(".time").css("background-color", $(streams[i]).css('background-color'));
+            });
+
+            // Set scrollbar
+            events_container.css({
+                'overflow-x': (o.scrollBar ? 'scroll' : 'hidden')
+            });
+
+            // Set streamer height
+            element.css({
+                height: element.find(".streams").outerHeight() + (o.scrollBar ? 20 : 0)
+            });
+
+            // Re-Calc events-area width
+            var events_area_width = 0;
+            groups.each(function(i, el) {
+                events_area_width += $(el).outerWidth();
+            });
+            events_area_width += ((groups.length - 1) * 2) + 10;
+            events_area.css('width', events_area_width);
+
+            events.each(function(i, el) {
+                addTouchEvents(el);
+            });
+
+            element.mousewheel(function(event, delta) {
+                var scroll_value = delta * 50;
+                events_container.scrollLeft(events_container.scrollLeft() - scroll_value);
+                return false;
+            });
+
+            streams.each(function(i, s) {
+                $(s).mousedown(function(e) {
+                    if (element.data('streamSelect') == i) {
+                        events.removeClass('event-disable');
+                        element.data('streamSelect', -1);
+                    } else {
+                        element.data('streamSelect', i);
+                        events.addClass('event-disable');
+                        $(event_streams[i]).find(".event").removeClass("event-disable");
+                    }
+                });
+            });
+
+            this._createEvents();
+
+            this.slideToTime(o.slideToTime, o.slideSleep, o.slideSpeed);
+
+            element.data('streamer', this);
+        },
+
+        _createEvents: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var events = element.find(".event");
+
+            events.on('click', function(e) {
+
+                var event = $(this);
+
+                if (e.ctrlKey) {
+                    $(this).toggleClass("selected");
+                }
+
+                if (typeof o.onClick === 'function') {
+                    o.onClick(event);
+                } else {
+                    if (typeof window[o.onClick] === 'function') {
+                        window[o.onClick](event);
+                    } else {
+                        var result = eval("(function(){" + o.onClick + "})");
+                        result.call(event);
+                    }
+                }
+
+                e.preventDefault();
+            });
+
+            element.find(".js-go-previous-time").on('click', function(e) {
+                var next_index = element.data("intervals").indexOf(element.data("current-time"));
+                if (next_index == 0) {
+                    return;
+                }
+                next_index--;
+                var new_time = element.data("intervals")[next_index];
+                that.slideToTime(new_time, 0, o.slideSpeed);
+            });
+
+            element.find(".js-go-next-time").on('click', function(e) {
+                var next_index = element.data("intervals").indexOf(element.data("current-time"));
+                if (next_index == element.data("intervals").length - 1) {
+                    return;
+                }
+                next_index++;
+                var new_time = element.data("intervals")[next_index];
+                that.slideToTime(new_time, 0, o.slideSpeed);
+            });
+
+            element.find(".js-show-all-streams").on("click", function(e) {
+                element.find(".event").removeClass("event-disable");
+                element.data('streamSelect', -1);
+                e.preventDefault();
+            });
+
+
+            element.find(".js-schedule-mode").on("click", function(e) {
+                $(this).toggleClass("active");
+                element.data("schedule-mode", $(this).hasClass("inverse"));
+                e.preventDefault();
+            });
+        },
+
+        slideToTime: function(time, sleep, speed) {
+            var that = this,
+                element = this.element,
+                interval, _time;
+
+            if (time === 'default') {
+                interval = element.find(".meter li")[0];
+                time = interval.className.replace("js-interval-", "").replace("-", ":");
+            } else {
+                _time = time.split(":");
+
+                if (_time[0].length === 1) {
+                    time = '0' + time;
+                }
+
+            }
+
+            interval = element.find(".meter li.js-interval-" + time.replace(":", "-"))[0];
+
+            setTimeout(function() {
+                element.find(".events").animate({
+                    scrollLeft: (interval.offsetLeft - $('.streams').width())
+                }, speed, function() {
+                    that._afterSlide();
+                });
+            }, sleep);
+
+            element.data("current-time", time);
+        },
+
+        _afterSlide: function() {
+
+        },
+
+        _destroy: function() {
+
+        },
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/tabcontrol.js
+    $.widget("metro.tabcontrol", {
+
+        version: "3.0.0",
+
+        options: {
+            openTarget: false,
+            saveState: false,
+            onTabClick: function(tab) {
+                return true;
+            },
+            onTabChange: function(tab) {},
+            _current: {
+                tab: false,
+                frame: false
+            }
+        },
+
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var tabs = element.children('.tabs').find('li').children('a');
+            var frames = element.children('.frames').children('div');
+            var tab, target, frame;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (o.saveState && element.attr('id') !== undefined && element.attr('id').trim() !== '') {
+
+                var stored_target = window.localStorage.getItem(element.attr('id') + "-stored-tab");
+                if (stored_target && stored_target !== 'undefined') {
+                    tab = element.find("a[href='" + stored_target + "']");
+                    if (tab) {
+                        target = tab.attr('href');
+                        frame = target && target.isUrl() ? false : $(target);
+                        o._current.tab = tab;
+                        o._current.frame = frame;
+                    }
+                }
+            }
+
+            if (!o._current.tab && o.openTarget !== false) {
+
+                tab = element.find("a[href='" + o.openTarget + "']");
+                if (tab) {
+                    target = tab.attr('href');
+                    frame = target && target.isUrl() ? false : $(target);
+                    o._current.tab = tab;
+                    o._current.frame = frame;
+                }
+            }
+
+            if (!o._current.tab) {
+
+                $.each(tabs, function(i, v) {
+                    var tab = $(v),
+                        target = tab.attr('href'),
+                        frame = target.isUrl() ? false : $(target);
+                    if (tab.parent().hasClass('active') && !tab.parent().hasClass('disabled') && frame !== false) {
+                        o._current.tab = tab;
+                        o._current.frame = frame;
+                    }
+                });
+            }
+
+            if (!o._current.tab) {
+
+                for (var i = 0; i < tabs.length; i++) {
+                    if (!$(tabs[i]).attr('href').isUrl() && !$(tabs[i]).parent().hasClass('disabled')) {
+                        o._current.tab = $(tabs[i]);
+                        o._current.frame = $($(tabs[i]).attr('href'));
+                        break;
+                    }
+                }
+            }
+
+            this._createEvents();
+            this._openTab();
+
+            //this._hideTabs();
+            //
+            //$(window).on('resize', function(){
+            //    that._hideTabs();
+            //});
+
+            element.data('tabcontrol', this);
+
+        },
+
+        _hideTabs: function() {
+            var element = this.element;
+            var w = element.outerWidth();
+            var _tabs = element.children('.tabs').find('li:not(.non-visible-tabs)');
+            var _nvt = element.children('.tabs').find('.non-visible-tabs').children('.d-menu');
+
+            $.each(_tabs, function() {
+                var $tab = $(this),
+                    tab = this;
+                if (tab.offsetLeft + tab.offsetWidth + 30 > w) {
+                    var new_tab = $tab.clone(true);
+                    new_tab.appendTo(_nvt);
+                    $tab.remove();
+                }
+            });
+        },
+
+        _openTab: function() {
+            var element = this.element,
+                o = this.options;
+            var tabs = element.children('.tabs').find('li').children('a');
+            var frames = element.children('.frames').children('div');
+
+            tabs.parent().removeClass('active');
+            frames.hide();
+
+            o._current.tab.parent().addClass('active');
+            o._current.frame.show();
+
+            if (o.saveState && element.attr('id') !== undefined && element.attr('id').trim() !== '') {
+                window.localStorage.setItem(element.attr('id') + "-stored-tab", o._current.tab.attr('href'));
+            }
+        },
+
+        _createEvents: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var tabs = element.children('.tabs').find('li').children('a');
+            var frames = element.children('.frames').children('div');
+
+            element.on('click', '.tabs > li > a', function(e) {
+                var result;
+                var tab = $(this),
+                    target = tab.attr('href'),
+                    frame = $(target);
+
+                if (tab.parent().hasClass('disabled')) {
+                    return false;
+                }
+
+                if (typeof o.onTabClick === 'function') {
+                    if (!o.onTabClick(tab)) {
+                        return false;
+                    }
+                } else {
+                    if (typeof window[o.onTabClick] === 'function') {
+                        if (!window[o.onTabClick](tab)) {
+                            return false;
+                        }
+                    } else {
+                        result = eval("(function(){" + o.onTabClick + "})");
+                        if (!result.call(tab)) {
+                            return false;
+                        }
+                    }
+                }
+
+                if (target.isUrl()) {
+                    window.location.href = target;
+                    return true;
+                }
+
+                o._current.tab = tab;
+                o._current.frame = frame;
+
+                that._openTab();
+
+                if (typeof o.onTabChange === 'function') {
+                    o.onTabChange(tab);
+                } else {
+                    if (typeof window[o.onTabChange] === 'function') {
+                        window[o.onTabChange](tab);
+                    } else {
+                        result = eval("(function(){" + o.onTabChange + "})");
+                        result.call(tab);
+                    }
+                }
+
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        },
+
+        hideTab: function(tab) {
+
+        },
+
+        showTab: function(tab) {
+
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/tile.js
+    $.widget("metro.tile", {
+
+        version: "3.0.0",
+
+        options: {
+            effect: 'slideLeft',
+            period: 4000,
+            duration: 700,
+            easing: 'doubleSqrt',
+            onClick: function(tile) {}
+        },
+
+        _frames: {},
+        _currentIndex: 0,
+        _interval: 0,
+        _outPosition: 0,
+        _size: {},
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._createTransformTile();
+            this._createLiveTile();
+            this._createEvents();
+
+            element.data('tile', this);
+
+        },
+
+        _createEvents: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var event = isTouchDevice() ? 'touchstart' : 'click';
+
+            element.on(event, function(e) {
+                if (element[0].tagName === "A") {
+
+                } else {
+                    if (typeof o.onClick === 'function') {
+                        o.onClick(element);
+                    } else {
+                        if (typeof window[o.onClick] === 'function') {
+                            window[o.onClick](element);
+                        } else {
+                            var result = eval("(function(){" + o.onClick + "})");
+                            result.call(element);
+                        }
+                    }
+                }
+            });
+        },
+
+        _createLiveTile: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var event_down = isTouchDevice() ? 'touchstart' : 'mouseenter';
+            var event_up = isTouchDevice() ? 'touchend' : 'mouseleave';
+
+            this._frames = element.find(".live-slide");
+            if (this._frames.length <= 1) {
+                return false;
+            }
+
+            $.easing.doubleSqrt = function(t) {
+                return Math.sqrt(Math.sqrt(t));
+            };
+
+            this._size = {
+                'width': element.width(),
+                'height': element.height()
+            };
+
+            element.on(event_down, function() {
+                that.stop();
+            });
+
+            element.on(event_up, function() {
+                that.start();
+            });
+
+            this.start();
+        },
+
+        start: function() {
+            var that = this;
+            this._interval = setInterval(function() {
+                that._animate();
+            }, this.options.period);
+        },
+
+        stop: function() {
+            clearInterval(this._interval);
+        },
+
+        _animate: function() {
+            var currentFrame = this._frames[this._currentIndex],
+                nextFrame;
+            this._currentIndex += 1;
+            if (this._currentIndex >= this._frames.length) {
+                this._currentIndex = 0;
+            }
+            nextFrame = this._frames[this._currentIndex];
+
+            switch (this.options.effect) {
+                case 'slideLeft':
+                    this._effectSlideLeft(currentFrame, nextFrame);
+                    break;
+                case 'slideRight':
+                    this._effectSlideRight(currentFrame, nextFrame);
+                    break;
+                case 'slideDown':
+                    this._effectSlideDown(currentFrame, nextFrame);
+                    break;
+                case 'slideUpDown':
+                    this._effectSlideUpDown(currentFrame, nextFrame);
+                    break;
+                case 'slideLeftRight':
+                    this._effectSlideLeftRight(currentFrame, nextFrame);
+                    break;
+                default:
+                    this._effectSlideUp(currentFrame, nextFrame);
+            }
+        },
+
+        _effectSlideLeftRight: function(currentFrame, nextFrame) {
+            if (this._currentIndex % 2 === 0) {
+                this._effectSlideLeft(currentFrame, nextFrame);
+            } else {
+                this._effectSlideRight(currentFrame, nextFrame);
+            }
+        },
+
+        _effectSlideUpDown: function(currentFrame, nextFrame) {
+            if (this._currentIndex % 2 === 0) {
+                this._effectSlideUp(currentFrame, nextFrame);
+            } else {
+                this._effectSlideDown(currentFrame, nextFrame);
+            }
+        },
+
+        _effectSlideUp: function(currentFrame, nextFrame) {
+            var _out = this._size.height;
+            var options = {
+                'duration': this.options.duration,
+                'easing': this.options.easing
+            };
+
+            $(currentFrame)
+                .animate({
+                    top: -_out
+                }, options);
+            $(nextFrame)
+                .css({
+                    top: _out
+                })
+                .show()
+                .animate({
+                    top: 0
+                }, options);
+        },
+
+        _effectSlideDown: function(currentFrame, nextFrame) {
+            var _out = this._size.height;
+            var options = {
+                'duration': this.options.duration,
+                'easing': this.options.easing
+            };
+
+            $(currentFrame)
+                .animate({
+                    top: _out
+                }, options);
+            $(nextFrame)
+                .css({
+                    top: -_out
+                })
+                .show()
+                .animate({
+                    top: 0
+                }, options);
+        },
+
+        _effectSlideLeft: function(currentFrame, nextFrame) {
+            var _out = this._size.width;
+            var options = {
+                'duration': this.options.duration,
+                'easing': this.options.easing
+            };
+
+            $(currentFrame)
+                .animate({
+                    left: _out * -1
+                }, options);
+            $(nextFrame)
+                .css({
+                    left: _out
+                })
+                .show()
+                .animate({
+                    left: 0
+                }, options);
+        },
+
+        _effectSlideRight: function(currentFrame, nextFrame) {
+            var _out = this._size.width;
+            var options = {
+                'duration': this.options.duration,
+                'easing': this.options.easing
+            };
+
+            $(currentFrame)
+                .animate({
+                    left: _out
+                }, options);
+            $(nextFrame)
+                .css({
+                    left: -_out
+                })
+                .show()
+                .animate({
+                    left: 0
+                }, options);
+        },
+
+        _createTransformTile: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var dim = {
+                w: element.width(),
+                h: element.height()
+            };
+            var event_down = isTouchDevice() ? 'touchstart' : 'mousedown';
+            var event_up = isTouchDevice() ? 'touchend' : 'mouseup';
+            var event_leave = isTouchDevice() ? 'touchend' : 'mouseleave';
+
+
+            element.on(event_down, function(e) {
+                var X = e.pageX - $(this).offset().left,
+                    Y = e.pageY - $(this).offset().top;
+                var transform = 'top';
+
+                if (X < dim.w * 1 / 3 && (Y < dim.h * 1 / 2 || Y > dim.h * 1 / 2)) {
+                    transform = 'left';
+                } else if (X > dim.w * 2 / 3 && (Y < dim.h * 1 / 2 || Y > dim.h * 1 / 2)) {
+                    transform = 'right';
+                } else if (X > dim.w * 1 / 3 && X < dim.w * 2 / 3 && Y > dim.h / 2) {
+                    transform = 'bottom';
+                }
+
+                $(this).addClass("tile-transform-" + transform);
+
+                //console.log(transform);
+
+                if (element[0].tagName === 'A' && element.attr('href')) {
+                    setTimeout(function() {
+                        document.location.href = element.attr('href');
+                    }, 500);
+                }
+            });
+
+            element.on(event_up, function() {
+                $(this)
+                    .removeClass("tile-transform-left")
+                    .removeClass("tile-transform-right")
+                    .removeClass("tile-transform-top")
+                    .removeClass("tile-transform-bottom");
+            });
+            element.on(event_leave, function() {
+                $(this)
+                    .removeClass("tile-transform-left")
+                    .removeClass("tile-transform-right")
+                    .removeClass("tile-transform-top")
+                    .removeClass("tile-transform-bottom");
+            });
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/treeview.js
+    $.widget("metro.treeview", {
+
+        version: "3.0.0",
+
+        options: {
+            doubleClick: true,
+            onClick: function(leaf, node, pnode, tree) {},
+            onInputClick: function(leaf, node, pnode, tree) {},
+            onExpand: function(leaf, node, pnode, tree) {},
+            onCollapse: function(leaf, node, pnode, tree) {}
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._initTree();
+            this._createEvents();
+
+            element.data('treeview', this);
+        },
+
+
+        _createCheckbox: function(leaf, parent) {
+            var input, checkbox, check;
+
+            input = $("<label/>").addClass("input-control checkbox small-check").insertBefore(leaf);
+            checkbox = $("<input/>").attr('type', 'checkbox').appendTo(input);
+            check = $("<span/>").addClass('check').appendTo(input);
+            if (parent.data('name') !== undefined) {
+                checkbox.attr('name', parent.data('name'));
+            }
+            if (parent.data('id') !== undefined) {
+                checkbox.attr('id', parent.data('id'));
+            }
+            if (parent.data('checked') !== undefined) {
+                checkbox.prop('checked', parent.data('checked'));
+            }
+            if (parent.data('readonly') !== undefined) {
+                checkbox.prop('disabled', parent.data('readonly'));
+            }
+            if (parent.data('disabled') !== undefined) {
+                checkbox.prop('disabled', parent.data('disabled'));
+                if (parent.data('disabled') === true) {
+                    parent.addClass('disabled');
+                }
+            }
+            if (parent.data('value') !== undefined) {
+                checkbox.val(parent.data('value'));
+            }
+        },
+
+        _createRadio: function(leaf, parent) {
+            var input, checkbox, check;
+
+            input = $("<label/>").addClass("input-control radio small-check").insertBefore(leaf);
+            checkbox = $("<input/>").attr('type', 'radio').appendTo(input);
+            check = $("<span/>").addClass('check').appendTo(input);
+            if (parent.data('name') !== undefined) {
+                checkbox.attr('name', parent.data('name'));
+            }
+            if (parent.data('id') !== undefined) {
+                checkbox.attr('id', parent.data('id'));
+            }
+            if (parent.data('checked') !== undefined) {
+                checkbox.prop('checked', parent.data('checked'));
+            }
+            if (parent.data('readonly') !== undefined) {
+                checkbox.prop('disabled', parent.data('readonly'));
+            }
+            if (parent.data('disabled') !== undefined) {
+                checkbox.prop('disabled', parent.data('disabled'));
+                if (parent.data('disabled') === true) {
+                    parent.addClass('disabled');
+                }
+            }
+            if (parent.data('value') !== undefined) {
+                checkbox.val(parent.data('value'));
+            }
+        },
+
+        _initTree: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var leafs = element.find('.leaf');
+            $.each(leafs, function() {
+                var leaf = $(this),
+                    parent = leaf.parent('li'),
+                    ul = leaf.siblings('ul'),
+                    node = $(leaf.parents('.node')[0]);
+                //var input, checkbox, check;
+
+                if (parent.data('mode') === 'checkbox') {
+                    that._createCheckbox(leaf, parent);
+                }
+
+                if (parent.data('mode') === 'radio') {
+                    that._createRadio(leaf, parent);
+                }
+
+                if (ul.length > 0) {
+                    if (!parent.hasClass('node')) {
+                        parent.addClass('node');
+                    }
+                }
+                if (parent.hasClass('collapsed')) {
+                    ul.hide();
+                }
+            });
+        },
+
+        _renderChecks: function(check) {
+            var element = this.element,
+                that = this,
+                o = this.options;
+            var state = check.is(":checked");
+            var parent = $(check.parent().parent());
+            var children_checks = parent.children('ul').find('[type="checkbox"]');
+
+            children_checks.prop('checked', state).removeClass('indeterminate');
+
+            $.each(element.find('.node[data-mode=checkbox]').reverse(), function() {
+                var node = $(this),
+                    ch = node.children('.input-control').find('[type="checkbox"]'),
+                    children_all = node.children('ul').find('[type="checkbox"]'),
+                    children_checked = node.children('ul').find('[type="checkbox"]:checked');
+
+                ch.removeClass('indeterminate');
+                if (children_checked.length === 0) {
+                    ch.prop("checked", false);
+                    ch.removeClass('indeterminate');
+                } else
+                if (children_checked.length > 0 && children_all.length > children_checked.length) {
+                    ch.prop('checked', true);
+                    ch.addClass('indeterminate');
+                }
+            });
+
+        },
+
+        _createEvents: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            element.on('change', 'input:checkbox', function() {
+                that._renderChecks($(this));
+            });
+
+            element.on('click', 'input', function() {
+                var leaf = $(this),
+                    node = $(leaf.parents('.node')[0]),
+                    parent = leaf.parent('li'),
+                    check = leaf.siblings('.input-control').find('input:checkbox'),
+                    radio = leaf.siblings('.input-control').find('input:radio'),
+                    new_check_state,
+                    check_disabled;
+
+                if (check.length > 0) {
+                    new_check_state = !check.is(":checked");
+                    check_disabled = check.is(":disabled");
+                    if (!check_disabled) {
+                        check.prop('checked', new_check_state);
+                    }
+                    that._renderChecks(check);
+                }
+                if (radio.length > 0) {
+                    check_disabled = radio.is(":disabled");
+                    if (!check_disabled) {
+                        radio.prop('checked', true);
+                    }
+                }
+
+                if (typeof o.onInputClick === 'function') {
+                    o.onInputClick(leaf, parent, node, that);
+                } else {
+                    if (typeof window[o.onInputClick] === 'function') {
+                        window[o.onInputClick](leaf, parent, node, that);
+                    } else {
+                        var result = eval("(function(){" + o.onInputClick + "})");
+                        result.call(leaf, parent, node, that);
+                    }
+                }
+            });
+
+            element.on('click', '.leaf', function() {
+                var leaf = $(this),
+                    node = $(leaf.parents('.node')[0]),
+                    parent = leaf.parent('li');
+
+                element.find('.leaf').parent('li').removeClass('active');
+                parent.addClass('active');
+
+                if (typeof o.onClick === 'function') {
+                    o.onClick(leaf, parent, node, that);
+                } else {
+                    if (typeof window[o.onClick] === 'function') {
+                        window[o.onClick](leaf, parent, node, that);
+                    } else {
+                        var result = eval("(function(){" + o.onClick + "})");
+                        result.call(leaf, parent, node, that);
+                    }
+                }
+            });
+
+            if (o.doubleClick) {
+                element.on('dblclick', '.leaf', function(e) {
+                    var leaf = $(this),
+                        parent = leaf.parent('li'),
+                        node = $(leaf.parents('.node')[0]);
+                    var result;
+
+                    if (parent.hasClass("keep-open")) {
+                        return false;
+                    }
+
+                    parent.toggleClass('collapsed');
+                    if (!parent.hasClass('collapsed')) {
+                        parent.children('ul').fadeIn('fast');
+
+                        if (typeof o.onExpand === 'function') {
+                            o.onExpand(parent, leaf, node, that);
+                        } else {
+                            if (typeof window[o.onExpand] === 'function') {
+                                window[o.onExpand](parent, leaf, node, that);
+                            } else {
+                                result = eval("(function(){" + o.onExpand + "})");
+                                result.call(parent, leaf, node, that);
+                            }
+                        }
+                    } else {
+                        parent.children('ul').fadeOut('fast');
+
+                        if (typeof o.onCollapse === 'function') {
+                            o.onCollapse(parent, leaf, node, that);
+                        } else {
+                            if (typeof window[o.onCollapse] === 'function') {
+                                window[o.onCollapse](parent, leaf, node, that);
+                            } else {
+                                result = eval("(function(){" + o.onCollapse + "})");
+                                result.call(parent, leaf, node, that);
+                            }
+                        }
+                    }
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+            }
+
+            element.on('click', '.node-toggle', function(e) {
+                var leaf = $(this).siblings('.leaf'),
+                    parent = $(this).parent('li'),
+                    node = $(leaf.parents('.node')[0]);
+                var result;
+
+                if (parent.hasClass("keep-open")) {
+                    return false;
+                }
+
+                parent.toggleClass('collapsed');
+                if (!parent.hasClass('collapsed')) {
+                    parent.children('ul').fadeIn('fast');
+                    if (typeof o.onExpand === 'function') {
+                        o.onExpand(parent, leaf, node, that);
+                    } else {
+                        if (typeof window[o.onExpand] === 'function') {
+                            window[o.onExpand](parent, leaf, node, that);
+                        } else {
+                            result = eval("(function(){" + o.onExpand + "})");
+                            result.call(parent, leaf, node, that);
+                        }
+                    }
+                } else {
+                    parent.children('ul').fadeOut('fast');
+                    if (typeof o.onCollapse === 'function') {
+                        o.onCollapse(parent, leaf, node, that);
+                    } else {
+                        if (typeof window[o.onCollapse] === 'function') {
+                            window[o.onCollapse](parent, leaf, node, that);
+                        } else {
+                            result = eval("(function(){" + o.onCollapse + "})");
+                            result.call(parent, leaf, node, that);
+                        }
+                    }
+                }
+                e.stopPropagation();
+                e.preventDefault();
+            });
+        },
+
+        addLeaf: function(parent, name, data) {
+            var element = this.element;
+            var leaf, li, ul;
+
+            if (parent) {
+                if (parent[0].tagName === "LI") {
+                    parent.addClass('node');
+                }
+                if (parent.children('.node-toggle').length === 0) {
+                    $("<span/>").addClass('node-toggle').appendTo(parent);
+                }
+            }
+
+            ul = parent ? $(parent).children('ul') : element.children('ul');
+
+            if (ul.length === 0) {
+                ul = $("<ul/>").appendTo(parent ? parent : element);
+            }
+
+            li = $("<li/>").appendTo(ul);
+
+            if (data !== undefined) {
+                if (data.tagName !== undefined) {
+                    leaf = $("<" + data.tagName + "/>").addClass("leaf").appendTo(li);
+                } else {
+                    leaf = $("<span/>").addClass("leaf").appendTo(li);
+                }
+            } else {
+                leaf = $("<span/>").addClass("leaf").appendTo(li);
+            }
+
+            leaf.html(name);
+
+            if (data !== undefined) {
+                $.each(data, function(key, value) {
+                    li.attr("data-" + key, value);
+                });
+                if (data.mode !== undefined) {
+                    switch (data.mode) {
+                        case 'checkbox':
+                            this._createCheckbox(leaf, li);
+                            break;
+                        case 'radio':
+                            this._createRadio(leaf, li);
+                            break;
+                    }
+                }
+            }
+
+            return li;
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/validator.js
+    $.widget("metro.validator", {
+
+        version: "1.0.0",
+
+        options: {
+            showErrorState: true,
+            showErrorHint: true,
+            showRequiredState: true,
+            showSuccessState: true,
+            hintSize: 0,
+            hintBackground: '#FFFCC0',
+            hintColor: '#000000',
+            hideError: 2000,
+            hideHint: 5000,
+            hintEasing: 'easeInQuad',
+            hintEasingTime: 400,
+            hintMode: 'hint', // hint, line
+            hintPosition: 'right',
+            focusInput: true,
+            onBeforeSubmit: function(form, result) {
+                return true;
+            },
+            onErrorInput: function(input) {},
+            onSubmit: function(form) {
+                return true;
+            }
+        },
+
+        _scroll: 0,
+
+        funcs: {
+            required: function(val) {
+                return val.trim() !== "";
+            },
+            minlength: function(val, len) {
+                if (len == undefined || isNaN(len) || len <= 0) {
+                    return false;
+                }
+                return val.trim().length >= len;
+            },
+            maxlength: function(val, len) {
+                if (len == undefined || isNaN(len) || len <= 0) {
+                    return false;
+                }
+                return val.trim().length <= len;
+            },
+            min: function(val, min_value) {
+                if (min_value == undefined || isNaN(min_value)) {
+                    return false;
+                }
+                if (val.trim() === "") {
+                    return false;
+                }
+                if (isNaN(val)) {
+                    return false;
+                }
+                return val >= min_value;
+            },
+            max: function(val, max_value) {
+                if (max_value == undefined || isNaN(max_value)) {
+                    return false;
+                }
+                if (val.trim() === "") {
+                    return false;
+                }
+                if (isNaN(val)) {
+                    return false;
+                }
+                return val <= max_value;
+            },
+            email: function(val) {
+                return /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i.test(val);
+            },
+            url: function(val) {
+                return /^(?:[a-z]+:)?\/\//i.test(val);
+            },
+            date: function(val) {
+                return !!(new Date(val) !== "Invalid Date" && !isNaN(new Date(val)));
+            },
+            number: function(val) {
+                return (val - 0) == val && ('' + val).trim().length > 0;
+            },
+            digits: function(val) {
+                return /^\d+$/.test(val);
+            },
+            hexcolor: function(val) {
+                return /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(val);
+            },
+            pattern: function(val, pat) {
+                if (pat == undefined) {
+                    return false;
+                }
+                var reg = new RegExp(pat);
+                return reg.test(val);
+            }
+        },
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            if (o.hintMode !== 'line') {
+                o.hintMode = 'hint2';
+            }
+
+            this._scroll = $(window).scrollTop();
+
+            this._createValidator();
+
+            element.data('validator', this);
+
+        },
+
+        _createValidator: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var inputs = element.find("[data-validate-func]");
+
+            element.attr('novalidate', 'novalidate');
+
+            if (o.showRequiredState) {
+                $.each(inputs, function() {
+                    var input = $(this);
+                    if (input.parent().hasClass('input-control')) {
+                        input.parent().addClass('required');
+                    } else {
+                        input.addClass('required');
+                    }
+                });
+            }
+
+            inputs.on('focus', function() {});
+
+            //console.log(this._scroll);
+
+            $(window).scroll(function(e) {
+                var st = $(this).scrollTop();
+                var delta = isNaN(st - this._scroll) ? 0 : st - this._scroll;
+                $(".validator-hint.hint2").css({
+                    top: '-=' + delta
+                });
+                this._scroll = st;
+            });
+
+            if (element[0].onsubmit) {
+                this._onsubmit = element[0].onsubmit;
+                element[0].onsubmit = null;
+            } else {
+                this._onsubmit = null;
+            }
+
+            element[0].onsubmit = function() {
+                return that._submit();
+            };
+        },
+
+        _submit: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var inputs = element.find("[data-validate-func]");
+            var submit = element.find(":submit").attr('disabled', 'disabled').addClass('disabled');
+
+            var result = 0;
+            $('.validator-hint').hide();
+            inputs.removeClass('error success');
+            $.each(inputs, function(i, v) {
+                var input = $(v);
+                if (input.parent().hasClass('input-control')) {
+                    input.parent().removeClass('error success');
+                }
+            });
+
+            $.each(inputs, function(i, v) {
+                var input = $(v);
+                var func = input.data('validateFunc'),
+                    arg = input.data('validateArg');
+                var this_result = that.funcs[func](input.val(), arg);
+
+                if (!this_result) {
+                    if (typeof o.onErrorInput === 'function') {
+                        o.onErrorInput(input);
+                    } else {
+                        if (typeof window[o.onErrorInput] === 'function') {
+                            window[o.onErrorInput](input);
+                        } else {
+                            result = eval("(function(){" + o.onErrorInput + "})");
+                            result.call(input);
+                        }
+                    }
+                }
+
+                if (!this_result && o.showErrorState) {
+                    that._showError(input);
+                }
+                if (!this_result && o.showErrorHint) {
+                    setTimeout(function() {
+                        that._showErrorHint(input);
+                    }, i * 100);
+
+                }
+                if (this_result && o.showSuccessState) {
+                    that._showSuccess(input);
+                }
+                if (!this_result && i == 0 && o.focusInput) {
+                    input.focus();
+                }
+                result += !this_result ? 1 : 0;
+            });
+
+            if (typeof o.onBeforeSubmit === 'function') {
+                result += !o.onBeforeSubmit(element, result) ? 1 : 0;
+            } else {
+                if (typeof window[o.onBeforeSubmit] === 'function') {
+                    result += window[o.onBeforeSubmit](element, result) ? 1 : 0;
+                } else {
+                    var f0 = eval("(function(){" + o.onBeforeSubmit + "})");
+                    result += f0.call(element, result) ? 1 : 0;
+                }
+            }
+
+            if (result !== 0) {
+                submit.removeAttr('disabled').removeClass('disabled');
+                return false;
+            }
+
+            if (typeof o.onSubmit === 'function') {
+                result = o.onSubmit(element[0]);
+            } else {
+                if (typeof window[o.onSubmit] === 'function') {
+                    result = window[o.onSubmit](element[0]);
+                } else {
+                    var f = eval("(function(){" + o.onSubmit + "})");
+                    result = f.call(element[0]);
+                }
+            }
+
+            submit.removeAttr('disabled').removeClass('disabled');
+
+            return result;
+        },
+
+        _showSuccess: function(input) {
+            if (input.parent().hasClass('input-control')) {
+                input.parent().addClass('success');
+            } else {
+                input.addClass('success');
+            }
+        },
+
+        _showError: function(input) {
+            var o = this.options;
+
+            if (input.parent().hasClass('input-control')) {
+                input.parent().addClass('error');
+            } else {
+                input.addClass('error');
+            }
+
+            if (o.hideError && o.hideError > 0) {
+                setTimeout(function() {
+                    input.parent().removeClass('error');
+                }, o.hideError);
+            }
+        },
+
+        _showErrorHint: function(input) {
+            var o = this.options,
+                msg = input.data('validateHint'),
+                pos = input.data('validateHintPosition') || o.hintPosition,
+                mode = input.data('validateHintMode') || o.hintMode,
+                background = input.data('validateHintBackground') || o.hintBackground,
+                color = input.data('validateHintColor') || o.hintColor;
+
+            var hint, top, left;
+
+            if (msg === undefined) {
+                return false;
+            }
+
+            hint = $("<div/>").addClass(mode + ' validator-hint'); //.appendTo(input.parent());
+            hint.html(msg !== undefined ? this._format(msg, input.val()) : '');
+            hint.css({
+                'min-width': o.hintSize
+            });
+
+            if (background.isColor()) {
+                hint.css('background-color', background);
+            } else {
+                hint.addClass(background);
+            }
+
+            if (color.isColor()) {
+                hint.css('color', color);
+            } else {
+                hint.addClass(color);
+            }
+
+            // Position
+            if (mode === 'line') {
+                hint.addClass('hint2').addClass('line');
+                hint.css({
+                    'position': 'relative',
+                    'width': input.parent().hasClass('input-control') ? input.parent().width() : input.width(),
+                    'z-index': 100
+                });
+                hint.appendTo(input.parent());
+                hint.fadeIn(o.hintEasingTime, function() {
+                    setTimeout(function() {
+                        hint.hide().remove();
+                    }, o.hideHint);
+                });
+            } else {
+                hint.appendTo("body");
+                // right
+                if (pos === 'right') {
+                    left = input.offset().left + input.outerWidth() + 15 - $(window).scrollLeft();
+                    top = input.offset().top + input.outerHeight() / 2 - hint.outerHeight() / 2 - $(window).scrollTop() - 10;
+
+                    hint.addClass(pos);
+                    hint.css({
+                        top: top,
+                        left: $(window).width() + 100
+                    });
+                    hint.show().animate({
+                        left: left
+                    }, o.hintEasingTime, o.hintEasing, function() {
+                        setTimeout(function() {
+                            hint.hide().remove();
+                        }, o.hideHint);
+                    });
+                } else if (pos === 'left') {
+                    left = input.offset().left - hint.outerWidth() - 10 - $(window).scrollLeft();
+                    top = input.offset().top + input.outerHeight() / 2 - hint.outerHeight() / 2 - $(window).scrollTop() - 10;
+
+                    hint.addClass(pos);
+                    hint.css({
+                        top: top,
+                        left: -input.offset().left - hint.outerWidth() - 10
+                    });
+                    hint.show().animate({
+                        left: left
+                    }, o.hintEasingTime, o.hintEasing, function() {
+                        setTimeout(function() {
+                            hint.hide().remove();
+                        }, o.hideHint);
+                    });
+                } else if (pos === 'top') {
+                    left = input.offset().left + input.outerWidth() / 2 - hint.outerWidth() / 2 - $(window).scrollLeft();
+                    top = input.offset().top - $(window).scrollTop() - hint.outerHeight() - 20;
+
+                    hint.addClass(pos);
+                    hint.css({
+                        top: -hint.outerHeight(),
+                        left: left
+                    }).show().animate({
+                        top: top
+                    }, o.hintEasingTime, o.hintEasing, function() {
+                        setTimeout(function() {
+                            hint.hide().remove();
+                        }, o.hideHint);
+                    });
+                } else /*bottom*/ {
+                    left = input.offset().left + input.outerWidth() / 2 - hint.outerWidth() / 2 - $(window).scrollLeft();
+                    top = input.offset().top - $(window).scrollTop() + input.outerHeight();
+
+                    hint.addClass(pos);
+                    hint.css({
+                        top: $(window).height(),
+                        left: left
+                    }).show().animate({
+                        top: top
+                    }, o.hintEasingTime, o.hintEasing, function() {
+                        setTimeout(function() {
+                            hint.hide().remove();
+                        }, o.hideHint);
+                    });
+                }
+            }
+        },
+
+        _format: function(source, params) {
+            if (arguments.length === 1) {
+                return function() {
+                    var args = $.makeArray(arguments);
+                    args.unshift(source);
+                    return $.validator.format.apply(this, args);
+                };
+            }
+            if (arguments.length > 2 && params.constructor !== Array) {
+                params = $.makeArray(arguments).slice(1);
+            }
+            if (params.constructor !== Array) {
+                params = [params];
+            }
+            $.each(params, function(i, n) {
+                source = source.replace(new RegExp("\\{" + i + "\\}", "g"), function() {
+                    return n;
+                });
+            });
+            return source;
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/window.js
+    $.widget("metro.window", {
+
+        version: "3.0.0",
+
+        options: {
+            parent: 'default',
+            captionStyle: false,
+            contentStyle: false,
+            buttons: {
+                btnMin: false,
+                btnMax: false,
+                btnClose: false
+            },
+            title: false,
+            content: false,
+            icon: false,
+            type: 'default', // 'modal'
+            size: false, // {width: x, height: y}
+
+            onBtnMinClick: function(e) {
+                e.preventDefault();
+            },
+            onBtnMaxClick: function(e) {
+                e.preventDefault();
+            },
+            onBtnCloseClick: function(e) {
+                e.preventDefault();
+            },
+            onShow: function(e) {
+                e.preventDefault();
+            },
+            onHide: function(e) {
+                e.preventDefault();
+            }
+        },
+
+        _create: function() {
+            var element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._createWindow();
+
+            element.data('window', this);
+
+        },
+
+        _createWindow: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var wind = element,
+                capt, cont;
+
+            wind.addClass("window");
+            capt = $("<div/>").addClass("window-caption");
+            cont = $("<div/>").addClass("window-content");
+
+            if (o.icon || o.title) {
+                capt.appendTo(wind);
+            }
+            cont.appendTo(wind);
+
+            if (typeof o.size === 'object') {
+                $.each(o.size, function(key, value) {
+                    cont.css(key, value);
+                });
+            }
+
+            if (o.captionStyle && typeof o.captionStyle === 'object') {
+                $.each(o.captionStyle, function(key, value) {
+                    if (value.isColor()) {
+                        capt.css(key, value + " !important");
+                    } else {
+                        capt.addClass(value);
+                    }
+                });
+            }
+
+            if (o.contentStyle && typeof o.contentStyle === 'object') {
+                $.each(o.contentStyle, function(key, value) {
+                    if (value.isColor()) {
+                        cont.css(key, value + " !important");
+                    } else {
+                        cont.addClass(value);
+                    }
+                });
+            }
+
+            wind.appendTo(o.parent !== 'default' ? o.parent : element.parent());
+
+            this.icon();
+            this.title();
+            this.buttons();
+            this.content();
+        },
+
+        icon: function() {
+            var o = this.options;
+            var capt = this.element.children('.window-caption');
+            var icon = capt.find(".window-caption-icon");
+
+            if (o.icon) {
+                if (icon.length === 0) {
+                    $("<span/>").addClass('window-caption-icon').html(o.icon).appendTo(capt);
+                } else {
+                    icon.html(o.icon);
+                }
+
+            }
+        },
+
+        title: function() {
+            var o = this.options;
+            var capt = this.element.children('.window-caption');
+            var title = capt.find(".window-caption-title");
+
+            if (o.title) {
+                if (title.length === 0) {
+                    $("<span/>").addClass('window-caption-title').html(o.title).appendTo(capt);
+                } else {
+                    title.html(o.title);
+                }
+            }
+        },
+
+        buttons: function() {
+            var o = this.options;
+            var bMin, bMax, bClose;
+            var capt = this.element.children('.window-caption');
+
+            if (capt.length === 0) {
+                return;
+            }
+
+            if (o.buttons) {
+                var btnMin = o.buttons.btnMin;
+                var btnMax = o.buttons.btnMax;
+                var btnClose = o.buttons.btnClose;
+
+                if (btnMin && btnMin !== false) {
+                    bMin = $("<span/>").addClass('btn-min').appendTo(capt);
+                    if (typeof btnMin === 'object') {
+                        bMin.css(btnMin);
+                    }
+                    if (typeof o.onBtnMinClick === 'string') {
+                        var bMinFn = window[o.onBtnMinClick];
+                        bMin.on('click', bMinFn);
+                    } else {
+                        bMin.on('click', o.onBtnMinClick(e));
+                    }
+                }
+
+                if (btnMax && btnMax !== false) {
+                    bMax = $("<span/>").addClass('btn-max').appendTo(capt);
+                    if (typeof btnMax === 'object') {
+                        bMax.css(btnMax);
+                    }
+                    if (typeof o.onBtnMaxClick === 'string') {
+                        var bMaxFn = window[o.onBtnMaxClick];
+                        bMax.on('click', bMaxFn);
+                    } else {
+                        bMax.on('click', o.onBtnMaxClick(e));
+                    }
+                }
+
+                if (btnClose && btnClose !== false) {
+                    bClose = $("<span/>").addClass('btn-close').appendTo(capt);
+                    if (typeof btnClose === 'object') {
+                        bClose.css(btnClose);
+                    }
+                    if (typeof o.onBtnCloseClick === 'string') {
+                        var bCloseFn = window[o.onBtnCloseClick];
+                        bClose.on('click', bCloseFn);
+                    } else {
+                        bClose.on('click', o.onBtnCloseClick(e));
+                    }
+                }
+            }
+        },
+
+        content: function() {
+            var o = this.options;
+            var c = o.content;
+            var content = this.element.children('.window-content');
+
+            if (!c) {
+                return;
+            }
+
+            if (c.isUrl()) {
+                if (c.indexOf('youtube') > -1) {
+                    var iframe = $("<iframe>");
+                    var video_container = $("<div/>").addClass('video-container').appendTo(content);
+
+                    iframe
+                        .attr('src', c)
+                        .attr('frameborder', '0');
+
+                    iframe.appendTo(video_container);
+                }
+            } else {
+                content.html(c);
+            }
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+    // Source: js/widgets/wizard.js
+    $.widget("metro.wizard", {
+
+        version: "3.0.0",
+
+        options: {
+            stepper: true,
+            stepperType: 'default',
+            stepperClickable: false,
+            startPage: 'default',
+            finishStep: 'default',
+            locale: window.METRO_CURRENT_LOCALE,
+            buttons: {
+                cancel: true,
+                help: true,
+                prior: true,
+                next: true,
+                finish: true
+            },
+
+            onCancel: function(page, wiz) {},
+            onHelp: function(page, wiz) {},
+            onPrior: function(page, wiz) {
+                return true;
+            },
+            onNext: function(page, wiz) {
+                return true;
+            },
+            onFinish: function(page, wiz) {},
+
+            onPage: function(page, wiz) {},
+            onStepClick: function(step) {}
+        },
+
+        _stepper: undefined,
+        _currentStep: 0,
+        _steps: undefined,
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options,
+                steps = element.find(".step");
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._steps = steps;
+
+            if (o.stepper) {
+                this._stepper = this._createStepper(steps.length)
+                    .insertBefore(element.find('.steps'))
+                    .stepper({
+                        clickable: o.stepperClickable
+                    }).on('stepclick', function(e, s) {
+                        that.stepTo(s);
+                        if (typeof o.onStepClick === 'function') {
+                            o.onStepClick(s);
+                        } else {
+                            if (typeof window[o.onStepClick] === 'function') {
+                                window[o.onStepClick](s);
+                            } else {
+                                var result = eval("(function(){" + o.onStepClick + "})");
+                                result.call(s);
+                            }
+                        }
+                    });
+            }
+
+            if (element.data('locale') !== undefined) {
+                o.locale = element.data('locale');
+            }
+
+            this._createEvents();
+
+            var sp = (o.startPage !== 'default' && parseInt(o.startPage) > 1) ? o.startPage : 1;
+            this.stepTo(sp);
+
+            if (typeof o.onPage === 'string') {
+                window[o.onPage](this._currentStep + 1, element);
+            } else {
+                o.onPage(this._currentStep + 1, element);
+            }
+
+            element.data('wizard', this);
+
+        },
+
+        _createStepper: function(steps) {
+            var stepper, o = this.options;
+
+            stepper = $("<div/>").addClass("stepper")
+                .attr("data-role", "stepper")
+                .attr("data-steps", steps);
+
+            if (o.stepperType !== 'default') {
+                stepper.addClass(o.stepperType);
+            }
+
+            return stepper;
+        },
+
+        _createEvents: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            if (o.buttons) {
+                var actions = $("<div/>").addClass("actions").appendTo(element);
+                var group_left = $("<div/>").addClass("group-left").appendTo(actions);
+                var group_right = $("<div/>").addClass("group-right").appendTo(actions);
+                var cancel_button, help_button, prior_button, next_button, finish_button;
+
+                if (o.buttons.cancel) {
+                    cancel_button = $("<button type='button'/>").addClass("btn-cancel").html(window.METRO_LOCALES[o.locale].buttons[2]);
+                    if (typeof o.buttons.cancel === "boolean") {
+                        cancel_button.appendTo(group_left);
+                    } else {
+                        if (o.buttons.cancel.title) {
+                            cancel_button.html(o.buttons.cancel.title);
+                        }
+                        if (o.buttons.cancel.cls) {
+                            cancel_button.addClass(o.buttons.cancel.cls);
+                        }
+                        if (o.buttons.cancel.group && o.buttons.cancel.group !== "left") {
+                            cancel_button.appendTo(group_right);
+                        } else {
+                            cancel_button.appendTo(group_left);
+                        }
+                    }
+                    cancel_button.on('click', function() {
+                        if (typeof o.onCancel === 'function') {
+                            o.onCancel(that._currentStep + 1, element);
+                        } else {
+                            if (typeof window[o.onCancel] === 'function') {
+                                window[o.onCancel](that._currentStep + 1, element);
+                            } else {
+                                var result = eval("(function(){" + o.onCancel + "})");
+                                result.call(that._currentStep + 1, element);
+                            }
+                        }
+                    });
+                }
+                if (o.buttons.help) {
+                    help_button = $("<button type='button'/>").addClass("btn-help").html(window.METRO_LOCALES[o.locale].buttons[3]);
+                    if (typeof o.buttons.help === "boolean") {
+                        help_button.appendTo(group_right);
+                    } else {
+                        if (o.buttons.help.title) {
+                            help_button.html(o.buttons.help.title);
+                        }
+                        if (o.buttons.help.cls) {
+                            help_button.addClass(o.buttons.help.cls);
+                        }
+                        if (o.buttons.help.group && o.buttons.help.group !== "left") {
+                            help_button.appendTo(group_right);
+                        } else {
+                            help_button.appendTo(group_left);
+                        }
+                    }
+                    help_button.on('click', function() {
+                        if (typeof o.onHelp === 'function') {
+                            o.onHelp(that._currentStep + 1, element);
+                        } else {
+                            if (typeof window[o.onHelp] === 'function') {
+                                window[o.onHelp](that._currentStep + 1, element);
+                            } else {
+                                var result = eval("(function(){" + o.onHelp + "})");
+                                result.call(that._currentStep + 1, element);
+                            }
+                        }
+                    });
+                }
+                if (o.buttons.prior) {
+                    prior_button = $("<button type='button'/>").addClass("btn-prior").html(window.METRO_LOCALES[o.locale].buttons[4]);
+                    if (typeof o.buttons.prior === "boolean") {
+                        prior_button.appendTo(group_right);
+                    } else {
+                        if (o.buttons.prior.title) {
+                            prior_button.html(o.buttons.prior.title);
+                        }
+                        if (o.buttons.prior.cls) {
+                            prior_button.addClass(o.buttons.prior.cls);
+                        }
+                        if (o.buttons.prior.group && o.buttons.prior.group !== "left") {
+                            prior_button.appendTo(group_right);
+                        } else {
+                            prior_button.appendTo(group_left);
+                        }
+                    }
+                    prior_button.on('click', function() {
+                        if (typeof o.onPrior === 'function') {
+                            if (o.onPrior(that._currentStep + 1, element)) {
+                                that.prior();
+                            }
+                        } else {
+                            if (typeof window[o.onPrior] === 'function') {
+                                if (window[o.onPrior](that._currentStep + 1, element)) {
+                                    that.prior();
+                                }
+                            } else {
+                                var result = eval("(function(){" + o.onPrior + "})");
+                                if (result.call(that._currentStep + 1, element)) {
+                                    that.prior();
+                                }
+                            }
+                        }
+                    });
+                }
+                if (o.buttons.next) {
+                    next_button = $("<button type='button'/>").addClass("btn-next").html(window.METRO_LOCALES[o.locale].buttons[5]);
+                    if (typeof o.buttons.next === "boolean") {
+                        next_button.appendTo(group_right);
+                    } else {
+                        if (o.buttons.next.title) {
+                            next_button.html(o.buttons.next.title);
+                        }
+                        if (o.buttons.next.cls) {
+                            next_button.addClass(o.buttons.next.cls);
+                        }
+                        if (o.buttons.next.group && o.buttons.next.group !== "left") {
+                            next_button.appendTo(group_right);
+                        } else {
+                            next_button.appendTo(group_left);
+                        }
+                    }
+                    next_button.on('click', function() {
+                        if (typeof o.onNext === 'function') {
+                            if (o.onNext(that._currentStep + 1, element)) {
+                                that.next();
+                            }
+                        } else {
+                            if (typeof window[o.onNext] === 'function') {
+                                if (window[o.onNext](that._currentStep + 1, element)) {
+                                    that.next();
+                                }
+                            } else {
+                                var result = eval("(function(){" + o.onNext + "})");
+                                if (result.call(that._currentStep + 1, element)) {
+                                    that.next();
+                                }
+                            }
+                        }
+                    });
+                }
+                if (o.buttons.finish) {
+                    finish_button = $("<button type='button'/>").addClass("btn-finish").html(window.METRO_LOCALES[o.locale].buttons[6]);
+                    if (typeof o.buttons.finish === "boolean") {
+                        finish_button.appendTo(group_right);
+                    } else {
+                        if (o.buttons.finish.title) {
+                            finish_button.html(o.buttons.finish.title);
+                        }
+                        if (o.buttons.finish.cls) {
+                            finish_button.addClass(o.buttons.finish.cls);
+                        }
+                        if (o.buttons.finish.group && o.buttons.finish.group !== "left") {
+                            finish_button.appendTo(group_right);
+                        } else {
+                            finish_button.appendTo(group_left);
+                        }
+                    }
+                    finish_button.on('click', function() {
+                        if (typeof o.onFinish === 'function') {
+                            o.onFinish(that._currentStep + 1, element);
+                        } else {
+                            if (typeof window[o.onFinish] === 'function') {
+                                window[o.onFinish](that._currentStep + 1, element);
+                            } else {
+                                var result = eval("(function(){" + o.onFinish + "})");
+                                result.call(that._currentStep + 1, element);
+                            }
+                        }
+                    });
+                }
+            }
+        },
+
+        next: function() {
+            var element = this.element,
+                that = this,
+                o = this.options;
+            var new_step = this._currentStep + 1;
+
+            if (new_step === this._steps.length) {
+                return false;
+            }
+
+            this._currentStep = new_step;
+            this._steps.hide();
+            $(this._steps[new_step]).show();
+
+
+            if (typeof o.onPage === 'function') {
+                o.onPage(that._currentStep + 1, element);
+            } else {
+                if (typeof window[o.onPage] === 'function') {
+                    window[o.onPage](that._currentStep + 1, element);
+                } else {
+                    var result = eval("(function(){" + o.onPage + "})");
+                    result.call(that._currentStep + 1, element);
+                }
+            }
+
+            if (this._stepper !== undefined) {
+                this._stepper.stepper('stepTo', this._currentStep + 1);
+            }
+
+            var finish = o.finishStep === 'default' ? this._steps.length - 1 : o.finishStep;
+            if (new_step === finish) {
+                this.element.find('.btn-finish').attr('disabled', false);
+            } else {
+                this.element.find('.btn-finish').attr('disabled', true);
+            }
+
+            if (new_step === this._steps.length - 1) {
+                this.element.find('.btn-next').attr('disabled', true);
+            } else {
+                this.element.find('.btn-next').attr('disabled', false);
+            }
+
+            if (new_step > 0) {
+                this.element.find('.btn-prior').attr('disabled', false);
+            }
+
+            return true;
+        },
+
+        prior: function() {
+            var element = this.element,
+                that = this,
+                new_step = this._currentStep - 1;
+            var o = this.options;
+
+            if (new_step < 0) {
+                return false;
+            }
+
+            this._currentStep = new_step;
+            this._steps.hide();
+            $(this._steps[new_step]).show();
+
+            if (typeof o.onPage === 'function') {
+                o.onPage(that._currentStep + 1, element);
+            } else {
+                if (typeof window[o.onPage] === 'function') {
+                    window[o.onPage](that._currentStep + 1, element);
+                } else {
+                    var result = eval("(function(){" + o.onPage + "})");
+                    result.call(that._currentStep + 1, element);
+                }
+            }
+
+            if (this._stepper !== undefined) {
+                this._stepper.stepper('stepTo', this._currentStep + 1);
+            }
+
+            var finish = o.finishStep === 'default' ? this._steps.length - 1 : o.finishStep;
+            if (new_step === finish) {
+                this.element.find('.btn-finish').attr('disabled', false);
+            } else {
+                this.element.find('.btn-finish').attr('disabled', true);
+            }
+
+            if (new_step === 0) {
+                this.element.find('.btn-prior').attr('disabled', true);
+            } else {
+                this.element.find('.btn-prior').attr('disabled', false);
+            }
+
+            if (new_step < finish) {
+                this.element.find('.btn-next').attr('disabled', false);
+            }
+
+            return true;
+        },
+
+        stepTo: function(step) {
+            var element = this.element,
+                that = this,
+                new_step = step - 1;
+            var o = this.options;
+
+            if (new_step < 0) {
+                return false;
+            }
+            this._currentStep = new_step;
+            this._steps.hide();
+            $(this._steps[new_step]).show();
+
+            if (typeof o.onPage === 'function') {
+                o.onPage(that._currentStep + 1, element);
+            } else {
+                if (typeof window[o.onPage] === 'function') {
+                    window[o.onPage](that._currentStep + 1, element);
+                } else {
+                    var result = eval("(function(){" + o.onPage + "})");
+                    result.call(that._currentStep + 1, element);
+                }
+            }
+
+            if (this._stepper !== undefined) {
+                this._stepper.stepper('stepTo', step);
+            }
+
+            var finish = (o.finishStep === 'default' ? this._steps.length - 1 : o.finishStep);
+            if (new_step === finish) {
+                this.element.find('.btn-finish').attr('disabled', false);
+            } else {
+                this.element.find('.btn-finish').attr('disabled', true);
+            }
+
+            this.element.find('.btn-next').attr('disabled', (new_step >= finish));
+            this.element.find('.btn-prior').attr('disabled', (new_step <= 0));
+
+            return true;
+        },
+
+        stepper: function() {
+            return this._stepper;
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+
+    // Source: js/widgets/wizard2.js
+    $.widget("metro.wizard2", {
+
+        version: "3.0.0",
+
+        options: {
+            start: 1,
+            finish: 'default',
+            buttonLabels: {
+                prev: '&lt;',
+                next: '&gt;',
+                finish: 'OK',
+                help: '?'
+            },
+            onPrior: function(page, wiz) {
+                return true;
+            },
+            onNext: function(page, wiz) {
+                return true;
+            },
+            onFinish: function(page, wiz) {},
+            onHelp: function(page, wiz) {},
+            onPage: function(page, wiz) {}
+
+        },
+
+        _step: 1,
+        _steps: undefined,
+
+        _create: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+
+            $.each(element.data(), function(key, value) {
+                if (key in o) {
+                    try {
+                        o[key] = $.parseJSON(value);
+                    } catch (e) {
+                        o[key] = value;
+                    }
+                }
+            });
+
+            this._step = o.start;
+            this._steps = element.children('.step');
+            this._height = 0;
+            this._width = 0;
+
+            if (o.finish === 'default') {
+                o.finish = this._steps.length;
+            }
+
+            $.each(this._steps, function(i, v) {
+                if ($(v).outerHeight() > that._height) {
+                    that._height = $(v).outerHeight();
+                }
+                //console.log(i, $(v).outerHeight(), that._height);
+                if ($(v).hasClass('active')) {
+                    that._step = i + 1;
+                }
+            });
+
+            this._width = element.innerWidth() - ((this._steps.length - 1) * 24 + (this._steps.length));
+
+            element.children('.step').css({
+                height: this._height + 48
+            });
+
+            $(window).resize(function() {
+                that._width = element.innerWidth() - ((that._steps.length - 1) * 24 + (that._steps.length));
+                that.step(that._step);
+            });
+
+            this._createActionBar();
+            this.step(o.start);
+            this._placeActionBar();
+
+            element.data('wizard2', this);
+        },
+
+        _createActionBar: function() {
+            var that = this,
+                element = this.element,
+                o = this.options;
+            var bar = $("<div/>").addClass('action-bar').appendTo(element);
+            var btn_prev, btn_next, btn_help, btn_finish;
+
+            btn_help = $("<button/>").html(o.buttonLabels.help).addClass('button cycle-button medium-button wiz-btn-help place-left').appendTo(bar);
+            btn_finish = $("<button/>").html(o.buttonLabels.finish).addClass('button cycle-button medium-button wiz-btn-finish place-right').appendTo(bar);
+            btn_next = $("<button/>").html(o.buttonLabels.next).addClass('button cycle-button medium-button wiz-btn-next place-right').appendTo(bar);
+            btn_prev = $("<button/>").html(o.buttonLabels.prev).addClass('button cycle-button medium-button wiz-btn-prev place-right').appendTo(bar);
+
+            btn_help.on('click', function() {
+                if (typeof o.onHelp === 'function') {
+                    o.onHelp(that._step, that);
+                } else {
+                    if (typeof window[o.onHelp] === 'function') {
+                        window[o.onHelp](that._step, that);
+                    } else {
+                        var result = eval("(function(){" + o.onHelp + "})");
+                        result.call(that._step, that);
+                    }
+                }
+            });
+
+            btn_finish.on('click', function() {
+                if (typeof o.onFinish === 'function') {
+                    o.onFinish(that._step, that);
+                } else {
+                    if (typeof window[o.onFinish] === 'function') {
+                        window[o.onFinish](that._step, that);
+                    } else {
+                        var result = eval("(function(){" + o.onFinish + "})");
+                        result.call(that._step, that);
+                    }
+                }
+            });
+
+            btn_prev.on('click', function() {
+                if (typeof o.onPrior === 'function') {
+                    if (o.onPrior(that._step, element)) {
+                        that.prior();
+                    }
+                } else {
+                    if (typeof window[o.onPrior] === 'function') {
+                        if (window[o.onPrior](that._step, element)) {
+                            that.prior();
+                        }
+                    } else {
+                        var result = eval("(function(){" + o.onPrior + "})");
+                        if (result.call(that._step, element)) {
+                            that.prior();
+                        }
+                    }
+                }
+            });
+
+            btn_next.on('click', function() {
+                if (typeof o.onNext === 'function') {
+                    if (o.onNext(that._step, element)) {
+                        that.next();
+                    }
+                } else {
+                    if (typeof window[o.onNext] === 'function') {
+                        if (window[o.onNext](that._step, element)) {
+                            that.next();
+                        }
+                    } else {
+                        var result = eval("(function(){" + o.onNext + "})");
+                        if (result.call(that._step, element)) {
+                            that.next();
+                        }
+                    }
+                }
+            });
+        },
+
+        _placeActionBar: function() {
+            var element = this.element,
+                o = this.options;
+            var action_bar = element.find('.action-bar');
+            var curr_frame = element.find('.step.active');
+            var left = curr_frame.position().left,
+                right = curr_frame.innerWidth();
+
+            action_bar.css({
+                left: left,
+                width: right
+            });
+        },
+
+        step: function(index) {
+            var o = this.options;
+
+            this.element.children('.step')
+                .removeClass('active prev next');
+
+            $(this.element.children('.step')[index - 1])
+                .addClass('active')
+                .css('width', this._width);
+
+            this.element.children('.step.active').prevAll().addClass('prev').css('width', 0);
+            this.element.children('.step.active').nextAll().addClass('next').css('width', 0);
+
+            this._placeActionBar();
+
+            if (index === 1) {
+                this.element.find('.wiz-btn-prev').hide();
+            } else {
+                this.element.find('.wiz-btn-prev').show();
+            }
+
+            if (index === this._steps.length) {
+                this.element.find('.wiz-btn-next').hide();
+            } else {
+                this.element.find('.wiz-btn-next').show();
+            }
+
+            if (index !== o.finish) {
+                this.element.find('.wiz-btn-finish').hide();
+            } else {
+                this.element.find('.wiz-btn-finish').show();
+            }
+
+        },
+
+        prior: function() {
+            var new_step = this._step - 1;
+            if (new_step <= 0) {
+                return false;
+            }
+
+            this._step = new_step;
+
+            this.step(new_step);
+
+            return true;
+        },
+
+        next: function() {
+            var new_step = this._step + 1;
+            if (new_step > this._steps.length) {
+                return false;
+            }
+
+            this._step = new_step;
+
+            this.step(new_step);
+
+            return true;
+        },
+
+        _destroy: function() {},
+
+        _setOption: function(key, value) {
+            this._super('_setOption', key, value);
+        }
+    });
+
+
+    return $.Metro.init();
+
+}));

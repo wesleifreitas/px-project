@@ -9,7 +9,7 @@
     output       ="true" 
     returntype   ="any" 
     returnformat ="JSON" 
-    hint         ="Retornar menu">
+    hint         ="Retorna menu">
     
     <cfargument 
         name     ="dsn"     
@@ -38,7 +38,9 @@
         required ="false"   
         default  ="false"          
         hint     ="O acesso é feito por browser mobile?">
-    
+
+    <cfset response = structNew()>
+
     <cfset arguments.pro_id = decode(arguments.pro_id)>
     <cfif isArray(arguments.pro_id)>
         <cfset inPro_id = arrayToList(arguments.pro_id, ",")>
@@ -123,13 +125,15 @@
             ,menu.men_ordem             
     </cfquery>
     
-
     <cfset cssFit = "px-fit">
+    <!---
     <cfset toggle = '<div class="element place-right px-pointer" ng-click="toggleRight()">
                 <a class="element-menu">
                     <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
                 </a>            
             </div>'>
+    --->
+    <cfset toggle = "">
     <cfif arguments.isMobile>
         <cfset cssFit = "px-fit-mobile">
         <cfset toggle = "">
@@ -142,19 +146,27 @@
             cssFit = variables.cssFit) />
 
     </cfsavecontent>
+
+    
    
     <!--- <cfwddx action="cfml2js" input="#pxMenu#" toplevelvariable="menuString"/> --->
-    <cfset response['navBar'] = '<div class="navbar-content #variables.cssFit#">
-        <a class="pull-menu" href=""></a>
-        <ul id="menu" class="element-menu #variables.cssFit#">
+    <cfset response['navBar'] = '<div class="app-bar darcula #variables.cssFit#" data-role="appbar">
+        <!-- <a class="pull-menu" href=""></a> <ul class="app-bar-menu"> <li><img src="custom/assets/logo/logo.png" width="100" style="padding-top: 5px;padding-right: 5px;"></li> </ul> -->
+        <ul id="menu" class="app-bar-menu #variables.cssFit#">
             #variables.pxMenu#    
-            #variables.toggle#
-            <span class="element-divider place-right"></span>
-            <button class="element image-button image-left place-right bg-dark">Phoenix Project - pxproject.com.br
-                <img id="topMenuImgLogo" ng-src="{{logo}}" />
-            </button>
+            #variables.toggle#   
         </ul>
-    </div>'>
+        <div class="app-bar-element place-right">
+            <a class="dropdown-toggle fg-white" href="">
+                <i class="fa fa-user"></i>
+                #qUsuario.usu_nome#
+            </a>
+            <ul class="d-menu dropdown-toggle place-right px-fit" data-role="dropdown">
+                <li ng-click="logout()"><a href="">Minha Conta</a></li>
+                <li ng-click="logout()"><a href="">Sair</a></li>
+            </ul>
+        </div>        
+        </div>'>
     <cfreturn response>
 
 </cffunction>
@@ -227,7 +239,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 
                 <a class='dropdown-toggle #arguments.cssFit# px-pointer'>#LOCAL.qMenu.men_nome#</a>
 
-                <ul class='dropdown-menu #arguments.cssFit#' data-role='dropdown'>
+                <ul class='d-menu #arguments.cssFit#' data-role='dropdown'>
 
                 <!---
                     Chama função recursiva

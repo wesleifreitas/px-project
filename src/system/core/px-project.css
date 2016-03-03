@@ -25,7 +25,7 @@ hr.px1 {
 div.px-view {
     position: absolute;
     bottom: 10px;
-    top: 45px;
+    top: 60px;
     right: 1px;
     width: 100%;
     padding-left: 10px;
@@ -145,4 +145,36 @@ div.px-view {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
     opacity: 1;
+}
+#home {
+    width: 100%;
+    float: left;
+    margin: 0 auto;
+    height: 100%;
+    position: absolute;
+    z-index: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding: 200px 10px 10px;   
+}
+.home-icon{ 
+    font-size: 100px;
+}
+.link-button div {
+    float: left;
+   e width: 100px;
+    height: 115px;
+    padding: 10px;
+    font-size: 10px;
+    line-height: 1.4;
+    text-align: center;      
+}
+.link-button div:hover {
+    color: #fff;    
+    cursor: pointer;
+}
+.link-button .link-name {
+    display: block;
+    text-align: center;
+    font-size: 20px;    
 }
