@@ -1,5 +1,5 @@
 <form role="form" id="loginForm" name="loginForm" ng-submit="vm.login()">
-    <div id="loginDiv"cd >
+    <div id="loginDiv" cd>
         <div id="headerDiv">
             <div>{{vm.formTitle}}</div>
         </div>
@@ -8,15 +8,11 @@
                 <fieldset>
                     <div class="input-control text" data-role="input">
                         <input id="username" name="username" type="text" class="form-control" placeholder="Usuário" ng-model="vm.username" required>
-                        <!--
                         <button class="button helper-button clear"><span class="mif-cross"></span></button>
-                        -->
                     </div>
                     <div class="input-control password" data-role="input">
                         <input id="password" name="password" type="password" class="senha form-control" placeholder="Senha" ng-model="vm.password" required/>
-                        <!--
                         <button class="button helper-button reveal"><span class="mif-looks"></span></button>
-                        -->
                     </div>
                     <!-- <i class="fa fa-keyboard-o lg fa-lg"></i> -->
                     <div id="loginControl" layout="row" layout-align="center center" layout-padding>

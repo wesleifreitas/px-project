@@ -28,14 +28,14 @@
   width: 300px;
 }
 #loginDiv fieldset {
-  background: #DDDDDD;
+  background: #EEEEEE;
   border-radius: 0 0 5px 5px;
   font-size: 16px;
   padding: 20px;
   position: relative;
 }
 #loginDiv fieldset:before {
-  background-color: #DDDDDD;
+  background-color: #EEEEEE;
   content: "";
   height: 8px;
   left: 50%;
