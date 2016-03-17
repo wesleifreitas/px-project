@@ -6602,11 +6602,13 @@ a.tag {
 .button:hover {
   border-color: #787878;
 }
+*/
 .button:active {
   background: #eeeeee;
   color: #262626;
   box-shadow: none;
 }
+/*
 .button:focus {
   outline: 0;
 }
@@ -9019,7 +9021,7 @@ textarea.required {
 .input-control input:focus ~ .button-group > .helper-button {
   visibility: visible;
 }
-/*
+
 .input-control input ~ .helper-button:active,
 .input-control input ~ .button-group > .helper-button:active {
   visibility: visible;
@@ -9028,6 +9030,7 @@ textarea.required {
 .input-control input:disabled ~ .button-group > .helper-button {
   display: none ;
 }
+/*
 .input-control.modern {
   position: relative;
   width: 12.25rem;
