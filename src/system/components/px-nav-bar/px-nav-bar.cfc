@@ -325,7 +325,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 
     <cfquery name="qView" datasource="#arguments.dsn#">
         
-        WITH pxProjectMenuRecursivo(men_id, men_nome, men_nivel, men_nomeCaminho, men_ordem, men_idPai, com_view, com_icon)
+        WITH pxProjectMenuRecursivo(men_id, men_nome, men_nivel, men_nomeCaminho, men_ordem, men_idPai, com_view, com_icon, com_px_lib)
         AS
         (
             SELECT 
@@ -337,6 +337,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                 ,men_idPai
                 ,com_view
                 ,com_icon
+                ,com_px_lib
             FROM 
                 dbo.vw_menu 
             WHERE 
@@ -354,6 +355,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                 ,m.men_idPai
                 ,m.com_view
                 ,m.com_icon
+                ,m.com_px_lib
             FROM 
                 dbo.vw_menu m 
             INNER JOIN 
@@ -370,6 +372,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
             ,men_id
             ,com_view 
             ,com_icon
+            ,com_px_lib
         FROM 
             pxProjectMenuRecursivo
         WHERE 
@@ -377,6 +380,9 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 
     </cfquery>
 
+    <cfif qView.com_px_lib EQ 1>
+        <cfset qView.com_view = arguments.pxProjectPackage & qView.com_view>
+    </cfif>
 
     <cfset result = structNew()> 
     

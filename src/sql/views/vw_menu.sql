@@ -24,6 +24,7 @@ AS
 
 	,co.com_view
     ,co.com_icon
+    ,co.com_px_lib
 
 	FROM menu AS me
 
