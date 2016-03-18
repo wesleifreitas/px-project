@@ -61,7 +61,9 @@ gulp.task('build-system-others', function() {
 			'./src/system/**/*.tff',
 			'./src/system/**/*.cfm',
 			'./src/system/**/*.cfc',
-			'./src/system/**/*.cfc'
+			'./src/system/**/*.cfc',
+			'./src/system/**/*.gif',
+			'./src/system/**/*.png'
 		])		
 		.pipe(gulp.dest('dist/system'));
 });
