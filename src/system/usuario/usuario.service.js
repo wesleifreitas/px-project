@@ -3,9 +3,9 @@ define(['../services/module'], function(services) {
 
     services.factory('usuarioService', usuarioService);
 
-    usuarioService.$inject = ['pxArrayUtil', '$http'];
+    usuarioService.$inject = ['pxConfig', 'pxArrayUtil', '$http'];
 
-    function usuarioService(pxArrayUtil, $http) {
+    function usuarioService(pxConfig, pxArrayUtil, $http) {
 
         var service = {};
 
@@ -60,7 +60,7 @@ define(['../services/module'], function(services) {
             };
             $http({
                 method: 'POST',
-                url: 'system/usuario/usuario.cfc?method=sendEmail',
+                url: pxConfig.PX_PACKAGE + 'system/usuario/usuario.cfc?method=sendEmail',
                 params: params
             }).success(function(response) {
                 callback(response);

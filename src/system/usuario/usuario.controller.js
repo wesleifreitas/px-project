@@ -4,9 +4,9 @@ define(['../controllers/module'], function(controllers) {
     // Controller
     controllers.controller('usuarioCtrl', usuarioCtrl);
 
-    usuarioCtrl.$inject = ['$scope', '$element', '$attrs', '$mdDialog', 'usuarioService'];
+    usuarioCtrl.$inject = ['pxConfig', '$scope', '$element', '$attrs', '$mdDialog', 'usuarioService'];
 
-    function usuarioCtrl($scope, $element, $attrs, $mdDialog, usuarioService) {
+    function usuarioCtrl(pxConfig, $scope, $element, $attrs, $mdDialog, usuarioService) {
         // Variáveis gerais - Start
         $scope.dataStatus = {
             // Array: opções do select com opção "Todos"
@@ -184,7 +184,7 @@ define(['../controllers/module'], function(controllers) {
                 scope: $scope,
                 preserveScope: true,
                 controller: formCtrl,
-                templateUrl: 'system/usuario/usuario-form.html',
+                templateUrl: pxConfig.PX_PACKAGE + 'system/usuario/usuario-form.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: false
@@ -200,7 +200,7 @@ define(['../controllers/module'], function(controllers) {
                 scope: $scope,
                 preserveScope: true,
                 controller: formCtrl,
-                templateUrl: 'system/usuario/usuario-form.html',
+                templateUrl: pxConfig.PX_PACKAGE + 'system/usuario/usuario-form.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: false

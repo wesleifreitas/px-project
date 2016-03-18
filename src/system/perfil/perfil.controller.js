@@ -4,9 +4,9 @@ define(['../controllers/module'], function(controllers) {
     // Controller
     controllers.controller('PerfilCtrl', PerfilCtrl);
 
-    PerfilCtrl.$inject = ['perfilService', '$scope', '$element', '$attrs', '$mdDialog'];
+    PerfilCtrl.$inject = ['pxConfig', 'perfilService', '$scope', '$element', '$attrs', '$mdDialog'];
 
-    function PerfilCtrl(perfilService, $scope, $element, $attrs, $mdDialog) {
+    function PerfilCtrl(pxConfig, perfilService, $scope, $element, $attrs, $mdDialog) {
         // Variáveis gerais - Start
         $scope.dataStatus = {
             // Array: opções do select com opção "Todos"
@@ -144,7 +144,7 @@ define(['../controllers/module'], function(controllers) {
                 scope: $scope,
                 preserveScope: true,
                 controller: formCtrl,
-                templateUrl: 'system/perfil/perfil-form.html',
+                templateUrl: pxConfig.PX_PACKAGE + 'system/perfil/perfil-form.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: false
@@ -159,7 +159,7 @@ define(['../controllers/module'], function(controllers) {
                 scope: $scope,
                 preserveScope: true,
                 controller: formCtrl,
-                templateUrl: 'system/perfil/perfil-form.html',
+                templateUrl: pxConfig.PX_PACKAGE + 'system/perfil/perfil-form.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: false
@@ -278,14 +278,14 @@ define(['../controllers/module'], function(controllers) {
                 // Salvar treeMenu
                 perfilService.saveTreeMenu(event.queryResult.IDENTITYCOL, $scope.jstreeData, function(response) {
                     //console.info('saveTreeMenu', response);
-                });                
+                });
             } else if (event.action == 'update') {
                 // Atualiza registro na listagem
                 $scope.gridControl.updateDataRow(event.data);
                 // Salvar treeMenu
                 perfilService.saveTreeMenu(event.data.per_id, $scope.jstreeData, function(response) {
                     //console.info('saveTreeMenu', response);
-                });                
+                });
             }
         };
 
@@ -314,7 +314,7 @@ define(['../controllers/module'], function(controllers) {
         $scope.grupo_id_itemClick = function(event) {
             $scope.formShow = 'default';
             $scope.grupo_id_searchControl.setValue(event.itemClick);
-            $scope.setFormTitle();            
+            $scope.setFormTitle();
         };
 
         $scope.jsTree = function(id) {
