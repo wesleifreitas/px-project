@@ -1,0 +1,1 @@
+define(["../filters/module"],function(n){"use strict";return n.filter("loginWorking",[function(){return function(n){return n?"working fa fa-circle-o-notch fa-spin fa-2x":""}}]),n});
