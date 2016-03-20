@@ -45,7 +45,7 @@ define(['../../directives/module'], function(directives) {
                     url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
                     params: params
                 }).success(function(response) {
-                    //console.info('getNavBar', response);
+                    console.info('getNavBar', response);
                     $scope.navBar = response.navBar;
                 }).
                 error(function(data, status, headers, config) {
@@ -55,8 +55,7 @@ define(['../../directives/module'], function(directives) {
             };
 
             $scope.showView = function(view) {
-                console.info($scope.isMobile());
-
+               
                 if ($scope.isMobile() || $('.app-bar-pullbutton.automatic')) {
                     // "Resetar" menu                    
                     $('.app-bar-pullbutton.automatic').trigger('click');
