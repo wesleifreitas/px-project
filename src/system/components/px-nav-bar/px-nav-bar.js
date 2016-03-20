@@ -36,15 +36,16 @@ define(['../../directives/module'], function(directives) {
             $scope.getNavBar = function() {
 
                 var params = {};
-                params.pro_id = 0;                
+                params.pro_id = angular.toJson(pxConfig.PROJECT_ID);
                 params.isMobile = $scope.isMobile();
                 params.user = $rootScope.globals.currentUser.usu_id;
-                
+
                 $http({
                     method: 'POST',
                     url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
                     params: params
                 }).success(function(response) {
+                    //console.info('getNavBar', response);
                     $scope.navBar = response.navBar;
                 }).
                 error(function(data, status, headers, config) {
@@ -58,7 +59,7 @@ define(['../../directives/module'], function(directives) {
 
                 if ($scope.isMobile() || $('.app-bar-pullbutton.automatic')) {
                     // "Resetar" menu                    
-                    $('.app-bar-pullbutton.automatic').trigger('click');                    
+                    $('.app-bar-pullbutton.automatic').trigger('click');
                 }
 
                 var params = {};
