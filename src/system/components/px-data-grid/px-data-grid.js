@@ -230,12 +230,7 @@ define(['../../directives/module'], function(directives) {
                     scope.dataTable = $sce.trustAsHtml(scope.dataTable);
 
                     // Data Grid pronta para consulta
-                    scope.pxTableReady = true;
-
-                    if (scope.where) {
-                        // Definir filterObject para os campos do scope.where                    
-                        scope.where = JSON.parse(newValue.where);
-                    }
+                    scope.pxTableReady = true;                   
                 });
 
                 // Internal Control - Start
