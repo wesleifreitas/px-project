@@ -4,9 +4,9 @@ define(['../controllers/module'], function(controllers) {
     // Controller
     controllers.controller('PerfilCtrl', PerfilCtrl);
 
-    PerfilCtrl.$inject = ['pxConfig', 'perfilService', '$scope', '$element', '$attrs', '$mdDialog'];
+    PerfilCtrl.$inject = ['pxConfig', 'perfilService', '$rootScope', '$scope', '$element', '$attrs', '$mdDialog'];
 
-    function PerfilCtrl(pxConfig, perfilService, $scope, $element, $attrs, $mdDialog) {
+    function PerfilCtrl(pxConfig, perfilService, $rootScope, $scope, $element, $attrs, $mdDialog) {
         // Variáveis gerais - Start
         $scope.dataStatus = {
             // Array: opções do select com opção "Todos"
@@ -101,6 +101,17 @@ define(['../controllers/module'], function(controllers) {
                     }
                 }]
             };
+
+            // Verificar se o usuário não é master
+            if (!$rootScope.globals.currentUser.per_master) {
+                // Se não for usuário master: não irá recuperar perfil master
+                $scope.dgConfig.where = [{
+                    field: 'per_master',
+                    type: 'bit',
+                    filterOperator: '<>',
+                    filterValue: '1'
+                }];
+            }
         };
 
         /**

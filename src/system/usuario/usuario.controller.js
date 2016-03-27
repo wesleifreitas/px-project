@@ -4,9 +4,9 @@ define(['../controllers/module'], function(controllers) {
     // Controller
     controllers.controller('usuarioCtrl', usuarioCtrl);
 
-    usuarioCtrl.$inject = ['pxConfig', '$scope', '$element', '$attrs', '$mdDialog', 'usuarioService'];
+    usuarioCtrl.$inject = ['pxConfig', '$rootScope', '$scope', '$element', '$attrs', '$mdDialog', 'usuarioService'];
 
-    function usuarioCtrl(pxConfig, $scope, $element, $attrs, $mdDialog, usuarioService) {
+    function usuarioCtrl(pxConfig, $rootScope, $scope, $element, $attrs, $mdDialog, usuarioService) {
         // Variáveis gerais - Start
         $scope.dataStatus = {
             // Array: opções do select com opção "Todos"
@@ -132,6 +132,17 @@ define(['../controllers/module'], function(controllers) {
                     moment: 'dddd - DD/MM/YYYY HH:mm:ss'
                 }],
             };
+
+            // Verificar se o usuário não é master
+            if (!$rootScope.globals.currentUser.per_master) {
+                // Se não for usuário master: não irá recuperar usuário master
+                $scope.dgConfig.where = [{
+                    field: 'per_master',
+                    type: 'bit',
+                    filterOperator: '<>',
+                    filterValue: '1'
+                }];
+            }
         };
 
         /**
