@@ -39,6 +39,7 @@ define(['../../directives/module'], function(directives) {
                 params.pro_id = angular.toJson(pxConfig.PROJECT_ID);
                 params.isMobile = $scope.isMobile();
                 params.user = $rootScope.globals.currentUser.usu_id;
+                params.dsn = pxConfig.PROJECT_DSN;
 
                 $http({
                     method: 'POST',
@@ -55,7 +56,7 @@ define(['../../directives/module'], function(directives) {
             };
 
             $scope.showView = function(view) {
-               
+
                 if ($scope.isMobile() || $('.app-bar-pullbutton.automatic')) {
                     // "Resetar" menu                    
                     $('.app-bar-pullbutton.automatic').trigger('click');
