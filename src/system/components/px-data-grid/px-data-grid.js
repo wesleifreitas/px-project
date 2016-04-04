@@ -54,7 +54,7 @@ define(['../../directives/module'], function(directives) {
 
                 // Group
                 if (!angular.isDefined(scope.group)) {
-                    scope.group = true;
+                    scope.group = pxConfig.GROUP;
                 }else{
                     scope.group = (scope.group === "true");
                 }
