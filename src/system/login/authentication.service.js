@@ -48,7 +48,8 @@ define(['../services/module'], function(services) {
             //    });
             var params = {
                 username: username,
-                password: password
+                password: password,
+                dsn: pxConfig.PROJECT_DSN
             };
             $http({
                 method: 'POST',
