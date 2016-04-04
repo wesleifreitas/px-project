@@ -2,38 +2,44 @@
 
 <cffunction name="jsTreeMenu" access="remote" returntype="any" returnformat="JSON" output="true">
 
-	<cfargument 
-		name ="dsn"		
-		type ="string"
-		required ="false"	
-		default ="px_project_sql"	
-		hint ="Data source name">
+	<cfargument
+		name="dsn"
+		type="string"
+		required="false"
+		default="px_project_sql"
+		hint="Data source name">
 
-	<cfargument 
-		name     ="user"
-		type	 ="numeric"
-		required ="false"
-		default  =""	
-		hint     ="ID do usuário">
+	<cfargument
+		name="user"
+		type="numeric"
+		required="false"
+		default=""
+		hint="ID do usuário">
 
-	<cfargument 
-		name     ="id"
-		type	 ="numeric"
-		required ="false"
-		default  ="0"	
-		hint     ="ID do perfil">
+	<cfargument
+		name="id"
+		type="numeric"
+		required="false"
+		default="0"
+		hint="ID do perfil">
 
-	<cfargument 
-        name     ="pro_id"  
-        type     ="string"  
-        required ="false"   
-        default  ="0"          
-        hint     ="Identificação do projeto">
+	<cfargument
+		name="pro_id"
+		type="string"
+		required="false"
+		default="0"
+		hint="Identificação do projeto">
 
 	<cfset result = structNew()>
 
 	<cftry>	
-		<cfset inPro_id = 0>
+
+		<cfset arguments.pro_id = decode(arguments.pro_id)>
+		<cfif isArray(arguments.pro_id)>
+		    <cfset inPro_id = arrayToList(arguments.pro_id, ",")>
+		<cfelse>
+		    <cfset inPro_id = arguments.pro_id>
+		</cfif>
 
 		<cfquery datasource="#arguments.dsn#" name="qUsuario">
 			SELECT
