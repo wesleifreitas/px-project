@@ -58,7 +58,8 @@ define(['../services/module'], function(services) {
             var params = {
                 dsn: pxConfig.PROJECT_DSN,
                 user: $rootScope.globals.currentUser.usu_id,
-                id: id
+                id: id,
+                pro_id: pxConfig.PROJECT_ID
             };
             $http({
                 method: 'POST',
