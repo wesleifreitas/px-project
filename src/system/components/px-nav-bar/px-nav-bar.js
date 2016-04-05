@@ -66,6 +66,7 @@ define(['../../directives/module'], function(directives) {
                 params.men_id = view;
                 params.pathname = pxConfig.PROJECT_SRC; //document.location.pathname;
                 params.pxProjectPackage = pxConfig.PX_PACKAGE;
+                params.dsn = pxConfig.PROJECT_DSN;
 
                 $http({
                     method: 'POST',
