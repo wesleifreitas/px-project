@@ -46,5 +46,8 @@
     "numeral": "~1.5.3",
     "requirejs": "~2.1.20",
     "jstree-bootstrap-theme": "~1.0.1"
+  },
+  "resolutions": {
+    "bootstrap": "~3.3.5"
   }
 }
