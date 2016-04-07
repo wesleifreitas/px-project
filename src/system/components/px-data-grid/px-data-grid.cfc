@@ -169,7 +169,7 @@
 				WITH pagination AS
 				(
 					SELECT 
-						-- TOP 1
+						<!--- TOP 1 --->
 						#listFields#
 						ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS row_number
 					FROM 
