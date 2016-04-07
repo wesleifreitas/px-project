@@ -3,41 +3,41 @@
 <cfprocessingDirective pageencoding="utf-8">
 <cfset setEncoding("form","utf-8")> 
 
-<cffunction 
-    name         ="getNavBar" 
-    access       ="remote"  
-    output       ="true" 
-    returntype   ="any" 
-    returnformat ="JSON" 
-    hint         ="Retorna menu">
+<cffunction
+    name="getNavBar"
+    access="remote"
+    output="true"
+    returntype="any"
+    returnformat="JSON"
+    hint="Retorna menu">
     
-    <cfargument 
-        name     ="dsn"     
-        type     ="string"  
-        required ="false"   
-        default  ="px_project_sql"  
-        hint     ="Data source name">
+    <cfargument
+        name="dsn"
+        type="string"
+        required="false"
+        default="px_project_sql"
+        hint="Data source name">
 
-    <cfargument 
-        name     ="pro_id"  
-        type     ="string"  
-        required ="false"   
-        default  ="0"          
-        hint     ="Identificação do projeto">
+    <cfargument
+        name="pro_id"
+        type="string"
+        required="false"
+        default="0"
+        hint="Identificação do projeto">
 
-    <cfargument 
-        name     ="user"  
-        type     ="numeric"  
-        required ="false"   
-        default  ="-1"          
-        hint     ="ID do usuário">
+    <cfargument
+        name="user"
+        type="numeric"
+        required="false"
+        default="-1"
+        hint="ID do usuário">
 
-    <cfargument 
-        name     ="isMobile"  
-        type     ="boolean"
-        required ="false"   
-        default  ="false"          
-        hint     ="O acesso é feito por browser mobile?">
+    <cfargument
+        name="isMobile"
+        type="boolean"
+        required="false"
+        default="false"
+        hint="O acesso é feito por browser mobile?">
 
     <cfset response = structNew()>
 
@@ -165,8 +165,8 @@
                 <li ng-click="logout()"><a href="">Minha Conta</a></li>
                 <li ng-click="logout()"><a href="">Sair</a></li>
             </ul>
-        </div>        
-        </div>'>
+        </div>
+        </div>'>q
     <cfreturn response>
 
 </cffunction>
@@ -174,34 +174,34 @@
 <!--- Função desenvolvida baseada em:
 http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 <cffunction
-    name       ="getRecursiveNavBar"
-    access     ="public"
-    returntype ="void"
-    output     ="true"
-    hint       ="Faz a saída dos menus filhos de um determinado menu pai">
+    name="getRecursiveNavBar"
+    access="public"
+    returntype="void"
+    output="true"
+    hint="Faz a saída dos menus filhos de um determinado menu pai">
  
     <!--- Define argumentos --->
     <cfargument
-        name     ="data"
-        type     ="query"
-        required ="true"
-        hint     ="data dos menus"
+        name="data"
+        type="query"
+        required="true"
+        hint="data dos menus"
         />
  
     <cfargument
-        name     ="men_idPai"
-        type     ="numeric"
-        required ="false"
-        default  ="0"
-        hint     ="ID do menu pai que o menu filho pertence"
+        name="men_idPai"
+        type="numeric"
+        required="false"
+        default="0"
+        hint="ID do menu pai que o menu filho pertence"
         />
 
     <cfargument
-        name     ="cssFit"
-        type     ="string"
-        required ="false"
-        default  =""
-        hint     ="CSS Fit"
+        name="cssFit"
+        type="string"
+        required="false"
+        default=""
+        hint="CSS Fit"
         />
 
     <!--- Define o scope LOCAL --->
@@ -281,46 +281,46 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 </cffunction>
 
 
-<cffunction 
-    name         ="getView"    
-    access       ="remote"  
-    output       ="true" 
-    returntype   ="any" 
-    returnformat ="JSON" 
-    hint         ="Retorna o componente que será apresentado para o usuário">
+<cffunction
+    name="getView"
+    access="remote"
+    output="true"
+    returntype="any"
+    returnformat="JSON"
+    hint="Retorna o componente que será apresentado para o usuário">
     
-    <cfargument 
-        name     ="dsn"     
-        required ="false"   
-        default  ="px_project_sql"    
-        hint     ="Data source name">
+    <cfargument
+        name="dsn"
+        required="false"
+        default="px_project_sql"
+        hint="Data source name">
+
+    <cfargument
+        name="pathname"
+        type="string"
+        required="false"
+        default=""
+        hint="Pasta raíz do projeto">
 
     <cfargument 
-        name     ="pathname"     
-        type     ="string"  
-        required ="false"   
-        default  =""    
-        hint     ="Pasta raíz do projeto">
+        name="pxProjectPackage"
+        type="string"
+        required="false"
+        default=""
+        hint="Componentes px-project">
 
-    <cfargument 
-        name     ="pxProjectPackage"     
-        type     ="string"  
-        required ="false"   
-        default  =""    
-        hint     ="Componentes px-project">
-
-    <cfargument 
-        name     ="per_id"  
-        required ="false"   
-        default  ="-1"          
-        hint     ="Código do perfil">
+    <cfargument
+        name="per_id"
+        required="false"
+        default="-1"
+        hint="Código do perfil">
 
 
-    <cfargument 
-        name     ="men_id"  
-        required ="false"   
-        default  ="-1"          
-        hint     ="Código do componente">
+    <cfargument
+        name="men_id"
+        required="false"
+        default="-1"
+        hint="Código do componente">
 
 
     <cfquery name="qView" datasource="#arguments.dsn#">
@@ -345,7 +345,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                                     
             UNION ALL
                                 
-            -- Parte recursiva
+            <!--- Parte recursiva --->
             SELECT 
                 m.men_id
                 ,m.men_nome
