@@ -691,7 +691,6 @@ define(['../../directives/module'], function(directives) {
 
             // Parâmetros da consulta
             var params = {};
-            params.dsn = pxConfig.PROJECT_DSN;
 
             params.schema = $scope.schema;
             if (angular.isDefined($scope.view) && $scope.view !== '') {
@@ -913,8 +912,13 @@ define(['../../directives/module'], function(directives) {
                 table = $scope.table;
             }
 
+            var params = {};
+            params.schema = $scope.schema;
+            params.table = table;
+            params.fields = angular.toJson(arrayFields);
+            params.selectedItems = angular.toJson($scope.internalControl.selectedItems);
 
-            pxDataGridService.remove(table, angular.toJson(arrayFields), angular.toJson($scope.internalControl.selectedItems), function(response) {
+            pxDataGridService.remove(params, function(response) {
                 if ($scope.debug) {
                     console.info('pxDataGrid remove: ', response);
                 }

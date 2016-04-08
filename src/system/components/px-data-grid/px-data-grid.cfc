@@ -50,9 +50,9 @@
 		type="string"
 		required="false"
 		default=""
-		hint="Schema do banco de dados">	
+		hint="Schema do banco de dados">
 
-	<cfargument 
+	<cfargument
 		name="table"
 		type="string"
 		required="false"
@@ -94,7 +94,7 @@
 		default=""
 		hint="Label do GROUP">
 
-	<cfargument 
+	<cfargument
 		name     ="where" 	
 		type	 ="string"
 		required ="false"
@@ -110,13 +110,13 @@
 		<cfset arguments.fields = decode(arguments.fields)>
 
 		<cfset _fields = "">
-		<cfloop array="#arguments.fields#" index="i">			
+		<cfloop array="#arguments.fields#" index="i">
 			<cfset _fields = _fields & "[" & i.field.replaceAll("[^\w\-_]+", "") & "],">			
 		</cfloop>
 		
 		<!--- Verificar se possui order by --->
-		<cfif arguments.orderBy EQ "">			
-			<!--- Definir order by default: primeiro campo de arguments.fields --->				
+		<cfif arguments.orderBy EQ "">
+			<!--- Definir order by default: primeiro campo de arguments.fields --->
 			<cfset _orderBy = "[" & arguments.fields[1].field.replaceAll("[^\w\-_]+", "") & "]">
 		<cfelse>
 			<cfset _orderBy = "">
@@ -229,7 +229,7 @@
 				)
 				
 				SELECT 
-					#_fields# 
+					#_fields#
 					row_number
 				FROM
 					pagination
@@ -254,7 +254,7 @@
 	<cfset result['qQuery'] = QueryToArray(qQuery)>
 	<cfset result['rRecordCount'] = rRecordCount>
 	<cfset result['rQuery'] = rQuery>
-	<cfset result['recordCount'] = qRecordCount.count>	
+	<cfset result['recordCount'] = qRecordCount.count>
 	<cfset result["_table"] = _table>
 	<cfset result['_fields'] = _fields>
 	<cfset result["_orderBy"] = _orderBy>
@@ -284,6 +284,13 @@
 		default="0"
 		hint="ID do usuário">
 
+	<cfargument 
+		name="schema"
+		type="string"
+		required="false"
+		default=""
+		hint="Schema do banco de dados">
+
 	<cfargument
 		name="table"
 		type="string"
@@ -308,14 +315,26 @@
 	<cfset result = structNew()>
 	<cfset result['arguments']  = arguments>
 
-	<cftry>	
+	<cftry>
+		<cfset _table = "[" & arguments.schema.replaceAll("[^\w\-_]+", "") & "].[" & arguments.table.replaceAll("[^\w\-_]+", "") & "]">	
+
 		<cfset arguments.fields = decode(arguments.fields)>
+		<cfset _fields = "">
+		<cfloop from="1" to="#arrayLen(arguments.fields)#" index="i">
+			<cfif i GT 1>
+				<cfset _fields = _fields & "," & "[" & arguments.fields[i].field.replaceAll("[^\w\-_]+", "") & "]">			
+			<cfelse>
+				<cfset _fields = _fields & "[" & arguments.fields[i].field.replaceAll("[^\w\-_]+", "") & "]">
+			</cfif>
+		</cfloop>
+		<cfset _fields = listToArray(_fields)>
+
 		<cfset arguments.selectedItems = decode(arguments.selectedItems)>
 		
 		<!--- Utilize apenas para testes --->
-		<!--- <cfset dump = arrayNew(1)> --->
+		<!--- <cfset dump = arrayNew(1)> --->		
 		<cfloop array="#arguments.selectedItems#" index="i">
-			<cfquery name="qRemove" datasource="#arguments.dsn#">
+			<cfquery result="qRemove" datasource="#arguments.dsn#">
 				<!---
 				-- Utilize a instrução abaixo (SELECT) para testes
 				-- Para verificar quais registros estão sendos removidos por exemplo
@@ -325,11 +344,11 @@
 				FROM
 					#arguments.table#
 				--->
-				DELETE FROM #arguments.table#
+				DELETE FROM #_table#
 
 				<!--- Constroi condição da instrução DELETE (SQL)--->
 				<cfset whereInit = "WHERE">
-				<cfloop array="#arguments.fields#" index="j">
+				<cfloop array="#_fields#" index="j">
 					<cfif isDefined("j.field") AND isDefined("j.pk") AND j.pk>
 						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i[j.field]#">
 						<cfset whereInit = "AND ">
@@ -337,10 +356,12 @@
 				</cfloop>
 			</cfquery>
 			<!--- <cfset arrayAppend(dump, qRemove)> --->
-		</cfloop>
+		</cfloop>	
 		
 		<!--- Utilize apenas para testes --->
 		<!--- <cfset result['dump'] = dump> --->
+		<cfset result['_table'] = _table>
+		<cfset result['_fields'] = _fields>
 		<cfset result['success'] = true>
 		
 		<cfcatch>

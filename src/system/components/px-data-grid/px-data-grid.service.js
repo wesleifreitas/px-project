@@ -32,15 +32,11 @@ define(['../../services/module'], function(services) {
 
         }
 
-        function remove(table, fields, selectedItems, callback) {
+        function remove(params, callback) {
 
-            var params = {
-                dsn: pxConfig.PROJECT_DSN,
-                user: $rootScope.globals.currentUser.usu_id,
-                table: table,
-                fields: fields,
-                selectedItems: selectedItems
-            };
+            params.dsn = pxConfig.PROJECT_DSN;
+            params.user = $rootScope.globals.currentUser.usu_id;
+
             $http({
                 method: 'POST',
                 url: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.cfc?method=removeData',
