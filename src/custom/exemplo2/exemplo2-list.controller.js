@@ -53,9 +53,13 @@ define(['../controllers/module'], function(controllers) {
              * @type {Object}
              */
             $scope.dgExemplo2Config = {
-                table: 'dbo.exemplo2',
+                schema: 'dbo',
+                table: 'exemplo2',
                 group: false,
-                orderBy: 'exe2_categoria',
+                orderBy: [{
+                    field: 'exe2_categoria',
+                    sort: 'asc'
+                }],
                 fields: [{
                     pk: true,
                     title: 'id',
