@@ -14,6 +14,7 @@ define(['../../directives/module'], function(directives) {
                 lengthChange: '=pxLengthChange',
                 lengthMenu: '=pxLengthMenu',
                 ajaxUrl: '@pxAjaxUrl',
+                schema: '@pxSchema',
                 table: '@pxTable',
                 fields: '@pxFields',
                 orderBy: '@pxOrderBy',
@@ -48,14 +49,14 @@ define(['../../directives/module'], function(directives) {
                 // Consulta por demanda?
                 if (!angular.isDefined(scope.demand)) {
                     scope.demand = true;
-                }else{
+                } else {
                     scope.demand = (scope.demand === "true");
                 }
 
                 // Group
                 if (!angular.isDefined(scope.group)) {
                     scope.group = pxConfig.GROUP;
-                }else{
+                } else {
                     scope.group = (scope.group === "true");
                 }
 
@@ -79,6 +80,7 @@ define(['../../directives/module'], function(directives) {
                     scope.columns = '';
 
                     var objConfig = JSON.parse(scope.config);
+                    scope.schema = scope.schema || objConfig.schema || 'dbo';
                     scope.table = scope.table || objConfig.table;
                     scope.view = scope.view || objConfig.view;
                     scope.orderBy = scope.orderBy || objConfig.orderBy;
@@ -230,7 +232,7 @@ define(['../../directives/module'], function(directives) {
                     scope.dataTable = $sce.trustAsHtml(scope.dataTable);
 
                     // Data Grid pronta para consulta
-                    scope.pxTableReady = true;                   
+                    scope.pxTableReady = true;
                 });
 
                 // Internal Control - Start
@@ -691,13 +693,14 @@ define(['../../directives/module'], function(directives) {
             var params = {};
             params.dsn = pxConfig.PROJECT_DSN;
 
+            params.schema = $scope.schema;
             if (angular.isDefined($scope.view) && $scope.view !== '') {
                 params.table = $scope.view;
             } else {
                 params.table = $scope.table;
             }
             params.fields = angular.toJson(arrayFields);
-            params.orderBy = $scope.orderBy;
+            params.orderBy = angular.toJson($scope.orderBy);
 
             params.rows = $scope.rowsProcess;
 

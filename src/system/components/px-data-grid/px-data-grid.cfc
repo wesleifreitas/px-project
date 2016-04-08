@@ -46,6 +46,13 @@
 		hint="Linha final do select">
 
 	<cfargument 
+		name="schema"
+		type="string"
+		required="false"
+		default=""
+		hint="Schema do banco de dados">	
+
+	<cfargument 
 		name="table"
 		type="string"
 		required="false"
@@ -97,19 +104,37 @@
 	<cfset result = structNew()>
 	<cftry>
 
+		<!--- http://www.bennadel.com/blog/867-ask-ben-protecting-database-table-names-in-coldfusion-cfquery.htm --->
+		<cfset _table = "[" & arguments.schema.replaceAll("[^\w\-_]+", "") & "].[" & arguments.table.replaceAll("[^\w\-_]+", "") & "]">
+
 		<cfset arguments.fields = decode(arguments.fields)>
 
-		<cfset listFields = "">
-		<cfloop array="#arguments.fields#" index="i">
-			
-			<cfset listFields = listFields&i.field&",">
-			
+		<cfset _fields = "">
+		<cfloop array="#arguments.fields#" index="i">			
+			<cfset _fields = _fields & "[" & i.field.replaceAll("[^\w\-_]+", "") & "],">			
 		</cfloop>
+		
+		<!--- Verificar se possui order by --->
+		<cfif arguments.orderBy EQ "">			
+			<!--- Definir order by default: primeiro campo de arguments.fields --->				
+			<cfset _orderBy = "[" & arguments.fields[1].field.replaceAll("[^\w\-_]+", "") & "]">
+		<cfelse>
+			<cfset _orderBy = "">
+			<cfset arrayOrderBy = decode(arguments.orderBy)>
 
-		<cfif arguments.orderBy EQ "">
-			<cfset arguments.orderBy = arguments.fields[1].field>
+			<cfset orderByInit = "">		
+			<cfloop array="#arrayOrderBy#" index="i">
+				<cfif isDefined("i.field")>
+					<cfif not isDefined("i.sort") OR (uCase(i.sort) NEQ "ASC" AND uCase(i.sort) NEQ "DESC")>
+						<cfset i.sort = "ASC">
+					</cfif>
+
+					<cfset _orderBy = _orderBy & #orderByInit# & "[" & i.field & "] " & i.sort>
+					<cfset orderByInit = ",">
+				</cfif>
+			</cfloop>
 		</cfif>
-
+	
 		<cfif arguments.where NEQ "">
 			<cfset arguments.where = decode(arguments.where)>
 		<cfelse>
@@ -131,11 +156,11 @@
 		</cfif>
 
 		<cftransaction>
-			<cfquery name="qRecordCount" datasource="#arguments.dsn#">
+			<cfquery datasource="#arguments.dsn#" name="qRecordCount" result="rRecordCount">
 				SELECT
 					COUNT(1) as count
 				FROM
-					#arguments.table#
+					#_table#
 				<cfset whereInit = "WHERE">
 				<cfif arguments.group>
 					#whereInit# #arguments.groupItem# = <cfqueryparam cfsqltype="cf_sql_integer" value="#qUsuario.grupo_id#">
@@ -165,15 +190,15 @@
 				</cfloop>
 			</cfquery>
 			
-			<cfquery name="qQuery" datasource="#arguments.dsn#">
+			<cfquery datasource="#arguments.dsn#" name="qQuery" result="rQuery">
 				WITH pagination AS
 				(
 					SELECT 
 						<!--- TOP 1 --->
-						#listFields#
-						ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS row_number
+						#_fields#
+						ROW_NUMBER() OVER (ORDER BY #_orderBy#) AS row_number
 					FROM 
-						#arguments.table#
+						#_table#
 					<cfset whereInit = "WHERE">
 					<cfif arguments.group>
 						#whereInit# #arguments.groupItem# = <cfqueryparam cfsqltype="cf_sql_integer" value="#qUsuario.grupo_id#">
@@ -204,7 +229,7 @@
 				)
 				
 				SELECT 
-					#listFields# 
+					#_fields# 
 					row_number
 				FROM
 					pagination
@@ -222,13 +247,17 @@
 		</cfcatch>
 
 	</cftry>
-
-	<cfset result['listFields']  = listFields>
-	<cfset result['arguments']   = arguments>
-	<cfset result['rowFrom']     = arguments.rowFrom>
-	<cfset result['rowTo']       = arguments.rowTo>
-	<cfset result['qQuery']      = QueryToArray(qQuery)>
-	<cfset result['recordCount'] = qRecordCount.count>
+	
+	<cfset result['arguments'] = arguments>
+	<cfset result['rowFrom'] = arguments.rowFrom>
+	<cfset result['rowTo'] = arguments.rowTo>
+	<cfset result['qQuery'] = QueryToArray(qQuery)>
+	<cfset result['rRecordCount'] = rRecordCount>
+	<cfset result['rQuery'] = rQuery>
+	<cfset result['recordCount'] = qRecordCount.count>	
+	<cfset result["_table"] = _table>
+	<cfset result['_fields'] = _fields>
+	<cfset result["_orderBy"] = _orderBy>
 
 	<cfreturn result>
 
