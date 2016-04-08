@@ -319,20 +319,15 @@
 		<cfset _table = "[" & arguments.schema.replaceAll("[^\w\-_]+", "") & "].[" & arguments.table.replaceAll("[^\w\-_]+", "") & "]">	
 
 		<cfset arguments.fields = decode(arguments.fields)>
-		<cfset _fields = "">
+		
 		<cfloop from="1" to="#arrayLen(arguments.fields)#" index="i">
-			<cfif i GT 1>
-				<cfset _fields = _fields & "," & "[" & arguments.fields[i].field.replaceAll("[^\w\-_]+", "") & "]">			
-			<cfelse>
-				<cfset _fields = _fields & "[" & arguments.fields[i].field.replaceAll("[^\w\-_]+", "") & "]">
-			</cfif>
+			<cfset arguments.fields[i].field = "[" & arguments.fields[i].field.replaceAll("[^\w\-_]+", "") & "]"> 
 		</cfloop>
-		<cfset _fields = listToArray(_fields)>
-
+		
 		<cfset arguments.selectedItems = decode(arguments.selectedItems)>
 		
 		<!--- Utilize apenas para testes --->
-		<!--- <cfset dump = arrayNew(1)> --->		
+		<!--- <cfset dump = arrayNew(1)> --->
 		<cfloop array="#arguments.selectedItems#" index="i">
 			<cfquery result="qRemove" datasource="#arguments.dsn#">
 				<!---
@@ -342,15 +337,15 @@
 				SELECT
 					*
 				FROM
-					#arguments.table#
+					#_table#
 				--->
 				DELETE FROM #_table#
 
 				<!--- Constroi condição da instrução DELETE (SQL)--->
 				<cfset whereInit = "WHERE">
-				<cfloop array="#_fields#" index="j">
+				<cfloop array="#arguments.fields#" index="j">
 					<cfif isDefined("j.field") AND isDefined("j.pk") AND j.pk>
-						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i[j.field]#">
+						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i[j.field.replaceAll("[^\w\-_]+", "")]#">
 						<cfset whereInit = "AND ">
 					</cfif>
 				</cfloop>
@@ -360,12 +355,11 @@
 		
 		<!--- Utilize apenas para testes --->
 		<!--- <cfset result['dump'] = dump> --->
-		<cfset result['_table'] = _table>
-		<cfset result['_fields'] = _fields>
+		<cfset result['_table'] = _table>		
 		<cfset result['success'] = true>
 		
 		<cfcatch>
-			<cfset result['success'] = false>
+			<cfset result['success'] = false>			
 			<cfset result['cfcatch'] = cfcatch>
 		</cfcatch>
 
