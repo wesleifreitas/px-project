@@ -27,7 +27,8 @@ define(['../controllers/module'], function(controllers) {
 
         // Configuração do exe2_id
         $scope.exe2_id_searchConfig = {
-            table: 'dbo.exemplo2',
+            schema: 'dbo',
+            table: 'exemplo2',
             group: false,
             fields: [{
                 title: '',
@@ -98,9 +99,13 @@ define(['../controllers/module'], function(controllers) {
              * @type {Object}
              */
             $scope.dgExemploConfig = {
-                table: 'dbo.exemplo',
-                view: 'dbo.vw_exemplo',
-                orderBy: 'exe_nome',
+                schema: 'dbo',
+                table: 'exemplo',
+                view: 'vw_exemplo',
+                orderBy: [{
+                    field: 'exe_nome',
+                    sort: 'asc'
+                }],
                 group: true,
                 fields: [{
                     pk: true,
@@ -274,8 +279,9 @@ define(['../controllers/module'], function(controllers) {
 
             // Configurar formulário
             $scope.formConfig = {
-                table: 'dbo.exemplo',
-                view: 'dbo.vw_exemplo',
+                schema: 'dbo',
+                table: 'exemplo',
+                view: 'vw_exemplo',
                 fields: [{
                     pk: true,
                     field: 'exe_id',
@@ -407,7 +413,8 @@ define(['../controllers/module'], function(controllers) {
              * @type {Object}
              */
             $scope.dgExemplo2Config = {
-                table: 'dbo.exemplo2',
+                schema: 'dbo',
+                table: 'exemplo2',
                 group: false,
                 fields: [{
                     pk: true,
