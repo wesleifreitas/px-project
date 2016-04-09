@@ -166,7 +166,7 @@
                 <li ng-click="logout()"><a href="">Sair</a></li>
             </ul>
         </div>
-        </div>'>q
+        </div>'>
     <cfreturn response>
 
 </cffunction>
