@@ -46,6 +46,13 @@
 		hint="Linha final do select">
 
 	<cfargument 
+		name="schema"
+		type="string"
+		required="false"
+		default=""
+		hint="Schema do banco de dados">
+
+	<cfargument
 		name="table"
 		type="string"
 		required="false"
@@ -87,7 +94,7 @@
 		default=""
 		hint="Label do GROUP">
 
-	<cfargument 
+	<cfargument
 		name     ="where" 	
 		type	 ="string"
 		required ="false"
@@ -97,19 +104,37 @@
 	<cfset result = structNew()>
 	<cftry>
 
+		<!--- http://www.bennadel.com/blog/867-ask-ben-protecting-database-table-names-in-coldfusion-cfquery.htm --->
+		<cfset _table = "[" & arguments.schema.replaceAll("[^\w\-_]+", "") & "].[" & arguments.table.replaceAll("[^\w\-_]+", "") & "]">
+
 		<cfset arguments.fields = decode(arguments.fields)>
 
-		<cfset listFields = "">
+		<cfset _fields = "">
 		<cfloop array="#arguments.fields#" index="i">
-			
-			<cfset listFields = listFields&i.field&",">
-			
+			<cfset _fields = _fields & "[" & i.field.replaceAll("[^\w\-_]+", "") & "],">			
 		</cfloop>
-
+		
+		<!--- Verificar se possui order by --->
 		<cfif arguments.orderBy EQ "">
-			<cfset arguments.orderBy = arguments.fields[1].field>
-		</cfif>
+			<!--- Definir order by default: primeiro campo de arguments.fields --->
+			<cfset _orderBy = "[" & arguments.fields[1].field.replaceAll("[^\w\-_]+", "") & "]">
+		<cfelse>
+			<cfset _orderBy = "">
+			<cfset arrayOrderBy = decode(arguments.orderBy)>
 
+			<cfset orderByInit = "">		
+			<cfloop array="#arrayOrderBy#" index="i">
+				<cfif isDefined("i.field")>
+					<cfif not isDefined("i.sort") OR (uCase(i.sort) NEQ "ASC" AND uCase(i.sort) NEQ "DESC")>
+						<cfset i.sort = "ASC">
+					</cfif>
+
+					<cfset _orderBy = _orderBy & #orderByInit# & "[" & i.field & "] " & i.sort>
+					<cfset orderByInit = ",">
+				</cfif>
+			</cfloop>
+		</cfif>
+	
 		<cfif arguments.where NEQ "">
 			<cfset arguments.where = decode(arguments.where)>
 		<cfelse>
@@ -131,11 +156,11 @@
 		</cfif>
 
 		<cftransaction>
-			<cfquery name="qRecordCount" datasource="#arguments.dsn#">
+			<cfquery datasource="#arguments.dsn#" name="qRecordCount" result="rRecordCount">
 				SELECT
 					COUNT(1) as count
 				FROM
-					#arguments.table#
+					#_table#
 				<cfset whereInit = "WHERE">
 				<cfif arguments.group>
 					#whereInit# #arguments.groupItem# = <cfqueryparam cfsqltype="cf_sql_integer" value="#qUsuario.grupo_id#">
@@ -165,15 +190,15 @@
 				</cfloop>
 			</cfquery>
 			
-			<cfquery name="qQuery" datasource="#arguments.dsn#">
+			<cfquery datasource="#arguments.dsn#" name="qQuery" result="rQuery">
 				WITH pagination AS
 				(
 					SELECT 
-						-- TOP 1
-						#listFields#
-						ROW_NUMBER() OVER (ORDER BY #arguments.orderBy#) AS row_number
+						<!--- TOP 1 --->
+						#_fields#
+						ROW_NUMBER() OVER (ORDER BY #_orderBy#) AS row_number
 					FROM 
-						#arguments.table#
+						#_table#
 					<cfset whereInit = "WHERE">
 					<cfif arguments.group>
 						#whereInit# #arguments.groupItem# = <cfqueryparam cfsqltype="cf_sql_integer" value="#qUsuario.grupo_id#">
@@ -204,7 +229,7 @@
 				)
 				
 				SELECT 
-					#listFields# 
+					#_fields#
 					row_number
 				FROM
 					pagination
@@ -222,13 +247,17 @@
 		</cfcatch>
 
 	</cftry>
-
-	<cfset result['listFields']  = listFields>
-	<cfset result['arguments']   = arguments>
-	<cfset result['rowFrom']     = arguments.rowFrom>
-	<cfset result['rowTo']       = arguments.rowTo>
-	<cfset result['qQuery']      = QueryToArray(qQuery)>
+	
+	<cfset result['arguments'] = arguments>
+	<cfset result['rowFrom'] = arguments.rowFrom>
+	<cfset result['rowTo'] = arguments.rowTo>
+	<cfset result['qQuery'] = QueryToArray(qQuery)>
+	<cfset result['rRecordCount'] = rRecordCount>
+	<cfset result['rQuery'] = rQuery>
 	<cfset result['recordCount'] = qRecordCount.count>
+	<cfset result["_table"] = _table>
+	<cfset result['_fields'] = _fields>
+	<cfset result["_orderBy"] = _orderBy>
 
 	<cfreturn result>
 
@@ -255,6 +284,13 @@
 		default="0"
 		hint="ID do usuário">
 
+	<cfargument 
+		name="schema"
+		type="string"
+		required="false"
+		default=""
+		hint="Schema do banco de dados">
+
 	<cfargument
 		name="table"
 		type="string"
@@ -279,14 +315,21 @@
 	<cfset result = structNew()>
 	<cfset result['arguments']  = arguments>
 
-	<cftry>	
+	<cftry>
+		<cfset _table = "[" & arguments.schema.replaceAll("[^\w\-_]+", "") & "].[" & arguments.table.replaceAll("[^\w\-_]+", "") & "]">	
+
 		<cfset arguments.fields = decode(arguments.fields)>
+		
+		<cfloop from="1" to="#arrayLen(arguments.fields)#" index="i">
+			<cfset arguments.fields[i].field = "[" & arguments.fields[i].field.replaceAll("[^\w\-_]+", "") & "]"> 
+		</cfloop>
+		
 		<cfset arguments.selectedItems = decode(arguments.selectedItems)>
 		
 		<!--- Utilize apenas para testes --->
 		<!--- <cfset dump = arrayNew(1)> --->
 		<cfloop array="#arguments.selectedItems#" index="i">
-			<cfquery name="qRemove" datasource="#arguments.dsn#">
+			<cfquery result="qRemove" datasource="#arguments.dsn#">
 				<!---
 				-- Utilize a instrução abaixo (SELECT) para testes
 				-- Para verificar quais registros estão sendos removidos por exemplo
@@ -294,28 +337,29 @@
 				SELECT
 					*
 				FROM
-					#arguments.table#
+					#_table#
 				--->
-				DELETE FROM #arguments.table#
+				DELETE FROM #_table#
 
 				<!--- Constroi condição da instrução DELETE (SQL)--->
 				<cfset whereInit = "WHERE">
 				<cfloop array="#arguments.fields#" index="j">
 					<cfif isDefined("j.field") AND isDefined("j.pk") AND j.pk>
-						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i[j.field]#">
+						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i[j.field.replaceAll("[^\w\-_]+", "")]#">
 						<cfset whereInit = "AND ">
 					</cfif>
 				</cfloop>
 			</cfquery>
 			<!--- <cfset arrayAppend(dump, qRemove)> --->
-		</cfloop>
+		</cfloop>	
 		
 		<!--- Utilize apenas para testes --->
 		<!--- <cfset result['dump'] = dump> --->
+		<cfset result['_table'] = _table>		
 		<cfset result['success'] = true>
 		
 		<cfcatch>
-			<cfset result['success'] = false>
+			<cfset result['success'] = false>			
 			<cfset result['cfcatch'] = cfcatch>
 		</cfcatch>
 
