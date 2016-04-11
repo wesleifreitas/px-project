@@ -64,7 +64,7 @@
 					<cfset result["message"] = 'A senha temporária expirou!\nVocê pode gerar outra clicando no link "Esqueci minha senha"'>					
 					<cfreturn result>
 				</cfif>
-			<cfelseif qQuery.usu_senhaData NEQ "" AND dateDiff("d", qQuery.usu_senhaData, now()) GT qQuery.usu_senhaExpira>									
+			<cfelseif qQuery.usu_senhaExpira GT 0 AND qQuery.usu_senhaData NEQ "" AND dateDiff("d", qQuery.usu_senhaData, now()) GT qQuery.usu_senhaExpira>
 				<cfset result["message"] = 'Sua senha expirou'>
 				<cfquery datasource="#arguments.dsn#">
 					UPDATE
