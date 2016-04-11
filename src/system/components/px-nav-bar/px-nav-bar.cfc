@@ -231,13 +231,14 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
     --->
     <cfif LOCAL.qMenu.RecordCount>       
         <!--- Loop nos menus filhos --->
-        <cfloop query="LOCAL.qMenu">
+        <!--- <cfloop query="LOCAL.qMenu"> --->
+        <cfloop from="1" to="#LOCAL.qMenu.RecordCount#" index="i">
             <!--- Possui submenu? --->
-            <cfif LOCAL.qMenu.count_submenu GT 0>
+            <cfif LOCAL.qMenu.count_submenu[i] GT 0>
 
               <li class="#arguments.cssFit#">
 
-                <a class='dropdown-toggle #arguments.cssFit# px-pointer'>#LOCAL.qMenu.men_nome#</a>
+                <a class='dropdown-toggle #arguments.cssFit# px-pointer'>#LOCAL.qMenu.men_nome[i]#</a>
 
                 <ul class='d-menu #arguments.cssFit#' data-role='dropdown'>
 
@@ -246,35 +247,38 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
                 --->
                 <cfset getRecursiveNavBar(
                     data = arguments.data,
-                    men_idPai = LOCAL.qMenu.men_id,
+                    men_idPai = LOCAL.qMenu.men_id[i],
                     cssFit = arguments.cssFit
                     ) />
             
             <!--- Verifica se possui idPai --->
-            <cfelseif LOCAL.qMenu.men_idPai GT 0>
+            <cfelseif LOCAL.qMenu.men_idPai[i] GT 0>
 
                 <li>
-                    <a ng-click="showView('#LOCAL.qMenu.men_id#')">#LOCAL.qMenu.men_nome#</a>
+                    <a ng-click="showView('#LOCAL.qMenu.men_id[i]#')">#LOCAL.qMenu.men_nome[i]#</a>
                 </li>
                  
             <cfelse>
                 
                 <li>
-                    <cfif LOCAL.qMenu.count_submenu EQ 0>
-                        <a class="px-pointer" ng-click="showView('#LOCAL.qMenu.men_id#')">#LOCAL.qMenu.men_nome# </a>
+                    <cfif LOCAL.qMenu.count_submenu[i] EQ 0>
+                        <a class="px-pointer" ng-click="showView('#LOCAL.qMenu.men_id[i]#')">#LOCAL.qMenu.men_nome[i]# </a>
                     <cfelse>
-                        <a>#LOCAL.qMenu.men_nome# </a>
+                        <a>#LOCAL.qMenu.men_nome[i]# </a>
                     </cfif>                   
                 </li>
 
             </cfif>                   
-        
-            <cfif (LOCAL.qMenu.men_ordem GTE LOCAL.qMenu.count_menu)>
+            
+            <!---<cfif (LOCAL.qMenu.men_ordem[i] GTE LOCAL.qMenu.count_menu[i])>
 
                  </ul> </li>    
 
-            </cfif>
-        </cfloop>        
+            </cfif>--->
+            
+        </cfloop>  
+         
+        </ul> </li>     
     </cfif>
 
     <cfreturn />
