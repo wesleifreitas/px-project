@@ -83,7 +83,7 @@ define(['../../directives/module'], function(directives) {
                     $scope.view.men_id = response.qView[0].MEN_ID;
                     $scope.view.caminho = response.qView[0].MEN_NOMECAMINHO;
                     $scope.view.header = headerView[0];
-                    $scope.view.titulo = response.qView[0].MEN_NOMECAMINHO.split('»')[response.qView[0].MEN_NOMECAMINHO.split('»').length - 1];
+                    $scope.view.title = response.qView[0].MEN_NOMECAMINHO.split('»')[response.qView[0].MEN_NOMECAMINHO.split('»').length - 1];
                     $scope.view.icon = response.qView[0].COM_ICON;
 
                     $scope.templates[1].name = response.qView[0].COM_VIEW;
