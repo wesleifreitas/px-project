@@ -10,8 +10,8 @@
 .metro .dataTable thead .sorting_desc:after,
 .metro .dataTable thead .sorting:after {
   font-family: metroSysIcons;
-  position: relative;
-  float: right; !px-project!
+  /*position: relative; !px-project!*/
+  float: right;
   right: 0;
   color: #999999;
 }
