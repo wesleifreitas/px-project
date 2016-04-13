@@ -867,10 +867,15 @@ define(['../../directives/module'], function(directives) {
                 // Se possuir moment
                 // http://momentjs.com/
                 if (item.moment) {
-                    //data[item.field] = moment(Date.parse(data[item.field])).format(item.moment);
-                    if (data[item.field] !== '') {
+                    // Verificar se o valor é do tipo date
+                    if (angular.isDate(data[item.field])) {
                         require(['moment'], function(moment) {
                             data[item.field] = moment(Date.parse(data[item.field])).format(item.moment);
+                        });
+                    } else {                        
+                        // Senão considerar numérico (YYYYMMDD)
+                        require(['moment'], function(moment) {    
+                            data[item.field] = moment(Date.parse(new Date(String(data[item.field]).substr(0, 4), String(data[item.field]).substr(4, 2) - 1, String(data[item.field]).substr(6, 2)))).format(item.moment);
                         });
                     }
                 }
