@@ -276,6 +276,14 @@ define(['../../directives/module'], function(directives) {
                 };
 
                 /**
+                 * Limpar dados
+                 * @param {object} value objeto linha do DataTable
+                 */
+                scope.internalControl.clearData = function(value) {
+                    scope.clearData(value);
+                };
+
+                /**
                  * Remover itens (selecionados) da listagem
                  * @return {void}
                  */
@@ -903,6 +911,19 @@ define(['../../directives/module'], function(directives) {
          */
         $scope.removeRow = function removeRow(value) {
             $scope.internalControl.table.rows(value).remove().draw();
+        }
+
+        /**
+         * Limpar dados
+         * @return {void}
+         */
+        $scope.clearData = function clearData(value) {
+            // Verificar a listagem foi iniciada para que assim possa apagar o dados
+            if ($scope.pxTableReady) {
+                requirejs(["dataTables"], function() {
+                    $('#' + $scope.id + '_pxDataTable').DataTable().clear().draw();
+                });
+            }
         }
 
         /**
