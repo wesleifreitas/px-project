@@ -276,11 +276,11 @@ define(['../../directives/module'], function(directives) {
                 };
 
                 /**
-                 * Limpar dados
-                 * @param {object} value objeto linha do DataTable
+                 * Limpar dados da listagem
+                 * @return {Void}
                  */
-                scope.internalControl.clearData = function(value) {
-                    scope.clearData(value);
+                scope.internalControl.clearData = function() {
+                    scope.clearData();
                 };
 
                 /**
@@ -917,7 +917,7 @@ define(['../../directives/module'], function(directives) {
          * Limpar dados
          * @return {void}
          */
-        $scope.clearData = function clearData(value) {
+        $scope.clearData = function clearData() {
             // Verificar a listagem foi iniciada para que assim possa apagar o dados
             if ($scope.pxTableReady) {
                 requirejs(["dataTables"], function() {
