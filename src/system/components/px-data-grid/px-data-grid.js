@@ -59,12 +59,12 @@ define(['../../directives/module'], function(directives) {
                 } else {
                     scope.group = (scope.group === "true");
                 }
-
+              
                 scope.$watch('config', function(newValue, oldValue) {
-
                     // Transformar valor String para Array
                     if (newValue !== '') {
                         newValue = JSON.parse(newValue);
+                        //console.info(scope.id + ' - new config:', newValue)
                     } else {
                         return;
                     }
@@ -78,24 +78,23 @@ define(['../../directives/module'], function(directives) {
 
                     // Colunas para o <table>
                     scope.columns = '';
-
-                    var objConfig = JSON.parse(scope.config);
-                    scope.schema = scope.schema || objConfig.schema || 'dbo';
-                    scope.table = scope.table || objConfig.table;
-                    scope.view = scope.view || objConfig.view;
-                    scope.orderBy = scope.orderBy || objConfig.orderBy;
-                    scope.where = scope.where || objConfig.where;
+                                    
+                    scope.schema = newValue.schema || 'dbo';
+                    scope.table = newValue.table;
+                    scope.view = newValue.view;
+                    scope.orderBy = newValue.orderBy;
+                    scope.where = newValue.where;
 
                     // Configuração Group
                     scope.group = scope.group || pxConfig.GROUP;
-                    if (angular.isDefined(objConfig.group)) {
-                        scope.group = objConfig.group;
+                    if (angular.isDefined(newValue.group)) {
+                        scope.group = newValue.group;
                     }
-                    if (angular.isDefined(objConfig.groupItem)) {
-                        scope.groupItem = objConfig.groupItem;
+                    if (angular.isDefined(newValue.groupItem)) {
+                        scope.groupItem = newValue.groupItem;
                     }
-                    if (angular.isDefined(objConfig.groupLabel)) {
-                        scope.groupLabel = objConfig.groupLabel;
+                    if (angular.isDefined(newValue.groupLabel)) {
+                        scope.groupLabel = newValue.groupLabel;
                     }
 
                     if (scope.group === true) {
@@ -151,8 +150,6 @@ define(['../../directives/module'], function(directives) {
                     var aoColumnsData = {};
                     var columnDefs = 0;
                     scope.columnDefs = [];
-
-
 
                     angular.forEach(scope.fields, function(index) {
 
@@ -249,7 +246,9 @@ define(['../../directives/module'], function(directives) {
                  * @return {void}
                  */
                 scope.internalControl.getData = function() {
-                    scope.getData(0, scope.rowsProcess);
+                    $timeout(function() {
+                        scope.getData(0, scope.rowsProcess);
+                    }, 0)
                 };
 
                 /**
@@ -275,7 +274,6 @@ define(['../../directives/module'], function(directives) {
                 scope.internalControl.removeRow = function(value) {
                     scope.removeRow(value);
                 };
-
 
                 /**
                  * Remover itens (selecionados) da listagem
@@ -603,10 +601,9 @@ define(['../../directives/module'], function(directives) {
          * @param  {number} rowTo   linha final
          * @return {void}
          */
-        $scope.getData = function(rowFrom, rowTo) {
+        $scope.getData = function(rowFrom, rowTo) {            
             // Processamento getData iniciado
-            $scope.internalControl.working = true;
-            //alert($scope.internalControl.working);
+            $scope.internalControl.working = true;            
 
             var arrayFields = $scope.fields; //JSON.parse($scope.fields);            
 
@@ -688,7 +685,7 @@ define(['../../directives/module'], function(directives) {
                 }
 
             });
-
+            
             // Parâmetros da consulta
             var params = {};
 
@@ -713,7 +710,7 @@ define(['../../directives/module'], function(directives) {
             params.group = $scope.group;
             params.groupItem = $scope.groupItem;
             params.groupLabel = $scope.groupLabel;
-
+            
             if ($scope.where) {
                 $scope.where = pxUtil.setFilterObject($scope.where, false, pxConfig.GROUP_TABLE);
                 params.where = angular.toJson($scope.where);
@@ -872,9 +869,9 @@ define(['../../directives/module'], function(directives) {
                         require(['moment'], function(moment) {
                             data[item.field] = moment(Date.parse(data[item.field])).format(item.moment);
                         });
-                    } else {                        
+                    } else {
                         // Senão considerar numérico (YYYYMMDD)
-                        require(['moment'], function(moment) {    
+                        require(['moment'], function(moment) {
                             data[item.field] = moment(Date.parse(new Date(String(data[item.field]).substr(0, 4), String(data[item.field]).substr(4, 2) - 1, String(data[item.field]).substr(6, 2)))).format(item.moment);
                         });
                     }
@@ -900,12 +897,16 @@ define(['../../directives/module'], function(directives) {
             });
         }
 
+        /**
+         * Remover linha
+         * @return {void}
+         */
         $scope.removeRow = function removeRow(value) {
             $scope.internalControl.table.rows(value).remove().draw();
         }
 
         /**
-         * Remover itens da listagem                  
+         * Remover itens da listagem
          * @return {void}
          */
         $scope.remove = function remove() {
