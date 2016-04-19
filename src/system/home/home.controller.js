@@ -92,7 +92,7 @@ define(['../controllers/module'], function(controllers) {
                 */
             }();
 
-            vm.toggleLeft = buildToggler('left');
+            $scope.toggleLeft = buildToggler('left');
             $scope.toggleRight = buildToggler('right');
             /**
              * Build handler to open/close a SideNav; when animation finishes
