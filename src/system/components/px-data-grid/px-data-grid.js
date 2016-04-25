@@ -59,7 +59,7 @@ define(['../../directives/module'], function(directives) {
                 } else {
                     scope.group = (scope.group === "true");
                 }
-              
+
                 scope.$watch('config', function(newValue, oldValue) {
                     // Transformar valor String para Array
                     if (newValue !== '') {
@@ -78,7 +78,7 @@ define(['../../directives/module'], function(directives) {
 
                     // Colunas para o <table>
                     scope.columns = '';
-                                    
+
                     scope.schema = newValue.schema || 'dbo';
                     scope.table = newValue.table;
                     scope.view = newValue.view;
@@ -268,11 +268,16 @@ define(['../../directives/module'], function(directives) {
                 };
 
                 /**
-                 * Remover linha
-                 * @param {object} value objeto linha do DataTable
+                 * Remover linha (obs.: função removeFromDataBase não implementada)
+                 * @param {Object} value objeto linha do DataTable, passar '.selected' para remover linhas selecionadas
+                 * @param {Boolean} remover o registro do banco de dados, default = true
                  */
-                scope.internalControl.removeRow = function(value) {
-                    scope.removeRow(value);
+                scope.internalControl.removeRow = function(value, removeFromDataBase) {
+                    // Se não definir removeFromDataBase
+                    if (!angular.isDefined(removeFromDataBase)) {
+                        removeFromDataBase = true;
+                    }
+                    scope.removeRow(value, removeFromDataBase);
                 };
 
                 /**
@@ -609,9 +614,9 @@ define(['../../directives/module'], function(directives) {
          * @param  {number} rowTo   linha final
          * @return {void}
          */
-        $scope.getData = function(rowFrom, rowTo) {            
+        $scope.getData = function(rowFrom, rowTo) {
             // Processamento getData iniciado
-            $scope.internalControl.working = true;            
+            $scope.internalControl.working = true;
 
             var arrayFields = $scope.fields; //JSON.parse($scope.fields);            
 
@@ -639,7 +644,7 @@ define(['../../directives/module'], function(directives) {
                         selectorValue = 'selectedItem';
                     }
 
-                    // Verifica seu o scope do elemento angular possui valor definido
+                    // Verificar seu o scope do elemento angular possui valor definido
                     if (angular.isDefined(angular.element($(selectorName).get(0)).scope()) && angular.element($(selectorName).get(0)).scope().hasOwnProperty(selectorValue)) {
                         // filtro
                         var filter = angular.element($(selectorName).get(0)).scope()[selectorValue];
@@ -693,7 +698,7 @@ define(['../../directives/module'], function(directives) {
                 }
 
             });
-            
+
             // Parâmetros da consulta
             var params = {};
 
@@ -718,7 +723,7 @@ define(['../../directives/module'], function(directives) {
             params.group = $scope.group;
             params.groupItem = $scope.groupItem;
             params.groupLabel = $scope.groupLabel;
-            
+
             if ($scope.where) {
                 $scope.where = pxUtil.setFilterObject($scope.where, false, pxConfig.GROUP_TABLE);
                 params.where = angular.toJson($scope.where);
@@ -909,8 +914,12 @@ define(['../../directives/module'], function(directives) {
          * Remover linha
          * @return {void}
          */
-        $scope.removeRow = function removeRow(value) {
-            $scope.internalControl.table.rows(value).remove().draw();
+        $scope.removeRow = function removeRow(value, removeFromDataBase) {
+            if (value === '.selected') {
+                $scope.internalControl.table.rows('.selected').remove().draw(false);
+            } else {
+                $scope.internalControl.table.rows(value).remove().draw();
+            }
         }
 
         /**
