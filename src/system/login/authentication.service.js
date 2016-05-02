@@ -92,7 +92,8 @@ define(['../services/module'], function(services) {
             var params = {
                 id: id,
                 username: username,
-                password: password
+                password: password,
+                dsn: pxConfig.PROJECT_DSN
             };
             $http({
                 method: 'POST',
@@ -110,7 +111,8 @@ define(['../services/module'], function(services) {
         function Recover(username, email, callback) {
             var params = {
                 username: username,
-                email: email
+                email: email,
+                dsn: pxConfig.PROJECT_DSN
             };
             $http({
                 method: 'POST',

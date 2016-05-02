@@ -47,6 +47,9 @@
 			OR usu_ativo IN (0,2)) -- Usuário inativo, bloqueado
 		</cfquery>	
 
+		<!-- <cfset result["arguments"] = arguments>
+		<cfset result["qQuery"] = qQuery> -->
+
 		<cfif qQuery.recordCount EQ 1>
 			<cfset qQuery.usu_senha = '*'>
 							
@@ -199,7 +202,8 @@
 				usu_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.id#">
 		</cfquery>	
 							
-		<cfreturn login( username = arguments.username,
+		<cfreturn login( dsn = arguments.dsn,
+			username = arguments.username,
 			password = arguments.password)/>
 
 		<cfcatch>
