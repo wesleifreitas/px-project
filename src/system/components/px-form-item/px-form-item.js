@@ -727,6 +727,7 @@ define(['../../directives/module'], function(directives) {
                     searchClick: '&pxSearchClick',
                     templateUrl: '@pxTemplateUrl',
                     for: '@for',
+                    change: '&pxChange'
                 },
                 templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-group.html',
                 link: function(scope, element, attrs, ngModelCtrl) {
@@ -772,6 +773,14 @@ define(['../../directives/module'], function(directives) {
                         };
                     }
 
+                    // How to call a method defined in an AngularJS directive?
+                    // http://stackoverflow.com/questions/16881478/how-to-call-a-method-defined-in-an-angularjs-directive
+                    scope.internalControl = scope.control || {};
+
+                    scope.internalControl.setValue = function(value) {
+                        scope.groupSearchControl.setValue(value);
+                    };
+
                     scope.groupSearchControl = {};
 
                     scope.groupSearchClick = function() {
@@ -792,12 +801,27 @@ define(['../../directives/module'], function(directives) {
                         }
                     }
 
+                    scope.groupSearchChange = function(event) {
+                        scope.internalControl.selectedItem = scope.groupSearchControl.selectedItem;
+                        scope.change({
+                            event: event
+                        });                        
+                    }
+
                     groupSearchCtrl.$inject = ['$scope', '$mdDialog'];
 
                     function groupSearchCtrl($scope, $mdDialog) {
                         $scope.callback = function(event) {
-                            $scope.groupSearchControl.setValue(event.itemClick);
+                            $scope.setValue(event.itemClick);
                             $mdDialog.hide();
+                            $scope.searchClick({
+                                event: event
+                            });
+                        };
+
+                        $scope.setValue = function(value) {
+                            $scope.groupSearchControl.setValue(value);
+                            //$scope.groupSearchChange(value);
                         };
                     }
                 }
@@ -828,6 +852,7 @@ define(['../../directives/module'], function(directives) {
                     searchFields: '@searchfields',
                     dialog: '=pxDialog',
                     searchClick: '&pxSearchClick',
+                    change: '&pxChange',
                     dependencies: '@pxDependencies'
                 },
                 require: '?ngModel',
@@ -929,8 +954,7 @@ define(['../../directives/module'], function(directives) {
                                 }
                             }
                             if (scope.searchStr !== searchStrQuery) {
-                                $scope.clear();
-
+                                scope.clear();
                                 ngModelCtrl.$setValidity('requiredsearch', false);
                             } else {
                                 ngModelCtrl.$setValidity('requiredsearch', true);
@@ -1142,6 +1166,9 @@ define(['../../directives/module'], function(directives) {
                         scope.results = [];
                         //scope.$apply();
                         scope.setValidity();
+                        scope.change({
+                            event: event
+                        });
                     };
 
                     var inputField = element.find('input');
@@ -1240,6 +1267,10 @@ define(['../../directives/module'], function(directives) {
                         scope.showDropdown = false;
                         scope.results = [];
                         */
+
+                        $scope.change({
+                            event: data
+                        });
                     };
 
                     $scope.clear = function() {
