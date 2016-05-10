@@ -620,10 +620,15 @@ define(['../../directives/module'], function(directives) {
 
             var arrayFields = $scope.fields; //JSON.parse($scope.fields);            
 
+            // Armazena se todos os filtros são válidos
+            // Exemplo de filtro não válido: filtro obrigatório com valor vazio
+            var validFilters = true;
+
             // Loop na configuração de campos
             angular.forEach(arrayFields, function(index) {
                 // Valor do filtro
                 index.filterObject = {};
+
 
                 // Verifica se possui campo de filtro
                 // Caso possua campo de filtro será definido o 'filterObject'
@@ -649,8 +654,24 @@ define(['../../directives/module'], function(directives) {
                         // filtro
                         var filter = angular.element($(selectorName).get(0)).scope()[selectorValue];
 
+
+                        if (angular.element($(selectorName).get(0)).scope().required) {
+                            index.filterRequired = true;
+                        }
+
                         // Se filtro for undefined, o filtro será considerado inválido
                         if (!angular.isDefined(filter)) {
+                            // Elemento que será validado
+                            var _element = angular.element($(selectorName).get(0));
+                            // ngModelController do elemento
+                            var _ngModelCtrl = _element.data('$ngModelController');
+                            if (index.filterRequired) {
+                                _ngModelCtrl.$setValidity('required', false);
+                                _element.trigger('keyup');
+                                validFilters = false;
+                            } else {
+                                _ngModelCtrl.$setValidity('required', true);
+                            }
                             return;
                         }
 
@@ -694,10 +715,20 @@ define(['../../directives/module'], function(directives) {
 
                     // Armazena valor do filtro que será enviado ao back-end
                     index.filterObject.value = pxUtil.filterOperator(index.filterObject.value, index.filterOperator);
-
+                    if (index.filterRequired && !angular.isDefined(index.filterObject.value)) {
+                        validFilters = false;
+                    }
                 }
-
             });
+            if (!validFilters) {
+                $scope.reset();
+                requirejs(["dataTables"], function() {
+                    $('#' + $scope.id + '_pxDataTable').DataTable().clear().draw();
+                });
+                $scope.internalControl.working = false;
+                //console.info($('.dataTables_empty'));
+                return;
+            }
 
             // Parâmetros da consulta
             var params = {};
