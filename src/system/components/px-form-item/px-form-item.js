@@ -709,7 +709,7 @@ define(['../../directives/module'], function(directives) {
                 restrict: 'E',
                 scope: {
                     id: '@id',
-                    required: '@required',
+                    required: '=required',
                     control: '=pxControl',
                     placeholder: '@placeholder',
                     inputClass: '@pxInputClass',
@@ -736,6 +736,12 @@ define(['../../directives/module'], function(directives) {
                         if (element.parent().children().length === 1) {
                             element.parent().hide();
                         }
+                    }
+
+                    if (attrs.required) {                        
+                        $timeout(function() {
+                            scope.required = true;
+                        }, 0)
                     }
 
                     // Tabela (SQL)
@@ -805,7 +811,7 @@ define(['../../directives/module'], function(directives) {
                         scope.internalControl.selectedItem = scope.groupSearchControl.selectedItem;
                         scope.change({
                             event: event
-                        });                        
+                        });
                     }
 
                     groupSearchCtrl.$inject = ['$scope', '$mdDialog'];
@@ -835,7 +841,7 @@ define(['../../directives/module'], function(directives) {
                     debug: '=pxDebug',
                     id: '@id',
                     config: '@pxConfig',
-                    required: '@required',
+                    required: '=required',
                     control: '=pxControl',
                     placeholder: '@placeholder',
                     inputClass: '@pxInputClass',
@@ -863,6 +869,12 @@ define(['../../directives/module'], function(directives) {
                         return;
                     }
 
+                    if (attrs.required) {                        
+                        $timeout(function() {
+                            scope.required = true;
+                        }, 0)
+                    }
+                
                     scope.inputClass = scope.inputClass || 'form-control';
 
                     if (scope.dialog) {
