@@ -168,7 +168,14 @@
 				</cfif>
 				<cfloop array="#arguments.fields#" index="i">
 					<cfif isDefined("i.filterObject.field")>
-						#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
+						#whereInit# 
+						#i.filterObject.field# 
+						#replace(i.filterOperator,"%","","all")# 
+						<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
+						<!--- Regra BETWEEN - START --->
+						<cfif i.filterOperator EQ 'BETWEEN'>
+							AND <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.endValue#">
+						</cfif>
 						<cfset whereInit = "AND ">
 					</cfif>
 				</cfloop>
@@ -184,8 +191,13 @@
 							<cfset inStart= "">
 							<cfset inEnd= "">
 						</cfif>
-						#whereInit# #i.field# #replace(i.filterOperator,"%","","all")# #inStart#<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#" list="#i.filterList#">#inEnd#
-							<cfset whereInit = 'AND '>	
+						#whereInit# 
+						#i.field# #replace(i.filterOperator,"%","","all")# 
+						#inStart#
+						<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#" list="#i.filterList#">						
+						#inEnd#
+						<!--- Regra BETWEEN - END --->
+						<cfset whereInit = 'AND '>						
 					</cfif>
 				</cfloop>
 			</cfquery>
@@ -206,7 +218,14 @@
 					</cfif>
 					<cfloop array="#arguments.fields#" index="i">
 						<cfif isDefined("i.filterObject.field")>
-							#whereInit# #i.filterObject.field# #replace(i.filterOperator,"%","","all")# <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
+							#whereInit# 
+							#i.filterObject.field# 
+							#replace(i.filterOperator,"%","","all")# 
+							<cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.value#">
+							<!--- Regra BETWEEN - START --->
+							<cfif i.filterOperator EQ 'BETWEEN'>
+								AND <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.filterObject.endValue#">
+							</cfif>
 							<cfset whereInit = "AND ">
 						</cfif>
 					</cfloop>

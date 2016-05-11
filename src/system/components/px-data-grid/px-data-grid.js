@@ -316,6 +316,8 @@ define(['../../directives/module'], function(directives) {
     pxDataGridCtrl.$inject = ['pxConfig', 'pxUtil', 'pxArrayUtil', 'pxMaskUtil', 'pxStringUtil', 'pxDataGridService', '$scope', '$http', '$timeout'];
 
     function pxDataGridCtrl(pxConfig, pxUtil, pxArrayUtil, pxMaskUtil, pxStringUtil, pxDataGridService, $scope, $http, $timeout) {
+        // Definir moment.js
+        var moment = require('moment');
 
         // Verifica se a grid a está preparada para receber os dados
         $scope.pxTableReady = false;
@@ -324,7 +326,6 @@ define(['../../directives/module'], function(directives) {
         $scope.currentPage = 0;
 
         $scope.$watch('pxTableReady', function(newValue, oldValue) {
-
             if (newValue === true) {
                 $timeout($scope.pxDataGridGetData, 0);
             }
@@ -629,7 +630,6 @@ define(['../../directives/module'], function(directives) {
                 // Valor do filtro
                 index.filterObject = {};
 
-
                 // Verifica se possui campo de filtro
                 // Caso possua campo de filtro será definido o 'filterObject'
                 // filterObject armazena dados do filtro que será realizado no campo
@@ -638,7 +638,7 @@ define(['../../directives/module'], function(directives) {
                     var selectorName = '#' + index.filter;
                     var selectorValue = index.filter;
 
-                    // Verifica se o filtro group
+                    // Verifica se é filtro group
                     if (index.filterGroup) {
                         selectorName += '_groupSearch_inputSearch';
                         selectorValue = 'selectedItem';
@@ -649,37 +649,30 @@ define(['../../directives/module'], function(directives) {
                         selectorValue = 'selectedItem';
                     }
 
+                    // Validar filtro - START
+                    var _element = angular.element($(selectorName).get(0));
+                    var _ngModelCtrl = _element.data('$ngModelController');
+                    if (angular.isDefined(_ngModelCtrl)) {
+                        _ngModelCtrl.$validate();
+                        if (!_ngModelCtrl.$valid) {
+                            _element.trigger('keyup');
+                            validFilters = false;
+                        } else {
+                            _element.trigger('keyup');
+                        }
+                    }
+                    // Validar filtro - END
+
                     // Verificar seu o scope do elemento angular possui valor definido
                     if (angular.isDefined(angular.element($(selectorName).get(0)).scope()) && angular.element($(selectorName).get(0)).scope().hasOwnProperty(selectorValue)) {
                         // filtro
                         var filter = angular.element($(selectorName).get(0)).scope()[selectorValue];
 
-
-                        if (angular.element($(selectorName).get(0)).scope().required) {
-                            index.filterRequired = true;
-                        }
-
-                        // Se filtro for undefined, o filtro será considerado inválido
-                        if (!angular.isDefined(filter)) {
-                            // Elemento que será validado
-                            var _element = angular.element($(selectorName).get(0));
-                            // ngModelController do elemento
-                            var _ngModelCtrl = _element.data('$ngModelController');
-                            if (index.filterRequired) {
-                                _ngModelCtrl.$setValidity('required', false);
-                                _element.trigger('keyup');
-                                validFilters = false;
-                            } else {
-                                _ngModelCtrl.$setValidity('required', true);
-                            }
-                            return;
-                        }
-
                         var tempField = index.field;
                         var tempValue = filter;
 
                         // Se possuir configuração avançada de fitro (filterOptions)
-                        if (angular.isDefined(index.filterOptions)) {
+                        if (angular.isDefined(index.filterOptions) && index.filterOptions.hasOwnProperty('selectedItem')) {
                             tempField = index.filterOptions.field;
                             // value recebe o que foi configurado em index.filterOptions.selectedItem
                             // por exemplo se o filtro for um select, o ng-model pode ser um objeto {id: 1, name: 'teste'}
@@ -700,7 +693,7 @@ define(['../../directives/module'], function(directives) {
                         if (tempValue !== null && tempValue !== '') {
                             // Define o objeto de filtro do campo
                             // field é nome do campo que será filtro no banco de dados
-                            // value é valor do campo, o qual será filtrado                        
+                            // value é valor do campo, o qual será filtrado
                             index.filterObject = {
                                 field: tempField,
                                 value: tempValue
@@ -715,11 +708,97 @@ define(['../../directives/module'], function(directives) {
 
                     // Armazena valor do filtro que será enviado ao back-end
                     index.filterObject.value = pxUtil.filterOperator(index.filterObject.value, index.filterOperator);
-                    if (index.filterRequired && !angular.isDefined(index.filterObject.value)) {
-                        validFilters = false;
+
+                    if (String(index.filterOperator).toUpperCase() === 'BETWEEN') {
+                        var selectorNameEnd = '#' + index.filterOptions.endField;
+                        var selectorValueEnd = index.filterOptions.endField;
+                        if (angular.isDefined(angular.element($(selectorNameEnd + '_inputSearch').get(0)).scope())) {
+                            selectorNameEnd += '_inputSearch';
+                            selectorValueEnd = 'selectedItem';
+                        }
+
+                        // Validar filtro - START
+                        var _element = angular.element($(selectorNameEnd).get(0));
+                        var _ngModelCtrl = _element.data('$ngModelController');
+                        if (angular.isDefined(_ngModelCtrl)) {
+                            _ngModelCtrl.$validate();
+                            if (!_ngModelCtrl.$valid) {
+                                _element.trigger('keyup');
+                                validFilters = false;
+                            } else {
+                                _element.trigger('keyup');
+                            }
+                        }
+                        // Validar filtro - END                    
+
+                        // filtro
+                        var filterEnd = angular.element($(selectorNameEnd).get(0)).scope()[selectorValueEnd];
+
+                        var tempFieldEnd = index.filterOptions.endField;
+                        var tempValueEnd = filterEnd;
+
+                        // Verificar seu o scope do elemento angular possui valor definido
+                        if (angular.isDefined(angular.element($(selectorNameEnd).get(0)).scope()) && angular.element($(selectorNameEnd).get(0)).scope().hasOwnProperty(selectorValueEnd)) {
+
+                            // Se possuir configuração avançada de fitro (filterOptions)
+                            if (angular.isDefined(index.filterOptions) && index.filterOptions.hasOwnProperty('selectedItem')) {
+                                tempFieldEnd = index.filterOptions.field;
+                                // value recebe o que foi configurado em index.filterOptions.selectedItem
+                                // por exemplo se o filtro for um select, o ng-model pode ser um objeto {id: 1, name: 'teste'}
+                                // neste caso é necessário definir qual chave do objeto representa o valor a ser filtrado
+                                if (filterEnd) {
+                                    tempValueEnd = filterEnd[index.filterOptions.selectedItem];
+                                    if (!angular.isDefined(tempValueEnd)) {
+                                        tempValueEnd = filterEnd[index.filterOptions.selectedItem.toUpperCase()];
+                                    }
+                                    if (tempValueEnd === '%') {
+                                        tempValueEnd = null;
+                                    }
+                                } else {
+                                    tempValueEnd = null;
+                                }
+                            }
+
+                            // field é nome do campo que será filtro no banco de dados
+                            index.filterObject.endField = tempFieldEnd;
+                            // Verificar se o valor final do between
+                            if (angular.isDefined(tempValueEnd) && tempValueEnd !== null && tempValueEnd !== '') {
+                                // value é valor do campo, o qual será filtrado                                                        
+                                index.filterObject.endValue = tempValueEnd;
+                            } else {
+                                index.filterObject.endValue = index.filterObject.value;
+                                angular.element($(selectorNameEnd).get(0)).scope()[tempFieldEnd] = index.filterObject.value;
+                            }
+
+                            // Verificar se valor inicial e maior que o final
+                            // Se for irá inverter automaticamente
+                            if (index.filterObject.value > index.filterObject.endValue) {
+                                var oldEndValue = angular.copy(index.filterObject.endValue);
+                                // Valor final recebe valor inicial
+                                index.filterObject.endValue = index.filterObject.value;
+                                angular.element($(selectorNameEnd).get(0)).scope()[tempFieldEnd] = index.filterObject.value;
+                                // Valor incial recebe valor final
+                                index.filterObject.value = oldEndValue;
+                                angular.element($(selectorName).get(0)).scope()[index.filter] = oldEndValue;
+                            }
+
+                        } else {
+                            index.filterObject.endValue = index.filterObject.value;
+                            angular.element($(selectorNameEnd).get(0)).scope()[tempFieldEnd] = index.filterObject.value;
+                        }
+
+                        // Verificar se campo é numeric e possui moment configurado
+                        // Neste caso o campo é uma data representanda em números
+                        // Ex.: 19900805 - YYYYMMDD
+                        if (index.type.toUpperCase() === 'NUMERIC' || index.type.toUpperCase() === 'INT') {
+                            index.filterObject.value = moment(index.filterObject.value).format('YYYYMMDD');;
+                            index.filterObject.endValue = moment(index.filterObject.endValue).format('YYYYMMDD');
+                        }
+
                     }
                 }
             });
+            //console.info('validFilters', validFilters);
             if (!validFilters) {
                 $scope.reset();
                 requirejs(["dataTables"], function() {
