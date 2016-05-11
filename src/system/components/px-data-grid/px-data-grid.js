@@ -325,9 +325,10 @@ define(['../../directives/module'], function(directives) {
         // A página atual inicia-se em 0
         $scope.currentPage = 0;
 
-        $scope.$watch('pxTableReady', function(newValue, oldValue) {
+        var pxTableReadyWatch = $scope.$watch('pxTableReady', function(newValue, oldValue) {
             if (newValue === true) {
                 $timeout($scope.pxDataGridGetData, 0);
+                pxTableReadyWatch(); // unwatch
             }
         });
 
