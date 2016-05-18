@@ -252,6 +252,14 @@ define(['../../directives/module'], function(directives) {
                 };
 
                 /**
+                 * Ordenar dados por
+                 * @param {object} value valor order, ex.: ([1, 'asc'], [2, 'asc'])
+                 */
+                scope.internalControl.sortDataBy = function(value) {
+                    scope.sortDataBy(value);
+                };
+
+                /**
                  * Adicionar linha de registro
                  * @param {object} value valor que será inserido na listagem
                  */
@@ -902,7 +910,6 @@ define(['../../directives/module'], function(directives) {
             });
         };
 
-
         $scope.updateDataRow = function updateDataRow(value) {
             var data = $scope.internalControl.table.row($scope.internalControl.updatedRow).data();
             angular.forEach($scope.fields, function(item) {
@@ -923,6 +930,13 @@ define(['../../directives/module'], function(directives) {
                 .row($scope.internalControl.updatedRow)
                 .data(data)
                 .draw();
+        }
+
+        $scope.sortDataBy = function sortDataBy(value) {
+           // Ordenar dados do dataTable
+            requirejs(["dataTables"], function() {
+                $('#' + $scope.id + '_pxDataTable').DataTable().order(value).draw();
+            });
         }
 
         $scope.addDataRow = function addDataRow(value) {
