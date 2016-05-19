@@ -5,7 +5,7 @@
 
 <cffunction 
 	name         ="insertUpdate" 
-	access       ="remote" 
+	access       ="public" 
 	output       ="false" 
 	returntype   ="Any" 
 	returnformat ="JSON">
@@ -157,7 +157,7 @@
 
 <cffunction 
 	name         ="select" 
-	access       ="remote" 
+	access       ="public" 
 	output       ="false" 
 	returntype   ="Any" 
 	returnformat ="JSON">

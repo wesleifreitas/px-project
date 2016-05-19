@@ -157,6 +157,11 @@ define(['../../directives/module'], function(directives) {
                                     _ngModelCtrl.$setValidity('confirm', true);
                                 }
                             }
+
+                            if (!angular.isDefined(_ngModelCtrl)) {
+                                return;
+                            }
+
                             // Verificar ser o elemento está inválido
                             if (_ngModelCtrl.$invalid) {
                                 $scope.$apply(function() {
@@ -729,7 +734,7 @@ define(['../../directives/module'], function(directives) {
                     for: '@for',
                     change: '&pxChange'
                 },
-                templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-group.html',
+                templateUrl: pxConfig.PX_PACKAGE + '/system/components/px-form-item/px-group.html',
                 link: function(scope, element, attrs, ngModelCtrl) {
                     if ($rootScope.globals.currentUser.per_developer !== 1) {
                         element.hide();
@@ -738,7 +743,7 @@ define(['../../directives/module'], function(directives) {
                         }
                     }
 
-                    if (attrs.required) {                        
+                    if (attrs.required) {
                         $timeout(function() {
                             scope.required = true;
                         }, 0)
@@ -862,19 +867,19 @@ define(['../../directives/module'], function(directives) {
                     dependencies: '@pxDependencies'
                 },
                 require: '?ngModel',
-                templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-input-search.html',
+                templateUrl: pxConfig.PX_PACKAGE + '/system/components/px-form-item/px-input-search.html',
                 link: function(scope, element, attrs, ngModelCtrl) {
 
                     if (!ngModelCtrl) {
                         return;
                     }
 
-                    if (attrs.required) {                        
+                    if (attrs.required) {
                         $timeout(function() {
                             scope.required = true;
                         }, 0)
                     }
-                
+
                     scope.inputClass = scope.inputClass || 'form-control';
 
                     if (scope.dialog) {
@@ -1096,7 +1101,7 @@ define(['../../directives/module'], function(directives) {
                                 params.rows = scope.recordCount;
 
                                 if (!angular.isDefined(scope.url) || scope.url === '') {
-                                    scope.url = pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-form-item.cfc?method=getData';
+                                    scope.url = pxConfig.PX_PACKAGE + '/system/components/px-form-item/px-form-item.cfc?method=getData';
                                 }
 
                                 $http({

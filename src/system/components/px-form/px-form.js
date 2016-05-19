@@ -276,18 +276,19 @@ define(['../../directives/module'], function(directives) {
                         value: '',
                         getDate: true
                     };
+                }
+                // Verificar default
+                // Se o campo possuir valor default e seu value for inválido
+                else if (angular.isDefined(index.default) && (!angular.isDefined(index.valueObject.value) || index.valueObject.value === null || index.valueObject.value === '')) {
+                    // Value do campo receber o valor default
+                    index.valueObject.value = index.default;
                 } else {
                     index.valueObject = {
                         field: index.field,
                         value: ''
                     };
                 }
-                // Verificar default
-                // Se o campo possuir valor default e seu value for inválido
-                if (angular.isDefined(index.default) && (index.valueObject.value === null || index.valueObject.value === '')) {
-                    // Value do campo receber o valor default
-                    index.valueObject.value = index.default;
-                }
+
             });
 
             if ($scope.debug) {
@@ -303,16 +304,16 @@ define(['../../directives/module'], function(directives) {
             if (angular.isDefined($scope.oldForm)) {
                 oldForm = angular.toJson($scope.oldForm)
             }
-
+            
             pxFormService.insertUpdate(action, table, angular.toJson(fields), oldForm, function(response) {
                 if ($scope.debug) {
                     console.info('pxFormService.insertUpdate response: ', response);
                 }
-                if (response.success) {
+                if (response.data.success) {
                     if ($scope.callback) {
                         // http://blog-it.hypoport.de/2013/11/06/passing-functions-to-angularjs-directives/
                         $scope.callback({
-                            event: response
+                            event: response.data
                         });
                     }
                     $scope.clean();
@@ -385,9 +386,9 @@ define(['../../directives/module'], function(directives) {
                     if ($scope.debug) {
                         console.info('pxFormService.select response: ', response);
                     }
-                    if (response.success) {
+                    if (response.data.success) {
                         // Armazenar dados recuperados
-                        $scope.oldForm = response.qQuery[0];
+                        $scope.oldForm = response.data.qQuery[0];
 
                         angular.forEach(fields, function(index) {
                             if (angular.isDefined(index.element)) {
@@ -403,9 +404,9 @@ define(['../../directives/module'], function(directives) {
                                 }
                                 var _ngModelCtrl = angular.element($(selectorName).data('$ngModelController'));
                                 var _element = angular.element($(selectorName).get(0));
-                                var _value = String(response.qQuery[0][index.field]);
-                                if (!angular.isDefined(response.qQuery[0][index.field])) {
-                                    _value = String(response.qQuery[0][index.field.toUpperCase()]);
+                                var _value = String(response.data.qQuery[0][index.field]);
+                                if (!angular.isDefined(response.data.qQuery[0][index.field])) {
+                                    _value = String(response.data.qQuery[0][index.field.toUpperCase()]);
                                 }
 
                                 if (!angular.isDefined(_element.context)) {
@@ -430,7 +431,7 @@ define(['../../directives/module'], function(directives) {
                                         if (!inputSearch) {
                                             _element.scope()[index.field] = _element.scope()[index.field][pxArrayUtil.getIndexByProperty(_element.scope()[index.field], index.fieldValueOptions.selectedItem, _value)]
                                         } else {
-                                            var searchValue = angular.copy(response.qQuery[0]);
+                                            var searchValue = angular.copy(response.data.qQuery[0]);
                                             if (!angular.isDefined(index.fieldValueOptions.selectedItem)) {
                                                 console.error('pxForm: selectedItem não definido em fieldValueOptions', index);
                                             }
@@ -461,9 +462,9 @@ define(['../../directives/module'], function(directives) {
                         });
 
                         if ($scope.callback) {
-                            response.action = 'select';
+                            response.data.action = 'select';
                             $scope.callback({
-                                event: response
+                                event: response.data
                             });
                         }
                     } else {

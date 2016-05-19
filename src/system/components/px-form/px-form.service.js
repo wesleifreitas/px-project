@@ -15,8 +15,9 @@ define(['../../services/module'], function(services) {
 
         function insertUpdate(action, table, fields, oldForm, callback) {
 
-            var params = {
+            var data = {
                 dsn: pxConfig.PROJECT_DSN,
+                cfcPath: pxConfig.PX_CFC_PATH,
                 action: action,
                 table: table,
                 fields: fields,
@@ -24,7 +25,17 @@ define(['../../services/module'], function(services) {
             };
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/components/px-form/px-form.cfc?method=insertUpdate',
+                url: 'http://localhost:8500/rest/px-project/system/px-form/insertUpdate',
+                data: data
+            }).then(function successCallback(response) {
+                callback(response);
+            }, function errorCallback(response) {
+                alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+            });
+            return;
+            $http({
+                method: 'POST',
+                url: pxConfig.PX_PACKAGE + '/system/components/px-form/px-form.cfc?method=insertUpdate',
                 params: params
             }).success(function(response) {
                 callback(response);
@@ -37,22 +48,22 @@ define(['../../services/module'], function(services) {
 
         function select(table, fields, callback) {
 
-            var params = {
+            var data = {
                 dsn: pxConfig.PROJECT_DSN,
+                cfcPath: pxConfig.PX_CFC_PATH,
                 table: table,
-                fields: fields
+                fields: fields,                
             };
+
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/components/px-form/px-form.cfc?method=select',
-                params: params
-            }).success(function(response) {
+                url: 'http://localhost:8500/rest/px-project/system/px-form/getData',
+                data: data
+            }).then(function successCallback(response) {
                 callback(response);
-            }).
-            error(function(data, status, headers, config) {
-                // Erro
+            }, function errorCallback(response) {
                 alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
-            });
+            });            
         }
     }
 });

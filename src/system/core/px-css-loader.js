@@ -27,15 +27,15 @@ define(['../services/module'], function(services) {
             var cssLoader = [{
                 file: pxConfig.LIB + 'bootstrap/dist/css/bootstrap.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/core/external/metro.css'
+                file: pxConfig.PX_PACKAGE + '/system/core/external/metro.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/core/external/metro-icons.css'
+                file: pxConfig.PX_PACKAGE + '/system/core/external/metro-icons.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/core/external/metro-responsive.css'
+                file: pxConfig.PX_PACKAGE + '/system/core/external/metro-responsive.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/core/external/metro-bootstrap.css'
+                file: pxConfig.PX_PACKAGE + '/system/core/external/metro-bootstrap.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/core/external/metro-schemes.css'
+                file: pxConfig.PX_PACKAGE + '/system/core/external/metro-schemes.css'
             }, {
                 file: 'http://cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.css'
             }, {
@@ -47,15 +47,15 @@ define(['../services/module'], function(services) {
             }, {
                 file: 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/core/external/jstree/themes/proton/style.css'
+                file: pxConfig.PX_PACKAGE + '/system/core/external/jstree/themes/proton/style.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.css'
+                file: pxConfig.PX_PACKAGE + '/system/components/px-view-header/px-view-header.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.css'
+                file: pxConfig.PX_PACKAGE + '/system/components/px-data-grid/px-data-grid.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/components/px-form-item/px-form-item.css'
+                file: pxConfig.PX_PACKAGE + '/system/components/px-form-item/px-form-item.css'
             }, {
-                file: pxConfig.PX_PACKAGE + 'system/core/px-project.css'
+                file: pxConfig.PX_PACKAGE + '/system/core/px-project.css'
             }];
 
             // Loop em cssLoader

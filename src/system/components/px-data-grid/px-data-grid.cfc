@@ -5,7 +5,7 @@
 
 <cffunction 
 	name="getData"
-	access="remote"
+	access="public"
 	output="false"
 	returntype="Any"
 	returnformat="JSON">
@@ -102,6 +102,8 @@
 		hint     ="Condição da instrução SQL">
 	
 	<cfset result = structNew()>
+	<cfset result['arguments'] = arguments>
+			
 	<cftry>
 
 		<!--- http://www.bennadel.com/blog/867-ask-ben-protecting-database-table-names-in-coldfusion-cfquery.htm --->
@@ -266,8 +268,7 @@
 		</cfcatch>
 
 	</cftry>
-	
-	<cfset result['arguments'] = arguments>
+			
 	<cfset result['rowFrom'] = arguments.rowFrom>
 	<cfset result['rowTo'] = arguments.rowTo>
 	<cfset result['qQuery'] = QueryToArray(qQuery)>
@@ -284,7 +285,7 @@
 
 <cffunction
 	name         ="removeData"
-	access       ="remote"
+	access       ="public"
 	output       ="false"
 	returntype   ="Any"
 	returnformat ="JSON">

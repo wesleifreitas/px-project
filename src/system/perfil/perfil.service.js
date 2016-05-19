@@ -63,7 +63,7 @@ define(['../services/module'], function(services) {
             };
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/perfil/perfil.cfc?method=jsTreeMenu',
+                url: pxConfig.PX_PACKAGE + '/system/perfil/perfil.cfc?method=jsTreeMenu',
                 params: params
             }).success(function(response) {
                 callback(response);
@@ -83,7 +83,7 @@ define(['../services/module'], function(services) {
             };
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/perfil/perfil.cfc?method=saveTreeMenu',
+                url: pxConfig.PX_PACKAGE + '/system/perfil/perfil.cfc?method=saveTreeMenu',
                 params: params
             }).success(function(response) {
                 callback(response);

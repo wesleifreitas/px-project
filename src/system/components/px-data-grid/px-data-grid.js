@@ -6,7 +6,7 @@ define(['../../directives/module'], function(directives) {
             restrict: 'E',
             replace: true,
             transclude: false,
-            templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.html',
+            templateUrl: pxConfig.PX_PACKAGE + '/system/components/px-data-grid/px-data-grid.html',
             scope: {
                 debug: '=pxDebug',
                 config: '@pxConfig',
@@ -818,34 +818,34 @@ define(['../../directives/module'], function(directives) {
                 return;
             }
 
-            // Parâmetros da consulta
-            var params = {};
+            // Dados da consulta
+            var data = {}
 
-            params.schema = $scope.schema;
+            data.schema = $scope.schema;
             if (angular.isDefined($scope.view) && $scope.view !== '') {
-                params.table = $scope.view;
+                data.table = $scope.view;
             } else {
-                params.table = $scope.table;
+                data.table = $scope.table;
             }
-            params.fields = angular.toJson(arrayFields);
-            params.orderBy = angular.toJson($scope.orderBy);
+            data.fields = angular.toJson(arrayFields);
+            data.orderBy = angular.toJson($scope.orderBy);
 
-            params.rows = $scope.rowsProcess;
+            data.rows = $scope.rowsProcess;
 
             if (angular.isDefined(rowFrom)) {
-                params.rowFrom = rowFrom;
+                data.rowFrom = rowFrom;
             }
             if (angular.isDefined(rowTo)) {
-                params.rowTo = rowTo;
+                data.rowTo = rowTo;
             }
 
-            params.group = $scope.group;
-            params.groupItem = $scope.groupItem;
-            params.groupLabel = $scope.groupLabel;
+            data.group = $scope.group;
+            data.groupItem = $scope.groupItem;
+            data.groupLabel = $scope.groupLabel;
 
             if ($scope.where) {
                 $scope.where = pxUtil.setFilterObject($scope.where, false, pxConfig.GROUP_TABLE);
-                params.where = angular.toJson($scope.where);
+                data.where = angular.toJson($scope.where);
             }
 
             // Se for a primeira linha significa que é uma nova consulta ao dados
@@ -858,25 +858,25 @@ define(['../../directives/module'], function(directives) {
                 });
             }
 
-            pxDataGridService.select(params, function(response) {
+            pxDataGridService.select(data, function(response) {
                 if ($scope.debug) {
                     console.info('px-data-grid ' + $scope.id + ' getData', response);
                     //console.info('px-data-grid ' + $scope.id + ' getData JSON.stringify',JSON.stringify(response,null,"    "));
                 }
 
-                if (angular.isDefined(response.fault)) {
+                if (angular.isDefined(response.data.fault)) {
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 } else {
                     // Verifica se a quantidade de registros é maior que 0
-                    if (response.qQuery.length > 0) {
+                    if (response.data.qQuery.length > 0) {
                         // Loop na query
-                        angular.forEach(response.qQuery, function(index) {
+                        angular.forEach(response.data.qQuery, function(index) {
                             $scope.addDataRow(index);
                         });
 
-                        $scope.recordCount = response.recordCount;
-                        $scope.nextRowFrom = response.rowFrom + $scope.rowsProcess;
-                        $scope.nextRowTo = response.rowTo + $scope.rowsProcess;
+                        $scope.recordCount = response.data.recordCount;
+                        $scope.nextRowFrom = response.data.rowFrom + $scope.rowsProcess;
+                        $scope.nextRowTo = response.data.rowTo + $scope.rowsProcess;
 
                         var table = $scope.internalControl.table;
                         requirejs(["dataTables"], function() {
@@ -1071,17 +1071,17 @@ define(['../../directives/module'], function(directives) {
                 table = $scope.table;
             }
 
-            var params = {};
-            params.schema = $scope.schema;
-            params.table = table;
-            params.fields = angular.toJson(arrayFields);
-            params.selectedItems = angular.toJson($scope.internalControl.selectedItems);
+            var data = {}
+            data.schema = $scope.schema;
+            data.table = table;
+            data.fields = angular.toJson(arrayFields);
+            data.selectedItems = angular.toJson($scope.internalControl.selectedItems);
 
-            pxDataGridService.remove(params, function(response) {
-                if ($scope.debug) {
+            pxDataGridService.remove(data, function(response) {
+                //if ($scope.debug) {
                     console.info('pxDataGrid remove: ', response);
-                }
-                if (response.success) {
+                //}
+                if (response.data.success) {
                     $scope.internalControl.table.rows('.selected').remove().draw(false);
 
                     // rotina duplicada :( - START

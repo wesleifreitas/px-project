@@ -13,39 +13,52 @@ define(['../../services/module'], function(services) {
 
         return service;
 
-        function select(params, callback) {
-            params.dsn = pxConfig.PROJECT_DSN;
-            params.user = $rootScope.globals.currentUser.usu_id;
+        function select(data, callback) {
+
+            data.dsn = pxConfig.PROJECT_DSN;
+            data.cfcPath = pxConfig.PX_CFC_PATH;
+            data.user = $rootScope.globals.currentUser.usu_id;            
+            
+            if(!angular.isDefined(data.orderBy)){
+                data.orderBy = '';
+            }
+
+            if(!angular.isDefined(data.groupItem)){
+                data.groupItem = '';
+            }
+
+            if(!angular.isDefined(data.groupLabel)){
+                data.groupLabel = '';
+            }
+
+            if(!angular.isDefined(data.where)){
+                data.where = '';
+            }
 
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.cfc?method=getData',
-                dataType: 'json',
-                params: params
-            }).success(function(response) {
+                url: 'http://localhost:8500/rest/px-project/system/px-data-grid/getData',
+                data: data
+            }).then(function successCallback(response) {
                 callback(response);
-            }).
-            error(function(data, status, headers, config) {
-                // Erro
+            }, function errorCallback(response) {
                 alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
             });
-
         }
 
-        function remove(params, callback) {
+        function remove(data, callback) {
 
-            params.dsn = pxConfig.PROJECT_DSN;
-            params.user = $rootScope.globals.currentUser.usu_id;
+            data.dsn = pxConfig.PROJECT_DSN;
+            data.cfcPath = pxConfig.PX_CFC_PATH;
+            data.user = $rootScope.globals.currentUser.usu_id;            
 
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.cfc?method=removeData',
-                params: params
-            }).success(function(response) {
+                url: 'http://localhost:8500/rest/px-project/system/px-data-grid/removeData',
+                data: data
+            }).then(function successCallback(response) {
                 callback(response);
-            }).
-            error(function(data, status, headers, config) {
-                // Erro
+            }, function errorCallback(response) {
                 alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
             });
         }

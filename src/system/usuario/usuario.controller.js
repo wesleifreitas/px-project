@@ -195,7 +195,7 @@ define(['../controllers/module'], function(controllers) {
                 scope: $scope,
                 preserveScope: true,
                 controller: formCtrl,
-                templateUrl: pxConfig.PX_PACKAGE + 'system/usuario/usuario-form.html',
+                templateUrl: pxConfig.PX_PACKAGE + '/system/usuario/usuario-form.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: false
@@ -211,7 +211,7 @@ define(['../controllers/module'], function(controllers) {
                 scope: $scope,
                 preserveScope: true,
                 controller: formCtrl,
-                templateUrl: pxConfig.PX_PACKAGE + 'system/usuario/usuario-form.html',
+                templateUrl: pxConfig.PX_PACKAGE + '/system/usuario/usuario-form.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: false

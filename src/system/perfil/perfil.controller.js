@@ -155,7 +155,7 @@ define(['../controllers/module'], function(controllers) {
                 scope: $scope,
                 preserveScope: true,
                 controller: formCtrl,
-                templateUrl: pxConfig.PX_PACKAGE + 'system/perfil/perfil-form.html',
+                templateUrl: pxConfig.PX_PACKAGE + '/system/perfil/perfil-form.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: false
@@ -170,7 +170,7 @@ define(['../controllers/module'], function(controllers) {
                 scope: $scope,
                 preserveScope: true,
                 controller: formCtrl,
-                templateUrl: pxConfig.PX_PACKAGE + 'system/perfil/perfil-form.html',
+                templateUrl: pxConfig.PX_PACKAGE + '/system/perfil/perfil-form.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: false

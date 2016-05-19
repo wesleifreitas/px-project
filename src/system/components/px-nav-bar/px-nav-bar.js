@@ -6,9 +6,9 @@ define(['../../directives/module'], function(directives) {
                 restrict: 'E',
                 replace: true,
                 transclude: false,
-                templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.html',
+                templateUrl: pxConfig.PX_PACKAGE + '/system/components/px-nav-bar/px-nav-bar.html',
                 link: function(scope, element, attrs) {
-                    scope.logo = pxConfig.PX_PACKAGE + 'system/assets/richsolutions/richsolutions_bola_200x200.jpg';
+                    scope.logo = pxConfig.PX_PACKAGE + '/system/assets/richsolutions/richsolutions_bola_200x200.jpg';
                     scope.$watch(attrs.content, function() {
                         element.html($parse(attrs.content)(scope));
                         $compile(element.contents())(scope);
@@ -43,7 +43,7 @@ define(['../../directives/module'], function(directives) {
 
                 $http({
                     method: 'POST',
-                    url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
+                    url: pxConfig.PX_PACKAGE + '/system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
                     params: params
                 }).success(function(response) {
                     console.info('getNavBar', response);
@@ -70,7 +70,7 @@ define(['../../directives/module'], function(directives) {
 
                 $http({
                     method: 'POST',
-                    url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getView',
+                    url: pxConfig.PX_PACKAGE + '/system/components/px-nav-bar/px-nav-bar.cfc?method=getView',
                     params: params
                 }).success(function(response) {
                     //console.info('response',response);

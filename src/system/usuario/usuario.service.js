@@ -60,7 +60,7 @@ define(['../services/module'], function(services) {
             };
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/usuario/usuario.cfc?method=sendEmail',
+                url: pxConfig.PX_PACKAGE + '/system/usuario/usuario.cfc?method=sendEmail',
                 params: params
             }).success(function(response) {
                 callback(response);
