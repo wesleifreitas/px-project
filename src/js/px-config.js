@@ -1,11 +1,16 @@
 define(['angular'], function(ng) {
 	'use strict';
 
-	var PX_PACKAGE = '' // Package Phoenix Project
+	// Package Phoenix Project
+	var PX_PACKAGE = ''
+	// Caminho de componentes ColdFusion (Phoenix Project)
+	// Ex.: 'my-project.src'
+	var PX_CFC_PATH = 'px-project.src' + PX_PACKAGE.replace(/\/|\\/g, ".");
 
 	var config = ng.module('pxConfig', [])
 		.constant('pxConfig', {
 			PX_PACKAGE: PX_PACKAGE, // Package Phoenix Project
+			PX_CFC_PATH: PX_CFC_PATH,
 			LIB: 'lib/', // Componentes externos
 			PROJECT_ID: 0, // Identificação do projeto (table: px.project)
 			PROJECT_NAME: 'Phoenix Project', // Nome do projeto
