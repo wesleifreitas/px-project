@@ -990,6 +990,22 @@ define(['../../directives/module'], function(directives) {
                                 maskData = '(##) #####-####';
                             }
                             break;
+                        case 'cpfCnpj':
+                            if (item.type === 'varchar' || item.type === 'char' || item.type === 'string') {
+                                if (String(data[item.field]).length === 11) {
+                                    maskData = '###.###.###-##';
+                                } else {
+                                    maskData = '##.###.###/####-##';
+                                }
+                            } else {
+                                data[item.field] = String(Number(data[item.field]));
+                                if (data[item.field].length > 11) {
+                                    maskData = '##.###.###/####-##';
+                                } else {
+                                    maskData = '###.###.###-##';
+                                }
+                            }
+                            break;
                         default:
                             maskData = angular.copy(item.stringMask);
                             break;
