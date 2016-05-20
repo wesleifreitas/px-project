@@ -229,9 +229,9 @@ define(['../../directives/module'], function(directives) {
                 }
             };
         }])
-        // pxBrCnpjMask
+        // pxCnpjMask
         // 99.999.999/9999-99
-        .directive('pxBrCnpjMask', ['pxStringUtil', '$compile', function(pxStringUtil, $compile) {
+        .directive('pxCnpjMask', ['pxStringUtil', '$compile', function(pxStringUtil, $compile) {
             return {
                 priority: 100,
                 restrict: 'A',
@@ -274,9 +274,9 @@ define(['../../directives/module'], function(directives) {
                 }]
             };
         }])
-        // pxBrCpfMask
+        // pxCpfMask
         // 999.999.999-99
-        .directive('pxBrCpfMask', ['$compile', function($compile) {
+        .directive('pxCpfMask', ['$compile', function($compile) {
             return {
                 priority: 100,
                 restrict: 'A',
