@@ -381,7 +381,8 @@ define(['../../directives/module'], function(directives) {
                 scope: {
                     cleanValue: '@cleanValue',
                     validPhone8: '@validPhone8',
-                    validPhone9: '@validPhone9'
+                    validPhone9: '@validPhone9',
+                    ddd: '=pxDdd'
                 },
                 bindToController: false,
                 require: '?ngModel',
@@ -391,11 +392,21 @@ define(['../../directives/module'], function(directives) {
                         return;
                     }
 
+                    var extraNumberCompare = 11;
+                    if (scope.ddd === false) {
+                        extraNumberCompare = 9;
+                    }
+
                     // Verifica se NÃO possui uiMask definido
                     if (!angular.isDefined(attrs.uiMask)) {
                         // Define uiMask
-                        attrs.$set('uiMask', '(99) 9999-9999?9');
-                        $compile(element)(scope);
+                        if (scope.ddd !== false) {
+                            attrs.$set('uiMask', '(99) 9999-9999?9');
+                            $compile(element)(scope);
+                        } else {
+                            attrs.$set('uiMask', '9999-9999?9');
+                            $compile(element)(scope);
+                        }
                     }
 
                     scope.tempValue = scope.tempValue || '';
@@ -403,9 +414,13 @@ define(['../../directives/module'], function(directives) {
                     // Evento focusout
                     element.bind('focusout', function(event) {
                         if (angular.isDefined(scope.cleanValue)) {
-                            if (scope.cleanValue.length < 11 || !angular.isDefined(scope.validPhone8)) {
+                            if (scope.cleanValue.length < extraNumberCompare || !angular.isDefined(scope.validPhone8)) {
                                 // Atualizar uiMask para telefone com 8 dígitos
-                                attrs.$set('uiMask', '(99) 9999-9999');
+                                if (scope.ddd !== false) {
+                                    attrs.$set('uiMask', '(99) 9999-9999');
+                                } else {
+                                    attrs.$set('uiMask', '9999-9999');
+                                }
                                 // Atualizar campo com o valor digitado e váriaveis de controle
                                 ngModelCtrl.$setViewValue(scope.cleanValue);
                                 //ngModelCtrl.$render();
@@ -419,9 +434,13 @@ define(['../../directives/module'], function(directives) {
                     element.bind('focusin', function(event) {
                         if (angular.isDefined(scope.cleanValue)) {
                             // Verifica se o telefone digitado possui menos que 11 dígitos
-                            if (scope.cleanValue.length < 11) {
+                            if (scope.cleanValue.length < extraNumberCompare) {
                                 // Atualizar uiMask para telefone com 8 dígitos, deixando um digitado a mais como opcional
-                                attrs.$set('uiMask', '(99) 9999-9999?9');
+                                if (scope.ddd !== false) {
+                                    attrs.$set('uiMask', '(99) 9999-9999?9');
+                                } else {
+                                    attrs.$set('uiMask', '9999-9999?9');
+                                }
                                 // Atualizar campo com o valor digitado e váriaveis de controle
                                 ngModelCtrl.$setViewValue(scope.cleanValue);
                                 //ngModelCtrl.$render();
@@ -447,19 +466,27 @@ define(['../../directives/module'], function(directives) {
                             if (angular.isDefined(scope.cleanValue)) {
                                 // Se possuir 11 dígitos e não estiver validado
                                 // Telefone com 11 dígitos é um telefone com 9 dígitos mais dois dígitos do DDD
-                                if (scope.cleanValue.length === 11 && scope.validPhone9 === false || !angular.isDefined(scope.validPhone9)) {
+                                if (scope.cleanValue.length === extraNumberCompare && scope.validPhone9 === false || !angular.isDefined(scope.validPhone9)) {
 
                                     // Atualizar uiMask para telefone com 9 dígitos
-                                    attrs.$set('uiMask', '(99) ?99999-9999');
+                                    if (scope.ddd !== false) {
+                                        attrs.$set('uiMask', '(99) ?99999-9999');
+                                    } else {
+                                        attrs.$set('uiMask', '?99999-9999');
+                                    }
                                     // Atualizar campo com o valor digitado e váriaveis de controle
                                     ngModelCtrl.$setViewValue(scope.cleanValue);
                                     //ngModelCtrl.$render();
                                     scope.validPhone9 = true;
                                     scope.validPhone8 = false;
-                                } else if (scope.cleanValue.length === 10 && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
+                                } else if (scope.cleanValue.length === (extraNumberCompare-1) && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
 
                                     // Atualizar uiMask para telefone com 8 dígitos
-                                    attrs.$set('uiMask', '(99) 9999-9999?9');
+                                    if (scope.ddd !== false) {
+                                        attrs.$set('uiMask', '(99) 9999-9999?9');
+                                    } else {
+                                        attrs.$set('uiMask', '9999-9999?9');
+                                    }
                                     // Atualizar campo com o valor digitado e váriaveis de controle
                                     ngModelCtrl.$setViewValue(scope.cleanValue);
                                     //ngModelCtrl.$render();
@@ -473,20 +500,28 @@ define(['../../directives/module'], function(directives) {
 
                                 // Se possuir 11 dígitos e não estiver validado
                                 // Telefone com 11 dígitos é um telefone com 9 dígitos mais dois dígitos do DDD
-                                if (scope.cleanValue.length === 11 && scope.validPhone9 === false || !angular.isDefined(scope.validPhone9)) {
+                                if (scope.cleanValue.length === extraNumberCompare && scope.validPhone9 === false || !angular.isDefined(scope.validPhone9)) {
 
                                     // Atualizar uiMask para telefone com 9 dígitos
-                                    attrs.$set('uiMask', '(99) ?99999-9999');
+                                    if (scope.ddd !== false) {
+                                        attrs.$set('uiMask', '(99) ?99999-9999');
+                                    } else {
+                                        attrs.$set('uiMask', '?99999-9999');
+                                    }
                                     // Atualizar campo com o valor digitado e váriaveis de controle
                                     //ngModelCtrl.$setViewValue(scope.cleanValue);
                                     //ngModelCtrl.$render();
                                     scope.validPhone9 = true;
                                     scope.validPhone8 = false;
 
-                                } else if (scope.cleanValue.length === 10 && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
+                                } else if (scope.cleanValue.length === (extraNumberCompare-1) && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
 
                                     // Atualizar uiMask para telefone com 8 dígitos
-                                    attrs.$set('uiMask', '(99) 9999-9999?9');
+                                    if (scope.ddd !== false) {
+                                        attrs.$set('uiMask', '(99) 9999-9999?9');
+                                    } else {
+                                        attrs.$set('uiMask', '9999-9999?9');
+                                    }
                                     // Atualizar campo com o valor digitado e váriaveis de controle
                                     //ngModelCtrl.$setViewValue(scope.cleanValue);
                                     //ngModelCtrl.$render();
