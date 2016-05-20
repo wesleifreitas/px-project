@@ -933,7 +933,7 @@ define(['../../directives/module'], function(directives) {
         }
 
         $scope.sortDataBy = function sortDataBy(value) {
-           // Ordenar dados do dataTable
+            // Ordenar dados do dataTable
             requirejs(["dataTables"], function() {
                 $('#' + $scope.id + '_pxDataTable').DataTable().order(value).draw();
             });
@@ -969,33 +969,35 @@ define(['../../directives/module'], function(directives) {
                 // Se possuir máscara
                 // https://github.com/the-darc/string-mask
                 if (item.stringMask) {
+                    var maskData = '';
                     switch (item.stringMask) {
                         case 'cpf':
-                            item.stringMask = '###.###.###-##';
+                            maskData = '###.###.###-##';
                             //item.pad = '00000000000';
                             break;
                         case 'cnpj':
-                            item.stringMask = '##.###.###/####-##';
+                            maskData = '##.###.###/####-##';
                             //item.pad = '00000000000000';
                             break;
                         case 'cep':
-                            item.stringMask = '#####-###';
+                            maskData = '#####-###';
                             //item.pad = '00000000';
                             break;
                         case 'brPhone':
                             if (data[item.field].length === 11) {
-                                item.stringMask = '(##) #####-####';
+                                maskData = '(##) #####-####';
                             } else {
-                                item.stringMask = '(##) #####-####';
+                                maskData = '(##) #####-####';
                             }
                             break;
                         default:
+                            maskData = angular.copy(item.stringMask);
                             break;
                     }
                     if (angular.isDefined(item.pad)) {
-                        data[item.field] = pxMaskUtil.maskFormat(pxStringUtil.pad(item.pad, data[item.field], true), item.stringMask).result;
+                        data[item.field] = pxMaskUtil.maskFormat(pxStringUtil.pad(item.pad, data[item.field], true), maskData).result;
                     } else {
-                        data[item.field] = pxMaskUtil.maskFormat(data[item.field], item.stringMask).result;
+                        data[item.field] = pxMaskUtil.maskFormat(String(data[item.field]), maskData).result;
                     }
                 }
 
@@ -1078,9 +1080,9 @@ define(['../../directives/module'], function(directives) {
             data.selectedItems = angular.toJson($scope.internalControl.selectedItems);
 
             pxDataGridService.remove(data, function(response) {
-                //if ($scope.debug) {
+                if ($scope.debug) {
                     console.info('pxDataGrid remove: ', response);
-                //}
+                }
                 if (response.data.success) {
                     $scope.internalControl.table.rows('.selected').remove().draw(false);
 
