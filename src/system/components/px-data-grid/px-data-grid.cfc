@@ -113,7 +113,9 @@
 
 		<cfset _fields = "">
 		<cfloop array="#arguments.fields#" index="i">
-			<cfset _fields = _fields & "[" & i.field.replaceAll("[^\w\-_]+", "") & "],">			
+			<cfif isDefined("i.field") AND i.field NEQ "">
+				<cfset _fields = _fields & "[" & i.field.replaceAll("[^\w\-_]+", "") & "],">
+			</cfif>
 		</cfloop>
 		
 		<!--- Verificar se possui order by --->

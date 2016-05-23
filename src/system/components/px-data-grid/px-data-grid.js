@@ -203,10 +203,29 @@ define(['../../directives/module'], function(directives) {
                         if (index.visible === false) {
                             scope.columnDefs.push({
                                 "targets": columnDefs,
-                                "visible": false
+                                "visible": false,
+                                "render": function(data, type, full, meta) {
+                                    return "<i class='fa fa-pencil'>";
+                                    //return "<i class='fa fa-pencil'> <b>Editar</b>";
+                                }
                             });
+                            columnDefs++;
                         }
-                        columnDefs++;
+
+                        // Verificar se o campo é link
+                        if (index.link) {
+                            scope.columnDefs.push({
+                                "mData": "link",
+                                "targets": columnDefs,
+                                "searchable": false,
+                                "orderable": false,
+                                "className": "dt-body-center",
+                                "render": function(data, type, full, meta) {
+                                    return "<i class='" + data.item.class + "'>" + data.item.icon + "</i>";
+                                }
+                            });
+                            columnDefs++;
+                        }
 
                         scope.columns += '<th class="text-left">' + index.title + '</th>';
 
@@ -580,8 +599,9 @@ define(['../../directives/module'], function(directives) {
                 var $row = $(this).closest('tr');
                 // Dados da linha
                 var data = $scope.internalControl.table.row($row).data();
+
                 var itemClickEvent = {
-                    itemClick: data
+                    itemClick: data,
                 }
 
                 $timeout(function() {
@@ -947,10 +967,17 @@ define(['../../directives/module'], function(directives) {
             var data = {};
 
             data.pxDataGridRowNumber = $scope.currentRecordCount;
-            data.edit = {}; //$scope.currentRecordCount;
+            data.edit = {};
 
             // Loop nas colunas da grid
             angular.forEach($scope.fields, function(item) {
+
+                if (item.link && (!angular.isDefined(item.field) || item.field === '')) {
+                    var linkData = angular.copy(value);
+                    linkData.item = angular.copy(item);
+                    data['link'] = linkData;
+                    return;
+                }
 
                 if (!angular.isDefined(value[item.field])) {
                     // Dados por campo
