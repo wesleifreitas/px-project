@@ -56,9 +56,9 @@ define(['../../directives/module'], function(directives) {
         };
     }]);
 
-    pxFormCtrl.$inject = ['pxConfig', 'pxFormService', 'pxArrayUtil', '$scope', '$http', '$timeout', '$rootScope'];
+    pxFormCtrl.$inject = ['pxConfig', 'pxFormService', 'pxArrayUtil', 'pxStringUtil', '$scope', '$http', '$timeout', '$rootScope'];
 
-    function pxFormCtrl(pxConfig, pxFormService, pxArrayUtil, $scope, $http, $timeout, $rootScope) {
+    function pxFormCtrl(pxConfig, pxFormService, pxArrayUtil, pxStringUtil, $scope, $http, $timeout, $rootScope) {
         // Inserir dados        
         $scope.insertUpdate = function(action) {
             var objConfig = JSON.parse($scope.config);
@@ -304,7 +304,7 @@ define(['../../directives/module'], function(directives) {
             if (angular.isDefined($scope.oldForm)) {
                 oldForm = angular.toJson($scope.oldForm)
             }
-            
+
             pxFormService.insertUpdate(action, table, angular.toJson(fields), oldForm, function(response) {
                 if ($scope.debug) {
                     console.info('pxFormService.insertUpdate response: ', response);
@@ -424,6 +424,8 @@ define(['../../directives/module'], function(directives) {
                                     } else {
                                         _value = false;
                                     }
+                                } else if (index.pad) {
+                                    _value = pxStringUtil.pad(index.pad, _value, true);
                                 }
 
                                 if (angular.isDefined(index.fieldValueOptions) && _element.context.type !== 'checkbox') {
