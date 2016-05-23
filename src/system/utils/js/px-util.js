@@ -41,6 +41,9 @@ define(['../../services/module'], function(services) {
          * @param {String} groupTable   tabela de grupo
          */
         function setFilterObject(array, isPxForm, groupTable) {
+            if (!Array.isArray(array)) {
+                array = JSON.parse(array);
+            }
             // Loop na array
             angular.forEach(array, function(index) {
                 if (index.filterGroup) {
