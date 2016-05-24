@@ -1,37 +1,37 @@
 <cfinclude template="../utils/cf/px-util.cfm">
 
 <cfprocessingDirective pageencoding="utf-8">
-<cfset setEncoding("form","utf-8")> 
+<cfset setEncoding("form","utf-8")>
 
-<cffunction 
-	name = "login" 
-	access ="remote" 
-	output ="false" 
-	returntype ="Any" 
+<cffunction
+	name = "login"
+	access ="remote"
+	output ="false"
+	returntype ="Any"
 	returnformat ="JSON">
 
-	<cfargument 
-		name ="dsn"		
+	<cfargument
+		name ="dsn"
 		type ="string"
-		required ="false"	
-		default ="px_project_sql"	
+		required ="false"
+		default ="px_project_sql"
 		hint ="Data source name">
 
-	<cfargument 
-		name ="username" 
-		type ="string"	
+	<cfargument
+		name ="username"
+		type ="string"
 		required ="false">
 
-	<cfargument 
-		name ="password" 	
-		type ="string"		
+	<cfargument
+		name ="password"
+		type ="string"
 		required ="false">
 
-	<cfargument 
-		name ="algorithm" 	
-		type ="string"		
+	<cfargument
+		name ="algorithm"
+		type ="string"
 		required ="false"
-		default ="SHA-512">	
+		default ="SHA-512">
 
 	<cfset result = structNew()>
 
@@ -136,6 +136,14 @@
 			WHERE
 				usu_id = <cfqueryparam cfsqltype="cf_sql_bigint" value="#qQuery.usu_id#">
 		</cfquery>
+
+		<cflock timeout="20" throwontimeout="No" type="EXCLUSIVE" scope="SESSION">
+			<cfset SESSION.userId = qQuery.usu_id>
+			<cfset SESSION.userName = arguments.username>
+			<cfset SESSION.password = hash(arguments.password,arguments.algorithm)>
+			<cfset SESSION.authenticated = true>
+			<cfset SESSION.loggedIn = true>
+		</cflock>
 			
 		<cfset result["success"] = true>		
 		<!--- <cfset result["message"] = "Olá, " & qQuery.usu_nome>	--->
@@ -152,38 +160,71 @@
 	</cftry>
 </cffunction>
 
-<cffunction 
-	name = "redefine" 
-	access ="remote" 
-	output ="false" 
-	returntype ="Any" 
+<cffunction
+	name = "loggedIn"
+	access ="remote"
+	output ="false"
+	returntype ="Any"
 	returnformat ="JSON">
 
-	<cfargument 
-		name ="dsn"		
+	<cfscript>
+		var response = structNew();
+
+		if (StructKeyExists(SESSION, "loggedIn") AND SESSION.loggedIn) {
+			response["loggedIn"] = true;
+		} else {
+			response["loggedIn"] = false;
+		}
+
+		return response;
+	</cfscript>
+
+</cffunction>
+
+<cffunction
+	name = "logout"
+	access ="remote"
+	output ="false"
+	returntype ="Any"
+	returnformat ="JSON">
+
+	<cfset StructDelete(SESSION, "loggedIn")>
+	<cfreturn {"logout": true}>
+
+</cffunction>
+
+<cffunction
+	name = "redefine"
+	access ="remote"
+	output ="false"
+	returntype ="Any"
+	returnformat ="JSON">
+
+	<cfargument
+		name ="dsn"
 		type ="string"
-		required ="false"	
-		default ="px_project_sql"	
+		required ="false"
+		default ="px_project_sql"
 		hint ="Data source name">
 
-	<cfargument 
-		name ="id" 
+	<cfargument
+		name ="id"
 		type="numeric"
 		required ="false">
 
-	<cfargument 
-		name ="username" 
-		type ="string"	
+	<cfargument
+		name ="username"
+		type ="string"
 		required ="false">
 
-	<cfargument 
-		name ="password" 	
-		type ="string"		
+	<cfargument
+		name ="password"
+		type ="string"
 		required ="false">
 
-	<cfargument 
-		name ="algorithm" 	
-		type ="string"		
+	<cfargument
+		name ="algorithm"
+		type ="string"
 		required ="false"
 		default ="SHA-512">		
 
@@ -218,35 +259,35 @@
 
 </cffunction>
 
-<cffunction 
-	name = "recover" 
-	access ="remote" 
-	output ="false" 
-	returntype ="Any" 
+<cffunction
+	name = "recover"
+	access ="remote"
+	output ="false"
+	returntype ="Any"
 	returnformat ="JSON">
 
-	<cfargument 
-		name ="dsn"		
+	<cfargument
+		name ="dsn"
 		type ="string"
-		required ="false"	
-		default ="px_project_sql"	
+		required ="false"
+		default ="px_project_sql"
 		hint ="Data source name">
 
-	<cfargument 
-		name ="username" 
-		type ="string"	
+	<cfargument
+		name ="username"
+		type ="string"
 		required ="false">
 
-	<cfargument 
-		name ="email" 	
-		type ="string"		
+	<cfargument
+		name ="email"
+		type ="string"
 		required ="false">
 
-	<cfargument 
-		name ="algorithm" 	
-		type ="string"		
+	<cfargument
+		name ="algorithm"
+		type ="string"
 		required ="false"
-		default ="SHA-512">		
+		default ="SHA-512">
 
 	<cfset result = structNew()>
 

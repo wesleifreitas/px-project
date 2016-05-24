@@ -2,18 +2,24 @@ define(['./app'], function(app) {
     'use strict';
 
     app.config(['pxConfig', '$routeProvider', '$locationProvider', '$mdThemingProvider', function(pxConfig, $routeProvider, $locationProvider, $mdThemingProvider) {
+        
+        var _url = angular.copy(pxConfig.PX_PACKAGE);
+        if(_url !== ''){
+          _url += '/';  
+        }
+        
         $routeProvider.when('/login', {
-            templateUrl: pxConfig.PX_PACKAGE + '/system/login/login.html',
+            templateUrl: _url + 'system/login/login.cfm',
             controller: 'LoginCtrl',
             controllerAs: 'vm'
         });
         $routeProvider.when('/home', {
-            templateUrl: pxConfig.PX_PACKAGE + '/system/home/home.html',
+            templateUrl: _url + 'system/home/home.cfm',
             controller: 'HomeCtrl',
             controllerAs: 'vm'
         });
         $routeProvider.when('/', {
-            templateUrl: pxConfig.PX_PACKAGE + '/system/home/home.html',
+            templateUrl: _url + 'system/home/home.cfm',
             controller: 'HomeCtrl',
             controllerAs: 'vm'
         });
@@ -27,17 +33,27 @@ define(['./app'], function(app) {
             .accentPalette('blue');
     }]);
 
-    app.run(function(pxConfig, $rootScope, $location, $cookieStore, $http) {
+    app.run(function(pxConfig, $rootScope, $location, $cookieStore, $http, AuthenticationService) {
         // Verifica se o login é obrigatório
         if (pxConfig.LOGIN_REQUIRED) {
-            // manter usuário logado após atualização de página
+            // Manter usuário logado após atualização de página
             $rootScope.globals = $cookieStore.get('globals') || {};
             if ($rootScope.globals.currentUser) {
                 $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
             }
 
             $rootScope.$on('$locationChangeStart', function(event, next, current) {
-                // redirecionar para a página de login se não estiver logado e tentar acessar uma página restrita                
+
+                if ($.inArray($location.path(), ['/login', '/register']) > -1) {} else {
+                    // Verificar SESSION
+                    AuthenticationService.LoggedIn(function(response) {
+                        if (!response.loggedIn) {
+                            $location.path('/login');
+                        }
+                    });
+                }
+
+                // Redirecionar para a página de login se não estiver logado e tentar acessar uma página restrita                
                 var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;
                 var loggedIn = $rootScope.globals.currentUser;
                 if (restrictedPage && !loggedIn) {

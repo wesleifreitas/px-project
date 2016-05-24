@@ -6,9 +6,16 @@ define(['../services/module'], function(services) {
     AuthenticationService.$inject = ['pxConfig', '$http', '$cookieStore', '$rootScope', '$timeout', 'UserService'];
 
     function AuthenticationService(pxConfig, $http, $cookieStore, $rootScope, $timeout, UserService) {
+        var _url = angular.copy(pxConfig.PX_PACKAGE);
+        if (_url !== '') {
+            _url += '/';
+        }
+
         var service = {};
 
         service.Login = Login;
+        service.LoggedIn = LoggedIn;
+        service.Logout = Logout;
         service.SetCredentials = SetCredentials;
         service.ClearCredentials = ClearCredentials;
         service.Redefine = Redefine;
@@ -53,8 +60,34 @@ define(['../services/module'], function(services) {
             };
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + '/system/login/login.cfc?method=login',
+                url: _url + 'system/login/login.cfc?method=login',
                 params: params
+            }).success(function(response) {
+                callback(response);
+            }).
+            error(function(data, status, headers, config) {
+                // Erro
+                alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+            });
+        }
+
+        function LoggedIn(callback) {
+            $http({
+                method: 'POST',
+                url: _url + 'system/login/login.cfc?method=loggedIn'
+            }).success(function(response) {
+                callback(response);
+            }).
+            error(function(data, status, headers, config) {
+                // Erro
+                alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+            });
+        }
+
+        function Logout(callback) {
+            $http({
+                method: 'POST',
+                url: _url + 'system/login/login.cfc?method=logout'
             }).success(function(response) {
                 callback(response);
             }).
