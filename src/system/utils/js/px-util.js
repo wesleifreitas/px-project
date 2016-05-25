@@ -41,7 +41,8 @@ define(['../../services/module'], function(services) {
          * @param {String} groupTable   tabela de grupo
          */
         function setFilterObject(array, isPxForm, groupTable) {
-            if (!Array.isArray(array)) {
+            // Verificar se array está no formato JSON
+            if (typeof array === 'string') {
                 array = JSON.parse(array);
             }
             // Loop na array
