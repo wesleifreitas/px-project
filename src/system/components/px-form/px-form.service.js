@@ -25,7 +25,7 @@ define(['../../services/module'], function(services) {
             };
             $http({
                 method: 'POST',
-                url: 'http://localhost:8500/rest/px-project/system/px-form/insertUpdate',
+                url: '../../../rest/px-project/system/px-form/insertUpdate',
                 data: data
             }).then(function successCallback(response) {
                 callback(response);
@@ -57,7 +57,7 @@ define(['../../services/module'], function(services) {
 
             $http({
                 method: 'POST',
-                url: 'http://localhost:8500/rest/px-project/system/px-form/getData',
+                url: '../../../rest/px-project/system/px-form/getData',
                 data: data
             }).then(function successCallback(response) {
                 callback(response);
