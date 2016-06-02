@@ -19,7 +19,7 @@
         <cftry>
 	        <cfset body = DeserializeJSON(arguments.body)>
 
-	        <cfinvoke component="px-project.system.components.px-data-grid.px-data-grid"
+	        <cfinvoke component="px-project-cfc.system.components.px-data-grid.px-data-grid"
 	        	method="getData"
 				dsn="#body.dsn#"
 				user="#body.user#"
@@ -64,7 +64,7 @@
         <cftry>
 	        <cfset body = DeserializeJSON(arguments.body)>
 
-	        <cfinvoke component="px-project.system.components.px-data-grid.px-data-grid"
+	        <cfinvoke component="px-project-cfc.system.components.px-data-grid.px-data-grid"
 	        	method="removeData"
 				dsn="#body.dsn#"
 				user="#body.user#"
@@ -108,7 +108,7 @@
         <cftry>
 	        <cfset body = DeserializeJSON(arguments.body)>
 
-	        <cfinvoke component="px-project.system.components.px-form.px-form"
+	        <cfinvoke component="px-project-cfc.system.components.px-form.px-form"
 	        	method="select"
 				dsn="#body.dsn#"
 				<!--- user="#body.user#" --->
@@ -145,7 +145,7 @@
         <cftry>
 	        <cfset body = DeserializeJSON(arguments.body)>
 
-	        <cfinvoke component="px-project.system.components.px-form.px-form"
+	        <cfinvoke component="px-project-cfc.system.components.px-form.px-form"
 	        	method="insertUpdate"
 				dsn="#body.dsn#"
 				<!--- user="#body.user#" --->

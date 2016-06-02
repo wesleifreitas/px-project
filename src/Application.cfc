@@ -13,7 +13,7 @@
 
     <cfset THIS.Mappings = structNew() />
     <cfset THIS.Mappings["/cfc"] = THIS.RootDir />
-    <cfset THIS.Mappings["/px-project"] = THIS.RootDir/>
+    <cfset THIS.Mappings["/px-project-cfc"] = THIS.RootDir & 'lib/px-project/dist' />
     <!--- <cfset THIS.Mappings["/px-project"] = THIS.RootDir & 'lib/px-project/dist'/> --->
 
     <cfparam name="session.loggedIn" default="false" />
