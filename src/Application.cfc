@@ -14,7 +14,7 @@
     <cfset THIS.Mappings = structNew() />
     <cfset THIS.Mappings["/cfc"] = THIS.RootDir />
     <cfset THIS.Mappings["/px-project-cfc"] = THIS.RootDir & 'lib/px-project/dist' />
-    <!--- <cfset THIS.Mappings["/px-project"] = THIS.RootDir & 'lib/px-project/dist'/> --->
+    <!--- <cfset THIS.Mappings["/px-project-cfc"] = THIS.RootDir & 'lib/px-project/dist'/> --->
 
     <cfparam name="session.loggedIn" default="false" />
 
@@ -33,7 +33,7 @@
         hint="I run when the application boots up. If I return false, the application initialization will hault.">
 
         <!--- Application root directory--->
-        <cfset APPLICATION.RootDir = THIS.RootDir />
+        <cfset APPLICATION.RootDir = getDirectoryFromPath(getCurrentTemplatePath()) />
 
         <!--- REST service --->
         <cfset restDirPath = APPLICATION.RootDir & "rest">
