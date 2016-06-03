@@ -1,7 +1,7 @@
 define(['../controllers/module'], function(controllers) {
     'use strict';
 
-    controllers.controller('HomeCtrl', ['pxConfig', 'pxCssLoader', 'UserService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$mdDialog', '$log', '$locale', function(pxConfig, pxCssLoader, UserService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $mdDialog, $log, $locale) {
+    controllers.controller('HomeCtrl', ['pxConfig', 'pxCssLoader', 'AuthenticationService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$mdDialog', '$log', '$locale', function(pxConfig, pxCssLoader, AuthenticationService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $mdDialog, $log, $locale) {
 
             pxCssLoader.load();
 
@@ -27,7 +27,7 @@ define(['../controllers/module'], function(controllers) {
                 } else {
                     alert('Função não disponível no momento')
                         /*            
-                        $mdDialog.show(
+                        $mdDialog.show'(
                             $mdDialog.alert()
                             .parent(angular.element(document.body))
                             .clickOutsideToClose(true)
@@ -109,10 +109,13 @@ define(['../controllers/module'], function(controllers) {
                 return debounceFn;
             }
 
+            // Sair do sistema
             $scope.logout = function logout() {
+                AuthenticationService.Logout(function(response) {
+                    //console.info(response);
+                })
                 $location.path('/login');
             };
-
 
             if (navigator.userAgent.toLowerCase().search(/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i) != -1) {
                 $('html').click(function() {
