@@ -137,8 +137,20 @@ define(['../../directives/module'], function(directives) {
 
                         // Armazena mensagem de erro de validação
                         $scope.error = '';
+
+                        var selectorName = '#' + $scope.element;
+
+                        // Verificar se é filtro group
+                        if (angular.isDefined(angular.element($(selectorName + '_groupSearch_inputSearch').get(0)).scope())) {
+                            selectorName += '_groupSearch_inputSearch';
+                        }
+                        // Verificar se o filtro é um px-complete
+                        else if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
+                            selectorName += '_inputSearch';
+                        }
+
                         // Elemento que será validado
-                        var _element = angular.element($('#' + $scope.element).get(0));
+                        var _element = angular.element($(selectorName).get(0));
                         // ngModelController do elemento
                         var _ngModelCtrl = _element.data('$ngModelController');
 
@@ -479,7 +491,7 @@ define(['../../directives/module'], function(directives) {
                                     //ngModelCtrl.$render();
                                     scope.validPhone9 = true;
                                     scope.validPhone8 = false;
-                                } else if (scope.cleanValue.length === (extraNumberCompare-1) && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
+                                } else if (scope.cleanValue.length === (extraNumberCompare - 1) && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
 
                                     // Atualizar uiMask para telefone com 8 dígitos
                                     if (scope.ddd !== false) {
@@ -514,7 +526,7 @@ define(['../../directives/module'], function(directives) {
                                     scope.validPhone9 = true;
                                     scope.validPhone8 = false;
 
-                                } else if (scope.cleanValue.length === (extraNumberCompare-1) && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
+                                } else if (scope.cleanValue.length === (extraNumberCompare - 1) && scope.validPhone8 === false || !angular.isDefined(scope.validPhone8)) {
 
                                     // Atualizar uiMask para telefone com 8 dígitos
                                     if (scope.ddd !== false) {
@@ -778,12 +790,6 @@ define(['../../directives/module'], function(directives) {
                         }
                     }
 
-                    if (attrs.required) {
-                        $timeout(function() {
-                            scope.required = true;
-                        }, 0)
-                    }
-
                     // Tabela (SQL)
                     //scope.table = pxConfig.GROUP_TABLE;
 
@@ -827,6 +833,11 @@ define(['../../directives/module'], function(directives) {
                         scope.groupSearchControl.setValue(value);
                     };
 
+                    scope.internalControl.setDefault = function(value) {
+                        scope.groupSearchControl.setDefault(value);
+                    };
+
+
                     scope.groupSearchControl = {};
 
                     scope.groupSearchClick = function() {
@@ -869,12 +880,18 @@ define(['../../directives/module'], function(directives) {
                             $scope.groupSearchControl.setValue(value);
                             //$scope.groupSearchChange(value);
                         };
+
+                        $scope.setDefault = function(value) {
+                            console.info('value',value)
+                            $scope.groupSearchControl.setDefault(value);
+                            //$scope.groupSearchChange(value);
+                        };
                     }
                 }
             };
         }])
         // pxInputSearch
-        .directive('pxInputSearch', ['pxConfig', 'pxUtil', 'pxArrayUtil', '$parse', '$http', '$sce', '$timeout', '$mdDialog', function(pxConfig, pxUtil, pxArrayUtil, $parse, $http, $sce, $timeout, $mdDialog) {
+        .directive('pxInputSearch', ['pxConfig', 'pxUtil', 'pxArrayUtil', '$parse', '$http', '$sce', '$timeout', '$mdDialog', '$compile', function(pxConfig, pxUtil, pxArrayUtil, $parse, $http, $sce, $timeout, $mdDialog, $compile) {
             return {
                 restrict: 'E',
                 scope: {
@@ -909,12 +926,6 @@ define(['../../directives/module'], function(directives) {
                         return;
                     }
 
-                    if (attrs.required) {
-                        $timeout(function() {
-                            scope.required = true;
-                        }, 0)
-                    }
-
                     scope.inputClass = scope.inputClass || 'form-control';
 
                     if (scope.dialog) {
@@ -940,6 +951,10 @@ define(['../../directives/module'], function(directives) {
 
                     scope.internalControl.setValue = function(value) {
                         scope.setValue(value);
+                    };
+
+                    scope.internalControl.setDefault = function(value) {
+                        scope.setDefault(value);
                     };
 
                     scope.internalControl.getValue = function() {
@@ -1296,9 +1311,17 @@ define(['../../directives/module'], function(directives) {
                         return false;
                     };
 
+                    $timeout(function() {
+                        if(angular.isDefined(scope.default) && !angular.isDefined(scope.selectedItem))                            
+                            scope.setValue(scope.default);
+                    }, 0)
 
                 },
-                controller: ['$scope', function($scope) {
+                controller: ['$scope', '$timeout', function($scope, $timeout) {
+
+                    $scope.setDefault = function(data) {
+                        $scope.default = data;
+                    }
 
                     $scope.setValue = function(data) {
                         var arrayFields = $scope.fields;
