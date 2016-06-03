@@ -199,19 +199,6 @@ define(['../../directives/module'], function(directives) {
                         }
                         // Edit - End
 
-                        // Verificar se o campo é visível
-                        if (index.visible === false) {
-                            scope.columnDefs.push({
-                                "targets": columnDefs,
-                                "visible": false,
-                                "render": function(data, type, full, meta) {
-                                    return "<i class='fa fa-pencil'>";
-                                    //return "<i class='fa fa-pencil'> <b>Editar</b>";
-                                }
-                            });
-                            columnDefs++;
-                        }
-
                         // Verificar se o campo é link
                         if (index.link) {
                             scope.columnDefs.push({
@@ -226,6 +213,19 @@ define(['../../directives/module'], function(directives) {
                             });
                             columnDefs++;
                         }
+
+                        // Verificar se o campo é visível
+                        if (index.visible === false) {
+                            scope.columnDefs.push({
+                                "targets": columnDefs,
+                                "visible": false,
+                                "render": function(data, type, full, meta) {
+                                    return "<i class='fa fa-pencil'>";
+                                    //return "<i class='fa fa-pencil'> <b>Editar</b>";
+                                }
+                            });
+                        }
+                        columnDefs++;
 
                         scope.columns += '<th class="text-left">' + index.title + '</th>';
 
@@ -667,12 +667,12 @@ define(['../../directives/module'], function(directives) {
                     var selectorName = '#' + index.filter;
                     var selectorValue = index.filter;
 
-                    // Verifica se é filtro group
+                    // Verificar se é filtro group
                     if (index.filterGroup) {
                         selectorName += '_groupSearch_inputSearch';
                         selectorValue = 'selectedItem';
                     }
-                    // Verificar se o filtro é um px-complete
+                    // Verificar se o filtro é um px-input-search
                     else if (angular.isDefined(angular.element($(selectorName + '_inputSearch').get(0)).scope())) {
                         selectorName += '_inputSearch';
                         selectorValue = 'selectedItem';
@@ -681,9 +681,10 @@ define(['../../directives/module'], function(directives) {
                     // Validar filtro - START
                     var _element = angular.element($(selectorName).get(0));
                     var _ngModelCtrl = _element.data('$ngModelController');
+                    
                     if (angular.isDefined(_ngModelCtrl)) {
                         _ngModelCtrl.$validate();
-                        if (!_ngModelCtrl.$valid) {
+                        if (!_ngModelCtrl.$valid) {                            
                             _element.trigger('keyup');
                             validFilters = false;
                         } else {
@@ -965,12 +966,15 @@ define(['../../directives/module'], function(directives) {
 
             // Dados
             var data = {};
+            data.pkValue={};
 
             data.pxDataGridRowNumber = $scope.currentRecordCount;
             data.edit = {};
-
+            
             // Loop nas colunas da grid
             angular.forEach($scope.fields, function(item) {
+                
+                data.pkValue[item.field] = angular.copy(value[item.field]);
 
                 if (item.link && (!angular.isDefined(item.field) || item.field === '')) {
                     var linkData = angular.copy(value);
@@ -1040,7 +1044,7 @@ define(['../../directives/module'], function(directives) {
                     if (angular.isDefined(item.pad)) {
                         data[item.field] = pxMaskUtil.maskFormat(pxStringUtil.pad(item.pad, data[item.field], true), maskData).result;
                     } else {
-                        data[item.field] = pxMaskUtil.maskFormat(String(data[item.field]), maskData).result;
+                        data[item.field] = pxMaskUtil.maskFormat(String(data[item.field]), maskData).result;                        
                     }
                 }
 

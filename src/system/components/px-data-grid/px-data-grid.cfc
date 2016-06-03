@@ -367,7 +367,7 @@
 				<cfset whereInit = "WHERE">
 				<cfloop array="#arguments.fields#" index="j">
 					<cfif isDefined("j.field") AND isDefined("j.pk") AND j.pk>
-						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i[j.field.replaceAll("[^\w\-_]+", "")]#">
+						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i.pkValue[j.field.replaceAll("[^\w\-_]+", "")]#">
 						<cfset whereInit = "AND ">
 					</cfif>
 				</cfloop>
