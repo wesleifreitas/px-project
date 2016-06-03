@@ -414,7 +414,7 @@ define(['../../directives/module'], function(directives) {
                                     return;
                                 } else if (_element.context.type === 'checkbox') {
                                     if (angular.isDefined(index.fieldValueOptions)) {
-                                        if (index.fieldValueOptions.checked === _value) {
+                                        if (String(index.fieldValueOptions.checked) === String(_value)) {
                                             _value = true;
                                         } else {
                                             _value = false;
