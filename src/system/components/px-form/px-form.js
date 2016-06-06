@@ -63,6 +63,9 @@ define(['../../directives/module'], function(directives) {
         $scope.insertUpdate = function(action) {
             var objConfig = JSON.parse($scope.config);
 
+            // Armazenar campos com verificação unique
+            var unique = {};
+
             var table = objConfig.table;
             var fields = objConfig.fields;
 
@@ -138,6 +141,33 @@ define(['../../directives/module'], function(directives) {
                     }
 
                     var element = angular.element($(selectorName).get(0));
+                    index.selectorName = selectorName;
+
+                    if (!index.uniqueControl === true) {
+
+                        element.bind('keyup', function(event) {
+                            var ngModelCtrl = angular.element($('#' + event.target.id).get(0)).data('$ngModelController');
+
+                            if (unique['#' + event.target.id] !== ngModelCtrl.$modelValue) {
+                                angular.forEach(unique, function(j, key) {
+
+                                    var element = angular.element($(key).get(0));
+                                    var ngModelCtrl = element.data('$ngModelController');
+
+                                    ngModelCtrl.$setValidity('unique', true);
+
+                                    $timeout(function() {
+                                        element.trigger('keyup');
+                                    }, 0);
+                                });
+
+                                unique = {};
+                                $(this).unbind(event);
+                            }
+                        });
+                    }
+
+                    index.uniqueControl = angular.copy(true);
 
                     if (!angular.isDefined(element.context)) {
                         console.error('pxForm: elemento não encontrado no html, verifique a propriedade element', index);
@@ -310,13 +340,28 @@ define(['../../directives/module'], function(directives) {
                     console.info('pxFormService.insertUpdate response: ', response);
                 }
                 if (response.data.success) {
+                    if (response.data.unique) {
+                        angular.forEach(fields, function(index) {
+                            if (index.pk === true) {
+                                var element = angular.element($(index.selectorName).get(0));
+                                var ngModelCtrl = element.data('$ngModelController');
+                                ngModelCtrl.$setValidity('unique', false);
+                                unique[index.selectorName] = angular.copy(ngModelCtrl.$modelValue);
+                                $timeout(function() {
+                                    element.trigger('blur');
+                                }, 0);
+                            }
+                        });
+                    } else {
+                        $scope.clean();
+                    }
                     if ($scope.callback) {
                         // http://blog-it.hypoport.de/2013/11/06/passing-functions-to-angularjs-directives/
                         $scope.callback({
                             event: response.data
                         });
                     }
-                    $scope.clean();
+
                 } else {
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 }
@@ -402,7 +447,7 @@ define(['../../directives/module'], function(directives) {
                                     selectorValue = 'selectedItem';
                                     var inputSearch = true;
                                 }
-                                var _ngModelCtrl = angular.element($(selectorName).data('$ngModelController'));
+                                //var _ngModelCtrl = angular.element($(selectorName).data('$ngModelController'));
                                 var _element = angular.element($(selectorName).get(0));
                                 var _value = String(response.data.qQuery[0][index.field]);
                                 if (!angular.isDefined(response.data.qQuery[0][index.field])) {
@@ -507,7 +552,7 @@ define(['../../directives/module'], function(directives) {
                         selectorValue = 'selectedItem';
                     }
 
-                    var _ngModelCtrl = angular.element($(selectorName).data('$ngModelController'));
+                    //var _ngModelCtrl = angular.element($(selectorName).data('$ngModelController'));
 
                     var _element = angular.element($(selectorName).get(0));
 

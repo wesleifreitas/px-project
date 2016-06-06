@@ -159,6 +159,11 @@ define(['../../directives/module'], function(directives) {
 
                         // Eventos keyup blur
                         _element.on('keyup blur', function(event) {
+
+                            if (!angular.isDefined(_ngModelCtrl)) {
+                                return;
+                            }
+
                             // Verificar se possui campo de confirmação
                             if (angular.isDefined($scope.confirm)) {
                                 if (String(_confirmModelCtrl.$modelValue) !== String(_ngModelCtrl.$modelValue)) {
@@ -168,10 +173,6 @@ define(['../../directives/module'], function(directives) {
                                     //_ngModelCtrl.$error.confirm = null;
                                     _ngModelCtrl.$setValidity('confirm', true);
                                 }
-                            }
-
-                            if (!angular.isDefined(_ngModelCtrl)) {
-                                return;
                             }
 
                             // Verificar ser o elemento está inválido
@@ -185,6 +186,8 @@ define(['../../directives/module'], function(directives) {
                                         $scope.error = 'E-mail inválido';
                                     } else if (_ngModelCtrl.$error.minlength) {
                                         $scope.error = $scope.minLengthError;
+                                    } else if (_ngModelCtrl.$error.unique) {
+                                        $scope.error = 'Campo já existente';
                                     } else if (_ngModelCtrl.$error.confirm) {
                                         if (!angular.isDefined($scope.confirmError)) {
                                             $scope.error = 'Campo não confere';
@@ -837,7 +840,6 @@ define(['../../directives/module'], function(directives) {
                         scope.groupSearchControl.setDefault(value);
                     };
 
-
                     scope.groupSearchControl = {};
 
                     scope.groupSearchClick = function() {
@@ -882,9 +884,7 @@ define(['../../directives/module'], function(directives) {
                         };
 
                         $scope.setDefault = function(value) {
-                            console.info('value',value)
                             $scope.groupSearchControl.setDefault(value);
-                            //$scope.groupSearchChange(value);
                         };
                     }
                 }
@@ -1312,7 +1312,7 @@ define(['../../directives/module'], function(directives) {
                     };
 
                     $timeout(function() {
-                        if(angular.isDefined(scope.default) && !angular.isDefined(scope.selectedItem))                            
+                        if (angular.isDefined(scope.default) && !angular.isDefined(scope.selectedItem))
                             scope.setValue(scope.default);
                     }, 0)
 

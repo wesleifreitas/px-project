@@ -58,6 +58,26 @@
 		
 		<cfset comma = "">
 		<cfif arguments.action EQ "insert">
+			<!--- Verificar se pk existe --->
+			<cfquery datasource="#arguments.dsn#" name="qUnique">
+				SELECT 1 FROM #arguments.table#
+				<cfset whereInit = 'WHERE'>
+				<cfloop array="#arguments.fields#" index="i">
+					<cfif isDefined("i.pk") AND i.pk>
+						#whereInit# #i.field# = <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
+					<cfset whereInit = 'AND '>
+					</cfif>
+				</cfloop>
+			</cfquery>
+
+			<cfif qUnique.recordCount GT 0>
+				<cfset result["action"] = 'unique'>
+				<cfset result["unique"] = true>
+				<cfset result["qUnique"] = QueryToArray(qUnique)>
+				<cfset result["success"] = true>
+				<cfreturn result>
+			</cfif>
+
 			<cfquery datasource="#arguments.dsn#" result="queryResult">
 				INSERT INTO
 					#arguments.table#
@@ -88,6 +108,30 @@
 				)
 			</cfquery>
 		<cfelse>
+			<cfset updatePk = false>
+			<!--- Verificar se pk existe --->
+			<cfquery datasource="#arguments.dsn#" name="qUnique">
+				SELECT 1 FROM #arguments.table#
+				<cfset whereInit = 'WHERE'>
+				<cfloop array="#arguments.fields#" index="i">
+					<cfif isDefined("i.pk") AND i.pk>
+						#whereInit# #i.field# = <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
+						<cfset whereInit = 'AND '>
+						<cfif i.valueObject.value NEQ arguments.oldForm[i.field]>
+							<cfset updatePk = true>
+						</cfif>
+					</cfif>
+				</cfloop>
+			</cfquery>
+
+			<cfif qUnique.recordCount GT 0 AND updatePk>
+				<cfset result["action"] = 'unique'>
+				<cfset result["unique"] = true>
+				<cfset result["qUnique"] = QueryToArray(qUnique)>
+				<cfset result["success"] = true>
+				<cfreturn result>
+			</cfif>
+
 			<cfquery datasource="#arguments.dsn#" result="queryResult">
 				UPDATE
 					#arguments.table#
