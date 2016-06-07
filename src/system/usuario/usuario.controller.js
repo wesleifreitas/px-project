@@ -348,7 +348,6 @@ define(['../controllers/module'], function(controllers) {
          */
         $scope.formInsert = function() {
             $scope.formControl.insert();
-            $mdDialog.hide();
         };
 
         /**
@@ -357,7 +356,6 @@ define(['../controllers/module'], function(controllers) {
          */
         $scope.formUpdate = function() {
             $scope.formControl.update();
-            $mdDialog.hide();
         };
 
         /**
@@ -369,12 +367,14 @@ define(['../controllers/module'], function(controllers) {
             if (event.action === 'select') {
                 $scope.usu_senha = '***************'
                 $scope.usu_senha_confirmar = '***************'
-            } else if (event.action == 'insert') {
+            } else if (event.action == 'insert' && !event.error) {
                 // Adicionar registro na listagem
                 $scope.gridControl.addDataRow(event.data);
-            } else if (event.action == 'update') {
+                $mdDialog.hide();
+            } else if (event.action == 'update' && !event.error) {
                 // Atualiza registro na listagem
                 $scope.gridControl.updateDataRow(event.data);
+                $mdDialog.hide();
             } else {
                 alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
             }

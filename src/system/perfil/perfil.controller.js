@@ -259,8 +259,7 @@ define(['../controllers/module'], function(controllers) {
          * @return {[type]} [description]
          */
         $scope.formInsert = function(form) {
-            $scope.formControl.insert();
-            $mdDialog.hide();
+            $scope.formControl.insert();            
         };
 
         /**
@@ -268,8 +267,7 @@ define(['../controllers/module'], function(controllers) {
          * @return {[type]} [description]
          */
         $scope.formUpdate = function(form) {
-            $scope.formControl.update();
-            $mdDialog.hide();
+            $scope.formControl.update();            
         };
 
         /**
@@ -283,19 +281,21 @@ define(['../controllers/module'], function(controllers) {
                 grupo_id = $scope.grupo_id_searchControl.getValue().selectedItem.grupo_id;
             }
 
-            if (event.action == 'insert') {
+            if (event.action == 'insert' && !event.error) {
                 // Adicionar registro na listagem
                 $scope.gridControl.addDataRow(event.data);
                 // Salvar treeMenu
                 perfilService.saveTreeMenu(event.queryResult.IDENTITYCOL, $scope.jstreeData, function(response) {
                     //console.info('saveTreeMenu', response);
+                    $mdDialog.hide();
                 });
-            } else if (event.action == 'update') {
+            } else if (event.action == 'update' && !event.error) {
                 // Atualiza registro na listagem
                 $scope.gridControl.updateDataRow(event.data);
                 // Salvar treeMenu
                 perfilService.saveTreeMenu(event.data.per_id, $scope.jstreeData, function(response) {
                     //console.info('saveTreeMenu', response);
+                    $mdDialog.hide();
                 });
             }
         };
