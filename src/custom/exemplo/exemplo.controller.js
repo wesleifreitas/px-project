@@ -348,8 +348,7 @@ define(['../controllers/module'], function(controllers) {
          * @return {[type]} [description]
          */
         $scope.formInsert = function() {
-            $scope.formControl.insert();
-            $mdDialog.hide();
+            $scope.formControl.insert();            
         };
 
         /**
@@ -357,8 +356,7 @@ define(['../controllers/module'], function(controllers) {
          * @return {[type]} [description]
          */
         $scope.formUpdate = function(form) {
-            $scope.formControl.update();
-            $mdDialog.hide();
+            $scope.formControl.update();            
         };
 
         /**
@@ -369,12 +367,14 @@ define(['../controllers/module'], function(controllers) {
         $scope.formCallback = function(event) {
             if (event.action === 'select') {
                 $scope.exe_senha_confirmar = event.qQuery[0].EXE_SENHA;
-            } else if (event.action == 'insert') {
+            } else if (event.action == 'insert' && !event.error) {
                 // Adicionar registro na listagem
                 $scope.dgExemploControl.addDataRow(event.data);
-            } else if (event.action == 'update') {
+                $mdDialog.hide();
+            } else if (event.action == 'update' && !event.error) {
                 // Atualizar registro na listagem
                 $scope.dgExemploControl.updateDataRow(event.data);
+                $mdDialog.hide();
             }
         };
 
