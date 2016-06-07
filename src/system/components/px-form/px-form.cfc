@@ -71,7 +71,7 @@
 			</cfquery>
 
 			<cfif qUnique.recordCount GT 0>
-				<cfset result["action"] = 'unique'>
+				<cfset result["error"] = true>
 				<cfset result["unique"] = true>
 				<cfset result["qUnique"] = QueryToArray(qUnique)>
 				<cfset result["success"] = true>
