@@ -32,12 +32,9 @@
         output="false"
         hint="I run when the application boots up. If I return false, the application initialization will hault.">
 
-        <!--- Application root directory--->
-        <cfset APPLICATION.RootDir = getDirectoryFromPath(getCurrentTemplatePath()) />
-
         <!--- REST service --->
-        <cfset restDirPath = APPLICATION.RootDir & "rest">
-        <!--- <cfset restDirPath = APPLICATION.RootDir & "lib/px-project/dist/rest"> --->
+        <cfset restDirPath = THIS.RootDir & "rest">
+        <!--- <cfset restDirPath = THIS.RootDir & "lib/px-project/dist/rest"> --->
         <cfset RestInitApplication(restDirPath, "px-project")>
         <!---
             Let's create an encryption key that will be used to

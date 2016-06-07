@@ -1,4 +1,7 @@
 <cfcomponent rest="true" restPath="/system">  
+
+	<cfset THIS.Mappings["/px-project-cfc"] = getDirectoryFromPath(getCurrentTemplatePath()) />
+
 	<!--- 
 	px-data-grid - START
 	--->    
