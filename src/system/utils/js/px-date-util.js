@@ -10,6 +10,8 @@ define(['../../services/module'], function(services) {
         var service = {};
 
         service.dateAdd = dateAdd;
+        // Definir service moment.js
+        service.moment = require('moment');
 
         return service;
 
