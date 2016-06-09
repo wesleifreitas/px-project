@@ -645,7 +645,12 @@ define(['../../directives/module'], function(directives) {
          * @return {void}
          */
         $scope.getData = function(rowFrom, rowTo) {
-            // Processamento getData iniciado
+            // Verificar se a listagem está em processamento
+            if ($scope.internalControl.working) {
+                return;
+            }
+
+            // Iniciar processamento
             $scope.internalControl.working = true;
 
             var arrayFields = $scope.fields; //JSON.parse($scope.fields);            
@@ -681,10 +686,10 @@ define(['../../directives/module'], function(directives) {
                     // Validar filtro - START
                     var _element = angular.element($(selectorName).get(0));
                     var _ngModelCtrl = _element.data('$ngModelController');
-                    
+
                     if (angular.isDefined(_ngModelCtrl)) {
                         _ngModelCtrl.$validate();
-                        if (!_ngModelCtrl.$valid) {                            
+                        if (!_ngModelCtrl.$valid) {
                             _element.trigger('keyup');
                             validFilters = false;
                         } else {
@@ -886,6 +891,7 @@ define(['../../directives/module'], function(directives) {
                 }
 
                 if (angular.isDefined(response.data.fault)) {
+                    $scope.internalControl.working = false;
                     alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
                 } else {
                     // Verifica se a quantidade de registros é maior que 0
@@ -966,14 +972,14 @@ define(['../../directives/module'], function(directives) {
 
             // Dados
             var data = {};
-            data.pkValue={};
+            data.pkValue = {};
 
             data.pxDataGridRowNumber = $scope.currentRecordCount;
             data.edit = {};
-            
+
             // Loop nas colunas da grid
             angular.forEach($scope.fields, function(item) {
-                
+
                 data.pkValue[item.field] = angular.copy(value[item.field]);
 
                 if (item.link && (!angular.isDefined(item.field) || item.field === '')) {
@@ -1044,7 +1050,7 @@ define(['../../directives/module'], function(directives) {
                     if (angular.isDefined(item.pad)) {
                         data[item.field] = pxMaskUtil.maskFormat(pxStringUtil.pad(item.pad, data[item.field], true), maskData).result;
                     } else {
-                        data[item.field] = pxMaskUtil.maskFormat(String(data[item.field]), maskData).result;                        
+                        data[item.field] = pxMaskUtil.maskFormat(String(data[item.field]), maskData).result;
                     }
                 }
 
