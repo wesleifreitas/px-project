@@ -64,7 +64,16 @@ define(['../../directives/module'], function(directives) {
                     // Transformar valor String para Array
                     if (newValue !== '') {
                         newValue = JSON.parse(newValue);
-                        //console.info(scope.id + ' - new config:', newValue)
+                        //console.info(scope.id + ' - new config:', newValue);
+
+                        // Verificar se DataTables já existe
+                        if (oldValue !== '') {
+                            // Destruir DataTables
+                            // https://datatables.net/reference/api/destroy()
+                            var table = $('#' + scope.id + '_pxDataTable');
+                            table.DataTable().destroy();
+                            table.empty();
+                        }
                     } else {
                         return;
                     }
@@ -248,7 +257,7 @@ define(['../../directives/module'], function(directives) {
                     scope.dataTable = $sce.trustAsHtml(scope.dataTable);
 
                     // Data Grid pronta para consulta
-                    scope.pxTableReady = true;
+                    $timeout(scope.pxDataGridGetData, 0);
                 });
 
                 // Internal Control - Start
@@ -346,18 +355,8 @@ define(['../../directives/module'], function(directives) {
         // Definir moment.js
         var moment = require('moment');
 
-        // Verifica se a grid a está preparada para receber os dados
-        $scope.pxTableReady = false;
-
         // A página atual inicia-se em 0
         $scope.currentPage = 0;
-
-        var pxTableReadyWatch = $scope.$watch('pxTableReady', function(newValue, oldValue) {
-            if (newValue === true) {
-                $timeout($scope.pxDataGridGetData, 0);
-                pxTableReadyWatch(); // unwatch
-            }
-        });
 
         $scope.reset = function() {
             // A página atual inicia-se em 0
@@ -455,13 +454,11 @@ define(['../../directives/module'], function(directives) {
             };
 
             requirejs(["dataTables"], function() {
-                // Inicializa dataTable
+                // Inicializar dataTable
                 $('#' + $scope.id + '_pxDataTable').dataTable(
                     dataTableConfig
                 );
             });
-
-            $scope.pxTableReady = false;
 
             // Se a propriedade pxGetData for true
             if ($scope.dataInit === true) {
@@ -1105,12 +1102,9 @@ define(['../../directives/module'], function(directives) {
          * @return {void}
          */
         $scope.clearData = function clearData() {
-            // Verificar a listagem foi iniciada para que assim possa apagar o dados
-            if ($scope.pxTableReady) {
-                requirejs(["dataTables"], function() {
-                    $('#' + $scope.id + '_pxDataTable').DataTable().clear().draw();
-                });
-            }
+            requirejs(["dataTables"], function() {
+                $('#' + $scope.id + '_pxDataTable').DataTable().clear().draw();
+            });
         }
 
         /**
