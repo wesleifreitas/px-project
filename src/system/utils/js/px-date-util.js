@@ -8,10 +8,12 @@ define(['../../services/module'], function(services) {
     function pxDateUtil() {
 
         var service = {};
+        var moment = require('moment')
 
         service.dateAdd = dateAdd;
+        service.months = months;
         // Definir service moment.js
-        service.moment = require('moment');
+        service.moment = moment;
 
         return service;
 
@@ -40,7 +42,7 @@ define(['../../services/module'], function(services) {
                     alert('pxDateUtil: datepart não desenvolvido no dateAdd');
                     break;
                 case "d": // Day
-                    date.setDate(date.getDate() + number);                    
+                    date.setDate(date.getDate() + number);
                     break;
                 case "w": // Weekday
                     console.warn('pxDateUtil:', 'datepart não desenvolvido no dateAdd');
@@ -68,6 +70,27 @@ define(['../../services/module'], function(services) {
                     break;
             }
             return date;
+        }
+
+        function months(showAll) {
+
+            var arrayData = [];
+
+            if (showAll) {
+                arrayData.push({
+                    name: 'Todos',
+                    id: '%'
+                });
+            }
+
+            for (var i = 0; i < moment.months().length; i++) {
+                arrayData.push({
+                    name: moment.months()[i],
+                    id: i
+                });
+            };
+
+            return arrayData;
         }
     }
 });
