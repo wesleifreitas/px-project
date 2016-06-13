@@ -1060,6 +1060,9 @@ define(['../../directives/module'], function(directives) {
                     // Verificar se o valor é do tipo date
                     if (angular.isDate(data[item.field])) {
                         data[item.field] = moment(Date.parse(data[item.field])).format(item.moment);
+                    } else if (parseInt(data[item.field]) > 0 && parseInt(data[item.field]) <= 12) {
+                        // Mês (m)
+                        data[item.field] = moment.months()[parseInt(data[item.field]) - 1];
                     } else if (data[item.field] > 0) {
                         // Senão considerar numérico (YYYYMMDD)
                         data[item.field] = moment(Date.parse(new Date(String(data[item.field]).substr(0, 4), String(data[item.field]).substr(4, 2) - 1, String(data[item.field]).substr(6, 2)))).format(item.moment);
