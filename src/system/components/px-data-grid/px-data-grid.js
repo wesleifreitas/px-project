@@ -72,7 +72,10 @@ define(['../../directives/module'], function(directives) {
                             // https://datatables.net/reference/api/destroy()
                             var table = $('#' + scope.id + '_pxDataTable');
                             table.DataTable().destroy();
-                            table.empty();
+                            /*if (scope.currentRecordCount > 0) {
+                                table.empty();
+                            }*/
+                            scope.reset();
                         }
                     } else {
                         return;
