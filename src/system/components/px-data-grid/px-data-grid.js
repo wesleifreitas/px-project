@@ -35,6 +35,11 @@ define(['../../directives/module'], function(directives) {
             },
             link: function(scope, element, attrs) {
 
+                element.on('$destroy', function() {
+                    // Remover scope.$watch('config',...
+                    watchConfig();
+                });
+
                 if (!angular.isDefined(scope.id) || scope.id === '') {
                     console.warn('pxDataGrid: Existe um px-data-grid sem id, isto pode causar sérios problemas em seu código!');
                 }
@@ -60,14 +65,19 @@ define(['../../directives/module'], function(directives) {
                     scope.group = (scope.group === "true");
                 }
 
-                scope.$watch('config', function(newValue, oldValue) {
-                    // Transformar valor String para Array
+                // Armanzenar se o eventos padrão foram adicionados
+                scope.events = false;
+
+                var watchConfig = scope.$watch('config', function(newValue, oldValue) {
+                    // Verificar se possui configuração
                     if (newValue !== '') {
+                        // Preparar configuração
+                        // string -> array
                         newValue = JSON.parse(newValue);
-                        //console.info(scope.id + ' - new config:', newValue);
 
                         // Verificar se DataTables já existe
-                        if (oldValue !== '') {
+                        // e se possuir fields definido
+                        if (oldValue !== '' && angular.isDefined(scope.fields)) {
                             // Destruir DataTables
                             // https://datatables.net/reference/api/destroy()
                             var table = $('#' + scope.id + '_pxDataTable');
@@ -78,8 +88,11 @@ define(['../../directives/module'], function(directives) {
                             scope.reset();
                         }
                     } else {
+                        // Se não possuir uma configuração válida
+                        // a listagem não será construida.
                         return;
                     }
+
                     scope.fields = newValue.fields;
 
                     scope.dataTable = '';
@@ -259,8 +272,101 @@ define(['../../directives/module'], function(directives) {
 
                     scope.dataTable = $sce.trustAsHtml(scope.dataTable);
 
-                    // Data Grid pronta para consulta
-                    $timeout(scope.pxDataGridGetData, 0);
+                    $timeout(function() {
+                        // Armazena linhas selecionadas (checkbox)
+                        scope.rowsSelected = [];
+
+                        // sDom - Start
+                        // http://legacy.datatables.net/usage/options#sDom
+                        var sDom = '';
+                        sDom += 'l'; // Length changing
+                        //sDom += 'f';  // Filtering input
+                        sDom += 't'; // The table!
+                        sDom += 'i'; // Information
+                        sDom += 'p'; // Pagination
+                        sDom += 'r'; // pRocessing
+                        // sDom - End
+
+                        // Configuração do dataTable
+                        // Features: http://legacy.datatables.net/usage/features
+                        var dataTableConfig = {};
+                        // Ajax Url
+                        if (scope.ajaxUrl) {
+                            dataTableConfig.ajax = {
+                                "url": scope.ajaxUrl,
+                                "dataSrc": ""
+                            }
+                        }
+                        // Tradução
+                        // https://datatables.net/reference/option/language
+                        dataTableConfig.language = {
+                                processing: "Processando...",
+                                search: "Filtrar registros carregados",
+                                lengthMenu: "Visualizar _MENU_ registros",
+                                info: "Monstrando de _START_ a _END_ no total de _TOTAL_ registros.",
+                                infoEmpty: "Nenhum registro encontrado",
+                                zeroRecords: "Nenhum registro encontrado",
+                                emptyTable: "Nenhum registro encontrado.",
+                                infoFiltered: "",
+                                paginate: {
+                                    first: "Primeira",
+                                    previous: "« Anterior",
+                                    next: "Próxima »",
+                                    last: "Última"
+                                }
+                            }
+                            // Acesso via mobile browser
+                        if (pxUtil.isMobile()) {
+                            dataTableConfig.pagingType = "simple";
+                            dataTableConfig.pageLength = 8;
+                        }
+                        dataTableConfig.bFilter = true;
+                        dataTableConfig.bLengthChange = scope.lengthChange;
+                        dataTableConfig.lengthMenu = scope.lengthMenu; //[20, 35, 45];
+                        dataTableConfig.sDom = sDom;
+                        dataTableConfig.bProcessing = true;
+                        dataTableConfig.aoColumns = scope.aoColumns;
+                        dataTableConfig.destroy = true;
+
+                        dataTableConfig.columnDefs = scope.columnDefs;
+
+                        dataTableConfig.order = []; //default order
+                        dataTableConfig.rowCallback = function(row, data, dataIndex) {
+                            // Linhda ID
+                            var rowId = data.pxDataGridRowNumber;
+
+                            // Se a linha ID está na lista de IDs de linha selecionados
+                            if ($.inArray(rowId, scope.rowsSelected) !== -1) {
+                                $(row).find('input[type="checkbox"]').prop('checked', true);
+                                $(row).addClass('selected');
+                            }
+                        };
+
+                        requirejs(["dataTables"], function() {
+                            // Inicializar dataTable
+                            $('#' + scope.id + '_pxDataTable').dataTable(
+                                dataTableConfig
+                            );
+                        });
+
+                        // Se a propriedade pxGetData for true
+                        if (scope.dataInit === true) {
+                            // Recupera dados assim que a listagem é criada
+                            scope.getData(0, scope.rowsProcess);
+                        }
+
+                        requirejs(["dataTables"], function() {
+                            var table = $('#' + scope.id + '_pxDataTable').DataTable();
+                            scope.internalControl.table = $('#' + scope.id + '_pxDataTable').DataTable();
+                        });
+                        // Verificar se o eventos não foram adicionar
+                        if (!scope.events) {
+                            // Chamar função para adicionar os eventos
+                            scope.eventInit();
+                            // Eventos adicionados
+                            scope.events = true;
+                        }
+                    }, 0);
                 });
 
                 // Internal Control - Start
@@ -386,94 +492,8 @@ define(['../../directives/module'], function(directives) {
 
         };
 
-        $scope.pxDataGridGetData = function() {
-            // Armazena linhas selecionadas (checkbox)
-            $scope.rowsSelected = [];
-
-            // sDom - Start
-            // http://legacy.datatables.net/usage/options#sDom
-            var sDom = '';
-            sDom += 'l'; // Length changing
-            //sDom += 'f';  // Filtering input
-            sDom += 't'; // The table!
-            sDom += 'i'; // Information
-            sDom += 'p'; // Pagination
-            sDom += 'r'; // pRocessing
-            // sDom - End
-
-            // Configuração do dataTable
-            // Features: http://legacy.datatables.net/usage/features
-            var dataTableConfig = {};
-            // Ajax Url
-            if ($scope.ajaxUrl) {
-                dataTableConfig.ajax = {
-                    "url": $scope.ajaxUrl,
-                    "dataSrc": ""
-                }
-            }
-            // Tradução                       
-            // https://datatables.net/reference/option/language
-            dataTableConfig.language = {
-                    processing: "Processando...",
-                    search: "Filtrar registros carregados",
-                    lengthMenu: "Visualizar _MENU_ registros",
-                    info: "Monstrando de _START_ a _END_ no total de _TOTAL_ registros.",
-                    infoEmpty: "Nenhum registro encontrado",
-                    zeroRecords: "Nenhum registro encontrado",
-                    emptyTable: "Nenhum registro encontrado.",
-                    infoFiltered: "",
-                    paginate: {
-                        first: "Primeira",
-                        previous: "« Anterior",
-                        next: "Próxima »",
-                        last: "Última"
-                    }
-                }
-                // Acesso via mobile browser
-            if (pxUtil.isMobile()) {
-                dataTableConfig.pagingType = "simple";
-                dataTableConfig.pageLength = 8;
-            }
-            dataTableConfig.bFilter = true;
-            dataTableConfig.bLengthChange = $scope.lengthChange;
-            dataTableConfig.lengthMenu = $scope.lengthMenu; //[20, 35, 45];
-            dataTableConfig.sDom = sDom;
-            dataTableConfig.bProcessing = true;
-            dataTableConfig.aoColumns = $scope.aoColumns;
-            dataTableConfig.destroy = true;
-
-            dataTableConfig.columnDefs = $scope.columnDefs;
-
-            dataTableConfig.order = []; //default order
-            dataTableConfig.rowCallback = function(row, data, dataIndex) {
-                // Linhda ID
-                var rowId = data.pxDataGridRowNumber;
-
-                // Se a linha ID está na lista de IDs de linha selecionados
-                if ($.inArray(rowId, $scope.rowsSelected) !== -1) {
-                    $(row).find('input[type="checkbox"]').prop('checked', true);
-                    $(row).addClass('selected');
-                }
-            };
-
-            requirejs(["dataTables"], function() {
-                // Inicializar dataTable
-                $('#' + $scope.id + '_pxDataTable').dataTable(
-                    dataTableConfig
-                );
-            });
-
-            // Se a propriedade pxGetData for true
-            if ($scope.dataInit === true) {
-                // Recupera dados assim que a listagem é criada
-                $scope.getData(0, $scope.rowsProcess);
-            }
-
-            requirejs(["dataTables"], function() {
-                var table = $('#' + $scope.id + '_pxDataTable').DataTable();
-                $scope.internalControl.table = $('#' + $scope.id + '_pxDataTable').DataTable();
-            });
-
+        // Adicionar controle de eventos
+        $scope.eventInit = function() {
             // Evento page.dt
             // https://datatables.net/reference/event/page
             $('#' + $scope.id + '_pxDataTable').on('page.dt', function() {
@@ -1111,9 +1131,11 @@ define(['../../directives/module'], function(directives) {
          * @return {void}
          */
         $scope.clearData = function clearData() {
-            requirejs(["dataTables"], function() {
-                $('#' + $scope.id + '_pxDataTable').DataTable().clear().draw();
-            });
+            if ($scope.currentRecordCount > 0) {
+                requirejs(["dataTables"], function() {
+                    $('#' + $scope.id + '_pxDataTable').DataTable().clear().draw();
+                });
+            }
         }
 
         /**
