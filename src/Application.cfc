@@ -28,7 +28,8 @@
         hint="I run when the application boots up. If I return false, the application initialization will hault.">
 
         <!--- px-project REST service --->
-        <cfinclude template="lib/px-project/dist/rest/restInit.cfm" />
+        <cfinclude template="src/rest/restInit.cfm" />
+        <!--- <cfinclude template="lib/px-project/dist/rest/restInit.cfm" /> --->
         
         <!---
             Let's create an encryption key that will be used to
