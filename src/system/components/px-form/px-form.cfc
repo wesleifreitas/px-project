@@ -63,14 +63,19 @@
 				SELECT 1 FROM #arguments.table#
 				<cfset whereInit = 'WHERE'>
 				<cfloop array="#arguments.fields#" index="i">
-					<cfif isDefined("i.pk") AND i.pk>
+					<cfif isDefined("i.pk") AND i.pk AND i.insert>
 						#whereInit# #i.field# = <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
-					<cfset whereInit = 'AND '>
+						<cfset whereInit = 'AND '>
 					</cfif>
 				</cfloop>
 			</cfquery>
 
-			<cfif qUnique.recordCount GT 0>
+			<!---
+			Verificar se whereInit é diferente que "WHERE" e qUnique (recordCount) > 0
+			Obs.: Se whereInit for igual a "WHERE" siginifica que  não foi criada nenhuma condição
+			neste caso deve desconsiderar a verificação UNIQUE
+			--->
+			<cfif whereInit NEQ "WHERE" AND qUnique.recordCount GT 0>
 				<cfset result["error"] = true>
 				<cfset result["unique"] = true>
 				<cfset result["qUnique"] = QueryToArray(qUnique)>
@@ -111,12 +116,12 @@
 			<cfset updatePk = false>
 			<!--- Verificar se pk existe --->
 			<cfquery datasource="#arguments.dsn#" name="qUnique">
-				SELECT 1 FROM #arguments.table#
+				SELECT TOP 1 1 FROM #arguments.table#
 				<cfset whereInit = 'WHERE'>
 				<cfloop array="#arguments.fields#" index="i">
-					<cfif isDefined("i.pk") AND i.pk>
+					<cfif isDefined("i.pk") AND i.pk AND i.update>
 						#whereInit# #i.field# = <cfqueryparam cfsqltype="#getSqlType(i.type)#" value="#i.valueObject.value#">
-						<cfset whereInit = 'AND '>
+							<cfset whereInit = 'AND '>
 						<cfif i.valueObject.value NEQ arguments.oldForm[i.field]>
 							<cfset updatePk = true>
 						</cfif>
@@ -124,7 +129,12 @@
 				</cfloop>
 			</cfquery>
 
-			<cfif qUnique.recordCount GT 0 AND updatePk>
+			<!---
+			Verificar se whereInit é diferente que "WHERE", qUnique (recordCount) > 0 e se o valor da PK não é ela mesma
+			Obs.: Se whereInit for igual a "WHERE" siginifica que  não foi criada nenhuma condição
+			neste caso deve desconsiderar a verificação UNIQUE
+			--->
+			<cfif whereInit NEQ "WHERE" AND qUnique.recordCount GT 0 AND updatePk>
 				<cfset result["action"] = 'unique'>
 				<cfset result["unique"] = true>
 				<cfset result["qUnique"] = QueryToArray(qUnique)>
