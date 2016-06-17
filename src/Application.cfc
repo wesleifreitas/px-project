@@ -11,11 +11,6 @@
 
     <cfset THIS.RootDir = getDirectoryFromPath(getCurrentTemplatePath()) />
 
-    <cfset THIS.Mappings = structNew() />
-    <cfset THIS.Mappings["/cfc"] = THIS.RootDir />
-    <cfset THIS.Mappings["/px-project-cfc"] = THIS.RootDir & 'lib/px-project/dist' />
-    <!--- <cfset THIS.Mappings["/px-project-cfc"] = THIS.RootDir & 'lib/px-project/dist'/> --->
-
     <cfparam name="session.loggedIn" default="false" />
 
     <!--- Define the request settings. --->
@@ -32,10 +27,9 @@
         output="false"
         hint="I run when the application boots up. If I return false, the application initialization will hault.">
 
-        <!--- REST service --->
-        <cfset restDirPath = THIS.RootDir & "rest">
-        <!--- <cfset restDirPath = THIS.RootDir & "lib/px-project/dist/rest"> --->
-        <cfset RestInitApplication(restDirPath, "px-project")>
+        <!--- px-project REST service --->
+        <cfinclude template="lib/px-project/dist/rest/restInit.cfm" />
+        
         <!---
             Let's create an encryption key that will be used to
             encrypt and decrypt values throughout the system.
