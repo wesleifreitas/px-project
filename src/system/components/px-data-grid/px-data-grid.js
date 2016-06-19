@@ -6,7 +6,7 @@ define(['../../directives/module'], function(directives) {
             restrict: 'E',
             replace: true,
             transclude: false,
-            templateUrl: pxConfig.PX_PACKAGE + '/system/components/px-data-grid/px-data-grid.html',
+            templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-data-grid/px-data-grid.html',
             scope: {
                 debug: '=pxDebug',
                 config: '@pxConfig',

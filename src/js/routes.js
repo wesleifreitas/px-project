@@ -5,21 +5,21 @@ define(['./app'], function(app) {
         
         var _url = angular.copy(pxConfig.PX_PACKAGE);
         if(_url !== ''){
-          _url += '/';  
+          pxConfig.PX_PACKAGE += '/';
         }
         
         $routeProvider.when('/login', {
-            templateUrl: _url + 'system/login/login.cfm',
+            templateUrl: pxConfig.PX_PACKAGE + 'system/login/login.cfm',
             controller: 'LoginCtrl',
             controllerAs: 'vm'
         });
         $routeProvider.when('/home', {
-            templateUrl: _url + 'system/home/home.cfm',
+            templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.cfm',
             controller: 'HomeCtrl',
             controllerAs: 'vm'
         });
         $routeProvider.when('/', {
-            templateUrl: _url + 'system/home/home.cfm',
+            templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.cfm',
             controller: 'HomeCtrl',
             controllerAs: 'vm'
         });

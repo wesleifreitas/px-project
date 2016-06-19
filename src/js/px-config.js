@@ -2,7 +2,7 @@ define(['angular'], function(ng) {
 	'use strict';
 
 	// Package Phoenix Project
-	var PX_PACKAGE = ''
+	var PX_PACKAGE = '';
 	// Caminho de componentes ColdFusion (Phoenix Project)
 	// Ex.: 'my-project.src'
 	var PX_CFC_PATH = 'px-project.src' + PX_PACKAGE.replace(/\/|\\/g, ".");
