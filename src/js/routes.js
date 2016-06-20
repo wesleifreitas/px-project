@@ -2,9 +2,8 @@ define(['./app'], function(app) {
     'use strict';
 
     app.config(['pxConfig', '$routeProvider', '$locationProvider', '$mdThemingProvider', function(pxConfig, $routeProvider, $locationProvider, $mdThemingProvider) {
-        
-        var _url = angular.copy(pxConfig.PX_PACKAGE);
-        if(_url !== ''){
+
+        if(pxConfig.PX_PACKAGE !== ''){
           pxConfig.PX_PACKAGE += '/';
         }
         
