@@ -20,5 +20,5 @@ Visite [px-example](https://github.com/wesleifreitas/px-example) para obter mais
 [license-image]: https://img.shields.io/github/license/mashape/apistatus.svg?style=flat
 [license-url]: LICENSE
 
-[angularJs-image]: https://img.shields.io/badge/angularJs-v1-blue.svg?style=flat
+[angularJs-image]: https://img.shields.io/badge/angularJs-v1.*-blue.svg?style=flat
 [angularJs-url]: https://angularjs.org/
