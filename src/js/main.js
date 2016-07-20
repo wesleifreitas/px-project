@@ -19,7 +19,7 @@ require.config({
         'jstree': '../lib/jstree/dist/jstree.min',
         'metro': '../system/core/external/metro',
         'docs': '../system/core/external/docs',
-        'px-config': 'px-config'
+        'px-module': '../lib/px-module/dist/px-full/px-full'
     },
     shim: {
         'angular': {
@@ -63,6 +63,9 @@ require.config({
         },
         'jstree': {
             deps: ['jquery']
+        },
+        'px-module': {
+            deps: ['angular', 'jquery']
         }
     }
 });
