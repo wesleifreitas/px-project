@@ -34,7 +34,7 @@ git clone git@github.com:YOUR-GITHUB-USERNAME/px-project.git
 cd px-project
 ```
 
-* Crie um git remote chamdo **upstream** do repositório oficial:
+* Crie um git remote chamado **upstream** do repositório oficial:
 
 ```shell
 git remote add upstream git@github.com:wesleifreitas/px-project.git
