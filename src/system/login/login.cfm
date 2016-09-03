@@ -15,10 +15,8 @@
                         <button class="button helper-button reveal"><span class="mif-looks"></span></button>
                     </div>
                     <!-- <i class="fa fa-keyboard-o lg fa-lg"></i> -->
-                    <div id="loginControl" layout="row" layout-align="center center" layout-padding>
-                        <div class="btn-group">
-                            <button class="btn btn-default" type="submit" name="submit" value="Entrar" ng-disabled="loginForm.$invalid || vm.dataLoading">Entrar</button>
-                        </div>
+                    <div id="loginControl" layout="row" layout-align="center center">
+                        <md-button class="md-raised" type="submit" name="submit" value="Entrar" ng-disabled="loginForm.$invalid || vm.dataLoading">Entrar</md-button>                     
                     </div>
                 </fieldset>
                 <a ng-click="vm.showRecover()" class="recover-link" ng-show="!vm.dataLoading">Esqueci minha senha</a>

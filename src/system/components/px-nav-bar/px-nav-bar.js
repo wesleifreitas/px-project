@@ -1,108 +1,92 @@
 define(['../../directives/module'], function(directives) {
     'use strict';
 
-    directives.directive('pxNavBar', ['pxConfig', '$compile', '$parse', '$timeout', function(pxConfig, $compile, $parse, $timeout) {
-            return {
-                restrict: 'E',
-                replace: true,
-                transclude: false,
-                templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.html',
-                link: function(scope, element, attrs) {
-                    scope.logo = pxConfig.PX_PACKAGE + 'system/assets/richsolutions/richsolutions_bola_200x200.jpg';
-                    scope.$watch(attrs.content, function() {
-                        element.html($parse(attrs.content)(scope));
+    directives.directive('pxNavBar', ['$compile', function($compile) {
+        return {
+            restrict: 'E',
+            transclude: true,
+            scope: {
+                title: '@'
+            },
+            link: function(scope, element, attrs) {
+
+                var watchNavBar = scope.$watch('navBar', function(newValue, oldValue) {
+                    console.info('newValue', newValue);
+                    console.info('oldValue', oldValue);
+                    if (newValue !== oldValue) {
+                        console.info('watchNavBar');
+                        element.html(scope.navBar);
                         $compile(element.contents())(scope);
-                    }, true);
-
-                    // Inicializar menu
-                    $timeout(scope.getNavBar, 1000);
-                }
-            };
-        }])
-        .controller('pxNavBarCtrl', ['pxConfig', '$scope', '$http', '$rootScope', function(pxConfig, $scope, $http, $rootScope) {
-
-            $scope.templates = [{
-                name: '?.html',
-                url: '?.html'
-            }, {
-                name: '',
-                url: ''
-            }];
-
-            $scope.template = $scope.templates[1];
-
-            $scope.navBar = '<div class="app-bar darcula px-no-radius"><span class="app-bar-element place-left" href="...">Por favor aguarde, carregando barra de navegação...</span></div>';
-
-            $scope.getNavBar = function() {
-
-                var params = {};
-                params.pro_id = angular.toJson(pxConfig.PROJECT_ID);
-                params.isMobile = $scope.isMobile();
-                params.user = $rootScope.globals.currentUser.usu_id;
-                params.dsn = pxConfig.PROJECT_DSN;
-
-                $http({
-                    method: 'POST',
-                    url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
-                    params: params
-                }).success(function(response) {
-                    console.info('getNavBar', response);
-                    $scope.navBar = response.navBar;
-                }).
-                error(function(data, status, headers, config) {
-                    // Erro
-                    alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+                        watchNavBar();
+                    }
                 });
-            };
+            },
+            controller: pxNavBarCtrl
+        };
+    }]);
 
-            $scope.showView = function(view) {
+    pxNavBarCtrl.$inject = ['pxConfig', '$scope', '$http', '$rootScope', '$location'];
 
-                if ($scope.isMobile() || $('.app-bar-pullbutton.automatic')) {
-                    // "Resetar" menu                    
-                    $('.app-bar-pullbutton.automatic').trigger('click');
-                }
+    function pxNavBarCtrl(pxConfig, $scope, $http, $rootScope, $location) {
 
-                var params = {};
-                params.men_id = view;
-                params.pathname = pxConfig.PROJECT_SRC; //document.location.pathname;
-                params.pxProjectPackage = pxConfig.PX_PACKAGE;
-                params.dsn = pxConfig.PROJECT_DSN;
+        $scope.getNavBar = function() {
 
-                $http({
-                    method: 'POST',
-                    url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getView',
-                    params: params
-                }).success(function(response) {
-                    //console.info('response',response);
-                    //$location.path('/'+response.qView.COM_VIEW);
+            var params = {};
+            params.pro_id = angular.toJson(pxConfig.PROJECT_ID);
+            params.isMobile = $scope.isMobile();
+            params.user = $rootScope.globals.currentUser.usu_id;
+            params.dsn = pxConfig.PROJECT_DSN;
 
-                    var headerView = response.qView[0].MEN_NOMECAMINHO.split(response.qView[0].MEN_NOMECAMINHO.split('»')[response.qView[0].MEN_NOMECAMINHO.split('»').length - 1]);
+            $http({
+                method: 'POST',
+                url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
+                params: params
+            }).success(function(response) {
+                console.info('getNavBar', response);
+                $scope.navBar = response.navBar;
+            }).
+            error(function(data, status, headers, config) {
+                // Erro
+                alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+            });
+        };
 
-                    $scope.view = {};
-                    $scope.view.response = response;
-                    $scope.view.men_id = response.qView[0].MEN_ID;
-                    $scope.view.caminho = response.qView[0].MEN_NOMECAMINHO;
-                    $scope.view.header = headerView[0];
-                    $scope.view.title = response.qView[0].MEN_NOMECAMINHO.split('»')[response.qView[0].MEN_NOMECAMINHO.split('»').length - 1];
-                    $scope.view.icon = response.qView[0].COM_ICON;
+        $scope.showView = function(view) {
+            /*if ($scope.isMobile() || $('.app-bar-pullbutton.automatic')) {
+                // "Resetar" menu                    
+                $('.app-bar-pullbutton.automatic').trigger('click');
+            }*/
 
-                    $scope.templates[1].name = response.qView[0].COM_VIEW;
-                    $scope.templates[1].url = response.qView[0].COM_VIEW;
+            var params = {};
+            params.men_id = view;
+            params.pathname = pxConfig.PROJECT_SRC; //document.location.pathname;
+            params.pxProjectPackage = pxConfig.PX_PACKAGE;
+            params.dsn = pxConfig.PROJECT_DSN;
 
-                }).
-                error(function(data, status, headers, config) {
-                    // Erro
-                    alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
-                });
-            };
+            $http({
+                method: 'POST',
+                url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getView',
+                params: params
+            }).success(function(response) {
+                console.info('response', response);
+                $location.path('/home/' + response.state);
+            }).
+            error(function(data, status, headers, config) {
+                // Erro
+                alert('Ops! Ocorreu um erro inesperado.\nPor favor contate o administrador do sistema!');
+            });
+        };
 
-            $scope.isMobile = function() {
-                var userAgent = navigator.userAgent.toLowerCase();
-                if (userAgent.search(/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i) != -1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            };
-        }]);
+        $scope.isMobile = function() {
+            var userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.search(/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i) != -1) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        // Inicializar menu
+        $scope.getNavBar();
+    }
 });

@@ -1,7 +1,7 @@
 define(['./app'], function(app) {
     'use strict';
 
-    app.config(['pxConfig', '$routeProvider', '$locationProvider', '$mdThemingProvider', function(pxConfig, $routeProvider, $locationProvider, $mdThemingProvider) {
+    app.config(['pxConfig', '$routeProvider', '$stateProvider', '$urlRouterProvider', '$locationProvider', '$mdThemingProvider', function(pxConfig, $routeProvider, $stateProvider, $urlRouterProvider, $locationProvider, $mdThemingProvider) {
 
         // Package Phoenix Project
         var PX_PACKAGE = '';
@@ -16,7 +16,14 @@ define(['./app'], function(app) {
             PROJECT_ID: 0, // Identificação do projeto (table: px.project)
             PROJECT_NAME: 'Phoenix Project', // Nome do projeto
             PROJECT_SRC: 'px-project/src/', // Source do projeto
-            PROJECT_CSS: [PX_PACKAGE + 'system/login/login.css', 'styles.css'], // Arquivos .css
+            PROJECT_CSS: [
+                PX_PACKAGE + 'system/login/login.css',
+                'lib/bootstrap/dist/css/bootstrap.min.css',
+                'lib/angular-material/angular-material.min.css',
+                'lib/font-awesome/css/font-awesome.min.css',
+                'lib/px-module/dist/px-full/px-full.min.css',
+                'styles.css'
+            ], // Arquivos .css
             PROJECT_DSN: 'px_project_sql', // Data Source Name (CF)
             LOCALE: 'pt-BR', // Locale
             LOGIN_REQUIRED: true, // Login obrigatório?
@@ -33,29 +40,51 @@ define(['./app'], function(app) {
             pxConfig.PX_PACKAGE += '/';
         }
 
-        $routeProvider.when('/login', {
-            templateUrl: pxConfig.PX_PACKAGE + 'system/login/login.cfm',
-            controller: 'LoginCtrl',
-            controllerAs: 'vm'
-        });
-        $routeProvider.when('/home', {
-            templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.cfm',
-            controller: 'HomeCtrl',
-            controllerAs: 'vm'
-        });
-        $routeProvider.when('/', {
-            templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.cfm',
-            controller: 'HomeCtrl',
-            controllerAs: 'vm'
-        });
-        $routeProvider.otherwise({
-            redirectTo: '/login'
-        });
+        // For any unmatched url, redirect to /state1
+        $urlRouterProvider.otherwise("/login");
 
-        // https://material.angularjs.org/latest/Theming/01_introduction
+        $stateProvider
+            .state('login', {
+                url: "/login",
+                templateUrl: pxConfig.PX_PACKAGE + 'system/login/login.cfm',
+                controller: 'LoginCtrl',
+                controllerAs: 'vm'
+            })
+            .state('home', {
+                url: "/home",
+                templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.cfm',
+                controller: 'HomeCtrl',
+                controllerAs: 'vm'
+            })
+            .state('home.exemplo', {
+                url: '/exemplo',
+                templateUrl: 'custom/exemplo/exemplo.html'
+            })
+            /*
+            $routeProvider.when('/login', {
+                templateUrl: pxConfig.PX_PACKAGE + 'system/login/login.cfm',
+                controller: 'LoginCtrl',
+                controllerAs: 'vm'
+            });
+            $routeProvider.when('/home', {
+                templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.cfm',
+                controller: 'HomeCtrl',
+                controllerAs: 'vm'
+            });
+            $routeProvider.when('/', {
+                templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.cfm',
+                controller: 'HomeCtrl',
+                controllerAs: 'vm'
+            });
+            $routeProvider.otherwise({
+                redirectTo: '/login'
+            });
+            */
+            // https://material.angularjs.org/latest/Theming/01_introduction
+            // Available palettes: red, pink, purple, deep-purple, indigo, blue, light-blue, cyan, teal, green, light-green, lime, yellow, amber, orange, deep-orange, brown, grey, blue-grey
         $mdThemingProvider.theme('default')
-            .primaryPalette('grey')
-            .accentPalette('blue');
+            .primaryPalette('blue-grey')
+            .accentPalette('grey');
     }]);
 
     app.run(function(pxConfig, $rootScope, $location, $cookieStore, $http, AuthenticationService) {
@@ -68,15 +97,14 @@ define(['./app'], function(app) {
             }
 
             $rootScope.$on('$locationChangeStart', function(event, next, current) {
-
-                if ($.inArray($location.path(), ['/login', '/register']) > -1) {} else {
+                /*if ($.inArray($location.path(), ['/login', '/register']) > -1) {} else {
                     // Verificar SESSION
                     AuthenticationService.LoggedIn(function(response) {
                         if (!response.loggedIn) {
                             $location.path('/login');
                         }
                     });
-                }
+                }*/
 
                 // Redirecionar para a página de login se não estiver logado e tentar acessar uma página restrita                
                 var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;

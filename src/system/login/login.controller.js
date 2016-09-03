@@ -32,7 +32,7 @@ define(['../controllers/module'], function(controllers) {
 
                         AuthenticationService.SetCredentials(vm.username, vm.password, response);
                         //document.body.style.background = "#000000 url('') no-repeat center center fixed";
-                        $location.path('/');
+                        $location.path('/home');
                     } else {
                         FlashService.Error(response.message);
                         vm.dataLoading = false;

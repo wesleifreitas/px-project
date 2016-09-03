@@ -1,9 +1,5 @@
-<div class="px-view" ng-controller="ExemploCtrl">
-    <!-- Directive px-view-header, apresenta o cabeçalho da view atual -->
-    <div px-fixed px-wrapper=".px-view" px-hfixed="true" px-vfixed="true" class="px-header">
-        <px-view-header px-show-hr="true"></px-view-header>
-    </div>
-    <div px-fixed px-wrapper=".px-view" px-hfixed="true">
+<div class="page" ng-controller="ExemploCtrl">
+    <div px-fixed px-wrapper=".page" px-hfixed="true">
         <div id="headerSearch" layout="row" layout-align="center center" ng-click="showFilter()"><span>FILTRO AVANÇADO</span><i class="material-icons" ng-show="filterExpand">expand_less</i><i class="material-icons" ng-show="!filterExpand">expand_more</i>
         </div>
         <form class="contentSearch" layout="row" layout-wrap>

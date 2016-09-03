@@ -29,20 +29,6 @@ define(['../services/module'], function(services) {
             }
 
             var cssLoader = [{
-                file: pxConfig.LIB + 'bootstrap/dist/css/bootstrap.css'
-            }, {
-                file: _url + 'system/core/external/metro.css'
-            }, {
-                file: _url + 'system/core/external/metro-icons.css'
-            }, {
-                file: _url + 'system/core/external/metro-responsive.css'
-            }, {
-                file: _url + 'system/core/external/metro-bootstrap.css'
-            }, {
-                file: _url + 'system/core/external/metro-schemes.css'
-            }, {
-                file: 'http://cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.css'
-            }, {
                 file: pxConfig.LIB + 'angular-material/angular-material.min.css'
             }, {
                 file: 'https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic'

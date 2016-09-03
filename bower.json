@@ -28,26 +28,24 @@
     "src"
   ],
   "dependencies": {
+    "requirejs": "~2",
     "angular": "~1",
     "angular-animate": "~1",
     "angular-aria": "~1",
     "angular-cookies": "~1",
     "angular-i18n": "~1",
-    "angular-material": "~1",
+    "angular-material": "1.0.9",
     "angular-resource": "~1",
     "angular-route": "~1",
-    "angular-sanitize": "~1",
-    "angular-ui-mask": "~1.2.0",
-    "bootstrap": "~3.3.5",
-    "datatables": "~1.10.7",
-    "jquery": "latest",
-    "jquery-ui": "~1.11.4",
-    "moment": "~2.10.6",
-    "numeral": "~1.5.3",
-    "requirejs": "~2.1.20",
-    "jstree-bootstrap-theme": "~1.0.1"
+    "jquery-ui": "~1",
+    "datatables": "~1",
+    "jstree-bootstrap-theme": "~1",
+    "px-module": "~1",
+    "bower": "*",
+    "install": "~1.0.4",
+    "angular-ui-router": "~0.3.1"
   },
   "resolutions": {
-    "bootstrap": "~3.3.5"
+    "bootstrap": "~3"
   }
 }

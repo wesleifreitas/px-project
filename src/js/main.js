@@ -3,12 +3,13 @@ require.config({
         'angular': '../lib/angular/angular.min',
         'angular-locale_pt-br': '../lib/angular-i18n/angular-locale_pt-br',
         'angular-route': '../lib/angular-route/angular-route.min',
+        'angular-ui-router': '../lib/angular-ui-router/release/angular-ui-router.min',
         'angular-cookies': '../lib/angular-cookies/angular-cookies.min',
         'angular-resource': '../lib/angular-resource/angular-resource.min',
-        'angular-sanitize': '../lib/angular-sanitize/angular-sanitize.min',
         'angular-animate': '../lib/angular-animate/angular-animate.min',
         'angular-aria': '../lib/angular-aria/angular-aria.min',
         'angular-material': '../lib/angular-material/angular-material.min',
+        'angular-messages': '../lib/angular-messages/angular-messages.min',
         'angular-ui-mask': '../lib/angular-ui-mask/dist/mask.min',
         'jquery': '../lib/jquery/dist/jquery.min',
         'jquery-ui': '../lib/jquery-ui/jquery-ui.min',
@@ -17,8 +18,6 @@ require.config({
         'numeral': '../lib/numeral/min/numeral.min',
         'numeral-languages': '../lib/numeral/min/languages.min',
         'jstree': '../lib/jstree/dist/jstree.min',
-        'metro': '../system/core/external/metro',
-        'docs': '../system/core/external/docs',
         'px-module': '../lib/px-module/dist/px-full/px-full'
     },
     shim: {
@@ -31,13 +30,13 @@ require.config({
         'angular-route': {
             deps: ['angular']
         },
+        'angular-ui-router': {
+            deps: ['angular']
+        },
         'angular-cookies': {
             deps: ['angular']
         },
         'angular-resource': {
-            deps: ['angular']
-        },
-        'angular-sanitize': {
             deps: ['angular']
         },
         'angular-animate': {
@@ -46,17 +45,14 @@ require.config({
         'angular-aria': {
             deps: ['angular']
         },
+        'angular-messages': {
+            deps: ['angular']
+        },
         'angular-material': {
             deps: ['angular']
         },
         'angular-ui-mask': {
             deps: ['angular']
-        },
-        'metro': {
-            deps: ['jquery', 'jquery-ui', 'docs']
-        },
-        'docs': {
-            deps: ['jquery']
         },
         'numeral-languages': {
             deps: ['numeral']

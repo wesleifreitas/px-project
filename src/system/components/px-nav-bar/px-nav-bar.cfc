@@ -150,23 +150,7 @@
     
    
     <!--- <cfwddx action="cfml2js" input="#pxMenu#" toplevelvariable="menuString"/> --->
-    <cfset response['navBar'] = '<div class="app-bar darcula #variables.cssFit#" data-role="appbar">
-        <!-- <a class="pull-menu" href=""></a> <ul class="app-bar-menu"> <li><img src="custom/assets/logo/logo.png" width="100" style="padding-top: 5px;padding-right: 5px;"></li> </ul> -->
-        <ul id="menu" class="app-bar-menu #variables.cssFit#">
-            #variables.pxMenu#    
-            #variables.toggle#   
-        </ul>
-        <div class="app-bar-element place-right">
-            <a class="dropdown-toggle fg-white" href="">
-                <i class="fa fa-user"></i>
-                #qUsuario.usu_nome#
-            </a>
-            <ul class="d-menu dropdown-toggle place-right px-fit" data-role="dropdown">
-                <li ng-click="logout()"><a href="">Minha Conta</a></li>
-                <li ng-click="logout()"><a href="">Sair</a></li>
-            </ul>
-        </div>
-        </div>'>
+    <cfset response['navBar'] = '<md-menu-bar>#variables.pxMenu#</md-menu-bar>'>
     <cfreturn response>
 
 </cffunction>
@@ -231,54 +215,54 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
     --->
     <cfif LOCAL.qMenu.RecordCount>       
         <!--- Loop nos menus filhos --->
-        <!--- <cfloop query="LOCAL.qMenu"> --->
         <cfloop from="1" to="#LOCAL.qMenu.RecordCount#" index="i">
             <!--- Possui submenu? --->
             <cfif LOCAL.qMenu.count_submenu[i] GT 0>
-
-              <li class="#arguments.cssFit#">
-
-                <a class='dropdown-toggle #arguments.cssFit# px-pointer'>#LOCAL.qMenu.men_nome[i]#</a>
-
-                <ul class='d-menu #arguments.cssFit#' data-role='dropdown'>
-
-                <!---
-                    Chama função recursiva
-                --->
-                <cfset getRecursiveNavBar(
-                    data = arguments.data,
-                    men_idPai = LOCAL.qMenu.men_id[i],
-                    cssFit = arguments.cssFit
-                    ) />
-            
-            <!--- Verifica se possui idPai --->
+                <!--- Verificar é menu base --->
+                <cfif LOCAL.qMenu.men_idPai[i] EQ 0>
+                    <md-menu>
+                        <button ng-click="$mdOpenMenu()">
+                            #LOCAL.qMenu.men_nome[i]#
+                        </button>
+                        <md-menu-content>
+                        <!---
+                            Chamar função recursiva
+                        --->
+                        <cfset getRecursiveNavBar(
+                            data = arguments.data,
+                            men_idPai = LOCAL.qMenu.men_id[i],
+                            cssFit = arguments.cssFit
+                            ) />
+                        </md-menu-content>
+                    </md-menu>
+                <cfelse>
+                    <md-menu-item>
+                        <md-menu>
+                            <md-button ng-click="$mdOpenMenu()">
+                                #LOCAL.qMenu.men_nome[i]#
+                            </md-button>
+                            <md-menu-content>
+                            <!---
+                                Chamar função recursiva
+                            --->
+                            <cfset getRecursiveNavBar(
+                                data = arguments.data,
+                                men_idPai = LOCAL.qMenu.men_id[i],
+                                cssFit = arguments.cssFit
+                                ) />
+                            </md-menu-content>
+                        </md-menu>
+                    </md-menu-item>
+                </cfif>
+            <!--- Verificar se possui idPai --->
             <cfelseif LOCAL.qMenu.men_idPai[i] GT 0>
-
-                <li>
-                    <a ng-click="showView('#LOCAL.qMenu.men_id[i]#')">#LOCAL.qMenu.men_nome[i]#</a>
-                </li>
-                 
-            <cfelse>
-                
-                <li>
-                    <cfif LOCAL.qMenu.count_submenu[i] EQ 0>
-                        <a class="px-pointer" ng-click="showView('#LOCAL.qMenu.men_id[i]#')">#LOCAL.qMenu.men_nome[i]# </a>
-                    <cfelse>
-                        <a>#LOCAL.qMenu.men_nome[i]# </a>
-                    </cfif>                   
-                </li>
-
-            </cfif>                   
-            
-            <!---<cfif (LOCAL.qMenu.men_ordem[i] GTE LOCAL.qMenu.count_menu[i])>
-
-                 </ul> </li>    
-
-            </cfif>--->
-            
-        </cfloop>  
-         
-        </ul> </li>     
+                <md-menu-item>
+                    <md-button ng-click="showView('#LOCAL.qMenu.men_id[i]#')">
+                        #LOCAL.qMenu.men_nome[i]#
+                    </md-button>
+                </md-menu-item>
+            </cfif>
+        </cfloop>
     </cfif>
 
     <cfreturn />
@@ -398,7 +382,9 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
     </cfif>    
     
     <cfset result['arguments'] = arguments> 
-    <cfset result['qView'] = QueryToArray(qView)> 
+    <cfset result['qView'] = QueryToArray(qView)>
+    <cfset state = listToArray(qView.COM_VIEW, "/")>
+    <cfset result['state'] = replace(state[arrayLen(state)], ".html", "")>
     
     <cfreturn result>
 
