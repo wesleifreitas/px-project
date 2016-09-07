@@ -113,7 +113,7 @@ define(['../controllers/module'], function(controllers) {
         vm.showRecover = function showRecover() {
             vm.password = '';
             vm.loginMessage = '';
-            vm.formTitle = "Esqueci minha senha";
+            vm.formTitle = "Recuperar senha";
             vm.selection = 'recover';
         };
 

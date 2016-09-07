@@ -67,7 +67,7 @@ require.config({
 });
 
 // Angular Bootstrap 
-require(['./app', './routes'], function(app) {
+require(['./app', './config'], function(app) {
     // initialisation code defined within app.js
     app.init();
 });

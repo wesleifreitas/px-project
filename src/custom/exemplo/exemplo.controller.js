@@ -89,14 +89,6 @@ define(['../controllers/module'], function(controllers) {
         $scope.dgExemploControl = {};
 
         /**
-         * Evento após listagem inicializar
-         * @return {Void}
-         */
-        $scope.dgExemploInit = function() {
-
-        };
-
-        /**
          * Configurações da listagem
          * - fields: Colunas da listagem
          * @type {Object}
@@ -171,6 +163,14 @@ define(['../controllers/module'], function(controllers) {
                 type: 'datetime',
                 moment: 'dddd - DD/MM/YYYY'
             }],
+        };
+
+        /**
+         * Evento após listagem inicializar
+         * @return {Void}
+         */
+        $scope.dgExemploInit = function() {
+
         };
 
         /**

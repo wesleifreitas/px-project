@@ -60,21 +60,14 @@ define(['../controllers/module'], function(controllers) {
         $scope.gridControl = {};
 
         /**
-         * Inicializa listagem
-         * @return {void}
-         */
-        $scope.gridInit = function() {
-            // Definir formulário default
-            $scope.formShow = 'default';
-
-            /**
              * Configurações da listagem
              * - fields: Colunas da listagem
              * @type {object}
              */
             $scope.dgConfig = {
-                table: 'dbo.perfil',
-                view: 'dbo.vw_perfil',
+                schema: 'dbo',
+                table: 'perfil',
+                view: 'vw_perfil',
                 groupItem: 'grupo_id',
                 fields: [{
                     pk: true,
@@ -112,6 +105,14 @@ define(['../controllers/module'], function(controllers) {
                     filterValue: '1'
                 }];
             }
+
+        /**
+         * Inicializa listagem
+         * @return {void}
+         */
+        $scope.gridInit = function() {
+            // Definir formulário default
+            $scope.formShow = 'default';
         };
 
         /**

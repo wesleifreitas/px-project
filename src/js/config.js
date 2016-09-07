@@ -5,25 +5,25 @@ define(['./app'], function(app) {
 
         // Package Phoenix Project
         var PX_PACKAGE = '';
-        // Caminho de componentes ColdFusion (Phoenix Project)
-        // Ex.: 'my-project.src'
-        var PX_CFC_PATH = 'px-project.src' + PX_PACKAGE.replace(/\/|\\/g, ".");
 
         angular.extend(pxConfig, {
             PX_PACKAGE: PX_PACKAGE, // Package Phoenix Project
-            PX_CFC_PATH: PX_CFC_PATH,
             LIB: 'lib/', // Componentes externos
             PROJECT_ID: 0, // Identificação do projeto (table: px.project)
             PROJECT_NAME: 'Phoenix Project', // Nome do projeto
             PROJECT_SRC: 'px-project/src/', // Source do projeto
             PROJECT_CSS: [
                 PX_PACKAGE + 'system/login/login.css',
+                PX_PACKAGE + 'system/core/external/jstree/themes/proton/style.css',
                 'lib/bootstrap/dist/css/bootstrap.min.css',
                 'lib/angular-material/angular-material.min.css',
+                'https://fonts.googleapis.com/icon?family=Material+Icons',
+                'https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic',
                 'lib/font-awesome/css/font-awesome.min.css',
                 'lib/px-module/dist/px-full/px-full.min.css',
                 'styles.css'
             ], // Arquivos .css
+
             PROJECT_DSN: 'px_project_sql', // Data Source Name (CF)
             LOCALE: 'pt-BR', // Locale
             LOGIN_REQUIRED: true, // Login obrigatório?
@@ -55,33 +55,20 @@ define(['./app'], function(app) {
                 templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.cfm',
                 controller: 'HomeCtrl',
                 controllerAs: 'vm'
+            }).state('home.perfil', {
+                url: '/perfil',
+                templateUrl: pxConfig.PX_PACKAGE + 'system/perfil/perfil.html',
+            }).state('home.usuario', {
+                url: '/usuario',
+                templateUrl: pxConfig.PX_PACKAGE + 'system/usuario/usuario.html',
             })
             .state('home.exemplo', {
                 url: '/exemplo',
                 templateUrl: 'custom/exemplo/exemplo.html'
-            })
-            /*
-            $routeProvider.when('/login', {
-                templateUrl: pxConfig.PX_PACKAGE + 'system/login/login.cfm',
-                controller: 'LoginCtrl',
-                controllerAs: 'vm'
             });
-            $routeProvider.when('/home', {
-                templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.cfm',
-                controller: 'HomeCtrl',
-                controllerAs: 'vm'
-            });
-            $routeProvider.when('/', {
-                templateUrl: pxConfig.PX_PACKAGE + 'system/home/home.cfm',
-                controller: 'HomeCtrl',
-                controllerAs: 'vm'
-            });
-            $routeProvider.otherwise({
-                redirectTo: '/login'
-            });
-            */
-            // https://material.angularjs.org/latest/Theming/01_introduction
-            // Available palettes: red, pink, purple, deep-purple, indigo, blue, light-blue, cyan, teal, green, light-green, lime, yellow, amber, orange, deep-orange, brown, grey, blue-grey
+
+        // https://material.angularjs.org/latest/Theming/01_introduction
+        // Available palettes: red, pink, purple, deep-purple, indigo, blue, light-blue, cyan, teal, green, light-green, lime, yellow, amber, orange, deep-orange, brown, grey, blue-grey
         $mdThemingProvider.theme('default')
             .primaryPalette('blue-grey')
             .accentPalette('grey');

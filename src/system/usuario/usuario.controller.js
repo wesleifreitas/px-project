@@ -76,63 +76,72 @@ define(['../controllers/module'], function(controllers) {
         $scope.gridControl = {};
 
         /**
+         * Configurações da listagem
+         * - fields: Colunas da listagem
+         * @type {object}
+         */
+        $scope.dgConfig = {
+            schema: 'dbo',
+            table: 'usuario',
+            view: 'vw_usuario',
+            fields: [{
+                pk: true,
+                visible: false,
+                title: 'ID',
+                field: 'usu_id',
+                type: 'int',
+                identity: true
+            }, {
+                title: 'Nome',
+                field: 'usu_nome',
+                type: 'string',
+                filter: 'filtro_usu_nome',
+                filterOperator: '%LIKE%'
+
+            }, {
+                title: 'Login',
+                field: 'usu_login',
+                type: 'string',
+                filter: 'filtro_usu_login',
+                filterOperator: '%LIKE%'
+            }, {
+                title: 'CPF',
+                field: 'usu_cpf',
+                type: 'int',
+                stringMask: '###.###.###-##',
+                filter: 'filtro_usu_cpf',
+                filterOperator: '='
+            }, {
+                title: 'Status',
+                field: 'usu_ativo_label',
+                type: 'bit',
+                filter: 'filtro_usu_ativo',
+                filterOperator: '=',
+                filterOptions: {
+                    field: 'usu_ativo',
+                    selectedItem: 'id'
+                }
+            }, {
+                title: 'Último acesso',
+                field: 'usu_ultimoAcesso',
+                type: 'datetime',
+                moment: 'dddd - DD/MM/YYYY HH:mm:ss'
+            }],
+        };
+
+        /**
          * Inicializa listagem
          * @return {void}
          */
         $scope.gridInit = function() {
-            /**
-             * Configurações da listagem
-             * - fields: Colunas da listagem
-             * @type {object}
-             */
-            $scope.dgConfig = {
-                table: 'dbo.usuario',
-                view: 'dbo.vw_usuario',
-                fields: [{
-                    pk: true,
-                    visible: false,
-                    title: 'ID',
-                    field: 'usu_id',
-                    type: 'int',
-                    identity: true
-                }, {
-                    title: 'Nome',
-                    field: 'usu_nome',
-                    type: 'string',
-                    filter: 'filtro_usu_nome',
-                    filterOperator: '%LIKE%'
+            $scope.getData();
+        };
 
-                }, {
-                    title: 'Login',
-                    field: 'usu_login',
-                    type: 'string',
-                    filter: 'filtro_usu_login',
-                    filterOperator: '%LIKE%'
-                }, {
-                    title: 'CPF',
-                    field: 'usu_cpf',
-                    type: 'int',
-                    stringMask: '###.###.###-##',
-                    filter: 'filtro_usu_cpf',
-                    filterOperator: '='
-                }, {
-                    title: 'Status',
-                    field: 'usu_ativo_label',
-                    type: 'bit',
-                    filter: 'filtro_usu_ativo',
-                    filterOperator: '=',
-                    filterOptions: {
-                        field: 'usu_ativo',
-                        selectedItem: 'id'
-                    }
-                }, {
-                    title: 'Último acesso',
-                    field: 'usu_ultimoAcesso',
-                    type: 'datetime',
-                    moment: 'dddd - DD/MM/YYYY HH:mm:ss'
-                }],
-            };
-
+        /**
+         * Atualizar dados da listagem
+         * @return {void}
+         */
+        $scope.getData = function() {
             // Verificar se o usuário não é master
             if (!$rootScope.globals.currentUser.per_master) {
                 // Se não for usuário master: não irá recuperar usuário master
@@ -143,13 +152,7 @@ define(['../controllers/module'], function(controllers) {
                     filterValue: '1'
                 }];
             }
-        };
 
-        /**
-         * Atualizar dados da listagem
-         * @return {void}
-         */
-        $scope.getData = function() {
             //Recuperar dados para a listagem
             $scope.gridControl.getData();
         };

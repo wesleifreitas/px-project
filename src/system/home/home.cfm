@@ -1,5 +1,5 @@
-<cfprocessingDirective pageencoding="utf-8">
-<div id="px-container">
+<cfprocessingDirective pageencoding="utf-8" />
+<div>
     <md-toolbar class="home-title">
         <div class="md-toolbar-tools">
             <img src="system/assets/img/logo-example-50x50.png">
@@ -9,17 +9,17 @@
             </md-button>
         </div>
     </md-toolbar>
-    <div ui-view></div>
-    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
-        <md-toolbar class="">
-            <h2 class="md-toolbar-tools">Configurações</h2>
-        </md-toolbar>
-        <md-content ng-controller="SidenavCtrl" layout-align="center center" layout-padding>
-            <form layout="row" layout-align="center center">
-                <md-button ng-click="logout();" class="md-primary">
-                    Sair do sistema
-                </md-button>
-            </form>
-        </md-content>
-    </md-sidenav>
+    <div ui-view class="page-view"></div>
 </div>
+<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+    <md-toolbar class="">
+        <h2 class="md-toolbar-tools">Configurações</h2>
+    </md-toolbar>
+    <md-content ng-controller="SidenavCtrl" layout-align="center center" layout-padding>
+        <form layout="row" layout-align="center center">
+            <md-button ng-click="logout();" class="md-primary">
+                Sair do sistema
+            </md-button>
+        </form>
+    </md-content>
+</md-sidenav>
