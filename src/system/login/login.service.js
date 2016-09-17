@@ -1,11 +1,11 @@
 define(['../services/module'], function(services) {
     'use strict';
 
-    services.factory('AuthenticationService', AuthenticationService);
+    services.factory('loginService', loginService);
 
-    AuthenticationService.$inject = ['pxConfig', '$http', '$cookieStore', '$rootScope', '$timeout', 'UserService'];
+    loginService.$inject = ['pxConfig', '$http', '$cookieStore', '$rootScope', '$timeout', 'UserService'];
 
-    function AuthenticationService(pxConfig, $http, $cookieStore, $rootScope, $timeout, UserService) {
+    function loginService(pxConfig, $http, $cookieStore, $rootScope, $timeout, UserService) {
         var _url = angular.copy(pxConfig.PX_PACKAGE);
         if (_url !== '') {
             _url += '/';
@@ -161,7 +161,7 @@ define(['../services/module'], function(services) {
         }
     }
 
-    // Base64 encoding service used by AuthenticationService
+    // Base64 encoding service used by loginService
     var Base64 = {
 
         keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',

@@ -74,7 +74,7 @@ define(['./app'], function(app) {
             .accentPalette('grey');
     }]);
 
-    app.run(function(pxConfig, $rootScope, $location, $cookieStore, $http, AuthenticationService) {
+    app.run(function(pxConfig, $rootScope, $location, $cookieStore, $http, loginService) {
         // Verifica se o login é obrigatório
         if (pxConfig.LOGIN_REQUIRED) {
             // Manter usuário logado após atualização de página
@@ -86,7 +86,7 @@ define(['./app'], function(app) {
             $rootScope.$on('$locationChangeStart', function(event, next, current) {
                 /*if ($.inArray($location.path(), ['/login', '/register']) > -1) {} else {
                     // Verificar SESSION
-                    AuthenticationService.LoggedIn(function(response) {
+                    loginService.LoggedIn(function(response) {
                         if (!response.loggedIn) {
                             $location.path('/login');
                         }

@@ -1,7 +1,7 @@
 define(['../controllers/module'], function(controllers) {
     'use strict';
 
-    controllers.controller('HomeCtrl', ['pxConfig', 'pxCssLoader', 'AuthenticationService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$mdDialog', '$log', '$locale', function(pxConfig, pxCssLoader, AuthenticationService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $mdDialog, $log, $locale) {
+    controllers.controller('HomeCtrl', ['pxConfig', 'pxCssLoader', 'loginService', '$rootScope', '$scope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$mdDialog', '$log', '$locale', function(pxConfig, pxCssLoader, loginService, $rootScope, $scope, $location, $timeout, $mdSidenav, $mdUtil, $mdDialog, $log, $locale) {
 
             pxCssLoader.load();
 
@@ -111,7 +111,7 @@ define(['../controllers/module'], function(controllers) {
 
             // Sair do sistema
             $scope.logout = function logout() {
-                AuthenticationService.Logout(function(response) {
+                loginService.Logout(function(response) {
                     //console.info(response);
                 })
                 $location.path('/login');

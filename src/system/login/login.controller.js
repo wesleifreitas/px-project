@@ -1,7 +1,7 @@
 define(['../controllers/module'], function(controllers) {
     'use strict';
 
-    controllers.controller('LoginCtrl', ['$timeout', 'pxCssLoader', '$scope', '$location', 'AuthenticationService', 'FlashService', '$mdDialog', function($timeout, pxCssLoader, $scope, $location, AuthenticationService, FlashService, $mdDialog) {
+    controllers.controller('LoginCtrl', ['$timeout', 'pxCssLoader', '$scope', '$location', 'loginService', 'FlashService', '$mdDialog', function($timeout, pxCssLoader, $scope, $location, loginService, FlashService, $mdDialog) {
 
         pxCssLoader.load();
         
@@ -12,14 +12,13 @@ define(['../controllers/module'], function(controllers) {
 
         vm.initController = function initController() {
             // reset login status
-            AuthenticationService.ClearCredentials();
+            loginService.ClearCredentials();
         }();
 
         vm.login = function login() {
             if (vm.selection === 'default') {
                 vm.dataLoading = true;
-                AuthenticationService.Login(vm.username, vm.password, function(response) {
-                    console.info(response);
+                loginService.Login(vm.username, vm.password, function(response) {                    
                     vm.loginMessage = response.message;
                     if (response.success) {
                         if (response.qQuery[0].USU_MUDARSENHA === 1) {
@@ -30,7 +29,7 @@ define(['../controllers/module'], function(controllers) {
                             return;
                         }
 
-                        AuthenticationService.SetCredentials(vm.username, vm.password, response);
+                        loginService.SetCredentials(vm.username, vm.password, response);
                         //document.body.style.background = "#000000 url('') no-repeat center center fixed";
                         $location.path('/home');
                     } else {
@@ -50,9 +49,9 @@ define(['../controllers/module'], function(controllers) {
         vm.redefine = function redefine() {
             vm.dataLoading = true;
 
-            AuthenticationService.Redefine(vm.id, vm.username, vm.usu_senha, function(response) {
+            loginService.Redefine(vm.id, vm.username, vm.usu_senha, function(response) {
                 if (response.success) {
-                    AuthenticationService.SetCredentials(vm.username, vm.password, response);
+                    loginService.SetCredentials(vm.username, vm.password, response);
                     $location.path('/');
                 } else {
                     vm.loginMessage = response.message;
@@ -92,7 +91,7 @@ define(['../controllers/module'], function(controllers) {
 
         vm.recover = function recover() {
             vm.dataLoading = true;
-            AuthenticationService.Recover(vm.username, vm.email, function(response) {
+            loginService.Recover(vm.username, vm.email, function(response) {
                 if (response.success) {
                     alert('Foi enviado um e-mail para ' + vm.email + ' com as instruções de recuperação de login');
                     vm.showLogin();
