@@ -1,10 +1,10 @@
 .loading {
-    display: none;
+	display: none;
 }
 body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
+	margin: 0;
+	padding: 0;
+	height: 100%;
 }
 body {
 	background: url('system/assets/wallpaper/px-example-q70.jpg') no-repeat center center fixed;
@@ -43,15 +43,19 @@ div.page-view .view {
 	overflow-y: auto;
 	padding: 5px;
 }
-div .filter{
+div .filter {
 	cursor: pointer;
 }
 hr.px1 {
-    border: 0;
-    height: 1px;
-    background: #bbb;
-    background-image: -webkit-linear-gradient(left, #eee, #bbb, #eee);
-    background-image: -o-linear-gradient(left, #eee, #bbb, #eee);
-    margin-top: 1px;
-    margin-bottom: 2px;
+	border: 0;
+	height: 1px;
+	background: #bbb;
+	background-image: -webkit-linear-gradient(left, #eee, #bbb, #eee);
+	background-image: -o-linear-gradient(left, #eee, #bbb, #eee);
+	margin-top: 1px;
+	margin-bottom: 2px;
+}
+.ng-invalid {
+	border-color: #A94442;
+	border-width: 1px;
 }

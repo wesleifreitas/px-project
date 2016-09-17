@@ -26,7 +26,7 @@
                     <div class="form-group" flex="50" flex-sm="100">
                         <label for="exe_nome">Nome</label>
                         <input id="exe_nome" name="exe_nome" ng-model="exe_nome" class="form-control" required>
-                        <px-show-error px-element="exe_nome"></px-show-error>
+                        <px-message px-element="form.exe_nome" />
                     </div>
                     <div flex="50" flex-sm="100">
                         <label for="exe_telefone">Telefone</label>
@@ -35,12 +35,12 @@
                     <div flex="50" flex-sm="100">
                         <label for="exe_cpf">CPF</label>
                         <input id="exe_cpf" name="exe_cpf" ng-model="exe_cpf" class="form-control" px-cpf-mask required>
-                        <px-show-error px-element="exe_cpf"></px-show-error>
+                        <px-message px-element="form.exe_cpf" />
                     </div>
                     <div flex="50" flex-sm="100">
                         <label for="exe_cep">CEP</label>
                         <input id="exe_cep" name="exe_cep" ng-model="exe_cep" class="form-control" px-br-cep-mask required>
-                        <px-show-error px-element="exe_cep"></px-show-error>
+                        <px-message px-element="form.exe_cep" />
                     </div>
                     <div flex="100" flex-sm="100">
                         <label for="exe2_id">Input Search</label>
@@ -49,12 +49,12 @@
                     <div flex="50" flex-sm="100">
                         <label for="exe_senha">Senha</label>
                         <input id="exe_senha" name="exe_senha" ng-model="exe_senha" class="form-control" type="password" required>
-                        <px-show-error px-element="exe_senha"></px-show-error>
+                        <px-message px-element="form.exe_senha" />
                     </div>
                     <div flex="50" flex-sm="100">
                         <label for="exe_senha_confirmar">Confirmar Senha</label>
                         <input id="exe_senha_confirmar" name="exe_senha_confirmar" ng-model="exe_senha_confirmar" class="form-control" type="password" required>
-                        <px-show-error px-element="exe_senha_confirmar" px-confirm="exe_senha" px-confirm-error="Senha não confere"></px-show-error>
+                        <px-message px-element="form.exe_senha_confirmar" px-confirm="exe_senha" px-confirm-error="Senha não confere" />
                     </div>
                 </div>
             </div>

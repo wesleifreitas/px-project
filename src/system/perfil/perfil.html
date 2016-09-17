@@ -33,10 +33,7 @@
                 </button>
                 <button type="button" class="btn btn-default" ng-click="getData()">
                     <span ng-class="gridControl.working | dataGridRefresh"></span> Atualizar
-                </button>
-                <button type="button" class="btn btn-primary" ng-click="">
-                    <span class="fa fa-file-excel-o"></span> Exportar
-                </button>
+                </button>                
             </div>
         </div>
         <px-data-grid id="dgPerfil" px-control="gridControl" px-debug="true" px-init="gridInit(this)" px-table="dbo.vw_perfil" px-config="{{dgConfig}}" px-order-by="per_id" px-data-init="true" px-check="true" px-edit="true" px-item-edit="edit(event)">

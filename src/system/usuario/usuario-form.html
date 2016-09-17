@@ -16,22 +16,22 @@
                     <div flex="100" flex-sm="100">
                         <label>Login</label>
                         <input id="usu_login" name="usu_login" ng-model="usu_login" class="form-control" required>
-                        <px-show-error px-element="usu_login"></px-show-error>
+                        <px-message px-element="form.usu_login" />
                     </div>
                     <div flex="70" flex-sm="100">
                         <label>Nome</label>
                         <input id="usu_nome" name="usu_nome" ng-model="usu_nome" class="form-control" required>
-                        <px-show-error px-element="usu_nome"></px-show-error>
+                        <px-message px-element="form.usu_nome" />
                     </div>
                     <div flex="30" flex-sm="100">
                         <label>CPF</label>
                         <input id="usu_cpf" name="usu_cpf" ng-model="usu_cpf" class="form-control" px-br-cpf-mask required>
-                        <px-show-error px-element="usu_cpf"></px-show-error>
+                        <px-message px-element="form.usu_cpf" />
                     </div>
                     <div flex="100" flex-sm="100">
                         <label>e-mail</label>
                         <input id="usu_email" name="usu_email" name="usu_email" ng-model="usu_email" class="form-control" type="email" required>
-                        <px-show-error px-element="usu_email"></px-show-error>
+                        <px-message px-element="form.usu_email" />
                     </div>
                     <div flex="100" flex-sm="100">
                         <label for="per_id">Perfil</label>
@@ -48,17 +48,17 @@
                     <div flex="33" flex-sm="100">
                         <label>Senha expira (dias)</label>
                         <input id="usu_senhaExpira" name="usu_senhaExpira" ng-model="usu_senhaExpira" class="form-control" px-valid-number required>
-                        <px-show-error px-element="usu_senhaExpira"></px-show-error>
+                        <px-message px-element="form.usu_senhaExpira" />
                     </div>
                     <div flex="33" flex-sm="100">
                         <label>Tentativas de login</label>
                         <input id="usu_tentativasLogin" name="usu_tentativasLogin" ng-model="usu_tentativasLogin" class="form-control" px-valid-number required>
-                        <px-show-error px-element="usu_tentativasLogin"></px-show-error>
+                        <px-message px-element="form.usu_tentativasLogin" />
                     </div>
                     <div flex="33" flex-sm="100">
                         <label for="usu_senha">Senha</label>
                         <input id="usu_senha" name="usu_senha" ng-model="usu_senha" class="form-control" type="password" required ng-disabled="disabledSenha" ng-minlength="8">
-                        <px-show-error px-element="usu_senha" px-minlength-error="A senha deve ter no mínimo 8 caracteres"></px-show-error>
+                        <px-message px-element="form.usu_senha" px-minlength-error="A senha deve ter no mínimo 8 caracteres" />
                     </div>
                     <div flex="33" flex-sm="100">
                         <label for="usu_senha_confirmar">Confirmar Senha</label>
@@ -70,7 +70,7 @@
                             </button>
                             </span>
                         </div>
-                        <px-show-error px-element="usu_senha_confirmar" px-confirm="usu_senha" px-confirm-error="Senha não confere"></px-show-error>
+                        <px-message px-element="form.usu_senha_confirmar" px-confirm="usu_senha" px-confirm-error="Senha não confere" />
                     </div>
                     <div flex="33" flex-sm="100" layout="row" layout-align="start center">
                         <label>

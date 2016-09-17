@@ -35,7 +35,7 @@ define(['../../services/module'], function(services) {
             return;
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/components/px-form/px-form.cfc?method=insertUpdate',
+                url: pxConfig.PX_PACKAGE + 'system/directives/px-form/px-form.cfc?method=insertUpdate',
                 params: params
             }).success(function(response) {
                 callback(response);

@@ -7,7 +7,7 @@
                 <div flex="20" flex-sm="100">
                     <label>Login</label>
                     <input id="filtro_usu_login" name="filtro_usu_login" ng-model="filtro_usu_login" class="form-control" px-enter="getData()">
-                </div>                
+                </div>
                 <div flex="25" flex-sm="100">
                     <label>Nome</label>
                     <input id="filtro_usu_nome" name="filtro_usu_nome" ng-model="filtro_usu_nome" class="form-control" px-enter="getData()">
@@ -32,13 +32,9 @@
                 <button type="button" class="btn btn-default" ng-click="getData()">
                     <span ng-class="gridControl.working | dataGridRefresh"></span> Atualizar
                 </button>
-                <button type="button" class="btn btn-primary" ng-click="">
-                    <span class="fa fa-file-excel-o"></span> Exportar
-                </button>
             </div>
         </div>
-        <px-data-grid id="dgUsuario" px-control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="vw_usuario" px-config="{{dgConfig}}" px-order-by="usu_nome" px-check="false" px-item-edit="edit(event)" 
-        px-edit="true">
+        <px-data-grid id="dgUsuario" px-control="gridControl" px-debug="false" px-init="gridInit(this)" px-table="vw_usuario" px-config="{{dgConfig}}" px-order-by="usu_nome" px-check="false" px-item-edit="edit(event)" px-edit="true">
         </px-data-grid>
         <px-form></px-form>
     </div>

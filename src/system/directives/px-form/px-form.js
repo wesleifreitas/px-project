@@ -169,13 +169,13 @@ define(['../../directives/module'], function(directives) {
 
                     index.uniqueControl = angular.copy(true);
 
-                    if (!angular.isDefined(element.context)) {
+                    if (!angular.isDefined(element[0].type)) {
                         console.error('pxForm: elemento não encontrado no html, verifique a propriedade element', index);
                         //return;
                     }
 
                     // Verificar se é um checkbox
-                    if (element.context.type === 'checkbox') {
+                    if (element[0].type === 'checkbox') {
                         if (!angular.isDefined(element.scope()[selectorValue]) || element.scope()[selectorValue] === '') {
                             element.scope()[selectorValue] = false;
                         }
@@ -217,7 +217,7 @@ define(['../../directives/module'], function(directives) {
                         var tempValue = fieldValue;
 
                         // Se possuir configuração avançada (fieldValueOptions)
-                        if (angular.isDefined(index.fieldValueOptions) && angular.element($(selectorName).get(0)).context.type !== 'checkbox') {
+                        if (angular.isDefined(index.fieldValueOptions) && element[0].type !== 'checkbox') {
 
                             tempField = index.fieldValueOptions.field;
                             // value recebe o que foi configurado em index.fieldValueOptions.selectedItem
@@ -454,10 +454,10 @@ define(['../../directives/module'], function(directives) {
                                     _value = String(response.data.qQuery[0][index.field.toUpperCase()]);
                                 }
 
-                                if (!angular.isDefined(_element.context)) {
+                                if (!angular.isDefined(_element[0].type)) {
                                     console.error('pxForm: elemento não encontrado no html, verifique a propriedade element', index);
                                     return;
-                                } else if (_element.context.type === 'checkbox') {
+                                } else if (_element[0].type === 'checkbox') {
                                     if (angular.isDefined(index.fieldValueOptions)) {
                                         if (String(index.fieldValueOptions.checked) === String(_value)) {
                                             _value = true;
@@ -473,9 +473,13 @@ define(['../../directives/module'], function(directives) {
                                     _value = pxStringUtil.pad(index.pad, _value, true);
                                 }
 
-                                if (angular.isDefined(index.fieldValueOptions) && _element.context.type !== 'checkbox') {
+                                if (angular.isDefined(index.fieldValueOptions) && _element[0].type !== 'checkbox') {
                                     if (_element.scope().hasOwnProperty(selectorValue)) {
                                         if (!inputSearch) {
+                                            if (index.type === 'bigint' || index.type === 'bit' || index.type === 'decimal' || index.type === 'double' || index.type === 'float' || index.type === 'integer' || index.type === 'money' || index.type === 'money4' || index.type === 'numeric' || index.type === 'real' || index.type === 'smallint' || index.type === 'tinyint' || index.type === 'int') {
+                                                _value = Number(_value);
+                                            }
+
                                             _element.scope()[index.field] = _element.scope()[index.field][pxArrayUtil.getIndexByProperty(_element.scope()[index.field], index.fieldValueOptions.selectedItem, _value)]
                                         } else {
                                             var searchValue = angular.copy(response.data.qQuery[0]);

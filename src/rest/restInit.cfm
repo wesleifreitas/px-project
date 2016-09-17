@@ -1,6 +1,6 @@
 <cftry>
 	<cfset path = getDirectoryFromPath(getCurrentTemplatePath())>
-	<cfset restInitApplication(path & '..\system',"px-project")>	
+	<cfset restInitApplication(path, "px-project")>	
 	<cfcatch type="any">
 	    <cfdump var="#cfcatch#">
 	    <cfabort>

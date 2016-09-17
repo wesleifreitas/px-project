@@ -4,7 +4,7 @@ define(['../../directives/module'], function(directives) {
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-group-search/px-group-search.html',
+            templateUrl: pxConfig.PX_PACKAGE + 'system/directives/px-group-search/px-group-search.html',
             scope: {
                 itemClick: '&pxItemClick'
             },

@@ -1,4 +1,4 @@
-<cfinclude template="../../utils/cf/px-util.cfm">
+<cfinclude template="../../system/utils/cf/px-util.cfm">
 
 <cfprocessingDirective pageencoding="utf-8">
 <cfset setEncoding("form","utf-8")> 
@@ -367,7 +367,7 @@
 				<cfset whereInit = "WHERE">
 				<cfloop array="#arguments.fields#" index="j">
 					<cfif isDefined("j.field") AND isDefined("j.pk") AND j.pk>
-						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i.pkValue[j.field.replaceAll("[^\w\-_]+", "")]#">
+						#whereInit# #j.field# = <cfqueryparam cfsqltype="#getSqlType(j.type)#" value="#i.value[j.field.replaceAll("[^\w\-_]+", "")]#">
 						<cfset whereInit = "AND ">
 					</cfif>
 				</cfloop>

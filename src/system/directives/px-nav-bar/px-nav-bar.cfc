@@ -378,7 +378,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
         <cfset result['com_view_fault'] = ''> 
     <cfelse>        
         <cfset result['com_view_fault'] = expandPath('/') & qView.com_view> 
-        <cfset qView.com_view  = pxProjectPackage & 'system/components/px-nav-bar/fault-view.html'> 
+        <cfset qView.com_view  = pxProjectPackage & 'system/directives/px-nav-bar/fault-view.html'> 
     </cfif>    
     
     <cfset result['arguments'] = arguments> 

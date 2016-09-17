@@ -9,12 +9,8 @@ define(['../../directives/module'], function(directives) {
                 title: '@'
             },
             link: function(scope, element, attrs) {
-
                 var watchNavBar = scope.$watch('navBar', function(newValue, oldValue) {
-                    console.info('newValue', newValue);
-                    console.info('oldValue', oldValue);
-                    if (newValue !== oldValue) {
-                        console.info('watchNavBar');
+                    if (newValue !== oldValue) {                        
                         element.html(scope.navBar);
                         $compile(element.contents())(scope);
                         watchNavBar();
@@ -39,10 +35,9 @@ define(['../../directives/module'], function(directives) {
 
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
+                url: pxConfig.PX_PACKAGE + 'system/directives/px-nav-bar/px-nav-bar.cfc?method=getNavBar',
                 params: params
             }).success(function(response) {
-                console.info('getNavBar', response);
                 $scope.navBar = response.navBar;
             }).
             error(function(data, status, headers, config) {
@@ -65,7 +60,7 @@ define(['../../directives/module'], function(directives) {
 
             $http({
                 method: 'POST',
-                url: pxConfig.PX_PACKAGE + 'system/components/px-nav-bar/px-nav-bar.cfc?method=getView',
+                url: pxConfig.PX_PACKAGE + 'system/directives/px-nav-bar/px-nav-bar.cfc?method=getView',
                 params: params
             }).success(function(response) {
                 console.info('response', response);

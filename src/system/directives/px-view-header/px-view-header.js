@@ -6,7 +6,7 @@ define(['../../directives/module'], function(directives) {
             restrict: 'E',
             replace: true,
             transclude: false,
-            templateUrl: pxConfig.PX_PACKAGE + 'system/components/px-view-header/px-view-header.html'
+            templateUrl: pxConfig.PX_PACKAGE + 'system/directives/px-view-header/px-view-header.html'
         };
     }]);
 });
