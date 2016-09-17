@@ -683,23 +683,125 @@ Version: 1.9 February 20, 2008
         default  =""    
         hint     ="Tipo do campo">
 
-    <cfscript>
-
-        switch(arguments.type){
-            case 'int':
-                'cf_sql_integer';
-                break;
-
-            case 'string':
-                'cf_sql_varchar';
-                break;
-
-            case 'varchar':
-                'cf_sql_varchar';
-                break;
+    <cfscript>        
         
+        switch(uCase(arguments.type)){
+
+            case 'CF_SQL_BIGINT':
+            case 'BIGINT':
+                return 'CF_SQL_BIGINT';
+                break;
+
+            case 'CF_SQL_BIT':
+            case 'BIT':
+                return 'CF_SQL_BIT';
+                break;
+
+            case 'CF_SQL_CHAR':
+            case 'CHAR':
+                return 'CF_SQL_CHAR';
+                break;
+
+            case 'CF_SQL_BLOB':
+            case 'BLOB':
+                return 'CF_SQL_BLOB';
+                break;
+
+            case 'CF_SQL_CLOB':
+            case 'CLOB':
+                return 'CF_SQL_CLOB';
+                break;
+
+            case 'CF_SQL_DATE':
+            case 'DATE':
+                return 'CF_SQL_DATE';
+                break;
+
+            case 'CF_SQL_DECIMAL':
+            case 'DECIMAL':
+                return 'CF_SQL_DECIMAL';
+                break;
+
+            case 'CF_SQL_DOUBLE':
+            case 'DOUBLE':
+                return 'CF_SQL_DOUBLE';
+                break;
+
+            case 'CF_SQL_FLOAT':
+            case 'FLOAT':
+                return 'CF_SQL_FLOAT';
+                break;
+
+            case 'CF_SQL_IDSTAMP':
+            case 'IDSTAMP':
+                return 'CF_SQL_IDSTAMP';
+                break;
+
+            case 'CF_SQL_INTEGER':
+            case 'INTEGER':
+            case 'INT':            
+                return 'CF_SQL_INTEGER';
+                break;
+
+            case 'CF_SQL_LONGVARCHAR':
+            case 'LONGVARCHAR':
+            case 'TEXT':
+                return 'CF_SQL_LONGVARCHAR';
+                break;
+
+            case 'CF_SQL_MONEY':
+            case 'MONEY':
+                return 'CF_SQL_MONEY';
+                break;
+
+            case 'CF_SQL_MONEY4':
+            case 'MONEY4':
+                return 'CF_SQL_MONEY4';
+                break;
+
+            case 'CF_SQL_NUMERIC':
+            case 'NUMERIC':
+                return 'CF_SQL_NUMERIC';
+                break;
+
+            case 'CF_SQL_REAL':
+            case 'REAL':
+                return 'CF_SQL_REAL';
+                break;
+
+            case 'CF_SQL_REFCURSOR':
+            case 'REFCURSOR':
+                return 'CF_SQL_REFCURSOR';
+                break;
+
+            case 'CF_SQL_SMALLINT':
+            case 'SMALLINT':
+                return 'CF_SQL_SMALLINT';
+                break;
+
+            case 'CF_SQL_TIME':
+            case 'TIME':
+                return 'CF_SQL_TIME';
+                break;
+
+            case 'CF_SQL_TIMESTAMP':
+            case 'DATETIME':
+                return 'CF_SQL_TIMESTAMP';
+                break;
+
+            case 'CF_SQL_TINYINT':
+            case 'TINYINT':
+                return 'CF_SQL_TINYINT';
+                break;
+
+            case 'CF_SQL_VARCHAR':
+            case 'VARCHAR':
+            case 'STRING':
+                return 'CF_SQL_VARCHAR';
+                break;
+
             default:
-                'cf_sql_varchar';
+                return  'CF_SQL_VARCHAR';
                 break;
         }
 

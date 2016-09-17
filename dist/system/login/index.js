@@ -1,1 +1,1 @@
-define(["../login/login.controller","../login/user.service","../login/authentication.service","../login/flash.service"],function(){});
+define(["../login/login.controller","../login/user.service","../login/login.service","../login/flash.service"],function(){});

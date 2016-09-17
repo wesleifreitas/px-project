@@ -1,1 +1,0 @@
-define(["../../directives/module"],function(e){"use strict";e.directive("pxViewHeader",["pxConfig",function(e){return{restrict:"E",replace:!0,transclude:!1,templateUrl:e.PX_PACKAGE+"system/components/px-view-header/px-view-header.html"}}])});
