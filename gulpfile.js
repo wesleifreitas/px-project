@@ -76,6 +76,14 @@ gulp.task('build-assets', function() {
 		.pipe(gulp.dest('dist/system/assets/richsolutions'));
 });
 
+gulp.task('build-rest', function() {
+	return gulp
+		.src([
+			'./src/rest/**/*.*'
+		])
+		.pipe(gulp.dest('dist/rest'));
+});
+
 gulp.task('watch', function() {
 	gulp.watch('src/js/**/*.js', ['build-js']);
 	gulp.watch('./src/system/**/*.js', ['build-system-js']);	
@@ -89,5 +97,6 @@ gulp.task('default', [
 	'build-system-js',	
 	'build-system-css',
 	'build-system-others',
-	'build-assets'
+	'build-assets',
+	'build-rest'
 ]);
