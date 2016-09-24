@@ -36,10 +36,6 @@ define(['./app'], function(app) {
             GROUP_LABEL: 'grupo_nome' // Label do GROUP (Utilizar quando GROUP_LABEL_SUFFIX === '')
         });
 
-        if (pxConfig.PX_PACKAGE !== '') {
-            pxConfig.PX_PACKAGE += '/';
-        }
-
         // For any unmatched url, redirect to /state1
         $urlRouterProvider.otherwise("/login");
 

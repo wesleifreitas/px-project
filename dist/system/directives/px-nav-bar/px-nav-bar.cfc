@@ -282,21 +282,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
         required="false"
         default="px_project_sql"
         hint="Data source name">
-
-    <cfargument
-        name="pathname"
-        type="string"
-        required="false"
-        default=""
-        hint="Pasta raíz do projeto">
-
-    <cfargument 
-        name="pxProjectPackage"
-        type="string"
-        required="false"
-        default=""
-        hint="Componentes px-project">
-
+        
     <cfargument
         name="per_id"
         required="false"
@@ -368,19 +354,7 @@ http://www.bennadel.com/blog/1069-ask-ben-simple-recursion-example.htm --->
 
     </cfquery>
 
-    <cfif qView.com_px_lib EQ 1>
-        <cfset qView.com_view = arguments.pxProjectPackage & qView.com_view>
-    </cfif>
-
     <cfset result = structNew()> 
-    
-    <cfif fileExists(expandPath('/') & qView.com_view) OR fileExists(expandPath('/') & arguments.pathname & qView.com_view)>
-        <cfset result['com_view_fault'] = ''> 
-    <cfelse>        
-        <cfset result['com_view_fault'] = expandPath('/') & qView.com_view> 
-        <cfset qView.com_view  = pxProjectPackage & 'system/directives/px-nav-bar/fault-view.html'> 
-    </cfif>    
-    
     <cfset result['arguments'] = arguments> 
     <cfset result['qView'] = QueryToArray(qView)>
     <cfset state = listToArray(qView.COM_VIEW, "/")>
