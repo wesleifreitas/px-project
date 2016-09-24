@@ -10,7 +10,7 @@ define(['../../directives/module'], function(directives) {
             },
             link: function(scope, element, attrs) {
                 var watchNavBar = scope.$watch('navBar', function(newValue, oldValue) {
-                    if (newValue !== oldValue) {                        
+                    if (newValue !== oldValue) {
                         element.html(scope.navBar);
                         $compile(element.contents())(scope);
                         watchNavBar();
@@ -52,11 +52,10 @@ define(['../../directives/module'], function(directives) {
                 $('.app-bar-pullbutton.automatic').trigger('click');
             }*/
 
-            var params = {};
-            params.men_id = view;
-            params.pathname = pxConfig.PROJECT_SRC; //document.location.pathname;
-            params.pxProjectPackage = pxConfig.PX_PACKAGE;
-            params.dsn = pxConfig.PROJECT_DSN;
+            var params = {
+                dsn: pxConfig.PROJECT_DSN,
+                men_id: view
+            };
 
             $http({
                 method: 'POST',

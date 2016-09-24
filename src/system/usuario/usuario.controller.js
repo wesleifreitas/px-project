@@ -39,7 +39,7 @@ define(['../controllers/module'], function(controllers) {
                 labelField: true,
                 field: 'per_nome',
                 search: true,
-                type: 'string',
+                type: 'varchar',
                 filterOperator: '%LIKE%'
             }, {
                 title: '',
@@ -55,7 +55,7 @@ define(['../controllers/module'], function(controllers) {
                 labelField: true,
                 field: 'grupo_nome',
                 search: true,
-                type: 'string',
+                type: 'varchar',
                 filterOperator: '%LIKE%'
             }, {
                 title: '',
@@ -94,14 +94,14 @@ define(['../controllers/module'], function(controllers) {
             }, {
                 title: 'Nome',
                 field: 'usu_nome',
-                type: 'string',
+                type: 'varchar',
                 filter: 'filtro_usu_nome',
                 filterOperator: '%LIKE%'
 
             }, {
                 title: 'Login',
                 field: 'usu_login',
-                type: 'string',
+                type: 'varchar',
                 filter: 'filtro_usu_login',
                 filterOperator: '%LIKE%'
             }, {
@@ -294,31 +294,31 @@ define(['../controllers/module'], function(controllers) {
                     element: 'per_id'
                 }, {
                     field: 'usu_login',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'usu_login'
                 }, {
                     field: 'usu_senha',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'usu_senha',
                     hash: true
                 }, {
                     field: 'usu_senha_confirmar',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'usu_senha_confirmar',
                     select: false,
                     insert: false,
                     update: false
                 }, {
                     field: 'usu_nome',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'usu_nome'
                 }, {
                     field: 'usu_email',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'usu_email'
                 }, {
                     field: 'usu_cpf',
-                    type: 'int',
+                    type: 'varchar',
                     element: 'usu_cpf'
                 }, {
                     field: 'usu_senhaExpira',
@@ -441,7 +441,7 @@ define(['../controllers/module'], function(controllers) {
                 }, {
                     title: 'Nome',
                     field: 'per_nome',
-                    type: 'string',
+                    type: 'varchar',
                     filter: 'filtro_per_nome',
                     filterOperator: '%LIKE%'
                 }, {
@@ -475,7 +475,7 @@ define(['../controllers/module'], function(controllers) {
                 }, {
                     title: 'Nome',
                     field: 'grupo_nome',
-                    type: 'string',
+                    type: 'varchar',
                     filter: 'filtro_grupo_nome',
                     filterOperator: '%LIKE%'
                 }]

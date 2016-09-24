@@ -1,12 +1,12 @@
-define(['../controllers/module'], function(controllers) {
+define(['../../controllers/module'], function(controllers) {
     'use strict';
 
     // Controller
-    controllers.controller('Exemplo2ListCtrl', Exemplo2ListCtrl);
+    controllers.controller('GrupoListCtrl', GrupoListCtrl);
 
-    Exemplo2ListCtrl.$inject = ['pxConfig', '$scope', '$element', '$attrs', '$mdDialog'];
+    GrupoListCtrl.$inject = ['pxConfig', '$scope', '$element', '$attrs', '$mdDialog'];
 
-    function Exemplo2ListCtrl(pxConfig, $scope, $element, $attrs, $mdDialog) {
+    function GrupoListCtrl(pxConfig, $scope, $element, $attrs, $mdDialog) {
         // Variáveis gerais - Start
         /**
          * Variável de controle de visualição do Filtro Avançado
@@ -36,17 +36,17 @@ define(['../controllers/module'], function(controllers) {
 
         /**
          * Controle da listagem
-         * Note que a propriedade 'control' da directive px-data-grid é igual a 'dgExemploControl'
-         * Exemplo: <px-data-grid px-control="dgExemploControl">
+         * Note que a propriedade 'control' da directive px-data-grid é igual a 'dgGrupoControl'
+         * Exemplo: <px-data-grid px-control="dgGrupoControl">
          * @type {Object}
          */
-        $scope.dgExemplo2Control = {};
+        $scope.dgGrupoControl = {};
 
         /**
          * Inicializa listagem
          * @return {Void}
          */
-        $scope.dgExemplo2Init = function() {
+        $scope.dgGrupoInit = function() {
 
         };
 
@@ -55,29 +55,23 @@ define(['../controllers/module'], function(controllers) {
          * - fields: Colunas da listagem
          * @type {Object}
          */
-        $scope.dgExemplo2Config = {
+        $scope.dgGrupoConfig = {
             schema: 'dbo',
-            table: 'exemplo2',
+            table: 'grupo',
             group: false,
-            orderBy: [{
-                field: 'exe2_categoria',
-                sort: 'asc'
-            }],
             fields: [{
                 pk: true,
-                title: 'id',
-                field: 'exe2_id',
-                type: 'integer',
+                title: 'Código',
+                field: 'grupo_id',
+                type: 'int',
+                filter: 'filtro_grupo_id',
+                filterOperator: '='
             }, {
-                title: 'Categoria',
-                field: 'exe2_categoria',
-                type: 'varchar',
-                filter: 'filtroCategoria',
+                title: 'Nome',
+                field: 'grupo_nome',
+                type: 'string',
+                filter: 'filtro_grupo_nome',
                 filterOperator: '%LIKE%'
-            }, {
-                title: 'Descrição',
-                field: 'exe2_descricao',
-                type: 'string'
             }],
         };
 
@@ -85,9 +79,9 @@ define(['../controllers/module'], function(controllers) {
          * Atualizar dados da listagem
          * @return {Void}
          */
-        $scope.getDataExemplo2 = function() {
+        $scope.getDataGrupo = function() {
             //Recuperar dados para a listagem
-            $scope.dgExemplo2Control.getData();
+            $scope.dgGrupoControl.getData();
         };
 
         /**
@@ -100,7 +94,7 @@ define(['../controllers/module'], function(controllers) {
             $mdDialog.hide();
         };
 
-        $scope.close = function() {
+        $scope.grupoListClose = function() {
             $mdDialog.cancel();
         };
     }

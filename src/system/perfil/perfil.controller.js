@@ -40,7 +40,7 @@ define(['../controllers/module'], function(controllers) {
                 labelField: true,
                 field: 'grupo_nome',
                 search: true,
-                type: 'string',
+                type: 'varchar',
                 filterOperator: '%LIKE%'
             }, {
                 title: '',
@@ -79,7 +79,7 @@ define(['../controllers/module'], function(controllers) {
                 }, {
                     title: 'Nome',
                     field: 'per_nome',
-                    type: 'string',
+                    type: 'varchar',
                     filter: 'filtro_per_nome',
                     filterOperator: '%LIKE%'
                 }, {
@@ -212,7 +212,7 @@ define(['../controllers/module'], function(controllers) {
                 fields: [{
                     pk: true,
                     field: 'per_id',
-                    type: 'string',
+                    type: 'varchar',
                     identity: true
                 }, {
                     field: 'grupo_id',
@@ -232,7 +232,7 @@ define(['../controllers/module'], function(controllers) {
                     }
                 }, {
                     field: 'per_nome',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'per_nome'
                 }, {
                     field: 'per_master',

@@ -805,7 +805,7 @@ define(['../../directives/module'], function(directives) {
                                 labelField: true,
                                 field: pxConfig.GROUP_TABLE + '_' + pxConfig.GROUP_LABEL_SUFFIX,
                                 search: true,
-                                type: 'string',
+                                type: 'varchar',
                                 filterOperator: '%LIKE%'
                             }, {
                                 title: '',
@@ -819,7 +819,7 @@ define(['../../directives/module'], function(directives) {
                                 labelField: true,
                                 field: pxConfig.GROUP_LABEL,
                                 search: true,
-                                type: 'string',
+                                type: 'varchar',
                                 filterOperator: '%LIKE%'
                             }, {
                                 title: '',

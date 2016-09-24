@@ -4,7 +4,7 @@ define(['../../directives/module'], function(directives) {
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: pxConfig.PX_PACKAGE + 'system/directives/px-group-search/px-group-search.html',
+            templateUrl: pxConfig.PX_PACKAGE + 'system/directives/px-group/px-group-search.html',
             scope: {
                 itemClick: '&pxItemClick'
             },
@@ -14,23 +14,25 @@ define(['../../directives/module'], function(directives) {
                 $scope.dgGroupControl = {};
                 // Inicializar listagem
                 $scope.dgGroupInit = function() {
-                    // Configurações da listagem
-                    $scope.dgGroupConfig = {
-                        table: 'grupo',
-                        fields: [{
-                            pk: true,
-                            title: 'Grupo',
-                            field: 'grupo_id',
-                            type: 'int',
-                            identity: true
-                        }, {
-                            title: 'Nome',
-                            field: 'grupo_nome',
-                            type: 'string',
-                            filter: 'filtro_grupo_nome',
-                            filterOperator: '%LIKE%'
-                        }]
-                    };
+
+                };
+                // Configurações da listagem
+                $scope.dgGroupConfig = {
+                    schema: 'dbo',
+                    table: 'grupo',
+                    fields: [{
+                        pk: true,
+                        title: 'Grupo',
+                        field: 'grupo_id',
+                        type: 'int',
+                        identity: true
+                    }, {
+                        title: 'Nome',
+                        field: 'grupo_nome',
+                        type: 'varchar',
+                        filter: 'filtro_grupo_nome',
+                        filterOperator: '%LIKE%'
+                    }]
                 };
                 // Atualizar listagem
                 $scope.getDataGrupo = function() {

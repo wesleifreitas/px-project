@@ -35,7 +35,7 @@ define(['../controllers/module'], function(controllers) {
                 labelField: true,
                 field: 'exe2_categoria',
                 search: true,
-                type: 'string',
+                type: 'varchar',
                 filterOperator: '%LIKE%'
             }, {
                 title: 'Descrição: ',
@@ -107,7 +107,7 @@ define(['../controllers/module'], function(controllers) {
                 visible: false,
                 title: 'id',
                 field: 'exe_id',
-                type: 'int',
+                type: 'integer',
                 filter: 'filtroId',
                 filterOperator: '='
             }, {
@@ -123,7 +123,7 @@ define(['../controllers/module'], function(controllers) {
             }, {
                 title: 'Nome',
                 field: 'exe_nome',
-                type: 'string',
+                type: 'varchar',
                 filter: 'filtroNome',
                 filterOperator: '%LIKE%'
             }, {
@@ -139,14 +139,14 @@ define(['../controllers/module'], function(controllers) {
             }, {
                 title: 'CPF',
                 field: 'exe_cpf',
-                type: 'int',
+                type: 'integer',
                 stringMask: '###.###.###-##',
                 filter: 'filtroCPF',
                 filterOperator: '='
             }, {
                 title: 'Telefone',
                 field: 'exe_telefone',
-                type: 'string',
+                type: 'varchar',
                 stringMask: 'brPhone',
                 filter: 'filtroTelefone',
                 filterOperator: '='
@@ -287,7 +287,7 @@ define(['../controllers/module'], function(controllers) {
                 fields: [{
                     pk: true,
                     field: 'exe_id',
-                    type: 'string',
+                    type: 'varchar',
                     identity: true
                 }, {
                     field: 'exe_checkbox',
@@ -295,7 +295,7 @@ define(['../controllers/module'], function(controllers) {
                     element: 'exe_checkbox'
                 }, {
                     field: 'exe_checkbox_char',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'exe_checkbox_char',
                     fieldValueOptions: {
                         checked: 'A',
@@ -303,23 +303,23 @@ define(['../controllers/module'], function(controllers) {
                     }
                 }, {
                     field: 'exe_nome',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'exe_nome',
                 }, {
                     field: 'exe_cpf',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'exe_cpf'
                 }, {
                     field: 'exe_telefone',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'exe_telefone'
                 }, {
                     field: 'exe_cep',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'exe_cep'
                 }, {
                     field: 'exe2_id',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'exe2_id',
                     fieldValueOptions: {
                         selectedItem: 'exe2_id',
@@ -327,12 +327,12 @@ define(['../controllers/module'], function(controllers) {
                     },
                 }, {
                     field: 'exe_senha',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'exe_senha',
                     hash: true
                 }, {
                     field: 'exe_senha_confirmar',
-                    type: 'string',
+                    type: 'varchar',
                     element: 'exe_senha_confirmar',
                     select: false,
                     insert: false,
@@ -426,7 +426,7 @@ define(['../controllers/module'], function(controllers) {
                 }, {
                     title: 'Categoria',
                     field: 'exe2_categoria',
-                    type: 'string',
+                    type: 'varchar',
                     filter: 'filtroCategoria',
                     filterOperator: '%LIKE%'
                 }, {
