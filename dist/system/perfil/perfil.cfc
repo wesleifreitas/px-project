@@ -126,7 +126,9 @@
 
 		<!--- <cfset dataTree = getRecursiveMenu(data = qMenu) /> --->
 
-	    <cfsavecontent variable="dataTree"><cfset getRecursiveMenu(data = qMenu, per_id = arguments.id)></cfsavecontent>
+	    <cfsavecontent variable="dataTree">
+	    	<cfset getRecursiveMenu(data = qMenu, per_id = arguments.id, dsn = arguments.dsn)>
+	    </cfsavecontent>
 
 	    <cfset dataTree = ConvertXmlToStruct(xmlParse(dataTree),structnew())>
    	   	
