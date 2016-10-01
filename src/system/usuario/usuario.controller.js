@@ -424,62 +424,66 @@ define(['../controllers/module'], function(controllers) {
          * @return {Void}
          */
         $scope.dgPerfilInit = function() {
-            /**
-             * Configurações da listagem
-             * - fields: Colunas da listagem
-             * @type {Object}
-             */
-            $scope.dgPerfilConfig = {
-                table: 'dbo.perfil',
-                view: 'dbo.vw_perfil',
-                fields: [{
-                    pk: true,
-                    title: 'ID',
-                    field: 'per_id',
-                    type: 'int',
-                    identity: true
-                }, {
-                    title: 'Nome',
-                    field: 'per_nome',
-                    type: 'varchar',
-                    filter: 'filtro_per_nome',
-                    filterOperator: '%LIKE%'
-                }, {
-                    title: 'Status',
-                    field: 'per_ativo_label',
-                    type: 'bit',
-                    filter: 'filtro_per_ativo',
-                    filterOperator: '=',
-                    filterOptions: {
-                        field: 'per_ativo',
-                        selectedItem: 'id'
-                    }
-                }]
-            };
+
+        };
+
+        /**
+         * Configurações da listagem
+         * - fields: Colunas da listagem
+         * @type {Object}
+         */
+        $scope.dgPerfilConfig = {
+            table: 'perfil',
+            view: 'vw_perfil',
+            fields: [{
+                pk: true,
+                title: 'ID',
+                field: 'per_id',
+                type: 'int',
+                identity: true
+            }, {
+                title: 'Nome',
+                field: 'per_nome',
+                type: 'varchar',
+                filter: 'filtro_per_nome',
+                filterOperator: '%LIKE%'
+            }, {
+                title: 'Status',
+                field: 'per_ativo_label',
+                type: 'bit',
+                filter: 'filtro_per_ativo',
+                filterOperator: '=',
+                filterOptions: {
+                    field: 'per_ativo',
+                    selectedItem: 'id'
+                }
+            }]
         };
 
         $scope.dgGrupoInit = function() {
-            /**
-             * Configurações da listagem
-             * - fields: Colunas da listagem
-             * @type {Object}
-             */
-            $scope.dgGrupoConfig = {
-                table: 'dbo.grupo',
-                fields: [{
-                    pk: true,
-                    title: 'Grupo',
-                    field: 'grupo_id',
-                    type: 'int',
-                    identity: true
-                }, {
-                    title: 'Nome',
-                    field: 'grupo_nome',
-                    type: 'varchar',
-                    filter: 'filtro_grupo_nome',
-                    filterOperator: '%LIKE%'
-                }]
-            };
+
+        };
+
+        /**
+         * Configurações da listagem
+         * - fields: Colunas da listagem
+         * @type {Object}
+         */
+        $scope.dgGrupoConfig = {
+            table: 'grupo',
+            fields: [{
+                pk: true,
+                title: 'Grupo',
+                field: 'grupo_id',
+                type: 'int',
+                identity: true
+            }, {
+                title: 'Nome',
+                field: 'grupo_nome',
+                type: 'varchar',
+                filter: 'filtro_grupo_nome',
+                filterOperator: '%LIKE%'
+            }]
         };
 
         // Atualizar listagem do formulário per_id
