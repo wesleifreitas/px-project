@@ -10,7 +10,7 @@ GO
 
 -- Cria View
 CREATE VIEW [dbo].[vw_exemplo]
-WITH ENCRYPTION
+--WITH ENCRYPTION
 AS
     SELECT
 

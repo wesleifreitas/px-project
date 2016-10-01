@@ -10,7 +10,7 @@ GO
 
 -- Criar View
 CREATE VIEW [dbo].[vw_menu]
-WITH ENCRYPTION
+--WITH ENCRYPTION
 AS
 	SELECT
 

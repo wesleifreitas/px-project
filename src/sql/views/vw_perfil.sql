@@ -10,7 +10,7 @@ GO
 
 -- Criar View
 CREATE VIEW [dbo].[vw_perfil]
-WITH ENCRYPTION
+--WITH ENCRYPTION
 AS
     SELECT
     
