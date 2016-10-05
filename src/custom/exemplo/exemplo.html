@@ -8,7 +8,7 @@
                     <label for="filtro_exe2_id">Input Search</label>
                     <px-input-search id="filtro_exe2_id" name="filtro_exe2_id" ng-model="filtro_exe2_id" px-input-class="form-control" placeholder="Pesquisar categoria" px-control="filtro_exe2_id_searchControl" px-complete="true" px-config="{{exe2_id_searchConfig}}" px-dialog="true" px-search-click="filtro_exe2_id_searchClick(event)"></px-input-search>
                 </div>
-                <div flex="10" flex-sm="100">
+                <div flex="15" flex-sm="100">
                     <label for="filtroId">ID</label>
                     <input id="filtroId" name="filtroId" ng-model="filtroId" class="form-control" px-enter="getData()" px-valid-number>
                 </div>
@@ -16,7 +16,7 @@
                     <label for="filtroStatus">Status</label>
                     <select id="filtroStatus" name="filtroStatus" ng-model="filtroStatus" class="form-control" px-enter="getData()" ng-options="option.name for option in dataStatus.optionsAll track by option.id"></select>
                 </div>
-                <div flex="25" flex-sm="100">
+                <div flex="30" flex-sm="100">
                     <label for="filtroNome">Nome</label>
                     <input id="filtroNome" name="filtroNome" ng-model="filtroNome" class="form-control" px-enter="getData()">
                 </div>
@@ -39,7 +39,7 @@
         </form>
     </div>
     <div>
-        <div px-fixed px-wrapper=".px-view" px-hfixed="true" layout="row" layout-align="end center">
+        <div px-fixed px-wrapper=".px-view" px-hfixed="true" layout="row" layout-align="end center" layout-padding>
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-default" ng-click="add($event)">
                     <span class="fa fa-plus"></span> <span hide-sm>Adicionar</span>

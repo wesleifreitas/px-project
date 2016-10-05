@@ -409,32 +409,34 @@ define(['../controllers/module'], function(controllers) {
          * @return {Void}
          */
         $scope.dgExemplo2Init = function() {
-            /**
-             * Configurações da listagem
-             * - fields: Colunas da listagem
-             * @type {Object}
-             */
-            $scope.dgExemplo2Config = {
-                schema: 'dbo',
-                table: 'exemplo2',
-                group: false,
-                fields: [{
-                    pk: true,
-                    title: 'id',
-                    field: 'exe2_id',
-                    type: 'int'
-                }, {
-                    title: 'Categoria',
-                    field: 'exe2_categoria',
-                    type: 'varchar',
-                    filter: 'filtroCategoria',
-                    filterOperator: '%LIKE%'
-                }, {
-                    title: 'Descrição',
-                    field: 'exe2_descricao',
-                    type: 'string'
-                }],
-            };
+
+        };
+
+        /**
+         * Configurações da listagem
+         * - fields: Colunas da listagem
+         * @type {Object}
+         */
+        $scope.dgExemplo2Config = {
+            schema: 'dbo',
+            table: 'exemplo2',
+            group: false,
+            fields: [{
+                pk: true,
+                title: 'id',
+                field: 'exe2_id',
+                type: 'int'
+            }, {
+                title: 'Categoria',
+                field: 'exe2_categoria',
+                type: 'varchar',
+                filter: 'filtroCategoria',
+                filterOperator: '%LIKE%'
+            }, {
+                title: 'Descrição',
+                field: 'exe2_descricao',
+                type: 'string'
+            }],
         };
 
         // Atualizar listagem do formulário
