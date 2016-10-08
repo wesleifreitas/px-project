@@ -31,6 +31,7 @@
 		hint="Identificação do projeto">
 
 	<cfset result = structNew()>
+	<cfset result["arguments"] = ARGUMENTS>
 
 	<cftry>	
 
@@ -127,11 +128,10 @@
 		<!--- <cfset dataTree = getRecursiveMenu(data = qMenu) /> --->
 
 	    <cfsavecontent variable="dataTree">
-	    	<cfset getRecursiveMenu(data = qMenu, per_id = arguments.id, dsn = arguments.dsn)>
+	    	<cfset getRecursiveMenu(dsn = arguments.dsn, data = qMenu, per_id = arguments.id)>
 	    </cfsavecontent>
 
 	    <cfset dataTree = ConvertXmlToStruct(xmlParse(dataTree),structnew())>
-   	   	
    	   		
    	   	<cfset result["qMenu"] = qMenu>
 		<cfset result["dataTree"] = dataTree>
@@ -158,7 +158,6 @@
 		</cfscript>		
 		
 		<cfset result["success"] = true>		
-		<cfset result["arguments"] = arguments>
 		<cfset result["jstree"] = jstree>			  
 			
 		<cfreturn result>
@@ -258,6 +257,7 @@
                 Chama função recursiva
             --->
             <cfset getRecursiveMenu(
+            	dsn = arguments.dsn,
                 data = arguments.data,
                 per_id = arguments.per_id,
                 men_idPai = LOCAL.qMenu.men_id

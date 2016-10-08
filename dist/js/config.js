@@ -94,6 +94,9 @@ define(['./app'], function(app) {
                 var loggedIn = $rootScope.globals.currentUser;
                 if (restrictedPage && !loggedIn) {
                     $location.path('/login');
+                } else if (restrictedPage && loggedIn && $location.path() === '/home') {
+                    // Redirecionar para primeira tela (exemplo)
+                    $location.path('/home/exemplo');
                 }
             });
         } else {
