@@ -454,7 +454,7 @@ define(['../../directives/module'], function(directives) {
                                     _value = String(response.data.qQuery[0][index.field.toUpperCase()]);
                                 }
 
-                                if (!angular.isDefined(_element[0].type)) {
+                                if (!angular.isDefined(_element[0])) {
                                     console.error('pxForm: elemento não encontrado no html, verifique a propriedade element', index);
                                     return;
                                 } else if (_element[0].type === 'checkbox') {
