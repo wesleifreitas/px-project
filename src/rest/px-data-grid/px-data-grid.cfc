@@ -160,7 +160,7 @@
 		</cfif>
 
 		<cftransaction>
-			<cfquery datasource="#arguments.dsn#" name="qRecordCount" result="rRecordCount">
+			<cfquery datasource="#arguments.dsn#" name="qRecordCount" result="recordCount">
 				SELECT
 					COUNT(1) as count
 				FROM
@@ -206,7 +206,7 @@
 				</cfloop>
 			</cfquery>
 			
-			<cfquery datasource="#arguments.dsn#" name="qQuery" result="rQuery">
+			<cfquery datasource="#arguments.dsn#" name="query" result="rQuery">
 				WITH pagination AS
 				(
 					SELECT 
@@ -273,8 +273,7 @@
 			
 	<cfset result['rowFrom'] = arguments.rowFrom>
 	<cfset result['rowTo'] = arguments.rowTo>
-	<cfset result['qQuery'] = QueryToArray(qQuery)>
-	<cfset result['rRecordCount'] = rRecordCount>
+	<cfset result['query'] = QueryToArray(query)>
 	<cfset result['rQuery'] = rQuery>
 	<cfset result['recordCount'] = qRecordCount.count>
 	<cfset result["_table"] = _table>
