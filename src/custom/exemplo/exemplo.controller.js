@@ -93,7 +93,7 @@ define(['../controllers/module'], function(controllers) {
          * - fields: Colunas da listagem
          * @type {Object}
          */
-        $scope.dgExemploConfig = {
+        $scope.dgExemploConfig = {        
             schema: 'dbo',
             table: 'exemplo',
             view: 'vw_exemplo',
@@ -170,7 +170,7 @@ define(['../controllers/module'], function(controllers) {
          * @return {Void}
          */
         $scope.dgExemploInit = function() {
-
+            $scope.getData();
         };
 
         /**

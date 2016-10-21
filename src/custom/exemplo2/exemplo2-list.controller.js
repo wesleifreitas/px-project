@@ -47,7 +47,7 @@ define(['../controllers/module'], function(controllers) {
          * @return {Void}
          */
         $scope.dgExemplo2Init = function() {
-
+            $scope.getDataExemplo2();
         };
 
         /**
