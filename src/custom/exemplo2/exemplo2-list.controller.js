@@ -4,9 +4,9 @@ define(['../controllers/module'], function(controllers) {
     // Controller
     controllers.controller('Exemplo2ListCtrl', Exemplo2ListCtrl);
 
-    Exemplo2ListCtrl.$inject = ['pxConfig', '$scope', '$element', '$attrs', '$mdDialog'];
+    Exemplo2ListCtrl.$inject = ['pxConfig', '$scope', '$element', '$mdDialog'];
 
-    function Exemplo2ListCtrl(pxConfig, $scope, $element, $attrs, $mdDialog) {
+    function Exemplo2ListCtrl(pxConfig, $scope, $element, $mdDialog) {
         // Variáveis gerais - Start
         /**
          * Variável de controle de visualição do Filtro Avançado
