@@ -169,13 +169,12 @@ define(['../../directives/module'], function(directives) {
 
                     index.uniqueControl = angular.copy(true);
 
-                    if (!angular.isDefined(element[0].type)) {
+                    if (typeof element[0] === 'undefined') {
                         console.error('pxForm: elemento não encontrado no html, verifique a propriedade element', index);
-                        //return;
                     }
 
                     // Verificar se é um checkbox
-                    if (element[0].type === 'checkbox') {
+                    if (element[0].hasOwnProperty('type') && element[0].type === 'checkbox') {
                         if (!angular.isDefined(element.scope()[selectorValue]) || element.scope()[selectorValue] === '') {
                             element.scope()[selectorValue] = false;
                         }
