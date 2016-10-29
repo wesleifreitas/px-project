@@ -56,9 +56,9 @@ define(['../../directives/module'], function(directives) {
         };
     }]);
 
-    pxFormCtrl.$inject = ['pxConfig', 'pxFormService', 'pxArrayUtil', 'pxStringUtil', '$scope', '$http', '$timeout', '$rootScope'];
+    pxFormCtrl.$inject = ['pxConfig', 'pxFormService', 'pxArrayUtil', 'pxStringUtil', '$scope', '$http', '$timeout', '$rootScope', 'pxDateUtil'];
 
-    function pxFormCtrl(pxConfig, pxFormService, pxArrayUtil, pxStringUtil, $scope, $http, $timeout, $rootScope) {
+    function pxFormCtrl(pxConfig, pxFormService, pxArrayUtil, pxStringUtil, $scope, $http, $timeout, $rootScope, pxDateUtil) {
         // Inserir dados        
         $scope.insertUpdate = function(action) {
             var objConfig = JSON.parse($scope.config);
@@ -189,12 +189,12 @@ define(['../../directives/module'], function(directives) {
                         }
                     }
 
-                    // Verifica seu o scope do elemento angular possui valor definido
+                    // Verificar seu o scope do elemento angular possui valor definido
                     if (element.scope().hasOwnProperty(selectorValue)) {
 
                         var fieldValue = element.scope()[selectorValue];
 
-                        // Se valor do campo for undefined, o filtro será considerado inválido
+                        // Se valor do campo for undefined, o valor será considerado inválido
                         if (!angular.isDefined(fieldValue)) {
                             if ($rootScope.globals.currentUser.per_developer !== 1 && index.field === $scope.groupItem) {
                                 if (pxConfig.GROUP_ITEM === '') {
@@ -214,6 +214,10 @@ define(['../../directives/module'], function(directives) {
 
                         var tempField = index.field;
                         var tempValue = fieldValue;
+
+                        if (index.type === 'date') {
+                            tempValue = pxDateUtil.moment(tempValue).format('YYYY/MM/DD HH:mm:ss');
+                        }
 
                         // Se possuir configuração avançada (fieldValueOptions)
                         if (angular.isDefined(index.fieldValueOptions) && element[0].type !== 'checkbox') {
@@ -501,11 +505,18 @@ define(['../../directives/module'], function(directives) {
                                         _element.scope().pxForm2mask(_value);
                                     }
 
-                                    _element.scope()[index.field] = _value;
+                                    if (index.type === 'date' && _value !== '') {
+                                        _value = pxDateUtil.moment(_value)._d;
+                                        _element.scope()[index.field] = _value;
+                                    } else if (index.type !== 'date') {
+                                        _element.scope()[index.field] = _value;
 
-                                    $timeout(function() {
-                                        _element.trigger('keyup');
-                                    }, 0);
+                                        $timeout(function() {
+                                            _element.trigger('keyup');
+                                        }, 0);
+                                    }
+
+
 
                                 }
                             }
