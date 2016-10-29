@@ -200,6 +200,9 @@
 		<cfset result["data"] = data>
 		
 		<cfcatch>
+			<cfif cfcatch.type NEQ "Database" AND isDefined("i")>
+				<cfset result["i"] = i>
+			</cfif>
 			<cfset result["success"] = false>
 			<cfset result["cfcatch"] = cfcatch>
 		</cfcatch>
