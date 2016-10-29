@@ -174,7 +174,7 @@ define(['../../directives/module'], function(directives) {
                     }
 
                     // Verificar se é um checkbox
-                    if (element[0].hasOwnProperty('type') && element[0].type === 'checkbox') {
+                    if (typeof element[0] === 'object' && element[0].type === 'checkbox') {
                         if (!angular.isDefined(element.scope()[selectorValue]) || element.scope()[selectorValue] === '') {
                             element.scope()[selectorValue] = false;
                         }
