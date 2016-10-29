@@ -93,7 +93,7 @@ define(['../controllers/module'], function(controllers) {
          * - fields: Colunas da listagem
          * @type {Object}
          */
-        $scope.dgExemploConfig = {        
+        $scope.dgExemploConfig = {
             schema: 'dbo',
             table: 'exemplo',
             view: 'vw_exemplo',
@@ -193,6 +193,7 @@ define(['../controllers/module'], function(controllers) {
 
         // Listagem - End     
 
+        $scope.formShow = 'default';
         // Inicializar título do formulário      
         $scope.formTitle = 'Formulário de Adicionar';
         /**
@@ -310,9 +311,21 @@ define(['../controllers/module'], function(controllers) {
                     type: 'varchar',
                     element: 'exe_cpf'
                 }, {
+                    field: 'exe_data',
+                    type: 'date',
+                    element: 'exe_data'
+                }, {
                     field: 'exe_telefone',
                     type: 'varchar',
                     element: 'exe_telefone'
+                }, {
+                    field: 'exe_ativo',
+                    type: 'bit',
+                    element: 'exe_ativo',
+                    fieldValueOptions: {
+                        selectedItem: 'id',
+                        labelField: 'name'
+                    }
                 }, {
                     field: 'exe_cep',
                     type: 'varchar',
@@ -341,6 +354,7 @@ define(['../controllers/module'], function(controllers) {
             }
 
             if ($scope.formAction == 'update') {
+                 $scope.exe_ativo = $scope.dataStatus.options;
                 $scope.formControl.select($scope.formItemEdit);
             }
         };
