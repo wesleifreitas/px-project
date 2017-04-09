@@ -4,7 +4,7 @@
 
 # Phoenix Project (px-project)
 
-**Este projeto foi criado para fins didáticos.**
+**Projeto criado para fins didáticos.**
 Este repositório está **encerrado**, com os resultados alcançados foi criado um **novo repositório**, disponível em https://github.com/wesleifreitas/px-project-a1
 
 * Web site: http://pxproject.com.br
