@@ -4,18 +4,16 @@
 
 # Phoenix Project (px-project)
 
-Projeto modular experimental baseado em componentes, possui como objetivo permitir o desenvolvimento ágil de aplicações web modernas com qualidade, confiabilidade e segurança.
+**Este projeto foi criado para fins didáticos.**
+Este repositório está **encerrado**, com os resultados alcançados foi criado um **novo repositório**, disponível em https://github.com/wesleifreitas/px-project-a1
 
 * Web site: http://pxproject.com.br
-* Developer guide: [docs](docs/guide-pt-BR)
-* Contribution guidelines: [CONTRIBUTING.md](CONTRIBUTING.md)
-* Demo page: http://demo.pxproject.com.br
+* Contribution guidelines: [CONTRIBUTING.md](https://github.com/wesleifreitas/px-project-a1/blob/master/CONTRIBUTING.md)
+* Demo page: http://demo-a1.pxproject.com.br
 
 Usuário     | Senha
 ------------ | -------------
-px-project | atopng
-
-Visite [px-example](https://github.com/wesleifreitas/px-example) para obter mais detalhes sobre como instalar e usar arquivos de distribução px-project dentro seu próprio projeto local.
+admin | admin
 
 [license-image]: https://img.shields.io/github/license/mashape/apistatus.svg?style=flat
 [license-url]: LICENSE
