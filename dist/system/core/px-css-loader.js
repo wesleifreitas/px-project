@@ -1,1 +1,0 @@
-define(["../services/module"],function(e){"use strict";function t(e){function t(){var t=document.getElementById("px-loading"),n=window.getComputedStyle(t),o=n.getPropertyValue("display");"none"!=o&&$.each(e.PROJECT_CSS,function(e,t){$('<link rel="stylesheet"/>').attr("href",t).appendTo($("head"))})}var n={};return n.load=t,n}e.factory("pxCssLoader",t),t.$inject=["pxConfig"]});

@@ -1,1 +1,0 @@
-define(["angular"],function(e){"use strict";return e.module("system.directives",[])});
